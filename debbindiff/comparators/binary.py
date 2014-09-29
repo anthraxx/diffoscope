@@ -1,4 +1,3 @@
-#!/usr/bin/python
 # -*- coding: utf-8 -*-
 #
 # debbindiff: highlight differences between two builds of Debian packages
@@ -18,21 +17,14 @@
 # You should have received a copy of the GNU General Public License
 # along with debbindiff.  If not, see <http://www.gnu.org/licenses/>.
 
-from __future__ import print_function
+from debbindiff.difference import Difference
+from debbindiff.pyxxd import hexdump
 
-import sys
-import debbindiff.comparators
+def compare_binary_files(path1, path2, source=None):
+    hexdump1 = hexdump(open(path1, 'rb').read())
+    hexdump2 = hexdump(open(path2, 'rb').read())
+    if hexdump1 == hexdump2:
+        return []
+    return [Difference(hexdump1.splitlines(1), hexdump2.splitlines(1), path1, path2, source)]
 
-def main():
-    if len(sys.argv) != 3:
-        print("Usage: %s FILE1 FILE2")
-        sys.exit(2)
-    differences = debbindiff.comparators.compare_files(sys.argv[1], sys.argv[2])
-    for difference in differences:
-        for line in difference.get_diff():
-            print(line, end='')
-    if len(differences) > 0:
-        sys.exit(1)
 
-if __name__ == '__main__':
-    main()

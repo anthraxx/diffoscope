@@ -1,4 +1,3 @@
-#!/usr/bin/python
 # -*- coding: utf-8 -*-
 #
 # debbindiff: highlight differences between two builds of Debian packages
@@ -18,21 +17,12 @@
 # You should have received a copy of the GNU General Public License
 # along with debbindiff.  If not, see <http://www.gnu.org/licenses/>.
 
-from __future__ import print_function
+import codecs
+from debbindiff.difference import Difference
 
-import sys
-import debbindiff.comparators
-
-def main():
-    if len(sys.argv) != 3:
-        print("Usage: %s FILE1 FILE2")
-        sys.exit(2)
-    differences = debbindiff.comparators.compare_files(sys.argv[1], sys.argv[2])
-    for difference in differences:
-        for line in difference.get_diff():
-            print(line, end='')
-    if len(differences) > 0:
-        sys.exit(1)
-
-if __name__ == '__main__':
-    main()
+def compare_text_files(path1, path2, encoding, source=None):
+    lines1 = codecs.open(path1, 'r', encoding=encoding).readlines()
+    lines2 = codecs.open(path2, 'r', encoding=encoding).readlines()
+    if lines1 == lines2:
+        return []
+    return [Difference(lines1, lines2, path1, path2, source)]

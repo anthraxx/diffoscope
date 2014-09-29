@@ -30,6 +30,8 @@ import codecs
 import tempfile
 import shutil
 import subprocess
+import tarfile
+from StringIO import StringIO
 from contextlib import contextmanager
 from debbindiff.changes import Changes
 from debbindiff.pyxxd import hexdump
@@ -188,22 +190,74 @@ def decompress_xz(path):
                 shell=False, stdout=temp_file, stderr=None)
             yield temp_path
 
-def compare_xz_files(path1, path2, source=None):
-    if are_same_binaries(path1, path2):
-        return []
+# decorator that will create a fallback on binary diff if no differences
+# are detected
+def binary_fallback(original_function):
+    def with_fallback(path1, path2, source=None):
+        if are_same_binaries(path1, path2):
+            return []
+        inside_differences = original_function(path1, path2, source)
+        # no differences detected inside? let's at least do a binary diff
+        if len(inside_differences) == 0:
+            difference = compare_binary_files(path1, path2)[0]
+            difference.comment = "No differences found inside, yet data differs"
+        else:
+            difference = Difference(None, None, path1, path2, source=get_source(path1, path2))
+            difference.add_details(inside_differences)
+        return [difference]
+    return with_fallback
 
+@binary_fallback
+def compare_xz_files(path1, path2, source=None):
     with decompress_xz(path1) as new_path1:
         with decompress_xz(path2) as new_path2:
-            inside_differences = compare_files(new_path1, new_path2, source=get_source(new_path1, new_path2))
+            return compare_files(new_path1, new_path2, source=get_source(new_path1, new_path2))
 
-    # no differences detected inside? let's at least do a binary diff
-    if len(inside_differences) == 0:
-        difference = compare_binary_files(path1, path2)[0]
-        difference.comment = "No differences found inside, yet compressed data differs"
+def get_tar_content(tar):
+    orig_stdout = sys.stdout
+    output = StringIO()
+    try:
+        sys.stdout = output
+        tar.list(verbose=True)
+        return output.getvalue()
+    finally:
+        sys.stdout = orig_stdout
+
+@binary_fallback
+def compare_tar_files(path1, path2, source=None):
+    difference = None
+    content_differences = []
+    with tarfile.open(path1, 'r') as tar1:
+        with tarfile.open(path2, 'r') as tar2:
+            # look up differences in content
+            with make_temp_directory() as temp_dir1:
+                with make_temp_directory() as temp_dir2:
+                    logger.debug('content1 %s' % (tar1.getnames(),))
+                    logger.debug('content2 %s' % (tar2.getnames(),))
+                    for name in sorted(set(tar1.getnames()).intersection(tar2.getnames())):
+                        member1 = tar1.getmember(name)
+                        member2 = tar2.getmember(name)
+                        if not member1.isfile() or not member2.isfile():
+                            continue
+                        logger.debug('extract member %s' % (name,))
+                        tar1.extract(name, temp_dir1)
+                        tar2.extract(name, temp_dir2)
+                        content_differences.extend(
+                            compare_files(os.path.join(temp_dir1, name),
+                                          os.path.join(temp_dir2, name),
+                                          source=name))
+            # look up differences in file list and file metadata
+            content1 = get_tar_content(tar1)
+            content2 = get_tar_content(tar2)
+            if content1 != content2:
+                difference = Difference(content1.splitlines(1), content2.splitlines(1), path1, path2, source)
+            elif len(content_differences) >= 0:
+                difference = Difference(None, None, path1, path2, source)
+    if difference:
+        difference.add_details(content_differences)
+        return [difference]
     else:
-        difference = Difference(None, None, path1, path2, source=get_source(path1, path2))
-        difference.add_details(inside_differences)
-    return [difference]
+        return []
 
 def compare_text_files(path1, path2, encoding, source=None):
     lines1 = codecs.open(path1, 'r', encoding=encoding).readlines()
@@ -220,8 +274,9 @@ def compare_binary_files(path1, path2, source=None):
     return [Difference(hexdump1.splitlines(1), hexdump2.splitlines(1), path1, path2, source)]
 
 COMPARATORS = [
-        (None,                      r'\.changes$', compare_changes_files),
-        (r'^application/x-xz(;|$)', r'\.xz$',      compare_xz_files)
+        (None,                       r'\.changes$', compare_changes_files),
+        (r'^application/x-xz(;|$)',  r'\.xz$',      compare_xz_files),
+        (r'^application/x-tar(;|$)', r'\.tar$',     compare_tar_files),
     ]
 
 def compare_unknown(path1, path2, source=None):

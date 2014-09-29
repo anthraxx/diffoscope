@@ -23,6 +23,7 @@ import re
 from debbindiff import logger
 from debbindiff.difference import Difference, get_source
 from debbindiff.comparators.binary import compare_binary_files
+from debbindiff.comparators.bzip2 import compare_bzip2_files
 from debbindiff.comparators.changes import compare_changes_files
 from debbindiff.comparators.deb import compare_deb_files
 from debbindiff.comparators.gzip import compare_gzip_files
@@ -57,6 +58,7 @@ COMPARATORS = [
         (r'^application/x-tar(;|$)',            r'\.tar$',     compare_tar_files),
         (r'^application/x-debian-package(;|$)', r'\.deb$',     compare_deb_files),
         (r'^application/x-gzip(;|$)',           r'\.gz$',      compare_gzip_files),
+        (r'^application/x-bzip2(;|$)',          r'\.bzip2$',   compare_bzip2_files),
     ]
 
 def compare_files(path1, path2, source=None):

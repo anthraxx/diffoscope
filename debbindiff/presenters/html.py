@@ -22,6 +22,7 @@ import difflib
 import os.path
 import sys
 from xml.sax.saxutils import escape
+from debbindiff import logger
 
 HEADER = """
 <!DOCTYPE html>
@@ -82,6 +83,7 @@ def create_limited_print_func(print_func):
     return limited_print_func
 
 def output_difference(difference, print_func):
+    logger.debug('html output for %s' % (difference.source1,))
     if not hasattr(output_difference, 'htmldiff'):
         output_difference.htmldiff = difflib.HtmlDiff(wrapcolumn=70)
 

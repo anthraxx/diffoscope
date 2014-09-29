@@ -42,6 +42,22 @@ class Difference(object):
     def set_comment(self, comment):
         self._comment = comment
 
+    @property
+    def source1(self):
+        return self._source1
+
+    @property
+    def source2(self):
+        return self._source2
+
+    @property
+    def lines1(self):
+        return self._lines1
+
+    @property
+    def lines2(self):
+        return self._lines2
+
     def get_diff(self, in_sources1=[], in_sources2=[]):
         if self._comment:
             yield '\n'
@@ -62,6 +78,10 @@ class Difference(object):
         for detail in self._details:
             for line in detail.get_diff(sources1, sources2):
                 yield line
+
+    @property
+    def details(self):
+        return self._details
 
     def add_details(self, differences):
         self._details.extend(differences)

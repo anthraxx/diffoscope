@@ -22,15 +22,14 @@ from __future__ import print_function
 
 import sys
 import debbindiff.comparators
+from debbindiff.presenters.html import output_html
 
 def main():
     if len(sys.argv) != 3:
         print("Usage: %s FILE1 FILE2")
         sys.exit(2)
     differences = debbindiff.comparators.compare_files(sys.argv[1], sys.argv[2])
-    for difference in differences:
-        for line in difference.get_diff():
-            print(line, end='')
+    output_html(differences)
     if len(differences) > 0:
         sys.exit(1)
 

@@ -39,9 +39,10 @@ HEADER = """
       font-size: small;
     }
     .difference {
-      border: solid #ccc 1px;
+      border: outset #888 1px;
       background-color:rgba(0,0,0,.1);
-      margin: 0.5em;
+      padding: 0.5em;
+      margin: 0.5em 0;
     }
     .comment {
       font-style: italic;

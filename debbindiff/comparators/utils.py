@@ -34,7 +34,7 @@ def are_same_binaries(path1, path2):
         buf1 = f1.read(BUF_SIZE)
         buf2 = f2.read(BUF_SIZE)
         if not buf1 or not buf2:
-            return False
+            return not buf1 and not buf2
         h1.update(buf1)
         h2.update(buf2)
         if h1.digest() != h2.digest():

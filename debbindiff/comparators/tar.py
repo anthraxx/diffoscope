@@ -55,11 +55,14 @@ def compare_tar_files(path1, path2, source=None):
                         logger.debug('extract member %s' % (name,))
                         tar1.extract(name, temp_dir1)
                         tar2.extract(name, temp_dir2)
+                        in_path1 = os.path.join(temp_dir1, name)
+                        in_path2 = os.path.join(temp_dir2, name)
                         content_differences.extend(
                             debbindiff.comparators.compare_files(
-                                os.path.join(temp_dir1, name),
-                                os.path.join(temp_dir2, name),
+                                in_path1, in_path2,
                                 source=name))
+                        os.unlink(in_path1)
+                        os.unlink(in_path2)
             # look up differences in file list and file metadata
             content1 = get_tar_content(tar1)
             content2 = get_tar_content(tar2)
@@ -72,5 +75,3 @@ def compare_tar_files(path1, path2, source=None):
         return [difference]
     else:
         return []
-
-

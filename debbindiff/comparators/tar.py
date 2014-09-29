@@ -38,8 +38,7 @@ def get_tar_content(tar):
 
 @binary_fallback
 def compare_tar_files(path1, path2, source=None):
-    difference = None
-    content_differences = []
+    differences = []
     with tarfile.open(path1, 'r') as tar1:
         with tarfile.open(path2, 'r') as tar2:
             # look up differences in content
@@ -57,7 +56,7 @@ def compare_tar_files(path1, path2, source=None):
                         tar2.extract(name, temp_dir2)
                         in_path1 = os.path.join(temp_dir1, name)
                         in_path2 = os.path.join(temp_dir2, name)
-                        content_differences.extend(
+                        differences.extend(
                             debbindiff.comparators.compare_files(
                                 in_path1, in_path2,
                                 source=name))
@@ -67,11 +66,5 @@ def compare_tar_files(path1, path2, source=None):
             content1 = get_tar_content(tar1)
             content2 = get_tar_content(tar2)
             if content1 != content2:
-                difference = Difference(content1.splitlines(1), content2.splitlines(1), path1, path2, source)
-            elif len(content_differences) >= 0:
-                difference = Difference(None, None, path1, path2, source)
-    if difference:
-        difference.add_details(content_differences)
-        return [difference]
-    else:
-        return []
+                differences.append(Difference(content1.splitlines(1), content2.splitlines(1), path1, path2, source="metadata"))
+    return differences

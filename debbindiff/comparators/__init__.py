@@ -24,6 +24,7 @@ from debbindiff import logger
 from debbindiff.difference import Difference, get_source
 from debbindiff.comparators.binary import compare_binary_files
 from debbindiff.comparators.changes import compare_changes_files
+from debbindiff.comparators.deb import compare_deb_files
 from debbindiff.comparators.text import compare_text_files
 from debbindiff.comparators.tar import compare_tar_files
 from debbindiff.comparators.xz import compare_xz_files
@@ -50,9 +51,10 @@ def compare_unknown(path1, path2, source=None):
     return compare_binary_files(path1, path2, source)
 
 COMPARATORS = [
-        (None,                       r'\.changes$', compare_changes_files),
-        (r'^application/x-xz(;|$)',  r'\.xz$',      compare_xz_files),
-        (r'^application/x-tar(;|$)', r'\.tar$',     compare_tar_files),
+        (None,                                  r'\.changes$', compare_changes_files),
+        (r'^application/x-xz(;|$)',             r'\.xz$',      compare_xz_files),
+        (r'^application/x-tar(;|$)',            r'\.tar$',     compare_tar_files),
+        (r'^application/x-debian-package(;|$)', r'\.deb$',     compare_deb_files),
     ]
 
 def compare_files(path1, path2, source=None):

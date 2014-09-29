@@ -21,9 +21,9 @@ import os.path
 import subprocess
 from debian.arfile import ArFile
 from debbindiff import logger
-from debbindiff.difference import Difference
+from debbindiff.difference import Difference, get_source
 import debbindiff.comparators
-from debbindiff.comparators.utils import binary_fallback, make_temp_directory
+from debbindiff.comparators.utils import binary_fallback, make_temp_directory, are_same_binaries
 
 def get_ar_content(path):
     return subprocess.check_output(['ar', 'tv', path], shell=False)
@@ -59,3 +59,8 @@ def compare_deb_files(path1, path2, source=None):
     if content1 != content2:
         differences.append(Difference(content1.splitlines(1), content2.splitlines(1), path1, path2, source="metadata"))
     return differences
+
+def compare_md5sums_files(path1, path2, source=None):
+    if are_same_binaries(path1, path2):
+        return []
+    return [Difference(None, None, path1, path2, source=get_source(path1, path2), comment="Files in package differs")]

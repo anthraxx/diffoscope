@@ -67,7 +67,7 @@ FOOTER = """
 </html>
 """
 
-MAX_PAGE_SIZE = 100 * 2 ** 10 # 100 kB
+MAX_PAGE_SIZE = 1000 * 2 ** 10 # 1000 kB
 
 class PrintLimitReached(Exception):
     pass
@@ -76,10 +76,10 @@ def create_limited_print_func(print_func):
     def limited_print_func(s, force=False):
         if not hasattr(limited_print_func, 'char_count'):
             limited_print_func.char_count = 0
+        print_func(s)
         limited_print_func.char_count += len(s)
         if not force and limited_print_func.char_count >= MAX_PAGE_SIZE:
             raise PrintLimitReached()
-        print_func(s)
     return limited_print_func
 
 def output_difference(difference, print_func):
@@ -99,12 +99,11 @@ def output_difference(difference, print_func):
         if difference.lines1 and difference.lines2:
             print_func(output_difference.htmldiff.make_table(
                 difference.lines1, difference.lines2,
-                context=True, numlines=10))
+                context=True, numlines=3))
         for detail in difference.details:
             output_difference(detail, print_func)
     except PrintLimitReached, e:
-        # ok let's end it now
-        pass
+        logger.debug('print limit reached')
     print_func("</div>", force=True)
 
 def output_html(differences, print_func=None):
@@ -117,7 +116,6 @@ def output_html(differences, print_func=None):
         for difference in differences:
             output_difference(difference, print_func)
     except PrintLimitReached, e:
-        # ok let's end it now
+        logger.debug('print limit reached')
         print_func("<div class='error'>Max output size reached.</div>", force=True)
-        pass
     print_func(FOOTER % { 'htmldiff_legend': difflib._legend }, force=True)

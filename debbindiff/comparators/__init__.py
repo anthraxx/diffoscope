@@ -26,6 +26,7 @@ from debbindiff.comparators.binary import compare_binary_files
 from debbindiff.comparators.bzip2 import compare_bzip2_files
 from debbindiff.comparators.changes import compare_changes_files
 from debbindiff.comparators.deb import compare_deb_files
+from debbindiff.comparators.elf import compare_elf_files
 from debbindiff.comparators.gzip import compare_gzip_files
 from debbindiff.comparators.haskell import compare_hi_files
 from debbindiff.comparators.text import compare_text_files
@@ -61,6 +62,7 @@ COMPARATORS = [
         (r'^application/x-debian-package(;|$)', r'\.deb$',     compare_deb_files),
         (r'^application/x-gzip(;|$)',           r'\.gz$',      compare_gzip_files),
         (r'^application/x-bzip2(;|$)',          r'\.bzip2$',   compare_bzip2_files),
+        (r'^application/x-executable(;|$)',     None,          compare_elf_files),
     ]
 
 def compare_files(path1, path2, source=None):

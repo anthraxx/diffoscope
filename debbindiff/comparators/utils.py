@@ -21,6 +21,7 @@ from contextlib import contextmanager
 import hashlib
 import shutil
 import tempfile
+from debbindiff.comparators.binary import compare_binary_files
 from debbindiff.difference import Difference, get_source
 
 def are_same_binaries(path1, path2):

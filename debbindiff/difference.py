@@ -58,27 +58,6 @@ class Difference(object):
     def lines2(self):
         return self._lines2
 
-    def get_diff(self, in_sources1=[], in_sources2=[]):
-        if self._comment:
-            yield '\n'
-            for line in self._comment.split('\n'):
-                yield line
-            yield '\n\n'
-        sources1 = in_sources1 + [self._source1]
-        sources2 = in_sources2 + [self._source2]
-        if self._lines1 is not None and self._lines2 is not None:
-            fromfile1 = " -> ".join(sources1)
-            fromfile2 = " -> ".join(sources2)
-            for line in difflib.unified_diff(self._lines1, self._lines2,
-                                             fromfile=fromfile1,
-                                             tofile=fromfile2,  n=0):
-                if not line.endswith('\n'):
-                    line += '\n'
-                yield line
-        for detail in self._details:
-            for line in detail.get_diff(sources1, sources2):
-                yield line
-
     @property
     def details(self):
         return self._details

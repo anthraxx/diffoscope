@@ -27,6 +27,7 @@ from debbindiff.comparators.bzip2 import compare_bzip2_files
 from debbindiff.comparators.changes import compare_changes_files
 from debbindiff.comparators.deb import compare_deb_files, compare_md5sums_files
 from debbindiff.comparators.elf import compare_elf_files
+from debbindiff.comparators.gettext import compare_mo_files
 from debbindiff.comparators.gzip import compare_gzip_files
 from debbindiff.comparators.haskell import compare_hi_files
 from debbindiff.comparators.text import compare_text_files
@@ -58,6 +59,7 @@ COMPARATORS = [
         (None,                                  r'\.changes$',    compare_changes_files),
         (None,                                  r'\.(p_)?hi$',    compare_hi_files),
         (None,                                  r'\/\./md5sums$', compare_md5sums_files),
+        (None,                                  r'\.mo$',         compare_mo_files),
         (r'^application/x-xz(;|$)',             r'\.xz$',         compare_xz_files),
         (r'^application/x-tar(;|$)',            r'\.tar$',        compare_tar_files),
         (r'^application/x-debian-package(;|$)', r'\.deb$',        compare_deb_files),

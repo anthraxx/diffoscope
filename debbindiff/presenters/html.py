@@ -51,6 +51,12 @@ HEADER = """
     .source {
       font-weight: bold;
     }
+    .error {
+      border: solid black 1px;
+      background: red;
+      color: white;
+      padding: 0.2em;
+    }
     table.diff {
       font-size: 10pt;
     }

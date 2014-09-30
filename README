@@ -20,6 +20,28 @@ Example
 This will compare `build1.changes` and `build2.changes` and create
 `output.html` if there are differences between the two files.
 
+External dependencies
+---------------------
+
+The various comparators rely on these external commands being available
+in the path:
+
+| command  | Debian package     |
++----------|--------------------|
+| ar       | binutils-multiarch |
+| bzip2    | bzip2              |
+| file     | file               |
+| ghc      | ghc                |
+| gpg      | gnupg              |
+| gzip     | gzip               |
+| msgunfmt | gettext            |
+| objdump  | binutils-multiarch |
+| readelf  | binutils-multiarch |
+| vim      | vim                |
+| xxd      | vim-common         |
+| xz       | xz-utils           |
+| zipinfo  | unzip              |
+
 Authors
 -------
 

@@ -1,0 +1,42 @@
+debbindiff
+==========
+
+Highlight differences between two builds of Debian packages, and even
+other kind of files.
+
+debbindiff will exit with 0 if there's no differences and 1 if there
+are. An HTML report can be produced with the detected differences.
+
+debbindiff was written as part of the “reproducible builds” Debian
+project: <https://wiki.debian.org/ReproducibleBuilds>
+It is meant to be able to quickly understand why two builds of the same
+package produce different outputs.
+
+Example
+-------
+
+    $ ./debbindiff.py --html output.html build1.changes build2.changes
+
+This will compare `build1.changes` and `build2.changes` and create
+`output.html` if there are differences between the two files.
+
+Authors
+-------
+
+Lunar <lunar@debian.org>
+
+License
+-------
+
+debdindiff is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+debbindiff is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with debbindiff.  If not, see <http://www.gnu.org/licenses/>.

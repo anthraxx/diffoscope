@@ -42,8 +42,9 @@ def main():
         logger.setLevel(logging.DEBUG)
     differences = debbindiff.comparators.compare_files(parsed_args.file1, parsed_args.file2)
     if len(differences) > 0 and parsed_args.html_output:
+        output = open(parsed_args.html_output, 'w')
         def print_func(*args, **kwargs):
-            kwargs['file'] = open(parsed_args.html_output, 'w')
+            kwargs['file'] = output
             print(*args, **kwargs)
         output_html(differences, print_func=print_func)
     if len(differences) > 0:

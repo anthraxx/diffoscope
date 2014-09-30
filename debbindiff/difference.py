@@ -39,7 +39,7 @@ class Difference(object):
         return self._comment
 
     @comment.setter
-    def set_comment(self, comment):
+    def comment(self, comment):
         self._comment = comment
 
     @property

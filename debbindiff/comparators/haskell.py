@@ -17,7 +17,6 @@
 # You should have received a copy of the GNU General Public License
 # along with debbindiff.  If not, see <http://www.gnu.org/licenses/>.
 
-import os.path
 import subprocess
 from debbindiff.comparators.utils import binary_fallback
 from debbindiff.difference import Difference

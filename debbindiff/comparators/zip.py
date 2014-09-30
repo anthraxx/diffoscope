@@ -18,6 +18,7 @@
 # along with debbindiff.  If not, see <http://www.gnu.org/licenses/>.
 
 import os.path
+import re
 import subprocess
 from zipfile import ZipFile
 from debbindiff import logger

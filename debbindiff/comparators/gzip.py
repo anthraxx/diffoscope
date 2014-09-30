@@ -18,7 +18,6 @@
 # along with debbindiff.  If not, see <http://www.gnu.org/licenses/>.
 
 from contextlib import contextmanager
-import gzip
 import subprocess
 import os.path
 import debbindiff.comparators

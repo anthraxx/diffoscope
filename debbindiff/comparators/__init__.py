@@ -22,7 +22,6 @@ import os.path
 import re
 import sys
 from debbindiff import logger
-from debbindiff.difference import Difference, get_source
 from debbindiff.comparators.binary import compare_binary_files
 from debbindiff.comparators.bzip2 import compare_bzip2_files
 from debbindiff.comparators.changes import compare_changes_files

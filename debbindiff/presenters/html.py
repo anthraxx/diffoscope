@@ -22,7 +22,6 @@ import os.path
 import re
 import subprocess
 import sys
-from tempfile import NamedTemporaryFile
 from xml.sax.saxutils import escape
 from debbindiff import logger
 from debbindiff.comparators.utils import make_temp_directory
@@ -144,7 +143,7 @@ def output_difference(difference, print_func):
             print_func(create_diff(difference.lines1, difference.lines2))
         for detail in difference.details:
             output_difference(detail, print_func)
-    except PrintLimitReached, e:
+    except PrintLimitReached:
         logger.debug('print limit reached')
         raise
     finally:
@@ -158,7 +157,7 @@ def output_html(differences, print_func=None):
         print_func(HEADER % { 'title': escape(' '.join(sys.argv)) })
         for difference in differences:
             output_difference(difference, print_func)
-    except PrintLimitReached, e:
+    except PrintLimitReached:
         logger.debug('print limit reached')
         print_func("<div class='error'>Max output size reached.</div>", force=True)
     print_func(FOOTER, force=True)

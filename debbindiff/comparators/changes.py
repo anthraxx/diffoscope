@@ -17,6 +17,7 @@
 # You should have received a copy of the GNU General Public License
 # along with debbindiff.  If not, see <http://www.gnu.org/licenses/>.
 
+import sys
 from debbindiff import logger
 from debbindiff.changes import Changes
 import debbindiff.comparators

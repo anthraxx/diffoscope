@@ -19,9 +19,12 @@
 
 import os.path
 
+
 class Difference(object):
-    def __init__(self, lines1, lines2, path1, path2, source=None, comment=None):
-        # allow to override declared file paths, useful when comparing tempfiles
+    def __init__(self, lines1, lines2, path1, path2, source=None,
+                 comment=None):
+        # allow to override declared file paths, useful when comparing
+        # tempfiles
         if source:
             self._source1 = source
             self._source2 = source
@@ -64,8 +67,8 @@ class Difference(object):
     def add_details(self, differences):
         self._details.extend(differences)
 
+
 def get_source(path1, path2):
     if os.path.basename(path1) == os.path.basename(path2):
         return os.path.basename(path1)
     return None
-

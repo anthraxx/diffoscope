@@ -25,8 +25,9 @@ import tempfile
 from debbindiff.comparators.binary import compare_binary_files
 from debbindiff.difference import Difference, get_source
 
+
 def are_same_binaries(path1, path2):
-    BUF_SIZE = 20 * 2 ** 10 # 20 kB
+    BUF_SIZE = 20 * 2 ** 10  # 20 kB
     h1 = hashlib.md5()
     f1 = open(path1, 'rb')
     h2 = hashlib.md5()
@@ -42,6 +43,7 @@ def are_same_binaries(path1, path2):
             return False
     return True
 
+
 # decorator that will create a fallback on binary diff if no differences
 # are detected
 def binary_fallback(original_function):
@@ -52,18 +54,22 @@ def binary_fallback(original_function):
         # no differences detected inside? let's at least do a binary diff
         if len(inside_differences) == 0:
             difference = compare_binary_files(path1, path2)[0]
-            difference.comment = "No differences found inside, yet data differs"
+            difference.comment = \
+                "No differences found inside, yet data differs"
         else:
-            difference = Difference(None, None, path1, path2, source=get_source(path1, path2))
+            difference = Difference(None, None, path1, path2,
+                                    source=get_source(path1, path2))
             difference.add_details(inside_differences)
         return [difference]
     return with_fallback
+
 
 @contextmanager
 def make_temp_directory():
     temp_dir = tempfile.mkdtemp(suffix='debbindiff')
     yield temp_dir
     shutil.rmtree(temp_dir)
+
 
 def get_ar_content(path):
     return subprocess.check_output(['ar', 'tv', path], shell=False)

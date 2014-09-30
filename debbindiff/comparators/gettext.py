@@ -21,13 +21,16 @@ import subprocess
 from debbindiff.comparators.utils import binary_fallback
 from debbindiff.difference import Difference
 
+
 def msgunfmt(path):
     return subprocess.check_output(['msgunfmt', path], shell=False)
+
 
 @binary_fallback
 def compare_mo_files(path1, path2, source=None):
     mo1 = msgunfmt(path1)
     mo2 = msgunfmt(path2)
     if mo1 != mo2:
-        return [Difference(mo1.splitlines(1), mo2.splitlines(1), path1, path2, source='msgunfmt')]
+        return [Difference(mo1.splitlines(1), mo2.splitlines(1),
+                           path1, path2, source='msgunfmt')]
     return []

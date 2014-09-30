@@ -22,7 +22,9 @@ from debian.arfile import ArFile
 from debbindiff import logger
 from debbindiff.difference import Difference, get_source
 import debbindiff.comparators
-from debbindiff.comparators.utils import binary_fallback, make_temp_directory, are_same_binaries, get_ar_content
+from debbindiff.comparators.utils import \
+    binary_fallback, make_temp_directory, are_same_binaries, get_ar_content
+
 
 @binary_fallback
 def compare_deb_files(path1, path2, source=None):
@@ -34,7 +36,8 @@ def compare_deb_files(path1, path2, source=None):
         with make_temp_directory() as temp_dir2:
             logger.debug('content1 %s' % (ar1.getnames(),))
             logger.debug('content2 %s' % (ar2.getnames(),))
-            for name in sorted(set(ar1.getnames()).intersection(ar2.getnames())):
+            for name in sorted(set(ar1.getnames())
+                               .intersection(ar2.getnames())):
                 logger.debug('extract member %s' % (name,))
                 member1 = ar1.getmember(name)
                 member2 = ar2.getmember(name)
@@ -53,10 +56,15 @@ def compare_deb_files(path1, path2, source=None):
     content1 = get_ar_content(path1)
     content2 = get_ar_content(path2)
     if content1 != content2:
-        differences.append(Difference(content1.splitlines(1), content2.splitlines(1), path1, path2, source="metadata"))
+        differences.append(Difference(
+            content1.splitlines(1), content2.splitlines(1),
+            path1, path2, source="metadata"))
     return differences
+
 
 def compare_md5sums_files(path1, path2, source=None):
     if are_same_binaries(path1, path2):
         return []
-    return [Difference(None, None, path1, path2, source=get_source(path1, path2), comment="Files in package differs")]
+    return [Difference(None, None, path1, path2,
+                       source=get_source(path1, path2),
+                       comment="Files in package differs")]

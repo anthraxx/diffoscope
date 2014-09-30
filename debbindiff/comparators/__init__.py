@@ -26,7 +26,8 @@ from debbindiff.comparators.binary import compare_binary_files
 from debbindiff.comparators.bzip2 import compare_bzip2_files
 from debbindiff.comparators.changes import compare_changes_files
 from debbindiff.comparators.deb import compare_deb_files, compare_md5sums_files
-from debbindiff.comparators.elf import compare_elf_files, compare_static_lib_files
+from debbindiff.comparators.elf import \
+    compare_elf_files, compare_static_lib_files
 from debbindiff.comparators.gettext import compare_mo_files
 from debbindiff.comparators.gzip import compare_gzip_files
 from debbindiff.comparators.haskell import compare_hi_files
@@ -35,11 +36,13 @@ from debbindiff.comparators.tar import compare_tar_files
 from debbindiff.comparators.xz import compare_xz_files
 from debbindiff.comparators.zip import compare_zip_files
 
+
 def guess_mime_type(path):
     if not hasattr(guess_mime_type, 'mimedb'):
         guess_mime_type.mimedb = magic.open(magic.MIME)
         guess_mime_type.mimedb.load()
     return guess_mime_type.mimedb.file(path)
+
 
 def compare_unknown(path1, path2, source=None):
     logger.debug("compare unknown path: %s and %s" % (path1, path2))
@@ -56,21 +59,24 @@ def compare_unknown(path1, path2, source=None):
         return compare_text_files(path1, path2, encoding, source)
     return compare_binary_files(path1, path2, source)
 
+
 COMPARATORS = [
-        (None,                                  r'\.changes$',         compare_changes_files),
-        (None,                                  r'\.(p_)?hi$',         compare_hi_files),
-        (None,                                  r'\/\./md5sums$',      compare_md5sums_files),
-        (None,                                  r'\.mo$',              compare_mo_files),
-        (r'^application/x-xz(;|$)',             r'\.xz$',              compare_xz_files),
-        (r'^application/x-tar(;|$)',            r'\.tar$',             compare_tar_files),
-        (r'^application/zip(;|$)',              r'\.(zip|jar)$',       compare_zip_files),
-        (r'^application/x-debian-package(;|$)', r'\.deb$',             compare_deb_files),
-        (r'^application/x-gzip(;|$)',           r'\.gz$',              compare_gzip_files),
-        (r'^application/x-bzip2(;|$)',          r'\.bzip2$',           compare_bzip2_files),
-        (r'^application/x-executable(;|$)',     None,                  compare_elf_files),
-        (r'^application/x-sharedlib(;|$)',      r'\.so($|\.[0-9.]+$)', compare_elf_files),
-        (None,                                  r'\.a$',               compare_static_lib_files),
+    (None, r'\.changes$', compare_changes_files),
+    (None, r'\.(p_)?hi$', compare_hi_files),
+    (None, r'\/\./md5sums$', compare_md5sums_files),
+    (None, r'\.mo$', compare_mo_files),
+    (r'^application/x-xz(;|$)', r'\.xz$', compare_xz_files),
+    (r'^application/x-tar(;|$)', r'\.tar$', compare_tar_files),
+    (r'^application/zip(;|$)', r'\.(zip|jar)$', compare_zip_files),
+    (r'^application/x-debian-package(;|$)', r'\.deb$', compare_deb_files),
+    (r'^application/x-gzip(;|$)', r'\.gz$', compare_gzip_files),
+    (r'^application/x-bzip2(;|$)', r'\.bzip2$', compare_bzip2_files),
+    (r'^application/x-executable(;|$)', None, compare_elf_files),
+    (r'^application/x-sharedlib(;|$)', r'\.so($|\.[0-9.]+$)',
+     compare_elf_files),
+    (None, r'\.a$', compare_static_lib_files),
     ]
+
 
 def compare_files(path1, path2, source=None):
     if not os.path.isfile(path1):
@@ -80,11 +86,13 @@ def compare_files(path1, path2, source=None):
         logger.critical("%s is not a file" % path2)
         sys.exit(2)
     for mime_type_regex, filename_regex, comparator in COMPARATORS:
-        if filename_regex and re.search(filename_regex, path1) and re.search(filename_regex, path2):
+        if filename_regex and re.search(filename_regex, path1) \
+           and re.search(filename_regex, path2):
             return comparator(path1, path2, source)
         if mime_type_regex:
             mime_type1 = guess_mime_type(path1)
             mime_type2 = guess_mime_type(path2)
-            if re.search(mime_type_regex, mime_type1) and re.search(mime_type_regex, mime_type2):
+            if re.search(mime_type_regex, mime_type1) and \
+               re.search(mime_type_regex, mime_type2):
                 return comparator(path1, path2, source)
     return compare_unknown(path1, path2, source)

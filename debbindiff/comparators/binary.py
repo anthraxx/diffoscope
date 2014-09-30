@@ -20,12 +20,15 @@
 from debbindiff.difference import Difference
 import subprocess
 
+
 def get_hexdump(path):
     return subprocess.check_output(['xxd', path], shell=False)
+
 
 def compare_binary_files(path1, path2, source=None):
     hexdump1 = get_hexdump(path1)
     hexdump2 = get_hexdump(path2)
     if hexdump1 == hexdump2:
         return []
-    return [Difference(hexdump1.splitlines(1), hexdump2.splitlines(1), path1, path2, source)]
+    return [Difference(hexdump1.splitlines(1), hexdump2.splitlines(1),
+                       path1, path2, source)]

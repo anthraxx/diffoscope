@@ -21,13 +21,16 @@ import subprocess
 from debbindiff.comparators.utils import binary_fallback
 from debbindiff.difference import Difference
 
+
 def show_iface(path):
     return subprocess.check_output(['ghc', '--show-iface', path], shell=False)
+
 
 @binary_fallback
 def compare_hi_files(path1, path2, source=None):
     iface1 = show_iface(path1)
     iface2 = show_iface(path2)
     if iface1 != iface2:
-        return [Difference(iface1.splitlines(1), iface2.splitlines(1), path1, path2, source='ghc --show-iface')]
+        return [Difference(iface1.splitlines(1), iface2.splitlines(1),
+                           path1, path2, source='ghc --show-iface')]
     return []

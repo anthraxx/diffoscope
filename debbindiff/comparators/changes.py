@@ -23,12 +23,14 @@ from debbindiff.changes import Changes
 import debbindiff.comparators
 from debbindiff.difference import Difference, get_source
 
+
 DOT_CHANGES_FIELDS = [
-        "Format", "Source", "Binary", "Architecture",
-        "Version", "Distribution", "Urgency",
-        "Maintainer", "Changed-By", "Description",
-        "Changes"
+    "Format", "Source", "Binary", "Architecture",
+    "Version", "Distribution", "Urgency",
+    "Maintainer", "Changed-By", "Description",
+    "Changes",
     ]
+
 
 def compare_changes_files(path1, path2, source=None):
     try:
@@ -73,12 +75,14 @@ def compare_changes_files(path1, path2, source=None):
         d1 = files1[filename]
         d2 = files2[filename]
         if d1['md5sum'] != d2['md5sum']:
-            logger.debug("%s mentioned in .changes have differences" % filename)
+            logger.debug("%s mentioned in .changes have "
+                         "differences" % filename)
             files_difference.add_details(
-                debbindiff.comparators.compare_files(dot_changes1.get_path(filename),
-                                                     dot_changes2.get_path(filename),
-                                                     source=get_source(dot_changes1.get_path(filename),
-                                                                       dot_changes2.get_path(filename))))
+                debbindiff.comparators.compare_files(
+                    dot_changes1.get_path(filename),
+                    dot_changes2.get_path(filename),
+                    source=get_source(dot_changes1.get_path(filename),
+                                      dot_changes2.get_path(filename))))
 
     differences.append(files_difference)
     return differences

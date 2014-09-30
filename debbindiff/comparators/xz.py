@@ -24,6 +24,7 @@ import debbindiff.comparators
 from debbindiff.comparators.utils import binary_fallback, make_temp_directory
 from debbindiff.difference import get_source
 
+
 @contextmanager
 def decompress_xz(path):
     with make_temp_directory() as temp_dir:
@@ -37,6 +38,7 @@ def decompress_xz(path):
                 shell=False, stdout=temp_file, stderr=None)
             yield temp_path
 
+
 @binary_fallback
 def compare_xz_files(path1, path2, source=None):
     with decompress_xz(path1) as new_path1:
@@ -44,4 +46,3 @@ def compare_xz_files(path1, path2, source=None):
             return debbindiff.comparators.compare_files(
                 new_path1, new_path2,
                 source=get_source(new_path1, new_path2))
-

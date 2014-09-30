@@ -86,10 +86,12 @@ FOOTER = """
 </html>
 """
 
-MAX_PAGE_SIZE = 2000 * 2 ** 10 # 2000 kB
+MAX_PAGE_SIZE = 2000 * 2 ** 10  # 2000 kB
+
 
 class PrintLimitReached(Exception):
     pass
+
 
 def create_limited_print_func(print_func):
     def limited_print_func(s, force=False):
@@ -100,6 +102,7 @@ def create_limited_print_func(print_func):
         if not force and limited_print_func.char_count >= MAX_PAGE_SIZE:
             raise PrintLimitReached()
     return limited_print_func
+
 
 # Huge thanks to Stefaan Himpe for this solution:
 # http://technogems.blogspot.com/2011/09/generate-side-by-side-diffs-in-html.html
@@ -124,21 +127,28 @@ def create_diff(lines1, lines2):
             ], shell=False, close_fds=True,
             stdin=subprocess.PIPE, stdout=subprocess.PIPE)
         output = open(diff_path).read()
-        output = re.search(r'(<table.*</table>)', output, flags=re.MULTILINE | re.DOTALL).group(1)
-        output = re.sub(r'<th.*</th>', '', output, flags=re.MULTILINE | re.DOTALL)
+        output = re.search(r'(<table.*</table>)', output,
+                           flags=re.MULTILINE | re.DOTALL).group(1)
+        output = re.sub(r'<th.*</th>', '', output,
+                        flags=re.MULTILINE | re.DOTALL)
         return output
+
 
 def output_difference(difference, print_func):
     logger.debug('html output for %s' % (difference.source1,))
     print_func("<div class='difference'>")
     try:
         if difference.source1 == difference.source2:
-            print_func("<div><span class='source'>%s</div>" % escape(difference.source1))
+            print_func("<div><span class='source'>%s</div>"
+                       % escape(difference.source1))
         else:
-            print_func("<div><span class='source'>%s</span> vs.</div>" % escape(difference.source1))
-            print_func("<div><span class='source'>%s</span></div>" % escape(difference.source2))
+            print_func("<div><span class='source'>%s</span> vs.</div>"
+                       % escape(difference.source1))
+            print_func("<div><span class='source'>%s</span></div>"
+                       % escape(difference.source2))
         if difference.comment:
-            print_func("<div class='comment'>%s</div>" % escape(difference.comment))
+            print_func("<div class='comment'>%s</div>"
+                       % escape(difference.comment))
         if difference.lines1 and difference.lines2:
             print_func(create_diff(difference.lines1, difference.lines2))
         for detail in difference.details:
@@ -149,15 +159,17 @@ def output_difference(difference, print_func):
     finally:
         print_func("</div>", force=True)
 
+
 def output_html(differences, print_func=None):
     if print_func is None:
         print_func = print
     print_func = create_limited_print_func(print_func)
     try:
-        print_func(HEADER % { 'title': escape(' '.join(sys.argv)) })
+        print_func(HEADER % {'title': escape(' '.join(sys.argv))})
         for difference in differences:
             output_difference(difference, print_func)
     except PrintLimitReached:
         logger.debug('print limit reached')
-        print_func("<div class='error'>Max output size reached.</div>", force=True)
+        print_func("<div class='error'>Max output size reached.</div>",
+                   force=True)
     print_func(FOOTER, force=True)

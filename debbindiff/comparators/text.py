@@ -20,6 +20,7 @@
 import codecs
 from debbindiff.difference import Difference
 
+
 def compare_text_files(path1, path2, encoding, source=None):
     lines1 = codecs.open(path1, 'r', encoding=encoding).readlines()
     lines2 = codecs.open(path2, 'r', encoding=encoding).readlines()

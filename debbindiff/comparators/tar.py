@@ -26,6 +26,7 @@ from debbindiff.difference import Difference
 import debbindiff.comparators
 from debbindiff.comparators.utils import binary_fallback, make_temp_directory
 
+
 def get_tar_content(tar):
     orig_stdout = sys.stdout
     output = StringIO()
@@ -35,6 +36,7 @@ def get_tar_content(tar):
         return output.getvalue()
     finally:
         sys.stdout = orig_stdout
+
 
 @binary_fallback
 def compare_tar_files(path1, path2, source=None):
@@ -46,7 +48,8 @@ def compare_tar_files(path1, path2, source=None):
                 with make_temp_directory() as temp_dir2:
                     logger.debug('content1 %s' % (tar1.getnames(),))
                     logger.debug('content2 %s' % (tar2.getnames(),))
-                    for name in sorted(set(tar1.getnames()).intersection(tar2.getnames())):
+                    for name in sorted(set(tar1.getnames())
+                                       .intersection(tar2.getnames())):
                         member1 = tar1.getmember(name)
                         member2 = tar2.getmember(name)
                         if not member1.isfile() or not member2.isfile():
@@ -66,5 +69,7 @@ def compare_tar_files(path1, path2, source=None):
             content1 = get_tar_content(tar1)
             content2 = get_tar_content(tar2)
             if content1 != content2:
-                differences.append(Difference(content1.splitlines(1), content2.splitlines(1), path1, path2, source="metadata"))
+                differences.append(Difference(
+                    content1.splitlines(1), content2.splitlines(1),
+                    path1, path2, source="metadata"))
     return differences

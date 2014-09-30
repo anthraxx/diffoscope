@@ -48,8 +48,10 @@ import subprocess
 from debian import deb822
 from debbindiff import logger
 
+
 class ChangesFileException(Exception):
     pass
+
 
 class Changes(object):
     """
@@ -111,7 +113,8 @@ class Changes(object):
 
     def get_path(self, filename):
         """
-        Return the full, absolute path to a file referenced by the changes file.
+        Return the full, absolute path to a file referenced by the changes
+        file.
         """
         return os.path.join(self._directory, filename)
 
@@ -245,8 +248,9 @@ class Changes(object):
         Throws a :class:`dput.exceptions.ChangesFileException` if there's
         an issue with the GPG signature. Returns the GPG key ID.
         """
-	pipe = subprocess.Popen(
-            ["gpg", "--status-fd", "1", "--verify", "--batch", self.get_changes_file()],
+        pipe = subprocess.Popen(
+            ["gpg", "--status-fd", "1", "--verify", "--batch",
+             self.get_changes_file()],
             shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         gpg_output, gpg_output_stderr = pipe.communicate()
         print gpg_output

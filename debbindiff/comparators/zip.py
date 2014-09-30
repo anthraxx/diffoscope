@@ -26,10 +26,12 @@ from debbindiff.difference import Difference
 import debbindiff.comparators
 from debbindiff.comparators.utils import binary_fallback, make_temp_directory
 
+
 def get_zipinfo(path):
     output = subprocess.check_output(['zipinfo', path], shell=False)
     # the full path appears in the output, we need to remove it
     return re.sub(re.escape(path), os.path.basename(path), output)
+
 
 @binary_fallback
 def compare_zip_files(path1, path2, source=None):
@@ -39,7 +41,8 @@ def compare_zip_files(path1, path2, source=None):
             # look up differences in content
             with make_temp_directory() as temp_dir1:
                 with make_temp_directory() as temp_dir2:
-                    for name in sorted(set(zip1.namelist()).intersection(zip2.namelist())):
+                    for name in sorted(set(zip1.namelist())
+                                       .intersection(zip2.namelist())):
                         # skip directories
                         if name.endswith('/'):
                             continue
@@ -58,5 +61,7 @@ def compare_zip_files(path1, path2, source=None):
             zipinfo1 = get_zipinfo(path1)
             zipinfo2 = get_zipinfo(path2)
             if zipinfo1 != zipinfo2:
-                differences.append(Difference(zipinfo1.splitlines(1), zipinfo2.splitlines(1), path1, path2, source="metadata"))
+                differences.append(Difference(
+                    zipinfo1.splitlines(1), zipinfo2.splitlines(1),
+                    path1, path2, source="metadata"))
     return differences

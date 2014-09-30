@@ -56,16 +56,17 @@ def compare_unknown(path1, path2, source=None):
     return compare_binary_files(path1, path2, source)
 
 COMPARATORS = [
-        (None,                                  r'\.changes$',    compare_changes_files),
-        (None,                                  r'\.(p_)?hi$',    compare_hi_files),
-        (None,                                  r'\/\./md5sums$', compare_md5sums_files),
-        (None,                                  r'\.mo$',         compare_mo_files),
-        (r'^application/x-xz(;|$)',             r'\.xz$',         compare_xz_files),
-        (r'^application/x-tar(;|$)',            r'\.tar$',        compare_tar_files),
-        (r'^application/x-debian-package(;|$)', r'\.deb$',        compare_deb_files),
-        (r'^application/x-gzip(;|$)',           r'\.gz$',         compare_gzip_files),
-        (r'^application/x-bzip2(;|$)',          r'\.bzip2$',      compare_bzip2_files),
-        (r'^application/x-executable(;|$)',     None,             compare_elf_files),
+        (None,                                  r'\.changes$',         compare_changes_files),
+        (None,                                  r'\.(p_)?hi$',         compare_hi_files),
+        (None,                                  r'\/\./md5sums$',      compare_md5sums_files),
+        (None,                                  r'\.mo$',              compare_mo_files),
+        (r'^application/x-xz(;|$)',             r'\.xz$',              compare_xz_files),
+        (r'^application/x-tar(;|$)',            r'\.tar$',             compare_tar_files),
+        (r'^application/x-debian-package(;|$)', r'\.deb$',             compare_deb_files),
+        (r'^application/x-gzip(;|$)',           r'\.gz$',              compare_gzip_files),
+        (r'^application/x-bzip2(;|$)',          r'\.bzip2$',           compare_bzip2_files),
+        (r'^application/x-executable(;|$)',     None,                  compare_elf_files),
+        (r'^application/x-sharedlib(;|$)',      r'\.so($|\.[0-9.]+$)', compare_elf_files),
     ]
 
 def compare_files(path1, path2, source=None):

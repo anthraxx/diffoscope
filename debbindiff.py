@@ -30,7 +30,7 @@ from debbindiff.presenters.html import output_html
 def create_parser():
     parser = argparse.ArgumentParser(description='Highlight differences between two builds of Debian packages')
     parser.add_argument('--debug', dest='debug', action='store_true', default=False)
-    parser.add_argument('--html', metavar='output', dest='html_output', type=argparse.FileType('w'))
+    parser.add_argument('--html', metavar='output', dest='html_output')
     parser.add_argument('file1', help='first file to compare')
     parser.add_argument('file2', help='second file to compare')
     return parser
@@ -41,9 +41,9 @@ def main():
     if parsed_args.debug:
         logger.setLevel(logging.DEBUG)
     differences = debbindiff.comparators.compare_files(parsed_args.file1, parsed_args.file2)
-    if parsed_args.html_output:
+    if len(differences) > 0 and parsed_args.html_output:
         def print_func(*args, **kwargs):
-            kwargs['file'] = parsed_args.html_output
+            kwargs['file'] = open(parsed_args.html_output, 'w')
             print(*args, **kwargs)
         output_html(differences, print_func=print_func)
     if len(differences) > 0:

@@ -18,6 +18,7 @@
 # along with debbindiff.  If not, see <http://www.gnu.org/licenses/>.
 
 import os.path
+import re
 import subprocess
 from debbindiff.comparators.utils import binary_fallback
 from debbindiff.difference import Difference
@@ -29,7 +30,9 @@ def readelf_debug_dump(path):
     return subprocess.check_output(['readelf', '--debug-dump', path], shell=False)
 
 def objdump_disassemble(path):
-    return subprocess.check_output(['objdump', '--disassemble', path], shell=False)
+    output = subprocess.check_output(['objdump', '--disassemble', path], shell=False)
+    # the full path appears in the output, we need to remove it
+    return re.sub(re.escape(path), os.path.basename(path), output)
 
 @binary_fallback
 def compare_elf_files(path1, path2, source=None):
@@ -45,5 +48,5 @@ def compare_elf_files(path1, path2, source=None):
     objdump1 = objdump_disassemble(path1)
     objdump2 = objdump_disassemble(path2)
     if objdump1 != objdump2:
-        differences.append(Difference(objdump1.splitlines(1), objdump2.splitlines(1), path1, path2, source='objdump --dissamble'))
+        differences.append(Difference(objdump1.splitlines(1), objdump2.splitlines(1), path1, path2, source='objdump --disassemble'))
     return differences

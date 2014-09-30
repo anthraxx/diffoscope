@@ -20,6 +20,7 @@
 import magic
 import os.path
 import re
+import sys
 from debbindiff import logger
 from debbindiff.difference import Difference, get_source
 from debbindiff.comparators.binary import compare_binary_files
@@ -33,6 +34,7 @@ from debbindiff.comparators.haskell import compare_hi_files
 from debbindiff.comparators.text import compare_text_files
 from debbindiff.comparators.tar import compare_tar_files
 from debbindiff.comparators.xz import compare_xz_files
+from debbindiff.comparators.zip import compare_zip_files
 
 def guess_mime_type(path):
     if not hasattr(guess_mime_type, 'mimedb'):
@@ -62,6 +64,7 @@ COMPARATORS = [
         (None,                                  r'\.mo$',              compare_mo_files),
         (r'^application/x-xz(;|$)',             r'\.xz$',              compare_xz_files),
         (r'^application/x-tar(;|$)',            r'\.tar$',             compare_tar_files),
+        (r'^application/zip(;|$)',              r'\.(zip|jar)$',       compare_zip_files),
         (r'^application/x-debian-package(;|$)', r'\.deb$',             compare_deb_files),
         (r'^application/x-gzip(;|$)',           r'\.gz$',              compare_gzip_files),
         (r'^application/x-bzip2(;|$)',          r'\.bzip2$',           compare_bzip2_files),

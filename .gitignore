@@ -1,2 +1,4 @@
 *.sw[p-z]
 *.pyc
+/debbindiff.egg-info/
+/dist/

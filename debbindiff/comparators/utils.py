@@ -20,6 +20,7 @@
 from contextlib import contextmanager
 import hashlib
 import shutil
+import subprocess
 import tempfile
 from debbindiff.comparators.binary import compare_binary_files
 from debbindiff.difference import Difference, get_source
@@ -63,3 +64,6 @@ def make_temp_directory():
     temp_dir = tempfile.mkdtemp(suffix='debbindiff')
     yield temp_dir
     shutil.rmtree(temp_dir)
+
+def get_ar_content(path):
+    return subprocess.check_output(['ar', 'tv', path], shell=False)

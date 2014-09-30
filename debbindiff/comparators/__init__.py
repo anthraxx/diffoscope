@@ -27,7 +27,7 @@ from debbindiff.comparators.binary import compare_binary_files
 from debbindiff.comparators.bzip2 import compare_bzip2_files
 from debbindiff.comparators.changes import compare_changes_files
 from debbindiff.comparators.deb import compare_deb_files, compare_md5sums_files
-from debbindiff.comparators.elf import compare_elf_files
+from debbindiff.comparators.elf import compare_elf_files, compare_static_lib_files
 from debbindiff.comparators.gettext import compare_mo_files
 from debbindiff.comparators.gzip import compare_gzip_files
 from debbindiff.comparators.haskell import compare_hi_files
@@ -70,6 +70,7 @@ COMPARATORS = [
         (r'^application/x-bzip2(;|$)',          r'\.bzip2$',           compare_bzip2_files),
         (r'^application/x-executable(;|$)',     None,                  compare_elf_files),
         (r'^application/x-sharedlib(;|$)',      r'\.so($|\.[0-9.]+$)', compare_elf_files),
+        (None,                                  r'\.a$',               compare_static_lib_files),
     ]
 
 def compare_files(path1, path2, source=None):

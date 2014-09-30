@@ -18,15 +18,11 @@
 # along with debbindiff.  If not, see <http://www.gnu.org/licenses/>.
 
 import os.path
-import subprocess
 from debian.arfile import ArFile
 from debbindiff import logger
 from debbindiff.difference import Difference, get_source
 import debbindiff.comparators
-from debbindiff.comparators.utils import binary_fallback, make_temp_directory, are_same_binaries
-
-def get_ar_content(path):
-    return subprocess.check_output(['ar', 'tv', path], shell=False)
+from debbindiff.comparators.utils import binary_fallback, make_temp_directory, are_same_binaries, get_ar_content
 
 @binary_fallback
 def compare_deb_files(path1, path2, source=None):

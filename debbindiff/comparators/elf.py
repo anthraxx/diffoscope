@@ -20,22 +20,27 @@
 import os.path
 import re
 import subprocess
-from debbindiff.comparators.utils import binary_fallback
+from debbindiff.comparators.utils import binary_fallback, get_ar_content
 from debbindiff.difference import Difference
 
 def readelf_all(path):
-    return subprocess.check_output(['readelf', '--all', path], shell=False)
+    output = subprocess.check_output(['readelf', '--all', path], shell=False)
+    # the full path can appear in the output, we need to remove it
+    return re.sub(re.escape(path), os.path.basename(path), output)
 
 def readelf_debug_dump(path):
-    return subprocess.check_output(['readelf', '--debug-dump', path], shell=False)
+    output = subprocess.check_output(['readelf', '--debug-dump', path], shell=False)
+    # the full path can appear in the output, we need to remove it
+    return re.sub(re.escape(path), os.path.basename(path), output)
 
 def objdump_disassemble(path):
     output = subprocess.check_output(['objdump', '--disassemble', path], shell=False)
     # the full path appears in the output, we need to remove it
     return re.sub(re.escape(path), os.path.basename(path), output)
 
-@binary_fallback
-def compare_elf_files(path1, path2, source=None):
+# this one is not wrapped with binary_fallback and is used
+# by both compare_elf_files and compare_static_lib_files
+def _compare_elf_data(path1, path2, source=None):
     differences = []
     all1 = readelf_all(path1)
     all2 = readelf_all(path2)
@@ -49,4 +54,19 @@ def compare_elf_files(path1, path2, source=None):
     objdump2 = objdump_disassemble(path2)
     if objdump1 != objdump2:
         differences.append(Difference(objdump1.splitlines(1), objdump2.splitlines(1), path1, path2, source='objdump --disassemble'))
+    return differences
+
+@binary_fallback
+def compare_elf_files(path1, path2, source=None):
+    return _compare_elf_data(path1, path2, source=None)
+
+@binary_fallback
+def compare_static_lib_files(path1, path2, source=None):
+    differences = []
+    # look up differences in metadata
+    content1 = get_ar_content(path1)
+    content2 = get_ar_content(path2)
+    if content1 != content2:
+        differences.append(Difference(content1.splitlines(1), content2.splitlines(1), path1, path2, source="metadata"))
+    differences.extend(_compare_elf_data(path1, path2, source))
     return differences

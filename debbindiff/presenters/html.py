@@ -110,7 +110,9 @@ def output_difference(difference, print_func):
             output_difference(detail, print_func)
     except PrintLimitReached, e:
         logger.debug('print limit reached')
-    print_func("</div>", force=True)
+        raise
+    finally:
+        print_func("</div>", force=True)
 
 def output_html(differences, print_func=None):
     if print_func is None:

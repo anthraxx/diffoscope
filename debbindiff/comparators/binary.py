@@ -18,7 +18,6 @@
 # along with debbindiff.  If not, see <http://www.gnu.org/licenses/>.
 
 from debbindiff.difference import Difference
-from debbindiff.pyxxd import hexdump
 import subprocess
 
 def get_hexdump(path):

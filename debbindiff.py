@@ -23,7 +23,7 @@ from __future__ import print_function
 import argparse
 import logging
 import sys
-from debbindiff import logger
+from debbindiff import logger, VERSION
 import debbindiff.comparators
 from debbindiff.presenters.html import output_html
 
@@ -32,6 +32,8 @@ def create_parser():
     parser = argparse.ArgumentParser(
         description='Highlight differences between two builds '
                     'of Debian packages')
+    parser.add_argument('--version', action='version',
+                        version='debbindiff %s' % VERSION)
     parser.add_argument('--debug', dest='debug', action='store_true',
                         default=False)
     parser.add_argument('--html', metavar='output', dest='html_output')

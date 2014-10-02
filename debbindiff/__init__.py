@@ -19,6 +19,8 @@
 
 import logging
 
+VERSION = "3"
+
 logger = logging.getLogger("debbindiff")
 logger.setLevel(logging.WARNING)
 ch = logging.StreamHandler()

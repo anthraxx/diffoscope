@@ -1,9 +1,10 @@
 #!/usr/bin/env python2
 
 from setuptools import setup, find_packages
+import debbindiff
 
 setup(name='debbindiff',
-      version='2',
+      version=debbindiff.VERSION,
       description='display differences between files',
       long_description=open('README').read(),
       author='Lunar',

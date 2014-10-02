@@ -35,8 +35,9 @@ def create_parser():
     parser.add_argument('--version', action='version',
                         version='debbindiff %s' % VERSION)
     parser.add_argument('--debug', dest='debug', action='store_true',
-                        default=False)
-    parser.add_argument('--html', metavar='output', dest='html_output')
+                        default=False, help='display debug messages')
+    parser.add_argument('--html', metavar='output', dest='html_output',
+                        help='write HTML report to given file')
     parser.add_argument('file1', help='first file to compare')
     parser.add_argument('file2', help='second file to compare')
     return parser

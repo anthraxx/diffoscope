@@ -1,0 +1,40 @@
+Source: debbindiff
+Section: devel
+Priority: optional
+Maintainer: Reproducible builds folks <reproducible-builds@lists.alioth.debian.org>
+Uploaders: Jérémy Bobbio <lunar@debian.org>
+Build-Depends: debhelper (>= 9),
+               python-all,
+               python-debian,
+               python-docutils,
+               python-magic,
+               python-setuptools
+Standards-Version: 3.9.5
+X-Python-Version: >= 2.7
+Homepage: https://wiki.debian.org/ReproducibleBuilds
+Vcs-Git: git://anonscm.debian.org/reproducible/debbindiff.git
+Vcs-Browser: https://anonscm.debian.org/cgit/reproducible/debbindiff.git
+
+Package: debbindiff
+Architecture: all
+Depends: binutils-multiarch,
+         bzip2,
+         file,
+         gettext,
+         ghc,
+         gnupg,
+         unzip,
+         vim,
+         vim-common,
+         xz-utils,
+         ${misc:Depends},
+         ${python:Depends},
+Description: highlight differences between two builds of Debian packages
+ debbindiff was designed to easily compare two builds of the same Debian
+ package, and understand their differences.
+ .
+ It can be scripted through error codes, and an HTML report can be produced
+ with the detected differences.
+ .
+ debbindiff was written as part of the “reproducible builds” Debian
+ project.

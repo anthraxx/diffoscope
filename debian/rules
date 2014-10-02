@@ -1,0 +1,18 @@
+#!/usr/bin/make -f
+
+%:
+	dh $@ --with python2 --buildsystem=python_distutils
+
+override_dh_install:
+	mv debian/debbindiff/usr/bin/debbindiff.py debian/debbindiff/usr/bin/debbindiff
+	dh_install -O--buildsystem=python_distutils
+
+debian/debbindiff.1: debian/debbindiff.1.rst
+	rst2man $< $@
+
+override_dh_installman: debian/debbindiff.1
+	dh_installman -O--buildsystem=python_distutils
+
+override_dh_clean:
+	rm -f debian/debbindiff.1
+	dh_clean -O--buildsystem=python_distutils

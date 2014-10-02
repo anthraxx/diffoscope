@@ -2,4 +2,4 @@ debbindiff (3) unstable; urgency=low
 
   * Initial Debian release. (Closes: #763328)
 
- -- Jérémy Bobbio <lunar@debian.org>  Thu, 02 Oct 2014 10:21:10 +0000
+ -- Jérémy Bobbio <lunar@debian.org>  Thu, 02 Oct 2014 13:52:55 +0200

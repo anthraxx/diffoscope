@@ -115,17 +115,23 @@ def create_diff(lines1, lines2):
             f.writelines(lines1)
         with open(path2, 'w') as f:
             f.writelines(lines2)
-        subprocess.check_call(
+        p = subprocess.Popen(
             ['vim', '-n', '-N', '-e', '-i', 'NONE', '-u', 'NORC', '-U', 'NORC',
              '-d', path1, path2,
              '-c', 'colorscheme zellner',
              '-c', 'let g:html_number_lines=1',
              '-c', 'let g:html_use_css=1',
+             '-c', 'let g:html_no_progress=1',
              '-c', 'TOhtml',
              '-c', 'w! %s' % (diff_path,),
              '-c', 'qall!',
             ], shell=False, close_fds=True,
             stdin=subprocess.PIPE, stdout=subprocess.PIPE)
+        # Consume all output and wait until end of processing
+        _, _ = p.communicate()
+        p.wait()
+        if p.returncode != 0:
+            return 'vim exited with error %d' % p.returncode
         output = open(diff_path).read()
         output = re.search(r'(<table.*</table>)', output,
                            flags=re.MULTILINE | re.DOTALL).group(1)

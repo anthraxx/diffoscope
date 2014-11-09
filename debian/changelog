@@ -1,3 +1,10 @@
+debbindiff (4) unstable; urgency=medium
+
+  * Avoid deadlock when calling vimdiff. (Closes: #764131, #764420)
+  * Add support for an external CSS. (Closes: #764470)
+
+ -- Jérémy Bobbio <lunar@debian.org>  Sun, 09 Nov 2014 12:35:07 +0100
+
 debbindiff (3) unstable; urgency=low
 
   * Initial Debian release. (Closes: #763328)

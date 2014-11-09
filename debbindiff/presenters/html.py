@@ -47,6 +47,17 @@ HEADER = """
       padding: 0.5em;
       margin: 0.5em 0;
     }
+    .difference table {
+      table-layout: fixed;
+      width: 100%%;
+    }
+    .difference th,
+    .difference td {
+      width: 50%%;
+    }
+    .difference td div {
+      overflow: auto;
+    }
     .comment {
       font-style: italic;
     }
@@ -58,9 +69,6 @@ HEADER = """
       background: red;
       color: white;
       padding: 0.2em;
-    }
-    table.diff {
-      font-size: 10pt;
     }
     .lnr {
       background-color: #ccc;

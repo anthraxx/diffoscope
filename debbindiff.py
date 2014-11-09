@@ -38,6 +38,8 @@ def create_parser():
                         default=False, help='display debug messages')
     parser.add_argument('--html', metavar='output', dest='html_output',
                         help='write HTML report to given file')
+    parser.add_argument('--css', metavar='url', dest='css_url',
+                        help='link to an extra CSS for the HTML report')
     parser.add_argument('file1', help='first file to compare')
     parser.add_argument('file2', help='second file to compare')
     return parser
@@ -55,7 +57,7 @@ def main():
         def print_func(*args, **kwargs):
             kwargs['file'] = output
             print(*args, **kwargs)
-        output_html(differences, print_func=print_func)
+        output_html(differences, css_url=parsed_args.css_url, print_func=print_func)
     if len(differences) > 0:
         sys.exit(1)
 

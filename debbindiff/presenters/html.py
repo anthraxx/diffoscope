@@ -76,6 +76,7 @@ HEADER = """
       font-weight: bold;
     }
   </style>
+  %(css_link)s
 </head>
 <body>
 """
@@ -166,12 +167,22 @@ def output_difference(difference, print_func):
         print_func("</div>", force=True)
 
 
-def output_html(differences, print_func=None):
+def output_header(css_url, print_func):
+    if css_url:
+        css_link = '<link href="%s" type="text/css" rel="stylesheet" />' % css_url
+    else:
+        css_link = ''
+    print_func(HEADER % {'title': escape(' '.join(sys.argv)),
+                         'css_link': css_link,
+                        })
+
+
+def output_html(differences, css_url=None, print_func=None):
     if print_func is None:
         print_func = print
     print_func = create_limited_print_func(print_func)
     try:
-        print_func(HEADER % {'title': escape(' '.join(sys.argv))})
+        output_header(css_url, print_func)
         for difference in differences:
             output_difference(difference, print_func)
     except PrintLimitReached:

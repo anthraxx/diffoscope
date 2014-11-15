@@ -18,12 +18,17 @@
 # along with debbindiff.  If not, see <http://www.gnu.org/licenses/>.
 
 import codecs
+from debbindiff.comparators.binary import compare_binary_files
 from debbindiff.difference import Difference
 
 
 def compare_text_files(path1, path2, encoding, source=None):
-    lines1 = codecs.open(path1, 'r', encoding=encoding).readlines()
-    lines2 = codecs.open(path2, 'r', encoding=encoding).readlines()
+    try:
+        lines1 = codecs.open(path1, 'r', encoding=encoding).readlines()
+        lines2 = codecs.open(path2, 'r', encoding=encoding).readlines()
+    except LookupError, e:
+        # unknown encoding
+        return compare_binary_files(path1, path2, source)
     if lines1 == lines2:
         return []
     return [Difference(lines1, lines2, path1, path2, source)]

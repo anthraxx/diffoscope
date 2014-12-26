@@ -57,8 +57,7 @@ def binary_fallback(original_function):
             difference.comment = \
                 "No differences found inside, yet data differs"
         else:
-            difference = Difference(None, None, path1, path2,
-                                    source=get_source(path1, path2))
+            difference = Difference(None, None, path1, path2, source=source)
             difference.add_details(inside_differences)
         return [difference]
     return with_fallback

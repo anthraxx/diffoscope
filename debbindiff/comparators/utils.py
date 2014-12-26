@@ -53,7 +53,7 @@ def binary_fallback(original_function):
         inside_differences = original_function(path1, path2, source)
         # no differences detected inside? let's at least do a binary diff
         if len(inside_differences) == 0:
-            difference = compare_binary_files(path1, path2)[0]
+            difference = compare_binary_files(path1, path2, source=source)[0]
             difference.comment = \
                 "No differences found inside, yet data differs"
         else:

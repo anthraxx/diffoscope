@@ -37,6 +37,7 @@ in the path:
 | msgunfmt | gettext            |
 | objdump  | binutils-multiarch |
 | readelf  | binutils-multiarch |
+| showttf  | fontforge-extras   |
 | vim      | vim                |
 | xxd      | vim-common         |
 | xz       | xz-utils           |

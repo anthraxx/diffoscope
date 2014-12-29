@@ -28,6 +28,7 @@ from debbindiff.comparators.changes import compare_changes_files
 from debbindiff.comparators.deb import compare_deb_files, compare_md5sums_files
 from debbindiff.comparators.elf import \
     compare_elf_files, compare_static_lib_files
+from debbindiff.comparators.fonts import compare_ttf_files
 from debbindiff.comparators.gettext import compare_mo_files
 from debbindiff.comparators.gzip import compare_gzip_files
 from debbindiff.comparators.haskell import compare_hi_files
@@ -74,6 +75,7 @@ COMPARATORS = [
     (r'^application/x-executable(;|$)', None, compare_elf_files),
     (r'^application/x-sharedlib(;|$)', r'\.so($|\.[0-9.]+$)',
      compare_elf_files),
+    (r'^application/(x-font-ttf|vnd.ms-opentype)(;|$)', r'\.(ttf|otf)$', compare_ttf_files),
     (None, r'\.a$', compare_static_lib_files),
     ]
 

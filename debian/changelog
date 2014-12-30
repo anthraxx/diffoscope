@@ -1,3 +1,15 @@
+debbindiff (5) unstable; urgency=medium
+
+  * Properly encode strings before writing them to tempfiles.
+    (Closes: #764254)
+  * Fallback on binary comparison when text encoding is unknown.
+  * Always use given source path in binary_fallback.
+  * Add support for .udeb.
+  * Add support for ttf and otf files.
+  * Add support for png files. (Closes: #773573)
+
+ -- Jérémy Bobbio <lunar@debian.org>  Tue, 30 Dec 2014 12:34:13 +0100
+
 debbindiff (4) unstable; urgency=medium
 
   * Look harder for differences in zip files if needed.

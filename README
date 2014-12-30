@@ -38,6 +38,7 @@ in the path:
 | objdump  | binutils-multiarch |
 | readelf  | binutils-multiarch |
 | showttf  | fontforge-extras   |
+| sng      | sng                |
 | vim      | vim                |
 | xxd      | vim-common         |
 | xz       | xz-utils           |

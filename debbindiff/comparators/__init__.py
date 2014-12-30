@@ -32,6 +32,7 @@ from debbindiff.comparators.fonts import compare_ttf_files
 from debbindiff.comparators.gettext import compare_mo_files
 from debbindiff.comparators.gzip import compare_gzip_files
 from debbindiff.comparators.haskell import compare_hi_files
+from debbindiff.comparators.png import compare_png_files
 from debbindiff.comparators.text import compare_text_files
 from debbindiff.comparators.tar import compare_tar_files
 from debbindiff.comparators.xz import compare_xz_files
@@ -76,6 +77,7 @@ COMPARATORS = [
     (r'^application/x-sharedlib(;|$)', r'\.so($|\.[0-9.]+$)',
      compare_elf_files),
     (r'^application/(x-font-ttf|vnd.ms-opentype)(;|$)', r'\.(ttf|otf)$', compare_ttf_files),
+    (r'^image/png(;|$)', r'\.png$', compare_png_files),
     (None, r'\.a$', compare_static_lib_files),
     ]
 

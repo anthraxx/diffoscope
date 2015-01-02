@@ -26,8 +26,8 @@ def compare_text_files(path1, path2, encoding, source=None):
     try:
         lines1 = codecs.open(path1, 'r', encoding=encoding).readlines()
         lines2 = codecs.open(path2, 'r', encoding=encoding).readlines()
-    except LookupError, e:
-        # unknown encoding
+    except (LookupError, UnicodeDecodeError) as e:
+        # unknown or misdetected encoding
         return compare_binary_files(path1, path2, source)
     if lines1 == lines2:
         return []

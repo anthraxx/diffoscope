@@ -1,3 +1,10 @@
+debbindiff (6) unstable; urgency=medium
+
+  * Fallback to binary comparison when text encoding gets misdetected.
+  * Skip full comparison when small files match.
+
+ -- Jérémy Bobbio <lunar@debian.org>  Wed, 07 Jan 2015 12:01:11 +0100
+
 debbindiff (5) unstable; urgency=medium
 
   * Properly encode strings before writing them to tempfiles.

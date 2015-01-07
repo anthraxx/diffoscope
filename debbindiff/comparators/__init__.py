@@ -81,6 +81,8 @@ COMPARATORS = [
     (None, r'\.a$', compare_static_lib_files),
     ]
 
+SMALL_FILE_THRESHOLD = 65536 # 64 kiB
+
 
 def compare_files(path1, path2, source=None):
     if not os.path.isfile(path1):
@@ -89,6 +91,13 @@ def compare_files(path1, path2, source=None):
     if not os.path.isfile(path2):
         logger.critical("%s is not a file" % path2)
         sys.exit(2)
+    # try comparing small files directly first
+    size1 = os.path.getsize(path1)
+    size2 = os.path.getsize(path2)
+    if size1 == size2 and size1 <= SMALL_FILE_THRESHOLD:
+        if file(path1).read() == file(path2).read():
+            return []
+    # ok, let's do the full thing
     for mime_type_regex, filename_regex, comparator in COMPARATORS:
         if filename_regex and re.search(filename_regex, path1) \
            and re.search(filename_regex, path2):

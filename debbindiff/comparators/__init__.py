@@ -100,13 +100,13 @@ def compare_files(path1, path2, source=None):
         if file(path1).read() == file(path2).read():
             return []
     # ok, let's do the full thing
+    mime_type1 = guess_mime_type(path1)
+    mime_type2 = guess_mime_type(path2)
     for mime_type_regex, filename_regex, comparator in COMPARATORS:
         if filename_regex and re.search(filename_regex, path1) \
            and re.search(filename_regex, path2):
             return comparator(path1, path2, source)
         if mime_type_regex:
-            mime_type1 = guess_mime_type(path1)
-            mime_type2 = guess_mime_type(path2)
             if re.search(mime_type_regex, mime_type1) and \
                re.search(mime_type_regex, mime_type2):
                 return comparator(path1, path2, source)

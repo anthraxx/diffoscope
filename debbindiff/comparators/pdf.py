@@ -32,7 +32,7 @@ def uncompress(path):
 def pdftotext(path):
     return subprocess.check_output(
         ['pdftotext', path, '-'],
-        shell=False, close_fds=True)
+        shell=False, close_fds=True).decode('utf-8')
 
 
 @binary_fallback

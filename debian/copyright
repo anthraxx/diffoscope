@@ -3,7 +3,7 @@ Upstream-Name: debbindiff
 Source: https://anonscm.debian.org/cgit/reproducible/debbindiff.git/
 
 Files: *
-Copyright: 2014 Jérémy Bobbio <lunar@debian.org>
+Copyright: 2014-2015 Jérémy Bobbio <lunar@debian.org>
 License: GPL-3+
 
 Files: debbindiff/changes.py

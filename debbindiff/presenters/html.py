@@ -22,6 +22,7 @@ import os.path
 import re
 import subprocess
 import sys
+import tempfile
 from xml.sax.saxutils import escape
 from debbindiff import logger, VERSION
 from debbindiff.comparators.utils import make_temp_directory
@@ -96,6 +97,7 @@ FOOTER = """
 """
 
 DEFAULT_MAX_PAGE_SIZE = 2000 * 2 ** 10  # 2000 kB
+MAX_DIFF_BLOCK_LINES = 500
 
 
 class PrintLimitReached(Exception):
@@ -113,6 +115,57 @@ def create_limited_print_func(print_func, max_page_size):
     return limited_print_func
 
 
+def trim_file(path, skip_lines):
+    n = 0
+    skip = 0
+    content = open(path, "r")
+    tmp_file = tempfile.NamedTemporaryFile("w", delete=False)
+    for line in content:
+        n += 1
+        if n in skip_lines.keys():
+            skip = skip_lines[n]
+            tmp_file.write("[ %d lines removed ]\n" % skip)
+
+        if skip > 0:
+            if n not in skip_lines.keys():
+                # insert dummy line to preserve correct line numbers
+                tmp_file.write(".\n")
+            skip -= 1
+        else:
+            tmp_file.write(line)
+    content.close()
+    tmp_file.close()
+    os.rename(tmp_file.name, path)
+
+# reduce size of diff blocks by prediffing with diff (which is extremely fast)
+# and then trimming the blocks larger than the configured limit
+def diff_optimize_files(path1, path2):
+    p = subprocess.Popen(['diff', '-u0', path1, path2], shell=False,
+        close_fds=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
+    (stdout, _) = p.communicate()
+    p.wait()
+    if p.returncode != 1:
+        return 'diff exited with error %d' % p.returncode
+
+    skip_lines1 = dict()
+    skip_lines2 = dict()
+    search = re.compile('^@@\s+-(\d+),(\d+)\s+\+(\d+),(\d+)\s+@@$')
+    for line in stdout.split('\n'):
+        found = search.match(line)
+        if found:
+            (start1, start2) = (int(found.group(1)), int(found.group(3)))
+            (len1, len2) = (int(found.group(2)), int(found.group(4)))
+            if len1 > MAX_DIFF_BLOCK_LINES:
+                skip_lines1[start1 + MAX_DIFF_BLOCK_LINES] = len1 - MAX_DIFF_BLOCK_LINES
+            if len2 > MAX_DIFF_BLOCK_LINES:
+                skip_lines2[start2 + MAX_DIFF_BLOCK_LINES] = len2 - MAX_DIFF_BLOCK_LINES
+
+    if len(skip_lines1) > 0:
+        trim_file(path1, skip_lines1)
+    if len(skip_lines2) > 0:
+        trim_file(path2, skip_lines2)
+
+
 # Huge thanks to Stefaan Himpe for this solution:
 # http://technogems.blogspot.com/2011/09/generate-side-by-side-diffs-in-html.html
 def create_diff(lines1, lines2):
@@ -124,6 +177,7 @@ def create_diff(lines1, lines2):
             f.writelines(map(lambda u: u.encode('utf-8'), lines1))
         with open(path2, 'w') as f:
             f.writelines(map(lambda u: u.encode('utf-8'), lines2))
+        diff_optimize_files(path1, path2)
         p = subprocess.Popen(
             ['vim', '-n', '-N', '-e', '-i', 'NONE', '-u', 'NORC', '-U', 'NORC',
              '-d', path1, path2,

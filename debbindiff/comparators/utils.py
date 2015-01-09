@@ -19,6 +19,7 @@
 
 from contextlib import contextmanager
 import hashlib
+import re
 import shutil
 import subprocess
 import tempfile
@@ -45,20 +46,28 @@ def are_same_binaries(path1, path2):
 
 
 # decorator that will create a fallback on binary diff if no differences
-# are detected
+# are detected or if an external tool fails
 def binary_fallback(original_function):
     def with_fallback(path1, path2, source=None):
         if are_same_binaries(path1, path2):
             return []
-        inside_differences = original_function(path1, path2, source)
-        # no differences detected inside? let's at least do a binary diff
-        if len(inside_differences) == 0:
+        try:
+            inside_differences = original_function(path1, path2, source)
+            # no differences detected inside? let's at least do a binary diff
+            if len(inside_differences) == 0:
+                difference = compare_binary_files(path1, path2, source=source)[0]
+                difference.comment = \
+                    "No differences found inside, yet data differs"
+            else:
+                difference = Difference(None, None, path1, path2, source=source)
+                difference.add_details(inside_differences)
+        except subprocess.CalledProcessError as e:
             difference = compare_binary_files(path1, path2, source=source)[0]
+            output = re.sub(r'^', '    ', e.output, flags=re.MULTILINE)
+            cmd = ' '.join(e.cmd)
             difference.comment = \
-                "No differences found inside, yet data differs"
-        else:
-            difference = Difference(None, None, path1, path2, source=source)
-            difference.add_details(inside_differences)
+                "Command `%s` exited with %d. Output:\n%s" \
+                % (cmd, e.returncode, output)
         return [difference]
     return with_fallback
 
@@ -71,4 +80,5 @@ def make_temp_directory():
 
 
 def get_ar_content(path):
-    return subprocess.check_output(['ar', 'tv', path], shell=False)
+    return subprocess.check_output(
+        ['ar', 'tv', path], stderr=subprocess.STDOUT, shell=False)

@@ -163,7 +163,7 @@ def output_difference(difference, print_func):
                        % escape(difference.source2))
         if difference.comment:
             print_func("<div class='comment'>%s</div>"
-                       % escape(difference.comment))
+                       % escape(difference.comment).replace('\n', '<br />'))
         if difference.lines1 and difference.lines2:
             print_func(create_diff(difference.lines1, difference.lines2))
         for detail in difference.details:

@@ -95,20 +95,20 @@ FOOTER = """
 </html>
 """
 
-MAX_PAGE_SIZE = 2000 * 2 ** 10  # 2000 kB
+DEFAULT_MAX_PAGE_SIZE = 2000 * 2 ** 10  # 2000 kB
 
 
 class PrintLimitReached(Exception):
     pass
 
 
-def create_limited_print_func(print_func):
+def create_limited_print_func(print_func, max_page_size):
     def limited_print_func(s, force=False):
         if not hasattr(limited_print_func, 'char_count'):
             limited_print_func.char_count = 0
         print_func(s)
         limited_print_func.char_count += len(s)
-        if not force and limited_print_func.char_count >= MAX_PAGE_SIZE:
+        if not force and limited_print_func.char_count >= max_page_size:
             raise PrintLimitReached()
     return limited_print_func
 
@@ -185,10 +185,12 @@ def output_header(css_url, print_func):
                         })
 
 
-def output_html(differences, css_url=None, print_func=None):
+def output_html(differences, css_url=None, print_func=None, max_page_size=None):
     if print_func is None:
         print_func = print
-    print_func = create_limited_print_func(print_func)
+    if max_page_size is None:
+        max_page_size = DEFAULT_MAX_PAGE_SIZE
+    print_func = create_limited_print_func(print_func, max_page_size)
     try:
         output_header(css_url, print_func)
         for difference in differences:

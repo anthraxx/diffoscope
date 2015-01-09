@@ -14,7 +14,7 @@ highlight differences between two builds of Debian packages
 SYNOPSIS
 ========
 
-  debbindiff [-h] [--version] [--debug] [--html output] [--css url] file1 file2
+  debbindiff [-h] [--version] [--debug] [--html output] [--max-report-size bytes] [--css url] file1 file2
 
 DESCRIPTION
 ===========
@@ -31,11 +31,12 @@ project.
 OPTIONS
 =======
 
--h, --help     show this help message and exit
---version      show program's version number and exit
---debug        display debug messages
---html output  write HTML report to given file
---css url      link to an extra CSS for the HTML report
+-h, --help               show this help message and exit
+--version                show program's version number and exit
+--debug                  display debug messages
+--html output            write HTML report to given file
+--max-report-size bytes  maximum bytes written in report
+--css url                link to an extra CSS for the HTML report
 
 SEE ALSO
 ========

@@ -1,3 +1,20 @@
+debbindiff (7) unstable; urgency=medium
+
+  [ Jérémy Bobbio ]
+  * Add support for PDF files.
+  * Add --max-report-size command-line option.
+  * Add extra mime type for .deb.
+  * Fallback on binary comparison when external tools fail. (Closes: #764140)
+  * Update copyrights.
+
+  [ Helmut Grohne ]
+  * Avoid unnecessary guess_mime_type calls.
+
+  [ Reiner Herrmann ]
+  * Speed up creation of diffs by removing extra lines before calling vim.
+
+ -- Jérémy Bobbio <lunar@debian.org>  Sat, 10 Jan 2015 14:05:17 +0100
+
 debbindiff (6) unstable; urgency=medium
 
   * Fallback to binary comparison when text encoding gets misdetected.

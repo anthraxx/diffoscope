@@ -19,7 +19,7 @@
 
 import logging
 
-VERSION = "5"
+VERSION = "7"
 
 logger = logging.getLogger("debbindiff")
 logger.setLevel(logging.WARNING)

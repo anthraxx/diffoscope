@@ -144,29 +144,31 @@ def trim_file(path, skip_lines):
                 except OSError as _:
                     pass # we've done our best
 
+
 # reduce size of diff blocks by prediffing with diff (which is extremely fast)
 # and then trimming the blocks larger than the configured limit
-def diff_optimize_files(path1, path2):
-    p = subprocess.Popen(['diff', '-u0', path1, path2], shell=False,
+def optimize_files_for_diff(path1, path2):
+    cmd = ['diff', '-u0', path1, path2]
+    p = subprocess.Popen(cmd, shell=False,
         close_fds=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
-    (stdout, _) = p.communicate()
+    stdout, stderr = p.communicate()
     p.wait()
     if p.returncode != 1:
-        return 'diff exited with error %d' % p.returncode
-
+        raise subprocess.CalledProcessError(cmd, p.returncode, output=stderr)
     skip_lines1 = dict()
     skip_lines2 = dict()
-    search = re.compile('^@@\s+-(\d+),(\d+)\s+\+(\d+),(\d+)\s+@@$')
+    search = re.compile(r'^@@\s+-(?P<start1>\d+),(?P<len1>\d+)\s+\+(?P<start2>\d+),(?P<len2>\d+)\s+@@$')
     for line in stdout.split('\n'):
         found = search.match(line)
         if found:
-            (start1, start2) = (int(found.group(1)), int(found.group(3)))
-            (len1, len2) = (int(found.group(2)), int(found.group(4)))
+            start1 = int(found.group('start1'))
+            len1 = int(found.group('len1'))
+            start2 = int(found.group('start2'))
+            len2 = int(found.group('len2'))
             if len1 > MAX_DIFF_BLOCK_LINES:
                 skip_lines1[start1 + MAX_DIFF_BLOCK_LINES] = len1 - MAX_DIFF_BLOCK_LINES
             if len2 > MAX_DIFF_BLOCK_LINES:
                 skip_lines2[start2 + MAX_DIFF_BLOCK_LINES] = len2 - MAX_DIFF_BLOCK_LINES
-
     if len(skip_lines1) > 0:
         trim_file(path1, skip_lines1)
     if len(skip_lines2) > 0:
@@ -184,7 +186,7 @@ def create_diff(lines1, lines2):
             f.writelines(map(lambda u: u.encode('utf-8'), lines1))
         with open(path2, 'w') as f:
             f.writelines(map(lambda u: u.encode('utf-8'), lines2))
-        diff_optimize_files(path1, path2)
+        optimize_files_for_diff(path1, path2)
         p = subprocess.Popen(
             ['vim', '-n', '-N', '-e', '-i', 'NONE', '-u', 'NORC', '-U', 'NORC',
              '-d', path1, path2,

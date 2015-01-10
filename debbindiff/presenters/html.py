@@ -22,7 +22,7 @@ import os.path
 import re
 import subprocess
 import sys
-import tempfile
+from tempfile import NamedTemporaryFile
 from xml.sax.saxutils import escape
 from debbindiff import logger, VERSION
 from debbindiff.comparators.utils import make_temp_directory
@@ -118,24 +118,31 @@ def create_limited_print_func(print_func, max_page_size):
 def trim_file(path, skip_lines):
     n = 0
     skip = 0
-    content = open(path, "r")
-    tmp_file = tempfile.NamedTemporaryFile("w", delete=False)
-    for line in content:
-        n += 1
-        if n in skip_lines.keys():
-            skip = skip_lines[n]
-            tmp_file.write("[ %d lines removed ]\n" % skip)
+    with file(path, "r") as content:
+        tmp_file = None
+        try:
+            tmp_file = NamedTemporaryFile("w", dir=os.path.dirname(path),
+                                          delete=False)
+            for line in content:
+                n += 1
+                if n in skip_lines.keys():
+                    skip = skip_lines[n]
+                    tmp_file.write("[ %d lines removed ]\n" % skip)
 
-        if skip > 0:
-            if n not in skip_lines.keys():
-                # insert dummy line to preserve correct line numbers
-                tmp_file.write(".\n")
-            skip -= 1
-        else:
-            tmp_file.write(line)
-    content.close()
-    tmp_file.close()
-    os.rename(tmp_file.name, path)
+                if skip > 0:
+                    if n not in skip_lines.keys():
+                        # insert dummy line to preserve correct line numbers
+                        tmp_file.write(".\n")
+                    skip -= 1
+                else:
+                    tmp_file.write(line)
+            os.rename(tmp_file.name, path)
+        finally:
+            if tmp_file:
+                try:
+                    os.unlink(tmp_file.name)
+                except OSError as _:
+                    pass # we've done our best
 
 # reduce size of diff blocks by prediffing with diff (which is extremely fast)
 # and then trimming the blocks larger than the configured limit

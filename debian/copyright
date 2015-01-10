@@ -14,6 +14,16 @@ Copyright: 2008 Jonny Lamb <jonny@debian.org>
            2014 Jérémy Bobbio <lunar@debian.org>
 License: Expat
 
+Files: debbindiff/comparators/__init__.py
+Copyright: 2014-2015 Jérémy Bobbio <lunar@debian.org>
+                2015  Helmut Grohne <helmut@subdivi.de>
+License: GPL-3+
+
+Files: debbindiff/presenters/html.py
+Copyright: 2014-2015 Jérémy Bobbio <lunar@debian.org>
+                2015 Reiner Herrmann <reiner@reiner-h.de>
+License: GPL-3+
+
 Files: debian/*
 Copyright: 2014 Jérémy Bobbio <lunar@debian.org>
 License: GPL-3+

@@ -1,5 +1,7 @@
 #!/usr/bin/make -f
 
+VERSION = $(shell dpkg-parsechangelog | sed -n -e 's/^Version: //p')
+
 %:
 	dh $@ --with python2 --buildsystem=python_distutils
 
@@ -15,4 +17,8 @@ override_dh_installman: debian/debbindiff.1
 
 override_dh_clean:
 	rm -f debian/debbindiff.1
+	@if ! grep -q 'VERSION = "$(VERSION)"' debbindiff/__init__.py; then \
+		echo "Version in debian/changelog doesn't match debbindiff version"; \
+		exit 1; \
+	fi
 	dh_clean -O--buildsystem=python_distutils

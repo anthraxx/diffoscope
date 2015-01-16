@@ -150,7 +150,7 @@ def trim_file(path, skip_lines):
 # reduce size of diff blocks by prediffing with diff (which is extremely fast)
 # and then trimming the blocks larger than the configured limit
 def optimize_files_for_diff(path1, path2):
-    cmd = ['diff', '-u0', path1, path2]
+    cmd = ['diff', '-au0', path1, path2]
     p = subprocess.Popen(cmd, shell=False,
         close_fds=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
     stdout, stderr = p.communicate()

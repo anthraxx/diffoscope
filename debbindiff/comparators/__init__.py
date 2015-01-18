@@ -81,6 +81,7 @@ COMPARATORS = [
     (r'^application/(x-font-ttf|vnd.ms-opentype)(;|$)', r'\.(ttf|otf)$', compare_ttf_files),
     (r'^image/png(;|$)', r'\.png$', compare_png_files),
     (r'^application/pdf(;|$)', r'\.pdf$', compare_pdf_files),
+    (r'^text/plain; charset=(?P<encoding>[a-z0-9-]+)$', r'\.txt$', compare_text_files),
     (None, r'\.a$', compare_static_lib_files),
     ]
 
@@ -108,7 +109,8 @@ def compare_files(path1, path2, source=None):
            and re.search(filename_regex, path2):
             return comparator(path1, path2, source)
         if mime_type_regex:
-            if re.search(mime_type_regex, mime_type1) and \
-               re.search(mime_type_regex, mime_type2):
-                return comparator(path1, path2, source)
+            match1 = re.search(mime_type_regex, mime_type1)
+            match2 = re.search(mime_type_regex, mime_type2)
+            if match1 and match2 and match1.groupdict() == match2.groupdict():
+                return comparator(path1, path2, source=source, **match1.groupdict())
     return compare_unknown(path1, path2, source)

@@ -81,7 +81,7 @@ COMPARATORS = [
     (r'^application/(x-font-ttf|vnd.ms-opentype)(;|$)', r'\.(ttf|otf)$', compare_ttf_files),
     (r'^image/png(;|$)', r'\.png$', compare_png_files),
     (r'^application/pdf(;|$)', r'\.pdf$', compare_pdf_files),
-    (r'^text/plain; charset=(?P<encoding>[a-z0-9-]+)$', r'\.txt$', compare_text_files),
+    (r'^text/plain; charset=(?P<encoding>[a-z0-9-]+)$', None, compare_text_files),
     (None, r'\.a$', compare_static_lib_files),
     ]
 

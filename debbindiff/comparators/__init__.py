@@ -83,6 +83,7 @@ COMPARATORS = [
     (r'^application/pdf(;|$)', r'\.pdf$', compare_pdf_files),
     (r'^text/plain; charset=(?P<encoding>[a-z0-9-]+)$', None, compare_text_files),
     (r'^application/xml; charset=(?P<encoding>[a-z0-9-]+)$', None, compare_text_files),
+    (r'^application/postscript; charset=(?P<encoding>[a-z0-9-]+)$', None, compare_text_files),
     (None, r'\.a$', compare_static_lib_files),
     ]
 

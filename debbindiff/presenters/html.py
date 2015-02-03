@@ -185,9 +185,9 @@ def create_diff(lines1, lines2):
         path2 = os.path.join(temp_dir, 'content2')
         diff_path = os.path.join(temp_dir, 'diff.html')
         with open(path1, 'w') as f:
-            f.writelines(map(lambda u: u.encode('utf-8'), lines1))
+            f.writelines([u.encode('utf-8') for u in lines1])
         with open(path2, 'w') as f:
-            f.writelines(map(lambda u: u.encode('utf-8'), lines2))
+            f.writelines([u.encode('utf-8') for u in lines2])
         optimize_files_for_diff(path1, path2)
         p = subprocess.Popen(
             ['vim', '-n', '-N', '-e', '-i', 'NONE', '-u', 'NORC', '-U', 'NORC',

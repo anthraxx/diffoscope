@@ -314,6 +314,7 @@ class Changes(object):
                 checksums = self.get("Files")
                 field_name = "md5sum"
 
+            changed_files = None # appease pylint
             for changed_files in checksums:
                 if changed_files['name'] == os.path.basename(filename):
                     break

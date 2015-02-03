@@ -1,6 +1,6 @@
 #!/usr/bin/make -f
 
-VERSION = $(shell dpkg-parsechangelog | sed -n -e 's/^Version: //p')
+VERSION = $(shell dpkg-parsechangelog --show-field Version)
 
 %:
 	dh $@ --with python2 --buildsystem=python_distutils

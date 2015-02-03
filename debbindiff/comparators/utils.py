@@ -24,7 +24,7 @@ import shutil
 import subprocess
 import tempfile
 from debbindiff.comparators.binary import compare_binary_files
-from debbindiff.difference import Difference, get_source
+from debbindiff.difference import Difference
 
 
 def are_same_binaries(path1, path2):

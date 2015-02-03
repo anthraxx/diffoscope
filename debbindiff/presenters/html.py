@@ -215,7 +215,7 @@ def create_diff(lines1, lines2):
 
 
 def output_difference(difference, print_func):
-    logger.debug('html output for %s' % (difference.source1,))
+    logger.debug('html output for %s', difference.source1)
     print_func("<div class='difference'>")
     try:
         if difference.source1 == difference.source2:

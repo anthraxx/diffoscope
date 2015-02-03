@@ -298,7 +298,7 @@ class Changes(object):
             * md5
             * md5sum
         """
-        logger.debug("validating %s checksums" % (check_hash))
+        logger.debug("validating %s checksums", check_hash)
 
         for filename in self.get_files():
             if check_hash == "sha1":
@@ -338,6 +338,5 @@ class Changes(object):
                         changed_files[field_name]
                     ))
             else:
-                logger.debug("%s Checksum for file %s matches" % (
-                    field_name, filename
-                ))
+                logger.debug("%s Checksum for file %s matches",
+                    field_name, filename)

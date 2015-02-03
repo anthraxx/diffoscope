@@ -46,15 +46,15 @@ def compare_tar_files(path1, path2, source=None):
             # look up differences in content
             with make_temp_directory() as temp_dir1:
                 with make_temp_directory() as temp_dir2:
-                    logger.debug('content1 %s' % (tar1.getnames(),))
-                    logger.debug('content2 %s' % (tar2.getnames(),))
+                    logger.debug('content1 %s', tar1.getnames())
+                    logger.debug('content2 %s', tar2.getnames())
                     for name in sorted(set(tar1.getnames())
                                        .intersection(tar2.getnames())):
                         member1 = tar1.getmember(name)
                         member2 = tar2.getmember(name)
                         if not member1.isfile() or not member2.isfile():
                             continue
-                        logger.debug('extract member %s' % (name,))
+                        logger.debug('extract member %s', name)
                         tar1.extract(name, temp_dir1)
                         tar2.extract(name, temp_dir2)
                         in_path1 = os.path.join(temp_dir1, name)

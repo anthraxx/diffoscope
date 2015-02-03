@@ -76,7 +76,7 @@ def compare_changes_files(path1, path2, source=None):
         d2 = files2[filename]
         if d1['md5sum'] != d2['md5sum']:
             logger.debug("%s mentioned in .changes have "
-                         "differences" % filename)
+                         "differences", filename)
             files_difference.add_details(
                 debbindiff.comparators.compare_files(
                     dot_changes1.get_path(filename),

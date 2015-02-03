@@ -49,10 +49,10 @@ def guess_mime_type(path):
 
 
 def compare_unknown(path1, path2, source=None):
-    logger.debug("compare unknown path: %s and %s" % (path1, path2))
+    logger.debug("compare unknown path: %s and %s", path1, path2)
     mime_type1 = guess_mime_type(path1)
     mime_type2 = guess_mime_type(path2)
-    logger.debug("mime_type1: %s | mime_type2: %s" % (mime_type1, mime_type2))
+    logger.debug("mime_type1: %s | mime_type2: %s", mime_type1, mime_type2)
     if mime_type1.startswith('text/') and mime_type2.startswith('text/'):
         encodings1 = re.findall(r'; charset=([^ ]+)', mime_type1)
         encodings2 = re.findall(r'; charset=([^ ]+)', mime_type2)
@@ -92,10 +92,10 @@ SMALL_FILE_THRESHOLD = 65536 # 64 kiB
 
 def compare_files(path1, path2, source=None):
     if not os.path.isfile(path1):
-        logger.critical("%s is not a file" % path1)
+        logger.critical("%s is not a file", path1)
         sys.exit(2)
     if not os.path.isfile(path2):
-        logger.critical("%s is not a file" % path2)
+        logger.critical("%s is not a file", path2)
         sys.exit(2)
     # try comparing small files directly first
     size1 = os.path.getsize(path1)

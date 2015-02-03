@@ -34,11 +34,11 @@ def compare_deb_files(path1, path2, source=None):
     ar2 = ArFile(filename=path2)
     with make_temp_directory() as temp_dir1:
         with make_temp_directory() as temp_dir2:
-            logger.debug('content1 %s' % (ar1.getnames(),))
-            logger.debug('content2 %s' % (ar2.getnames(),))
+            logger.debug('content1 %s', ar1.getnames())
+            logger.debug('content2 %s', ar2.getnames())
             for name in sorted(set(ar1.getnames())
                                .intersection(ar2.getnames())):
-                logger.debug('extract member %s' % (name,))
+                logger.debug('extract member %s', name)
                 member1 = ar1.getmember(name)
                 member2 = ar2.getmember(name)
                 in_path1 = os.path.join(temp_dir1, name)

@@ -50,7 +50,7 @@ def compare_zip_files(path1, path2, source=None):
                         # skip directories
                         if name.endswith('/'):
                             continue
-                        logger.debug('extract member %s' % (name,))
+                        logger.debug('extract member %s', name)
                         zip1.extract(name, temp_dir1)
                         zip2.extract(name, temp_dir2)
                         in_path1 = os.path.join(temp_dir1, name)

@@ -19,6 +19,7 @@ Package: debbindiff
 Architecture: all
 Depends: binutils-multiarch,
          bzip2,
+         cpio,
          diffutils,
          file,
          fontforge-extras,

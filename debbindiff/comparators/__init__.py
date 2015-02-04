@@ -5,7 +5,7 @@
 # Copyright © 2014-2015 Jérémy Bobbio <lunar@debian.org>
 #           ©      2015  Helmut Grohne <helmut@subdivi.de>
 #
-# debdindiff is free software: you can redistribute it and/or modify
+# debbindiff is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.

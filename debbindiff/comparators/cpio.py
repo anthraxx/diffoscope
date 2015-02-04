@@ -2,7 +2,7 @@
 #
 # debbindiff: highlight differences between two builds of Debian packages
 #
-# Copyright © 2014 Reiner Herrmann <reiner@reiner-h.de>
+# Copyright © 2015 Reiner Herrmann <reiner@reiner-h.de>
 #
 # debbindiff is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by

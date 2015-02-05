@@ -36,6 +36,7 @@ from debbindiff.comparators.gzip import compare_gzip_files
 from debbindiff.comparators.haskell import compare_hi_files
 from debbindiff.comparators.pdf import compare_pdf_files
 from debbindiff.comparators.png import compare_png_files
+from debbindiff.comparators.rpm import compare_rpm_files
 from debbindiff.comparators.text import compare_text_files
 from debbindiff.comparators.tar import compare_tar_files
 from debbindiff.comparators.xz import compare_xz_files
@@ -75,6 +76,7 @@ COMPARATORS = [
     (r'^application/x-tar(;|$)', r'\.tar$', compare_tar_files),
     (r'^application/zip(;|$)', r'\.(zip|jar)$', compare_zip_files),
     (r'^application/(x-debian-package|vnd.debian.binary-package)(;|$)', r'\.u?deb$', compare_deb_files),
+    (r'^application/x-rpm(;|$)', r'\.rpm$', compare_rpm_files),
     (r'^application/x-gzip(;|$)', r'\.gz$', compare_gzip_files),
     (r'^application/x-bzip2(;|$)', r'\.bzip2$', compare_bzip2_files),
     (r'^application/x-executable(;|$)', None, compare_elf_files),

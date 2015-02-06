@@ -15,6 +15,7 @@ setup(name='debbindiff',
       install_requires=[
           'python-debian',
           'magic',
+          'rpm',
           ],
       classifiers=[
           'Development Status :: 3 - Alpha',

@@ -30,6 +30,7 @@ in the path:
 +-----------|--------------------|
 | ar        | binutils-multiarch |
 | bzip2     | bzip2              |
+| cpio      | cpio               |
 | file      | file               |
 | ghc       | ghc                |
 | gpg       | gnupg              |
@@ -39,6 +40,7 @@ in the path:
 | pdftk     | pdftk              |
 | pdftotext | poppler-utils      |
 | readelf   | binutils-multiarch |
+| rpm2cpio  | rpm2cpio           |
 | showttf   | fontforge-extras   |
 | sng       | sng                |
 | vim       | vim                |

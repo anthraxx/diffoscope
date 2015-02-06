@@ -19,6 +19,11 @@ Copyright: 2014-2015 Jérémy Bobbio <lunar@debian.org>
                 2015  Helmut Grohne <helmut@subdivi.de>
 License: GPL-3+
 
+Files: debbindiff/comparators/cpio.py
+       debbindiff/comparators/rpm.py
+Copyright: 2015 Reiner Herrmann <reiner@reiner-h.de>
+License: GPL-3+
+
 Files: debbindiff/presenters/html.py
 Copyright: 2014-2015 Jérémy Bobbio <lunar@debian.org>
                 2015 Reiner Herrmann <reiner@reiner-h.de>

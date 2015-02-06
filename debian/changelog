@@ -1,3 +1,26 @@
+debbindiff (8) unstable; urgency=medium
+
+  [ Peter De Wachter ]
+  * Use `diff -a` so debbindiff doesn't abort on binary files.
+
+  [ Jérémy Bobbio ]
+  * Verify that version in debian/changelog matches debbindiff version.
+  * Update debian/copyright.
+  * Recognize text/plain files.
+
+  [ Reiner Herrmann ]
+  * Increased line context of diff to further lower running time.
+  * Use text comparator for xml/xhtml files.
+  * Use text comparator for postscript files.
+  * Add support for cpio archives.
+  * Add support for rpm packages.
+  * Fix a typo in debbindiff name in source headers.
+
+  [ Chris Lamb ]
+  * Improve code quality in several places.
+
+ -- Jérémy Bobbio <lunar@debian.org>  Tue, 10 Feb 2015 03:02:55 +0100
+
 debbindiff (7) unstable; urgency=medium
 
   [ Jérémy Bobbio ]

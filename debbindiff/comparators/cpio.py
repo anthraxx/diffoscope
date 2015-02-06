@@ -33,7 +33,7 @@ def get_cpio_content(path, verbose=False):
 
 
 def extract_cpio_archive(path, destdir):
-    cmd = ['cpio', '--no-absolute-filenames', '--quiet', '-iF',
+    cmd = ['cpio', '--no-absolute-filenames', '--quiet', '-idF',
             os.path.abspath(path)]
     logger.debug("extracting %s into %s", path, destdir)
     p = subprocess.Popen(cmd, shell=False, cwd=destdir)

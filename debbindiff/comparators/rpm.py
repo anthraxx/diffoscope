@@ -30,7 +30,11 @@ from debbindiff.difference import Difference, get_source
 def get_rpm_header(path, ts):
     header = ''
     with open(path, 'r') as f:
-        hdr = ts.hdrFromFdno(f)
+        try:
+            hdr = ts.hdrFromFdno(f)
+        except rpm.error, e:
+            logger.error("reading rpm header failed: %s", str(e))
+            return str(e)
         for rpmtag in sorted(rpm.tagnames):
             if rpmtag not in hdr:
                 continue
@@ -64,13 +68,16 @@ def compare_rpm_files(path1, path2, source=None):
     differences = []
 
     # compare headers
-    ts = rpm.TransactionSet()
-    header1 = get_rpm_header(path1, ts)
-    header2 = get_rpm_header(path2, ts)
-    if header1 != header2:
-        differences.append(Difference(
-            header1.splitlines(1), header2.splitlines(2),
-            path1, path2, source="header"))
+    with make_temp_directory() as rpmdb_dir:
+        rpm.addMacro("_dbpath", rpmdb_dir)
+        ts = rpm.TransactionSet()
+        ts.setVSFlags(-1)
+        header1 = get_rpm_header(path1, ts)
+        header2 = get_rpm_header(path2, ts)
+        if header1 != header2:
+            differences.append(Difference(
+                header1.splitlines(1), header2.splitlines(2),
+                path1, path2, source="header"))
 
     # extract cpio archive
     with extract_rpm_payload(path1) as archive1:

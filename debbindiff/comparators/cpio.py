@@ -37,7 +37,7 @@ def extract_cpio_archive(path, destdir):
             os.path.abspath(path)]
     logger.debug("extracting %s into %s", path, destdir)
     p = subprocess.Popen(cmd, shell=False, cwd=destdir)
-    stdout, stderr = p.communicate()
+    p.communicate()
     p.wait()
     if p.returncode != 0:
         logger.error('cpio exited with error code %d', p.returncode)

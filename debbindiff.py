@@ -62,9 +62,7 @@ def main():
             print(*args, **kwargs)
         output_html(differences, css_url=parsed_args.css_url, print_func=print_func,
                     max_page_size=parsed_args.max_report_size)
-    if len(differences) > 0:
-        return 1
-    return 0
+    return bool(differences)
 
 if __name__ == '__main__':
     sys.exit(main())

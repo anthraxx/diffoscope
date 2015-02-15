@@ -56,7 +56,7 @@ def make_printer(path):
     if path == '-':
         output = sys.stdout
     else:
-        output = open(parsed_args.html_output, 'w')
+        output = open(path, 'w')
     def print_func(*args, **kwargs):
         kwargs['file'] = output
         print(*args, **kwargs)

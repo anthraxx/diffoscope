@@ -27,7 +27,11 @@ def print_difference(difference, print_func):
         for line in difference.comment.split('\n'):
             print_func("│┄ %s" % line)
     if difference.lines1 or difference.lines2:
-        for line in difflib.unified_diff(difference.lines1, difference.lines2):
+        g = difflib.unified_diff(difference.lines1, difference.lines2)
+        # First skip lines with filename
+        g.next()
+        g.next()
+        for line in g:
             if line.startswith('--- ') or line.startswith('+++ '):
                 continue
             print_func("│ %s" % line.encode('utf-8'), end='')

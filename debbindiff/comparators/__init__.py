@@ -28,6 +28,7 @@ from debbindiff.comparators.bzip2 import compare_bzip2_files
 from debbindiff.comparators.changes import compare_changes_files
 from debbindiff.comparators.cpio import compare_cpio_files
 from debbindiff.comparators.deb import compare_deb_files, compare_md5sums_files
+from debbindiff.comparators.directory import compare_directories
 from debbindiff.comparators.elf import \
     compare_elf_files, compare_static_lib_files
 from debbindiff.comparators.fonts import compare_ttf_files
@@ -95,6 +96,8 @@ SMALL_FILE_THRESHOLD = 65536 # 64 kiB
 
 
 def compare_files(path1, path2, source=None):
+    if os.path.isdir(path1) and os.path.isdir(path2):
+        return compare_directories(path1, path2)
     if not os.path.isfile(path1):
         logger.critical("%s is not a file", path1)
         sys.exit(2)

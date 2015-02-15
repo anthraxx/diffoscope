@@ -27,7 +27,7 @@ def ls(path):
     return subprocess.check_output(['ls', '-l', path], shell=False).decode('utf-8')
 
 
-def compare_directories(path1, path2):
+def compare_directories(path1, path2, source=None):
     differences = []
     for name in sorted(set(os.listdir(path1)).intersection(os.listdir(path2))):
         in_path1 = os.path.join(path1, name)
@@ -41,7 +41,7 @@ def compare_directories(path1, path2):
             ls1.splitlines(1), ls2.splitlines(2),
             path1, path2, source="ls -l"))
     if differences:
-        d = Difference(None, None, path1, path2)
+        d = Difference(None, None, path1, path2, source=source)
         d.add_details(differences)
         return [d]
     return []

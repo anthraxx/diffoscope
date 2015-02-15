@@ -97,7 +97,7 @@ SMALL_FILE_THRESHOLD = 65536 # 64 kiB
 
 def compare_files(path1, path2, source=None):
     if os.path.isdir(path1) and os.path.isdir(path2):
-        return compare_directories(path1, path2)
+        return compare_directories(path1, path2, source)
     if not os.path.isfile(path1):
         logger.critical("%s is not a file", path1)
         sys.exit(2)

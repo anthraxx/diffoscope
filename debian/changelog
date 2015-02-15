@@ -1,3 +1,19 @@
+debbindiff (9) unstable; urgency=medium
+
+  [ Chris Lamb ]
+  * Add rpm-common to Build-Depends so that we can “import rpm" during build.
+  * Code improvements improvements.
+
+  [ Jérémy Bobbio ]
+  * Add plain text output for differences. Thanks Helmut Grohne for the
+    original patch. (Closes: #778423)
+  * Exit with 2 in case of errors. (Closes: #774983)
+  * Properly output diffs when one of the file is empty.
+  * Add support for comparing directories.
+  * Update debian/copyright.
+
+ -- Jérémy Bobbio <lunar@debian.org>  Sun, 15 Feb 2015 12:13:46 +0100
+
 debbindiff (8) unstable; urgency=medium
 
   [ Peter De Wachter ]

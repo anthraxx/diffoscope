@@ -22,23 +22,34 @@ import sys
 import difflib
 
 
+def print_difference(difference, print_func):
+    if difference.comment:
+        for line in difference.comment.split('\n'):
+            print_func("│┄ %s" % line)
+    if difference.lines1 and difference.lines2:
+        for line in difflib.unified_diff(difference.lines1, difference.lines2):
+            if line.startswith('--- ') or line.startswith('+++ '):
+                continue
+            print_func("│ %s" % line.encode('utf-8'), end='')
+
+def print_details(difference, print_func):
+    if not difference.details:
+        return
+    for detail in difference.details:
+        if detail.source1 == detail.source2:
+            print_func("├── %s" % detail.source1)
+        else:
+            print_func("│   --- %s" % (detail.source1))
+            print_func("├── +++ %s" % (detail.source2))
+        print_difference(detail, print_func)
+        def new_print_func(*args, **kwargs):
+            print_func('│  ', *args, **kwargs)
+        print_details(detail, new_print_func)
+    print_func('╵')
+
 def output_text(differences, print_func):
     for difference in differences:
-        if difference.source1 == difference.source2:
-            print_func("├── %s" % difference.source1)
-        else:
-            print_func("│   --- %s" % (difference.source1))
-            print_func("├── +++ %s" % (difference.source2))
-        if difference.comment:
-            for line in difference.comment.split('\n'):
-                print_func("│┄ %s" % line)
-        if difference.lines1 and difference.lines2:
-            for line in difflib.unified_diff(difference.lines1, difference.lines2):
-                if line.startswith('--- ') or line.startswith('+++ '):
-                    continue
-                print_func("│ %s" % line.encode('utf-8'), end='')
-        if difference.details:
-            def new_print_func(*args, **kwargs):
-                print_func('│  ', *args, **kwargs)
-            output_text(difference.details, new_print_func)
-        print_func('│')
+        print_func("--- %s" % (difference.source1))
+        print_func("+++ %s" % (difference.source2))
+        print_difference(difference, print_func)
+        print_details(difference, print_func)

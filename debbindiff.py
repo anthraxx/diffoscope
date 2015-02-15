@@ -24,6 +24,7 @@ import argparse
 from contextlib import contextmanager
 import logging
 import sys
+import traceback
 from debbindiff import logger, VERSION
 import debbindiff.comparators
 from debbindiff.presenters.html import output_html
@@ -84,4 +85,8 @@ def main():
     return 0
 
 if __name__ == '__main__':
-    sys.exit(main())
+    try:
+        sys.exit(main())
+    except (Exception, KeyboardInterrupt):
+        traceback.print_exc()
+        sys.exit(2)

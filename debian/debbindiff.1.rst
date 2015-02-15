@@ -41,6 +41,11 @@ OPTIONS
 --max-report-size bytes  maximum bytes written in report
 --css url                link to an extra CSS for the HTML report
 
+EXIT STATUS
+===========
+
+Exit status is 0 if inputs are the same, 1 if different, 2 if trouble.
+
 SEE ALSO
 ========
 

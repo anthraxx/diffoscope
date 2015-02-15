@@ -229,8 +229,9 @@ def output_difference(difference, print_func):
         if difference.comment:
             print_func("<div class='comment'>%s</div>"
                        % escape(difference.comment).replace('\n', '<br />'))
-        if difference.lines1 and difference.lines2:
-            print_func(create_diff(difference.lines1, difference.lines2))
+        if difference.lines1 or difference.lines2:
+            print_func(create_diff(difference.lines1 or ['<empty>'],
+                                   difference.lines2 or ['<empty>']))
         for detail in difference.details:
             output_difference(detail, print_func)
     except PrintLimitReached:

@@ -26,7 +26,7 @@ def print_difference(difference, print_func):
     if difference.comment:
         for line in difference.comment.split('\n'):
             print_func("│┄ %s" % line)
-    if difference.lines1 and difference.lines2:
+    if difference.lines1 or difference.lines2:
         for line in difflib.unified_diff(difference.lines1, difference.lines2):
             if line.startswith('--- ') or line.startswith('+++ '):
                 continue

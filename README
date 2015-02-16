@@ -35,6 +35,7 @@ in the path:
 | ghc        | ghc                |
 | gpg        | gnupg              |
 | gzip       | gzip               |
+| ls         | coreutils          |
 | msgunfmt   | gettext            |
 | objdump    | binutils-multiarch |
 | pdftk      | pdftk              |

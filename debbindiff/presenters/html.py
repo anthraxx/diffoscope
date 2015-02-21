@@ -132,9 +132,6 @@ def trim_file(path, skip_lines):
                     tmp_file.write("[ %d lines removed ]\n" % skip)
 
                 if skip > 0:
-                    if n not in skip_lines.keys():
-                        # insert dummy line to preserve correct line numbers
-                        tmp_file.write(".\n")
                     skip -= 1
                 else:
                     tmp_file.write(line)

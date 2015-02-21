@@ -38,6 +38,7 @@ from debbindiff.comparators.haskell import compare_hi_files
 from debbindiff.comparators.pdf import compare_pdf_files
 from debbindiff.comparators.png import compare_png_files
 from debbindiff.comparators.rpm import compare_rpm_files
+from debbindiff.comparators.squashfs import compare_squashfs_files
 from debbindiff.comparators.text import compare_text_files
 from debbindiff.comparators.tar import compare_tar_files
 from debbindiff.comparators.xz import compare_xz_files
@@ -91,6 +92,7 @@ COMPARATORS = [
     (r'^text/plain; charset=(?P<encoding>[a-z0-9-]+)$', None, compare_text_files),
     (r'^application/xml; charset=(?P<encoding>[a-z0-9-]+)$', None, compare_text_files),
     (r'^application/postscript; charset=(?P<encoding>[a-z0-9-]+)$', None, compare_text_files),
+    (None, r'\.squashfs$', compare_squashfs_files),
     (None, r'\.a$', compare_static_lib_files),
     ]
 

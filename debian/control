@@ -38,6 +38,7 @@ Depends: binutils-multiarch,
          xz-utils,
          ${misc:Depends},
          ${python:Depends},
+Recommends: squashfs-tools
 Description: highlight differences between two builds of Debian packages
  debbindiff was designed to easily compare two builds of the same Debian
  package, and understand their differences.

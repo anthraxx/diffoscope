@@ -26,27 +26,28 @@ External dependencies
 The various comparators rely on these external commands being available
 in the path:
 
-| command   | Debian package     |
-+-----------|--------------------|
-| ar        | binutils-multiarch |
-| bzip2     | bzip2              |
-| cpio      | cpio               |
-| file      | file               |
-| ghc       | ghc                |
-| gpg       | gnupg              |
-| gzip      | gzip               |
-| msgunfmt  | gettext            |
-| objdump   | binutils-multiarch |
-| pdftk     | pdftk              |
-| pdftotext | poppler-utils      |
-| readelf   | binutils-multiarch |
-| rpm2cpio  | rpm2cpio           |
-| showttf   | fontforge-extras   |
-| sng       | sng                |
-| vim       | vim                |
-| xxd       | vim-common         |
-| xz        | xz-utils           |
-| zipinfo   | unzip              |
+| command    | Debian package     |
++------------|--------------------|
+| ar         | binutils-multiarch |
+| bzip2      | bzip2              |
+| cpio       | cpio               |
+| file       | file               |
+| ghc        | ghc                |
+| gpg        | gnupg              |
+| gzip       | gzip               |
+| msgunfmt   | gettext            |
+| objdump    | binutils-multiarch |
+| pdftk      | pdftk              |
+| pdftotext  | poppler-utils      |
+| readelf    | binutils-multiarch |
+| rpm2cpio   | rpm2cpio           |
+| showttf    | fontforge-extras   |
+| sng        | sng                |
+| unsquashfs | squashfs-tools     |
+| vim        | vim                |
+| xxd        | vim-common         |
+| xz         | xz-utils           |
+| zipinfo    | unzip              |
 
 Authors
 -------

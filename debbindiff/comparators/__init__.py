@@ -81,7 +81,7 @@ COMPARATORS = [
     (r'^application/epub+zip(;|$)', r'\.epub$', compare_zip_files),
     (r'^application/(x-debian-package|vnd.debian.binary-package)(;|$)', r'\.u?deb$', compare_deb_files),
     (r'^application/x-rpm(;|$)', r'\.rpm$', compare_rpm_files),
-    (r'^application/x-gzip(;|$)', r'\.(gz|svgz)$', compare_gzip_files),
+    (r'^application/x-gzip(;|$)', r'\.(t?gz|svgz)$', compare_gzip_files),
     (r'^application/x-bzip2(;|$)', r'\.bzip2$', compare_bzip2_files),
     (r'^application/x-executable(;|$)', None, compare_elf_files),
     (r'^application/x-sharedlib(;|$)', r'\.so($|\.[0-9.]+$)',

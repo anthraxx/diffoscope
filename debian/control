@@ -19,10 +19,12 @@ Vcs-Browser: https://anonscm.debian.org/cgit/reproducible/debbindiff.git
 
 Package: debbindiff
 Architecture: all
-Depends: binutils-multiarch,
+Depends: acl,
+         binutils-multiarch,
          bzip2,
          cpio,
          diffutils,
+         e2fsprogs,
          file,
          fontforge-extras,
          gettext,

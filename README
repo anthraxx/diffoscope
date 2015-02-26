@@ -32,10 +32,12 @@ in the path:
 | bzip2      | bzip2              |
 | cpio       | cpio               |
 | file       | file               |
+| getfacl    | acl                |
 | ghc        | ghc                |
 | gpg        | gnupg              |
 | gzip       | gzip               |
 | ls         | coreutils          |
+| lsattr     | e2fsprogs          |
 | msgunfmt   | gettext            |
 | objdump    | binutils-multiarch |
 | pdftk      | pdftk              |

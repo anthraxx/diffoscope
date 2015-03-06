@@ -22,6 +22,7 @@ import re
 import subprocess
 from debbindiff import logger
 from debbindiff.difference import Difference
+from debbindiff.comparators.utils import tool_required
 import debbindiff.comparators
 
 
@@ -49,6 +50,9 @@ def getfacl(path):
     return subprocess.check_output(['getfacl', '-p', '-c', path], shell=False).decode('utf-8')
 
 
+@tool_required('stat')
+@tool_required('lsattr')
+@tool_required('getfacl')
 def compare_meta(path1, path2):
     logger.debug('compare_meta(%s, %s)' % (path1, path2))
     differences = []
@@ -73,6 +77,7 @@ def compare_meta(path1, path2):
     return differences
 
 
+@tool_required('ls')
 def compare_directories(path1, path2, source=None):
     differences = []
     logger.debug('path1 files: %s' % sorted(set(os.listdir(path1))))

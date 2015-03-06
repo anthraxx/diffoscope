@@ -18,7 +18,7 @@
 # along with debbindiff.  If not, see <http://www.gnu.org/licenses/>.
 
 import subprocess
-from debbindiff.comparators.utils import binary_fallback
+from debbindiff.comparators.utils import binary_fallback, tool_required
 from debbindiff.difference import Difference
 
 
@@ -33,6 +33,7 @@ def sng(path):
         return out
 
 @binary_fallback
+@tool_required('sng')
 def compare_png_files(path1, path2, source=None):
     sng1 = sng(path1)
     sng2 = sng(path2)

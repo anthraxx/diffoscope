@@ -18,7 +18,7 @@
 # along with debbindiff.  If not, see <http://www.gnu.org/licenses/>.
 
 import subprocess
-from debbindiff.comparators.utils import binary_fallback
+from debbindiff.comparators.utils import binary_fallback, tool_required
 from debbindiff.difference import Difference, get_source
 
 
@@ -36,6 +36,8 @@ def pdftotext(path):
 
 
 @binary_fallback
+@tool_required('pdftk')
+@tool_required('pdftotext')
 def compare_pdf_files(path1, path2, source=None):
     differences = []
     src = get_source(path1, path2) or 'FILE'

@@ -18,7 +18,7 @@
 # along with debbindiff.  If not, see <http://www.gnu.org/licenses/>.
 
 import subprocess
-from debbindiff.comparators.utils import binary_fallback
+from debbindiff.comparators.utils import binary_fallback, tool_required
 from debbindiff.difference import Difference
 
 
@@ -27,6 +27,7 @@ def msgunfmt(path):
 
 
 @binary_fallback
+@tool_required('msgunfmt')
 def compare_mo_files(path1, path2, source=None):
     mo1 = msgunfmt(path1)
     mo2 = msgunfmt(path2)

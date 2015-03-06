@@ -19,28 +19,29 @@ Vcs-Browser: https://anonscm.debian.org/cgit/reproducible/debbindiff.git
 
 Package: debbindiff
 Architecture: all
-Depends: acl,
-         binutils-multiarch,
-         bzip2,
-         cpio,
-         diffutils,
-         e2fsprogs,
-         file,
-         fontforge-extras,
-         gettext,
-         ghc,
+Depends: diffutils,
          gnupg,
-         pdftk,
-         poppler-utils,
-         rpm2cpio,
-         sng,
-         unzip,
          vim,
          vim-common,
-         xz-utils,
          ${misc:Depends},
          ${python:Depends},
-Recommends: squashfs-tools
+Recommends: acl,
+            binutils-multiarch,
+            bzip2,
+            cpio,
+            e2fsprogs,
+            file,
+            fontforge-extras,
+            gettext,
+            ghc,
+            gzip,
+            pdftk,
+            poppler-utils,
+            rpm2cpio,
+            sng,
+            squashfs-tools,
+            unzip,
+            xz-utils
 Description: highlight differences between two builds of Debian packages
  debbindiff was designed to easily compare two builds of the same Debian
  package, and understand their differences.

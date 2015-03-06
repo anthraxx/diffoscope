@@ -18,7 +18,7 @@
 # along with debbindiff.  If not, see <http://www.gnu.org/licenses/>.
 
 import subprocess
-from debbindiff.comparators.utils import binary_fallback
+from debbindiff.comparators.utils import binary_fallback, tool_required
 from debbindiff.difference import Difference
 
 
@@ -27,6 +27,7 @@ def show_iface(path):
 
 
 @binary_fallback
+@tool_required('ghc')
 def compare_hi_files(path1, path2, source=None):
     iface1 = show_iface(path1)
     iface2 = show_iface(path2)

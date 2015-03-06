@@ -20,7 +20,7 @@
 import os.path
 import re
 import subprocess
-from debbindiff.comparators.utils import binary_fallback, get_ar_content
+from debbindiff.comparators.utils import binary_fallback, get_ar_content, tool_required
 from debbindiff.difference import Difference
 
 
@@ -74,11 +74,15 @@ def _compare_elf_data(path1, path2, source=None):
 
 
 @binary_fallback
+@tool_required('readelf')
+@tool_required('objdump')
 def compare_elf_files(path1, path2, source=None):
     return _compare_elf_data(path1, path2, source=None)
 
 
 @binary_fallback
+@tool_required('readelf')
+@tool_required('objdump')
 def compare_static_lib_files(path1, path2, source=None):
     differences = []
     # look up differences in metadata

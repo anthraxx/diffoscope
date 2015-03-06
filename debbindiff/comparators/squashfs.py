@@ -21,7 +21,7 @@ import subprocess
 import os.path
 import debbindiff.comparators
 from debbindiff import logger
-from debbindiff.comparators.utils import binary_fallback, make_temp_directory
+from debbindiff.comparators.utils import binary_fallback, make_temp_directory, tool_required
 from debbindiff.difference import Difference
 
 
@@ -48,6 +48,7 @@ def extract_squashfs(path, destdir):
 
 
 @binary_fallback
+@tool_required('unsquashfs')
 def compare_squashfs_files(path1, path2, source=None):
     differences = []
 

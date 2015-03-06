@@ -18,13 +18,12 @@
 # along with debbindiff.  If not, see <http://www.gnu.org/licenses/>.
 
 from __future__ import absolute_import
-import rpm
 import os.path
 import subprocess
 from contextlib import contextmanager
 import debbindiff.comparators
 from debbindiff import logger
-from debbindiff.comparators.utils import binary_fallback, make_temp_directory
+from debbindiff.comparators.utils import binary_fallback, make_temp_directory, tool_required
 from debbindiff.difference import Difference, get_source
 
 def get_rpm_header(path, ts):
@@ -64,7 +63,14 @@ def extract_rpm_payload(path):
 
 
 @binary_fallback
+@tool_required('rpm2cpio')
 def compare_rpm_files(path1, path2, source=None):
+    try:
+        import rpm
+    except ImportError:
+        logger.info("Python module rpm not found.")
+        return []
+
     differences = []
 
     # compare headers

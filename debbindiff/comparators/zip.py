@@ -24,7 +24,7 @@ from zipfile import ZipFile
 from debbindiff import logger
 from debbindiff.difference import Difference
 import debbindiff.comparators
-from debbindiff.comparators.utils import binary_fallback, make_temp_directory
+from debbindiff.comparators.utils import binary_fallback, make_temp_directory, tool_required
 
 
 def get_zipinfo(path, verbose=False):
@@ -38,6 +38,7 @@ def get_zipinfo(path, verbose=False):
 
 
 @binary_fallback
+@tool_required('zipinfo')
 def compare_zip_files(path1, path2, source=None):
     differences = []
     with ZipFile(path1, 'r') as zip1:

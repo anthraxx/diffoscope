@@ -20,11 +20,13 @@
 from contextlib import contextmanager
 import hashlib
 import re
+import os
 import shutil
 import subprocess
 import tempfile
 from debbindiff.comparators.binary import compare_binary_files
 from debbindiff.difference import Difference
+from debbindiff import logger
 
 
 def are_same_binaries(path1, path2):
@@ -70,6 +72,22 @@ def binary_fallback(original_function):
                 % (cmd, e.returncode, output)
         return [difference]
     return with_fallback
+
+
+# decorator that checks if the specified tool is installed
+def tool_required(filename):
+    def wrapper(original_function):
+        def tool_check(*args):
+            if 'PATH' not in os.environ:
+                return []
+            for path in os.environ['PATH'].split(os.pathsep):
+                f = os.path.join(path, filename)
+                if os.path.isfile(f):
+                    return original_function(*args)
+            logger.info("Tool '%s' not found." % filename)
+            return []
+        return tool_check
+    return wrapper
 
 
 @contextmanager

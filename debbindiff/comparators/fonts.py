@@ -18,7 +18,7 @@
 # along with debbindiff.  If not, see <http://www.gnu.org/licenses/>.
 
 import subprocess
-from debbindiff.comparators.utils import binary_fallback
+from debbindiff.comparators.utils import binary_fallback, tool_required
 from debbindiff.difference import Difference
 
 
@@ -27,6 +27,7 @@ def show_ttf(path):
 
 
 @binary_fallback
+@tool_required('showttf')
 def compare_ttf_files(path1, path2, source=None):
     ttf1 = show_ttf(path1)
     ttf2 = show_ttf(path2)

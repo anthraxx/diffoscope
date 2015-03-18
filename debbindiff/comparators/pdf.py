@@ -22,6 +22,7 @@ from debbindiff.comparators.utils import binary_fallback, tool_required
 from debbindiff.difference import Difference, get_source
 
 
+@tool_required('pdftk')
 def uncompress(path):
     output = subprocess.check_output(
         ['pdftk', path, 'output', '-', 'uncompress'],
@@ -29,6 +30,7 @@ def uncompress(path):
     return output.decode('latin-1').encode('ascii', 'backslashreplace')
 
 
+@tool_required('pdftotext')
 def pdftotext(path):
     return subprocess.check_output(
         ['pdftotext', path, '-'],
@@ -36,8 +38,6 @@ def pdftotext(path):
 
 
 @binary_fallback
-@tool_required('pdftk')
-@tool_required('pdftotext')
 def compare_pdf_files(path1, path2, source=None):
     differences = []
     src = get_source(path1, path2) or 'FILE'

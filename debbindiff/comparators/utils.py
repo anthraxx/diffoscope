@@ -72,18 +72,67 @@ def binary_fallback(original_function):
             difference.comment = \
                 "Command `%s` exited with %d. Output:\n%s" \
                 % (cmd, e.returncode, output)
+        except RequiredToolNotFound as e:
+            difference = compare_binary_files(path1, path2, source=source)[0]
+            difference.comment = \
+                "'%s' not available in path. Falling back to binary comparison." % e.command
+            package = e.get_package()
+            if package:
+                difference.comment += "\nInstall '%s' to get a better output." % package
         return [difference]
     return with_fallback
 
 
+class RequiredToolNotFound(Exception):
+    PROVIDERS = { 'ar':         { 'debian': 'binutils-multiarch' }
+                , 'bzip2':      { 'debian': 'bzip2' }
+                , 'cpio':       { 'debian': 'cpio' }
+                , 'file':       { 'debian': 'file' }
+                , 'getfacl':    { 'debian': 'acl' }
+                , 'ghc':        { 'debian': 'ghc' }
+                , 'gpg':        { 'debian': 'gnupg' }
+                , 'gzip':       { 'debian': 'gzip' }
+                , 'ls':         { 'debian': 'coreutils' }
+                , 'lsattr':     { 'debian': 'e2fsprogs' }
+                , 'msgunfmt':   { 'debian': 'gettext' }
+                , 'objdump':    { 'debian': 'binutils-multiarch' }
+                , 'pdftk':      { 'debian': 'pdftk' }
+                , 'pdftotext':  { 'debian': 'poppler-utils' }
+                , 'readelf':    { 'debian': 'binutils-multiarch' }
+                , 'rpm2cpio':   { 'debian': 'rpm2cpio' }
+                , 'showttf':    { 'debian': 'fontforge-extras' }
+                , 'sng':        { 'debian': 'sng' }
+                , 'stat':       { 'debian': 'coreutils' }
+                , 'unsquashfs': { 'debian': 'squashfs-tools' }
+                , 'vim':        { 'debian': 'vim' }
+                , 'xxd':        { 'debian': 'vim-common' }
+                , 'xz':         { 'debian': 'xz-utils' }
+                , 'zipinfo':    { 'debian': 'unzip' }
+              }
+
+    def __init__(self, command):
+        self.command = command
+
+    def get_package(self):
+        providers = RequiredToolNotFound.PROVIDERS.get(self.command, None)
+        if not providers:
+            return None
+        # XXX: hardcode Debian for now
+        return providers['debian']
+
+
 # decorator that checks if the specified tool is installed
-def tool_required(filename):
+def tool_required(command):
+    if not hasattr(tool_required, 'all'):
+        tool_required.all = set()
+    tool_required.all.add(command)
     def wrapper(original_function):
-        def tool_check(*args):
-            if not find_executable(filename):
-                logger.info("Tool '%s' not found." % filename)
-                return []
-            return original_function(*args)
+        if find_executable(command):
+            def tool_check(*args):
+                return original_function(*args)
+        else:
+            def tool_check(*args):
+                raise RequiredToolNotFound(command)
         return tool_check
     return wrapper
 

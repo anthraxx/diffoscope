@@ -26,6 +26,7 @@ from debbindiff.difference import get_source
 
 
 @contextmanager
+@tool_required('xz')
 def decompress_xz(path):
     with make_temp_directory() as temp_dir:
         if path.endswith('.xz'):
@@ -40,7 +41,6 @@ def decompress_xz(path):
 
 
 @binary_fallback
-@tool_required('xz')
 def compare_xz_files(path1, path2, source=None):
     with decompress_xz(path1) as new_path1:
         with decompress_xz(path2) as new_path2:

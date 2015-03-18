@@ -22,6 +22,7 @@ from debbindiff.comparators.utils import binary_fallback, tool_required
 from debbindiff.difference import Difference
 
 
+@tool_required('sng')
 def sng(path):
     with open(path) as f:
         p = subprocess.Popen(['sng'], shell=False, close_fds=True,
@@ -33,7 +34,6 @@ def sng(path):
         return out
 
 @binary_fallback
-@tool_required('sng')
 def compare_png_files(path1, path2, source=None):
     sng1 = sng(path1)
     sng2 = sng(path2)

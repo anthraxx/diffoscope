@@ -37,6 +37,8 @@ def create_parser():
                     'of Debian packages')
     parser.add_argument('--version', action='version',
                         version='debbindiff %s' % VERSION)
+    parser.add_argument('--list-tools', nargs=0, action=ListToolsAction,
+                        help='show external tools required and exit')
     parser.add_argument('--debug', dest='debug', action='store_true',
                         default=False, help='display debug messages')
     parser.add_argument('--html', metavar='output', dest='html_output',
@@ -52,6 +54,7 @@ def create_parser():
     parser.add_argument('file2', help='second file to compare')
     return parser
 
+
 @contextmanager
 def make_printer(path):
     if path == '-':
@@ -64,6 +67,17 @@ def make_printer(path):
     yield print_func
     if path != '-':
         output.close()
+
+
+class ListToolsAction(argparse.Action):
+    def __call__(self, parser, namespace, values, option_string=None):
+        from debbindiff.comparators.utils import tool_required, RequiredToolNotFound
+        print("External tools required:")
+        print(', '.join(tool_required.all))
+        print()
+        print("Available in packages:")
+        print(', '.join(sorted(set([RequiredToolNotFound.PROVIDERS[k]["debian"] for k in tool_required.all]))))
+        sys.exit(0)
 
 
 def main():

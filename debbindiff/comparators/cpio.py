@@ -25,6 +25,7 @@ from debbindiff.comparators.utils import binary_fallback, make_temp_directory, t
 from debbindiff.difference import Difference
 
 
+@tool_required('cpio')
 def get_cpio_content(path, verbose=False):
     cmd = ['cpio', '--quiet', '-tF', path]
     if verbose:
@@ -32,6 +33,7 @@ def get_cpio_content(path, verbose=False):
     return subprocess.check_output(cmd, stderr=subprocess.STDOUT, shell=False)
 
 
+@tool_required('cpio')
 def extract_cpio_archive(path, destdir):
     cmd = ['cpio', '--no-absolute-filenames', '--quiet', '-idF',
             os.path.abspath(path)]
@@ -44,7 +46,6 @@ def extract_cpio_archive(path, destdir):
 
 
 @binary_fallback
-@tool_required('cpio')
 def compare_cpio_files(path1, path2, source=None):
     differences = []
 

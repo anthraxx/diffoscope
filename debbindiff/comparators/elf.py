@@ -24,6 +24,7 @@ from debbindiff.comparators.utils import binary_fallback, get_ar_content, tool_r
 from debbindiff.difference import Difference
 
 
+@tool_required('readelf')
 def readelf_all(path):
     output = subprocess.check_output(
         ['readelf', '--all', path],
@@ -32,6 +33,7 @@ def readelf_all(path):
     return re.sub(re.escape(path), os.path.basename(path), output)
 
 
+@tool_required('readelf')
 def readelf_debug_dump(path):
     output = subprocess.check_output(
         ['readelf', '--debug-dump', path],
@@ -40,6 +42,7 @@ def readelf_debug_dump(path):
     return re.sub(re.escape(path), os.path.basename(path), output)
 
 
+@tool_required('objdump')
 def objdump_disassemble(path):
     output = subprocess.check_output(
         ['objdump', '--disassemble', path],
@@ -74,15 +77,11 @@ def _compare_elf_data(path1, path2, source=None):
 
 
 @binary_fallback
-@tool_required('readelf')
-@tool_required('objdump')
 def compare_elf_files(path1, path2, source=None):
     return _compare_elf_data(path1, path2, source=None)
 
 
 @binary_fallback
-@tool_required('readelf')
-@tool_required('objdump')
 def compare_static_lib_files(path1, path2, source=None):
     differences = []
     # look up differences in metadata

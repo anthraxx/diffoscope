@@ -22,12 +22,12 @@ from debbindiff.comparators.utils import binary_fallback, tool_required
 from debbindiff.difference import Difference
 
 
+@tool_required('msgunfmt')
 def msgunfmt(path):
     return subprocess.check_output(['msgunfmt', path], shell=False)
 
 
 @binary_fallback
-@tool_required('msgunfmt')
 def compare_mo_files(path1, path2, source=None):
     mo1 = msgunfmt(path1)
     mo2 = msgunfmt(path2)

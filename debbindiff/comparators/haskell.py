@@ -22,12 +22,12 @@ from debbindiff.comparators.utils import binary_fallback, tool_required
 from debbindiff.difference import Difference
 
 
+@tool_required('ghc')
 def show_iface(path):
     return subprocess.check_output(['ghc', '--show-iface', path], shell=False)
 
 
 @binary_fallback
-@tool_required('ghc')
 def compare_hi_files(path1, path2, source=None):
     iface1 = show_iface(path1)
     iface2 = show_iface(path2)

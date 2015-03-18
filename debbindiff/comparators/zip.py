@@ -27,6 +27,7 @@ import debbindiff.comparators
 from debbindiff.comparators.utils import binary_fallback, make_temp_directory, tool_required
 
 
+@tool_required('zipinfo')
 def get_zipinfo(path, verbose=False):
     if verbose:
         cmd = ['zipinfo', '-v', path]
@@ -38,7 +39,6 @@ def get_zipinfo(path, verbose=False):
 
 
 @binary_fallback
-@tool_required('zipinfo')
 def compare_zip_files(path1, path2, source=None):
     differences = []
     with ZipFile(path1, 'r') as zip1:

@@ -23,34 +23,10 @@ This will compare `build1.changes` and `build2.changes` and create
 External dependencies
 ---------------------
 
-The various comparators rely on these external commands being available
-in the path:
+The various comparators rely on external commands being available. To
+get a list of them, please run:
 
-| command    | Debian package     |
-+------------|--------------------|
-| ar         | binutils-multiarch |
-| bzip2      | bzip2              |
-| cpio       | cpio               |
-| file       | file               |
-| getfacl    | acl                |
-| ghc        | ghc                |
-| gpg        | gnupg              |
-| gzip       | gzip               |
-| ls         | coreutils          |
-| lsattr     | e2fsprogs          |
-| msgunfmt   | gettext            |
-| objdump    | binutils-multiarch |
-| pdftk      | pdftk              |
-| pdftotext  | poppler-utils      |
-| readelf    | binutils-multiarch |
-| rpm2cpio   | rpm2cpio           |
-| showttf    | fontforge-extras   |
-| sng        | sng                |
-| unsquashfs | squashfs-tools     |
-| vim        | vim                |
-| xxd        | vim-common         |
-| xz         | xz-utils           |
-| zipinfo    | unzip              |
+    $ ./debbindiff.py --list-tools
 
 Authors
 -------

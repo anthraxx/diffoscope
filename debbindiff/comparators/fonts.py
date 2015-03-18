@@ -22,12 +22,12 @@ from debbindiff.comparators.utils import binary_fallback, tool_required
 from debbindiff.difference import Difference
 
 
+@tool_required('showttf')
 def show_ttf(path):
     return subprocess.check_output(['showttf', path], shell=False)
 
 
 @binary_fallback
-@tool_required('showttf')
 def compare_ttf_files(path1, path2, source=None):
     ttf1 = show_ttf(path1)
     ttf2 = show_ttf(path2)

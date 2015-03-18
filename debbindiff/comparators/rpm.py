@@ -48,6 +48,7 @@ def get_rpm_header(path, ts):
 
 
 @contextmanager
+@tool_required('rpm2cpio')
 def extract_rpm_payload(path):
     cmd = ['rpm2cpio', path]
     with make_temp_directory() as temp_dir:
@@ -63,7 +64,6 @@ def extract_rpm_payload(path):
 
 
 @binary_fallback
-@tool_required('rpm2cpio')
 def compare_rpm_files(path1, path2, source=None):
     try:
         import rpm

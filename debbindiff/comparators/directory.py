@@ -30,6 +30,7 @@ def ls(path):
     return subprocess.check_output(['ls', path], shell=False).decode('utf-8')
 
 
+@tool_required('stat')
 def stat(path):
     output = subprocess.check_output(['stat', path], shell=False).decode('utf-8')
     output = re.sub(r'^\s*File:.*$', '', output, flags=re.MULTILINE)
@@ -37,6 +38,7 @@ def stat(path):
     return output
 
 
+@tool_required('lsattr')
 def lsattr(path):
     try:
         output = subprocess.check_output(['lsattr', '-d', path], shell=False, stderr=subprocess.STDOUT).decode('utf-8')
@@ -47,34 +49,44 @@ def lsattr(path):
             return ''
 
 
+@tool_required('getfacl')
 def getfacl(path):
     return subprocess.check_output(['getfacl', '-p', '-c', path], shell=False).decode('utf-8')
 
 
-@tool_required('stat')
-@tool_required('lsattr')
-@tool_required('getfacl')
 def compare_meta(path1, path2):
     logger.debug('compare_meta(%s, %s)' % (path1, path2))
     differences = []
-    stat1 = stat(path1)
-    stat2 = stat(path2)
-    if stat1 != stat2:
-        differences.append(Difference(
-            stat1.splitlines(1), stat2.splitlines(1),
-            path1, path2, source="stat"))
-    lsattr1 = lsattr(path1)
-    lsattr2 = lsattr(path2)
-    if lsattr1 != lsattr2:
-        differences.append(Difference(
-            lsattr1.splitlines(1), lsattr2.splitlines(1),
-            path1, path2, source="lattr"))
-    acl1 = getfacl(path1)
-    acl2 = getfacl(path2)
-    if acl1 != acl2:
-        differences.append(Difference(
-            acl1.splitlines(1), acl2.splitlines(1),
-            path1, path2, source="getfacl"))
+
+    try:
+        stat1 = stat(path1)
+        stat2 = stat(path2)
+        if stat1 != stat2:
+            differences.append(Difference(
+                stat1.splitlines(1), stat2.splitlines(1),
+                path1, path2, source="stat"))
+    except RequiredToolNotFound:
+        logger.warn("'stat' not found! Is PATH wrong?")
+
+    try:
+        lsattr1 = lsattr(path1)
+        lsattr2 = lsattr(path2)
+        if lsattr1 != lsattr2:
+            differences.append(Difference(
+                lsattr1.splitlines(1), lsattr2.splitlines(1),
+                path1, path2, source="lattr"))
+    except RequiredToolNotFound:
+        logger.info("Unable to find 'lsattr'.")
+
+    try:
+        acl1 = getfacl(path1)
+        acl2 = getfacl(path2)
+        if acl1 != acl2:
+            differences.append(Difference(
+                acl1.splitlines(1), acl2.splitlines(1),
+                path1, path2, source="getfacl"))
+    except RequiredToolNotFound:
+        logger.info("Unable to find 'getfacl'.")
     return differences
 
 

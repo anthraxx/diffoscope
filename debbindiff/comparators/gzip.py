@@ -26,6 +26,7 @@ from debbindiff.difference import Difference, get_source
 
 
 @contextmanager
+@tool_required('gzip')
 def decompress_gzip(path):
     with make_temp_directory() as temp_dir:
         if path.endswith('.gz'):
@@ -39,13 +40,12 @@ def decompress_gzip(path):
             yield temp_path
 
 
+@tool_required('file')
 def get_gzip_metadata(path):
     return subprocess.check_output(['file', '--brief', path])
 
 
 @binary_fallback
-@tool_required('gzip')
-@tool_required('file')
 def compare_gzip_files(path1, path2, source=None):
     differences = []
     # check metadata

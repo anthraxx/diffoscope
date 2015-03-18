@@ -25,23 +25,7 @@ Depends: diffutils,
          vim-common,
          ${misc:Depends},
          ${python:Depends},
-Recommends: acl,
-            binutils-multiarch,
-            bzip2,
-            cpio,
-            e2fsprogs,
-            file,
-            fontforge-extras,
-            gettext,
-            ghc,
-            gzip,
-            pdftk,
-            poppler-utils,
-            rpm2cpio,
-            sng,
-            squashfs-tools,
-            unzip,
-            xz-utils
+Recommends: ${debbindiff:Recommends}
 Description: highlight differences between two builds of Debian packages
  debbindiff was designed to easily compare two builds of the same Debian
  package, and understand their differences.

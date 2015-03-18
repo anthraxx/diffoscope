@@ -5,6 +5,10 @@ VERSION = $(shell dpkg-parsechangelog --show-field Version)
 %:
 	dh $@ --with python2 --buildsystem=python_distutils
 
+override_dh_auto_build:
+	dh_auto_build -O--buildsystem=python_distutils
+	echo "debbindiff:Recommends=$$(./debbindiff.py --list-tools | tail -n 1)" >> debian/substvars
+
 override_dh_install:
 	mv debian/debbindiff/usr/bin/debbindiff.py debian/debbindiff/usr/bin/debbindiff
 	dh_install -O--buildsystem=python_distutils

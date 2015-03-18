@@ -39,7 +39,8 @@ def stat(path):
 
 def lsattr(path):
     try:
-        return subprocess.check_output(['lsattr', '-d', path], shell=False, stderr=subprocess.STDOUT).decode('utf-8')
+        output = subprocess.check_output(['lsattr', '-d', path], shell=False, stderr=subprocess.STDOUT).decode('utf-8')
+        return output.split()[0]
     except subprocess.CalledProcessError as e:
         if e.returncode == 1:
             # filesystem doesn't support xattrs

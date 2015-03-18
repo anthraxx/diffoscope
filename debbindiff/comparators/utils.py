@@ -18,6 +18,8 @@
 # along with debbindiff.  If not, see <http://www.gnu.org/licenses/>.
 
 from contextlib import contextmanager
+# The following would be shutil.which in Python 3.3
+from distutils.spawn import find_executable
 import hashlib
 import re
 import os
@@ -78,14 +80,10 @@ def binary_fallback(original_function):
 def tool_required(filename):
     def wrapper(original_function):
         def tool_check(*args):
-            if 'PATH' not in os.environ:
+            if not find_executable(filename):
+                logger.info("Tool '%s' not found." % filename)
                 return []
-            for path in os.environ['PATH'].split(os.pathsep):
-                f = os.path.join(path, filename)
-                if os.path.isfile(f):
-                    return original_function(*args)
-            logger.info("Tool '%s' not found." % filename)
-            return []
+            return original_function(*args)
         return tool_check
     return wrapper
 

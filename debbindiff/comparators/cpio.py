@@ -30,7 +30,7 @@ def get_cpio_content(path, verbose=False):
     cmd = ['cpio', '--quiet', '-tF', path]
     if verbose:
         cmd = ['cpio', '-tvF', path]
-    return subprocess.check_output(cmd, stderr=subprocess.STDOUT, shell=False)
+    return subprocess.check_output(cmd, stderr=subprocess.PIPE, shell=False)
 
 
 @tool_required('cpio')

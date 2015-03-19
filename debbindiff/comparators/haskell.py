@@ -24,7 +24,7 @@ from debbindiff.difference import Difference
 
 @tool_required('ghc')
 def show_iface(path):
-    return subprocess.check_output(['ghc', '--show-iface', path], shell=False)
+    return subprocess.check_output(['ghc', '--show-iface', path], shell=False).decode('ascii')
 
 
 @binary_fallback

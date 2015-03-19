@@ -17,6 +17,7 @@
 # You should have received a copy of the GNU General Public License
 # along with debbindiff.  If not, see <http://www.gnu.org/licenses/>.
 
+import locale
 import os.path
 import re
 import subprocess
@@ -27,12 +28,12 @@ import debbindiff.comparators
 
 
 def ls(path):
-    return subprocess.check_output(['ls', path], shell=False).decode('utf-8')
+    return subprocess.check_output(['ls', path], shell=False).decode(locale.getpreferredencoding())
 
 
 @tool_required('stat')
 def stat(path):
-    output = subprocess.check_output(['stat', path], shell=False).decode('utf-8')
+    output = subprocess.check_output(['stat', path], shell=False).decode(locale.getpreferredencoding())
     output = re.sub(r'^\s*File:.*$', '', output, flags=re.MULTILINE)
     output = re.sub(r'Inode: [0-9]+', '', output)
     return output
@@ -41,7 +42,7 @@ def stat(path):
 @tool_required('lsattr')
 def lsattr(path):
     try:
-        output = subprocess.check_output(['lsattr', '-d', path], shell=False, stderr=subprocess.STDOUT).decode('utf-8')
+        output = subprocess.check_output(['lsattr', '-d', path], shell=False, stderr=subprocess.STDOUT).decode(locale.getpreferredencoding())
         return output.split()[0]
     except subprocess.CalledProcessError as e:
         if e.returncode == 1:
@@ -51,7 +52,7 @@ def lsattr(path):
 
 @tool_required('getfacl')
 def getfacl(path):
-    return subprocess.check_output(['getfacl', '-p', '-c', path], shell=False).decode('utf-8')
+    return subprocess.check_output(['getfacl', '-p', '-c', path], shell=False).decode(locale.getpreferredencoding())
 
 
 def compare_meta(path1, path2):

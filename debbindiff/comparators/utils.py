@@ -128,10 +128,10 @@ def tool_required(command):
     tool_required.all.add(command)
     def wrapper(original_function):
         if find_executable(command):
-            def tool_check(*args):
-                return original_function(*args)
+            def tool_check(*args, **kwargs):
+                return original_function(*args, **kwargs)
         else:
-            def tool_check(*args):
+            def tool_check(*args, **kwargs):
                 raise RequiredToolNotFound(command)
         return tool_check
     return wrapper
@@ -146,4 +146,4 @@ def make_temp_directory():
 
 def get_ar_content(path):
     return subprocess.check_output(
-        ['ar', 'tv', path], stderr=subprocess.STDOUT, shell=False)
+        ['ar', 'tv', path], stderr=subprocess.STDOUT, shell=False).decode('utf-8')

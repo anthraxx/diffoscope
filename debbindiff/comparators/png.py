@@ -17,6 +17,7 @@
 # You should have received a copy of the GNU General Public License
 # along with debbindiff.  If not, see <http://www.gnu.org/licenses/>.
 
+import locale
 import subprocess
 from debbindiff.comparators.utils import binary_fallback, tool_required
 from debbindiff.difference import Difference
@@ -31,7 +32,7 @@ def sng(path):
         p.wait()
         if p.returncode != 0:
             return 'sng exited with error %d\n%s' % (p.returncode, err)
-        return out
+        return out.decode(locale.getpreferredencoding())
 
 @binary_fallback
 def compare_png_files(path1, path2, source=None):

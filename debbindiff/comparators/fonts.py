@@ -17,6 +17,7 @@
 # You should have received a copy of the GNU General Public License
 # along with debbindiff.  If not, see <http://www.gnu.org/licenses/>.
 
+import locale
 import subprocess
 from debbindiff.comparators.utils import binary_fallback, tool_required
 from debbindiff.difference import Difference
@@ -24,7 +25,7 @@ from debbindiff.difference import Difference
 
 @tool_required('showttf')
 def show_ttf(path):
-    return subprocess.check_output(['showttf', path], shell=False)
+    return subprocess.check_output(['showttf', path], shell=False).decode(locale.getpreferredencoding())
 
 
 @binary_fallback

@@ -17,6 +17,7 @@
 # You should have received a copy of the GNU General Public License
 # along with debbindiff.  If not, see <http://www.gnu.org/licenses/>.
 
+import locale
 import os.path
 import re
 import subprocess
@@ -33,7 +34,7 @@ def get_zipinfo(path, verbose=False):
         cmd = ['zipinfo', '-v', path]
     else:
         cmd = ['zipinfo', path]
-    output = subprocess.check_output(cmd, shell=False)
+    output = subprocess.check_output(cmd, shell=False).decode(locale.getpreferredencoding())
     # the full path appears in the output, we need to remove it
     return re.sub(re.escape(path), os.path.basename(path), output)
 

@@ -18,14 +18,16 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with debbindiff.  If not, see <http://www.gnu.org/licenses/>.
+
 import sys
 import difflib
+import locale
 
 
 def print_difference(difference, print_func):
     if difference.comment:
         for line in difference.comment.split('\n'):
-            print_func("│┄ %s" % line)
+            print_func(u"│┄ %s" % line)
     if difference.lines1 or difference.lines2:
         g = difflib.unified_diff(difference.lines1, difference.lines2)
         # First skip lines with filename
@@ -34,22 +36,22 @@ def print_difference(difference, print_func):
         for line in g:
             if line.startswith('--- ') or line.startswith('+++ '):
                 continue
-            print_func("│ %s" % line.encode('utf-8'), end='')
+            print_func("│ %s" % line.encode(locale.getpreferredencoding()), end='')
 
 def print_details(difference, print_func):
     if not difference.details:
         return
     for detail in difference.details:
         if detail.source1 == detail.source2:
-            print_func("├── %s" % detail.source1)
+            print_func(u"├── %s" % detail.source1)
         else:
-            print_func("│   --- %s" % (detail.source1))
-            print_func("├── +++ %s" % (detail.source2))
+            print_func(u"│   --- %s" % (detail.source1))
+            print_func(u"├── +++ %s" % (detail.source2))
         print_difference(detail, print_func)
         def new_print_func(*args, **kwargs):
-            print_func('│  ', *args, **kwargs)
+            print_func(u'│  ', *args, **kwargs)
         print_details(detail, new_print_func)
-    print_func('╵')
+    print_func(u'╵')
 
 def output_text(differences, print_func):
     for difference in differences:

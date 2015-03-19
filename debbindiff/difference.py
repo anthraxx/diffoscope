@@ -23,6 +23,10 @@ import os.path
 class Difference(object):
     def __init__(self, lines1, lines2, path1, path2, source=None,
                  comment=None):
+        if lines1 and type(lines1[0]) is not unicode:
+            raise UnicodeError('lines1 has not been decoded')
+        if lines2 and type(lines2[0]) is not unicode:
+            raise UnicodeError('lines2 has not been decoded')
         # allow to override declared file paths, useful when comparing
         # tempfiles
         if source:

@@ -17,6 +17,7 @@
 # You should have received a copy of the GNU General Public License
 # along with debbindiff.  If not, see <http://www.gnu.org/licenses/>.
 
+import locale
 import subprocess
 import os.path
 import debbindiff.comparators
@@ -32,10 +33,10 @@ def get_squashfs_content(path, verbose=True):
     if verbose:
         # first get superblock information
         cmd = ['unsquashfs', '-s', path]
-        content = subprocess.check_output(cmd, shell=False)
+        content = subprocess.check_output(cmd, shell=False).decode(locale.getpreferredencoding())
         # and then the verbose file listing
         cmd = ['unsquashfs', '-d', '', '-lls', path]
-    return content + subprocess.check_output(cmd, shell=False)
+    return content + subprocess.check_output(cmd, shell=False).decode(locale.getpreferredencoding())
 
 
 @tool_required('unsquashfs')

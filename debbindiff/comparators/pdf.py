@@ -17,6 +17,7 @@
 # You should have received a copy of the GNU General Public License
 # along with debbindiff.  If not, see <http://www.gnu.org/licenses/>.
 
+import locale
 import subprocess
 from debbindiff.comparators.utils import binary_fallback, tool_required
 from debbindiff.difference import Difference, get_source
@@ -27,14 +28,14 @@ def uncompress(path):
     output = subprocess.check_output(
         ['pdftk', path, 'output', '-', 'uncompress'],
         shell=False, close_fds=True)
-    return output.decode('latin-1').encode('ascii', 'backslashreplace')
+    return output.decode('latin-1')
 
 
 @tool_required('pdftotext')
 def pdftotext(path):
     return subprocess.check_output(
         ['pdftotext', path, '-'],
-        shell=False, close_fds=True).decode('utf-8')
+        shell=False, close_fds=True).decode(locale.getpreferredencoding())
 
 
 @binary_fallback

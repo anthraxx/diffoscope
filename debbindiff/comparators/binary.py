@@ -22,7 +22,7 @@ import subprocess
 
 
 def get_hexdump(path):
-    return subprocess.check_output(['xxd', path], shell=False)
+    return subprocess.check_output(['xxd', path], shell=False).decode('ascii')
 
 
 def compare_binary_files(path1, path2, source=None):

@@ -17,6 +17,7 @@
 # You should have received a copy of the GNU General Public License
 # along with debbindiff.  If not, see <http://www.gnu.org/licenses/>.
 
+import locale
 import subprocess
 import os.path
 import debbindiff.comparators
@@ -30,14 +31,14 @@ def get_cpio_content(path, verbose=False):
     cmd = ['cpio', '--quiet', '-tF', path]
     if verbose:
         cmd = ['cpio', '-tvF', path]
-    return subprocess.check_output(cmd, stderr=subprocess.PIPE, shell=False)
+    return subprocess.check_output(cmd, stderr=subprocess.PIPE, shell=False).decode(locale.getpreferredencoding())
 
 
 @tool_required('cpio')
 def extract_cpio_archive(path, destdir):
     cmd = ['cpio', '--no-absolute-filenames', '--quiet', '-idF',
-            os.path.abspath(path)]
-    logger.debug("extracting %s into %s", path, destdir)
+            os.path.abspath(path.encode('utf-8'))]
+    logger.debug("extracting %s into %s", path.encode('utf-8'), destdir)
     p = subprocess.Popen(cmd, shell=False, cwd=destdir)
     p.communicate()
     p.wait()
@@ -64,8 +65,8 @@ def compare_cpio_files(path1, path2, source=None):
         with make_temp_directory() as temp_dir2:
             extract_cpio_archive(path1, temp_dir1)
             extract_cpio_archive(path2, temp_dir2)
-            files1 = [ f for f in content1.split('\n') ]
-            files2 = [ f for f in content2.split('\n') ]
+            files1 = content1.splitlines(1)
+            files2 = content2.splitlines(1)
             for member in sorted(set(files1).intersection(set(files2))):
                 in_path1 = os.path.join(temp_dir1, member)
                 in_path2 = os.path.join(temp_dir2, member)

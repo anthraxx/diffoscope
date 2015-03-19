@@ -45,7 +45,7 @@ def readelf_debug_dump(path):
 @tool_required('objdump')
 def objdump_disassemble(path):
     output = subprocess.check_output(
-        ['objdump', '--disassemble', path],
+        ['objdump', '--disassemble', '--full-contents', path],
         shell=False)
     # the full path appears in the output, we need to remove it
     return re.sub(re.escape(path), os.path.basename(path), output)
@@ -72,7 +72,7 @@ def _compare_elf_data(path1, path2, source=None):
     if objdump1 != objdump2:
         differences.append(Difference(
             objdump1.splitlines(1), objdump2.splitlines(1),
-            path1, path2, source='objdump --disassemble'))
+            path1, path2, source='objdump --disassemble --full-contents'))
     return differences
 
 

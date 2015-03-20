@@ -30,8 +30,11 @@ class Difference(object):
         # allow to override declared file paths, useful when comparing
         # tempfiles
         if source:
-            self._source1 = source
-            self._source2 = source
+            if type(source) is list:
+                self._source1, self._source2 = source
+            else:
+                self._source1 = source
+                self._source2 = source
         else:
             self._source1 = path1
             self._source2 = path2

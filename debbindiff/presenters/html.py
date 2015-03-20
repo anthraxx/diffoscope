@@ -221,7 +221,7 @@ def output_difference(difference, print_func):
     print_func("<div class='difference'>")
     try:
         if difference.source1 == difference.source2:
-            print_func("<div><span class='source'>%s</div>"
+            print_func("<div><span class='source'>%s<span></div>"
                        % escape(difference.source1))
         else:
             print_func("<div><span class='source'>%s</span> vs.</div>"

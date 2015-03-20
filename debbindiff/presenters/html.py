@@ -53,10 +53,15 @@ HEADER = """
     .difference table {
       table-layout: fixed;
       width: 100%%;
+      border: 0;
     }
     .difference th,
     .difference td {
       width: 50%%;
+      border: 0;
+    }
+    .difference td + td {
+      border-left: solid black 1px;
     }
     .difference td div {
       overflow: auto;

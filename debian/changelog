@@ -1,3 +1,36 @@
+debbindiff (10) unstable; urgency=low
+
+  [ Chris Lamb ]
+  * SVGZ files are gzip files.
+  * Use gzip comparator for .tgz files.
+
+  [ Reiner Herrmann ]
+  * Use zip comparator for Java web archives (.war).
+  * Use zip comparator for epub files.
+  * Don't fill up diffs with dots.
+  * Add support for squashfs images.
+
+  [ Jérémy Bobbio ]
+  * Output a nicer name for sub-directories.
+  * Also compare stat, acl, and xattrs when comparing directories.
+  * Check for availability of tools required by comparators (original work by
+    Reiner Herrmann). Most packages in Depends are now in Recommends.
+  * Ask objdump to display more sections.
+  * Drop stderr output when running cpio -t.
+  * Attempt to sort out multiple decoding and encoding issues.
+    (Closes: #778641)
+  * Fix source path when handling gzip, bzip2 and xz. (Closes: #779474)
+  * Don't crash when two .changes don't contain the same files.
+    (Closes: #779391)
+  * Properly split lines when comparing .changes.
+  * Add newlines if needed in text output.
+  * Remove most table borders in HTML output. (Closes: #779475)
+  * Properly close <span/> in HTML output.
+  * Add anchors in HTML output. (Closes: #778537)
+  * Update debian/copyright.
+
+ -- Jérémy Bobbio <lunar@debian.org>  Fri, 20 Mar 2015 13:52:44 +0100
+
 debbindiff (9) unstable; urgency=medium
 
   [ Chris Lamb ]

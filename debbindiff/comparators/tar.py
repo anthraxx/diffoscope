@@ -66,8 +66,8 @@ def compare_tar_files(path1, path2, source=None):
                         os.unlink(in_path1)
                         os.unlink(in_path2)
             # look up differences in file list and file metadata
-            content1 = get_tar_content(tar1)
-            content2 = get_tar_content(tar2)
+            content1 = get_tar_content(tar1).decode('utf-8')
+            content2 = get_tar_content(tar2).decode('utf-8')
             if content1 != content2:
                 differences.append(Difference(
                     content1.splitlines(1), content2.splitlines(1),

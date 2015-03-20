@@ -7,21 +7,41 @@ Copyright: 2014-2015 Jérémy Bobbio <lunar@debian.org>
 License: GPL-3+
 
 Files: debbindiff/changes.py
-Copyright: 2008 Jonny Lamb <jonny@debian.org>
-           2010 Jan Dittberner <jandd@debian.org>
-           2012 Arno Töll <arno@debian.org>
-           2012 Paul Tagliamonte <paultag@debian.org>
-           2014 Jérémy Bobbio <lunar@debian.org>
+Copyright:      2008 Jonny Lamb <jonny@debian.org>
+                2010 Jan Dittberner <jandd@debian.org>
+                2012 Arno Töll <arno@debian.org>
+                2012 Paul Tagliamonte <paultag@debian.org>
+           2014-2015 Jérémy Bobbio <lunar@debian.org>
 License: Expat
 
 Files: debbindiff/comparators/__init__.py
 Copyright: 2014-2015 Jérémy Bobbio <lunar@debian.org>
                 2015 Helmut Grohne <helmut@subdivi.de>
+                2015 Chris Lamb <lamby@debian.org>
+                2015 Reiner Herrmann <reiner@reiner-h.de>
+License: GPL-3+
+
+Files: debbindiff/comparators/bzip2.py
+       debbindiff/comparators/elf.py
+       debbindiff/comparators/fonts.py
+       debbindiff/comparators/gettext.py
+       debbindiff/comparators/gzip.py
+       debbindiff/comparators/haskell.py
+       debbindiff/comparators/pdf.py
+       debbindiff/comparators/png.py
+       debbindiff/comparators/utils.py
+       debbindiff/comparators/xz.py
+       debbindiff/comparators/zip.py
+Copyright: 2014-2015 Jérémy Bobbio <lunar@debian.org>
+                2015 Reiner Herrmann <reiner@reiner-h.de>
 License: GPL-3+
 
 Files: debbindiff/comparators/cpio.py
+       debbindiff/comparators/directory.py
        debbindiff/comparators/rpm.py
+       debbindiff/comparators/squashfs.py
 Copyright: 2015 Reiner Herrmann <reiner@reiner-h.de>
+           2015 Jérémy Bobbio <lunar@debian.org>
 License: GPL-3+
 
 Files: debbindiff/presenters/html.py
@@ -35,7 +55,7 @@ Copyright: 2015 Jérémy Bobbio <lunar@debian.org>
 License: GPL-3+
 
 Files: debian/*
-Copyright: 2014 Jérémy Bobbio <lunar@debian.org>
+Copyright: 2014-2015 Jérémy Bobbio <lunar@debian.org>
 License: GPL-3+
 
 License: GPL-3+

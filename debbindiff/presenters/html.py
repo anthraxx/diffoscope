@@ -91,6 +91,16 @@ HEADER = """
       background-color: #ff4444;
       font-weight: bold;
     }
+    .anchor {
+      margin-left: 0.5em;
+      font-size: 80%%;
+      color: #333;
+      text-decoration: none;
+      display: none;
+    }
+    .diffheader:hover .anchor {
+      display: inline;
+    }
   </style>
   %(css_link)s
 </head>
@@ -216,26 +226,32 @@ def create_diff(lines1, lines2):
         return output
 
 
-def output_difference(difference, print_func):
+def output_difference(difference, print_func, parents):
     logger.debug('html output for %s', difference.source1)
+    sources = parents + [difference.source1]
     print_func("<div class='difference'>")
     try:
+        print_func("<div class='diffheader'>")
         if difference.source1 == difference.source2:
-            print_func("<div><span class='source'>%s<span></div>"
+            print_func("<div><span class='source'>%s<span>"
                        % escape(difference.source1))
         else:
             print_func("<div><span class='source'>%s</span> vs.</div>"
                        % escape(difference.source1))
-            print_func("<div><span class='source'>%s</span></div>"
+            print_func("<div><span class='source'>%s</span>"
                        % escape(difference.source2))
+        anchor = '/'.join(sources[1:])
+        print_func(" <a class='anchor' href='#%s' name='%s'>&para;</a>" % (anchor, anchor))
+        print_func("</div>")
         if difference.comment:
             print_func("<div class='comment'>%s</div>"
                        % escape(difference.comment).replace('\n', '<br />'))
+        print_func("</div>")
         if difference.lines1 or difference.lines2:
             print_func(create_diff(difference.lines1 or ['<empty>'],
                                    difference.lines2 or ['<empty>']))
         for detail in difference.details:
-            output_difference(detail, print_func)
+            output_difference(detail, print_func, sources)
     except PrintLimitReached:
         logger.debug('print limit reached')
         raise
@@ -262,7 +278,7 @@ def output_html(differences, css_url=None, print_func=None, max_page_size=None):
     try:
         output_header(css_url, print_func)
         for difference in differences:
-            output_difference(difference, print_func)
+            output_difference(difference, print_func, [])
     except PrintLimitReached:
         logger.debug('print limit reached')
         print_func("<div class='error'>Max output size reached.</div>",

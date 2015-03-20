@@ -71,7 +71,7 @@ def compare_changes_files(path1, path2, source=None):
     files1 = dict([(d['name'], d) for d in files1])
     files2 = dict([(d['name'], d) for d in files2])
 
-    for filename in sorted(set(files1.keys()).union(files2.keys())):
+    for filename in sorted(set(files1.keys()).intersection(files2.keys())):
         d1 = files1[filename]
         d2 = files2[filename]
         if d1['md5sum'] != d2['md5sum']:

@@ -45,9 +45,12 @@ def compare_changes_files(path1, path2, source=None):
     differences = []
     for field in DOT_CHANGES_FIELDS:
         if dot_changes1[field] != dot_changes2[field]:
+            lines1 = dot_changes1[field].splitlines(1)
+            lines2 = dot_changes2[field].splitlines(1)
+            lines1[0] = "%s: %s" % (field, lines1[0])
+            lines2[0] = "%s: %s" % (field, lines2[0])
             differences.append(Difference(
-                ["%s: %s" % (field, dot_changes1[field])],
-                ["%s: %s" % (field, dot_changes2[field])],
+                lines1, lines2,
                 dot_changes1.get_changes_file(),
                 dot_changes2.get_changes_file(),
                 source=source))

@@ -1,3 +1,13 @@
+debbindiff (11) unstable; urgency=low
+
+  * Use latin-1 to decode showttf output.
+  * Normalize locale environment variables on startup and subsequently use
+    UTF-8 to decode output of most external tools. (Closes: #780863)
+  * Error out when encoding is not Unicode-compatible for text output.
+    (Closes: #778641)
+
+ -- Jérémy Bobbio <lunar@debian.org>  Mon, 23 Mar 2015 22:00:15 +0100
+
 debbindiff (10) unstable; urgency=low
 
   [ Chris Lamb ]

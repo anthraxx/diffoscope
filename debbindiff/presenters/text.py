@@ -22,6 +22,7 @@
 import sys
 import difflib
 import locale
+from debbindiff import logger
 
 
 def print_difference(difference, print_func):
@@ -60,8 +61,12 @@ def print_details(difference, print_func):
     print_func(u'╵')
 
 def output_text(differences, print_func):
-    for difference in differences:
-        print_func("--- %s" % (difference.source1))
-        print_func("+++ %s" % (difference.source2))
-        print_difference(difference, print_func)
-        print_details(difference, print_func)
+    try:
+        for difference in differences:
+            print_func("--- %s" % (difference.source1))
+            print_func("+++ %s" % (difference.source2))
+            print_difference(difference, print_func)
+            print_details(difference, print_func)
+    except UnicodeEncodeError:
+        logger.critical('Console is unable to print Unicode characters. Set LC_CTYPE=C.UTF-8')
+        sys.exit(2)

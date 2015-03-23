@@ -17,7 +17,6 @@
 # You should have received a copy of the GNU General Public License
 # along with debbindiff.  If not, see <http://www.gnu.org/licenses/>.
 
-import locale
 import subprocess
 import os.path
 import debbindiff.comparators
@@ -31,7 +30,7 @@ def get_cpio_content(path, verbose=False):
     cmd = ['cpio', '--quiet', '-tF', path]
     if verbose:
         cmd = ['cpio', '-tvF', path]
-    return subprocess.check_output(cmd, stderr=subprocess.PIPE, shell=False).decode(locale.getpreferredencoding())
+    return subprocess.check_output(cmd, stderr=subprocess.PIPE, shell=False).decode('utf-8')
 
 
 @tool_required('cpio')

@@ -18,7 +18,6 @@
 # along with debbindiff.  If not, see <http://www.gnu.org/licenses/>.
 
 from contextlib import contextmanager
-import locale
 import subprocess
 import os.path
 import debbindiff.comparators
@@ -43,7 +42,7 @@ def decompress_gzip(path):
 
 @tool_required('file')
 def get_gzip_metadata(path):
-    return subprocess.check_output(['file', '--brief', path]).decode(locale.getpreferredencoding())
+    return subprocess.check_output(['file', '--brief', path]).decode('utf-8')
 
 
 @binary_fallback

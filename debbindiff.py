@@ -23,6 +23,7 @@ from __future__ import print_function
 import argparse
 from contextlib import contextmanager
 import logging
+import os
 import sys
 import traceback
 from debbindiff import logger, VERSION
@@ -80,11 +81,26 @@ class ListToolsAction(argparse.Action):
         sys.exit(0)
 
 
+def set_locale():
+    """Normalize locale so external tool gives us stable and properly
+    encoded output"""
+
+    for var in ['LANGUAGE', 'LC_ALL']:
+        if var in os.environ:
+            del os.environ[var]
+    for var in ['LANG', 'LC_NUMERIC', 'LC_TIME', 'LC_COLLATE', 'LC_MONETARY',
+                'LC_MESSAGES', 'LC_PAPER', 'LC_NAME', 'LC_ADDRESS',
+                'LC_TELEPHONE', 'LC_MEASUREMENT', 'LC_IDENTIFICATION']:
+        os.environ[var] = 'C'
+    os.environ['LC_CTYPE'] = 'C.UTF-8'
+
+
 def main():
     parser = create_parser()
     parsed_args = parser.parse_args(sys.argv[1:])
     if parsed_args.debug:
         logger.setLevel(logging.DEBUG)
+    set_locale()
     differences = debbindiff.comparators.compare_files(
         parsed_args.file1, parsed_args.file2)
     if len(differences) > 0:

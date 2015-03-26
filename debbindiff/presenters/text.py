@@ -30,10 +30,10 @@ def print_difference(difference, print_func):
         for line in difference.comment.split('\n'):
             print_func(u"│┄ %s" % line)
     if difference.lines1 or difference.lines2:
-        if not difference.lines1[-1].endswith('\n'):
+        if difference.lines1 and not difference.lines1[-1].endswith('\n'):
             difference.lines1[-1] = difference.lines1[-1] + '\n'
             difference.lines1.append('<No newline at the end>\n')
-        if not difference.lines2[-1].endswith('\n'):
+        if difference.lines2 and not difference.lines2[-1].endswith('\n'):
             difference.lines2[-1] = difference.lines2[-1] + '\n'
             difference.lines2.append('<No newline at the end>\n')
         g = difflib.unified_diff(difference.lines1, difference.lines2)

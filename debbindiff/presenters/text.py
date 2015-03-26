@@ -43,7 +43,7 @@ def print_difference(difference, print_func):
         for line in g:
             if line.startswith('--- ') or line.startswith('+++ '):
                 continue
-            print_func("│ %s" % line.encode(locale.getpreferredencoding()), end='')
+            print_func(u"│ %s" % line, end='')
 
 def print_details(difference, print_func):
     if not difference.details:

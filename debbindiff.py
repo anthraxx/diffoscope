@@ -23,6 +23,7 @@ from __future__ import print_function
 import argparse
 from contextlib import contextmanager
 import logging
+import codecs
 import os
 import sys
 import traceback
@@ -61,7 +62,7 @@ def make_printer(path):
     if path == '-':
         output = sys.stdout
     else:
-        output = open(path, 'w')
+        output = codecs.open(path, 'w', encoding='utf-8')
     def print_func(*args, **kwargs):
         kwargs['file'] = output
         print(*args, **kwargs)

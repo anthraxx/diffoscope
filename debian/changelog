@@ -1,3 +1,18 @@
+debbindiff (12) unstable; urgency=low
+
+  [ Helmut Grohne ]
+  * Attempt at fixing unicode issues with --text. (Closes: #778641)
+
+  [ Jérémy Bobbio ]
+  * Try with utf-8 encoding when comparing text files and no common
+    encoding has been detected.
+  * Perform content comparison when finding differences instead of
+    waiting for the presentation phases. (Closes: #781280)
+  * Instead of using vim, the HTML view is created from diff output.
+    (Closes: #772029, #779476)
+
+ -- Jérémy Bobbio <lunar@debian.org>  Fri, 27 Mar 2015 18:42:26 +0100
+
 debbindiff (11) unstable; urgency=low
 
   * Use latin-1 to decode showttf output.

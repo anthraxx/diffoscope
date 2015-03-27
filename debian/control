@@ -19,8 +19,7 @@ Vcs-Browser: https://anonscm.debian.org/cgit/reproducible/debbindiff.git
 
 Package: debbindiff
 Architecture: all
-Depends: gnupg,
-         ${misc:Depends},
+Depends: ${misc:Depends},
          ${python:Depends},
 Recommends: ${debbindiff:Recommends}
 Description: highlight differences between two builds of Debian packages

@@ -46,7 +46,7 @@ import os.path
 import hashlib
 import subprocess
 from debian import deb822
-from debbindiff import logger
+from debbindiff import logger, tool_required
 
 
 class ChangesFileException(Exception):
@@ -241,6 +241,7 @@ class Changes(object):
         else:
             logger.info("Not checking signature")
 
+    @tool_required('gpg')
     def validate_signature(self, check_signature=True):
         """
         Validate the GPG signature of a .changes file.

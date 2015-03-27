@@ -21,7 +21,8 @@ from contextlib import contextmanager
 import subprocess
 import os.path
 import debbindiff.comparators
-from debbindiff.comparators.utils import binary_fallback, make_temp_directory, tool_required
+from debbindiff import tool_required
+from debbindiff.comparators.utils import binary_fallback, make_temp_directory
 from debbindiff.difference import Difference, get_source
 
 
@@ -53,8 +54,7 @@ def compare_gzip_files(path1, path2, source=None):
     metadata2 = get_gzip_metadata(path2)
     if metadata1 != metadata2:
         differences.append(Difference(
-            metadata1.splitlines(1), metadata2.splitlines(1),
-            path1, path2, source='metadata'))
+            metadata1, metadata2, path1, path2, source='metadata'))
     # check content
     with decompress_gzip(path1) as new_path1:
         with decompress_gzip(path2) as new_path2:

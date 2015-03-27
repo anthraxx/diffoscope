@@ -20,7 +20,8 @@
 import os.path
 import re
 import subprocess
-from debbindiff.comparators.utils import binary_fallback, get_ar_content, tool_required
+from debbindiff import tool_required
+from debbindiff.comparators.utils import binary_fallback, get_ar_content
 from debbindiff.difference import Difference
 
 
@@ -59,19 +60,18 @@ def _compare_elf_data(path1, path2, source=None):
     all2 = readelf_all(path2)
     if all1 != all2:
         differences.append(Difference(
-            all1.splitlines(1), all2.splitlines(1),
-            path1, path2, source='readelf --all'))
+            all1, all2, path1, path2, source='readelf --all'))
     debug_dump1 = readelf_debug_dump(path1)
     debug_dump2 = readelf_debug_dump(path2)
     if debug_dump1 != debug_dump2:
         differences.append(Difference(
-            debug_dump1.splitlines(1), debug_dump2.splitlines(1),
+            debug_dump1, debug_dump2,
             path1, path2, source='readelf --debug-dump'))
     objdump1 = objdump_disassemble(path1)
     objdump2 = objdump_disassemble(path2)
     if objdump1 != objdump2:
         differences.append(Difference(
-            objdump1.splitlines(1), objdump2.splitlines(1),
+            objdump1, objdump2,
             path1, path2, source='objdump --disassemble --full-contents'))
     return differences
 
@@ -89,7 +89,6 @@ def compare_static_lib_files(path1, path2, source=None):
     content2 = get_ar_content(path2)
     if content1 != content2:
         differences.append(Difference(
-            content1.splitlines(1), content2.splitlines(1),
-            path1, path2, source="metadata"))
+            content1, content2, path1, path2, source="metadata"))
     differences.extend(_compare_elf_data(path1, path2, source))
     return differences

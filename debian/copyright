@@ -47,6 +47,10 @@ License: GPL-3+
 Files: debbindiff/presenters/html.py
 Copyright: 2014-2015 Jérémy Bobbio <lunar@debian.org>
                 2015 Reiner Herrmann <reiner@reiner-h.de>
+           2012-2013 Olivier Matz <zer0@droids-corp.org>
+                2012 Alan De Smet <adesmet@cs.wisc.edu>
+                2012 Sergey Satskiy <sergey.satskiy@gmail.com>
+                2012 scito <info@scito.ch>
 License: GPL-3+
 
 Files: debbindiff/presenters/text.py

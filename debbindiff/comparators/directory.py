@@ -20,9 +20,8 @@
 import os.path
 import re
 import subprocess
-from debbindiff import logger
+from debbindiff import logger, tool_required
 from debbindiff.difference import Difference
-from debbindiff.comparators.utils import tool_required
 import debbindiff.comparators
 
 
@@ -63,8 +62,7 @@ def compare_meta(path1, path2):
         stat2 = stat(path2)
         if stat1 != stat2:
             differences.append(Difference(
-                stat1.splitlines(1), stat2.splitlines(1),
-                path1, path2, source="stat"))
+                stat1, stat2, path1, path2, source="stat"))
     except RequiredToolNotFound:
         logger.warn("'stat' not found! Is PATH wrong?")
 
@@ -73,8 +71,7 @@ def compare_meta(path1, path2):
         lsattr2 = lsattr(path2)
         if lsattr1 != lsattr2:
             differences.append(Difference(
-                lsattr1.splitlines(1), lsattr2.splitlines(1),
-                path1, path2, source="lattr"))
+                lsattr1, lsattr2, path1, path2, source="lattr"))
     except RequiredToolNotFound:
         logger.info("Unable to find 'lsattr'.")
 
@@ -83,8 +80,7 @@ def compare_meta(path1, path2):
         acl2 = getfacl(path2)
         if acl1 != acl2:
             differences.append(Difference(
-                acl1.splitlines(1), acl2.splitlines(1),
-                path1, path2, source="getfacl"))
+                acl1, acl2, path1, path2, source="getfacl"))
     except RequiredToolNotFound:
         logger.info("Unable to find 'getfacl'.")
     return differences
@@ -112,9 +108,7 @@ def compare_directories(path1, path2, source=None):
     ls1 = sorted(ls(path1))
     ls2 = sorted(ls(path2))
     if ls1 != ls2:
-        differences.append(Difference(
-            ls1.splitlines(1), ls2.splitlines(1),
-            path1, path2, source="ls"))
+        differences.append(Difference(ls1, ls2, path1, path2, source="ls"))
     differences.extend(compare_meta(path1, path2))
     if differences:
         d = Difference(None, None, path1, path2, source=source)

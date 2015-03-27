@@ -19,7 +19,6 @@
 
 from contextlib import contextmanager
 # The following would be shutil.which in Python 3.3
-from distutils.spawn import find_executable
 import hashlib
 import re
 import os
@@ -81,60 +80,6 @@ def binary_fallback(original_function):
                 difference.comment += "\nInstall '%s' to get a better output." % package
         return [difference]
     return with_fallback
-
-
-class RequiredToolNotFound(Exception):
-    PROVIDERS = { 'ar':         { 'debian': 'binutils-multiarch' }
-                , 'bzip2':      { 'debian': 'bzip2' }
-                , 'cpio':       { 'debian': 'cpio' }
-                , 'file':       { 'debian': 'file' }
-                , 'getfacl':    { 'debian': 'acl' }
-                , 'ghc':        { 'debian': 'ghc' }
-                , 'gpg':        { 'debian': 'gnupg' }
-                , 'gzip':       { 'debian': 'gzip' }
-                , 'ls':         { 'debian': 'coreutils' }
-                , 'lsattr':     { 'debian': 'e2fsprogs' }
-                , 'msgunfmt':   { 'debian': 'gettext' }
-                , 'objdump':    { 'debian': 'binutils-multiarch' }
-                , 'pdftk':      { 'debian': 'pdftk' }
-                , 'pdftotext':  { 'debian': 'poppler-utils' }
-                , 'readelf':    { 'debian': 'binutils-multiarch' }
-                , 'rpm2cpio':   { 'debian': 'rpm2cpio' }
-                , 'showttf':    { 'debian': 'fontforge-extras' }
-                , 'sng':        { 'debian': 'sng' }
-                , 'stat':       { 'debian': 'coreutils' }
-                , 'unsquashfs': { 'debian': 'squashfs-tools' }
-                , 'vim':        { 'debian': 'vim' }
-                , 'xxd':        { 'debian': 'vim-common' }
-                , 'xz':         { 'debian': 'xz-utils' }
-                , 'zipinfo':    { 'debian': 'unzip' }
-              }
-
-    def __init__(self, command):
-        self.command = command
-
-    def get_package(self):
-        providers = RequiredToolNotFound.PROVIDERS.get(self.command, None)
-        if not providers:
-            return None
-        # XXX: hardcode Debian for now
-        return providers['debian']
-
-
-# decorator that checks if the specified tool is installed
-def tool_required(command):
-    if not hasattr(tool_required, 'all'):
-        tool_required.all = set()
-    tool_required.all.add(command)
-    def wrapper(original_function):
-        if find_executable(command):
-            def tool_check(*args, **kwargs):
-                return original_function(*args, **kwargs)
-        else:
-            def tool_check(*args, **kwargs):
-                raise RequiredToolNotFound(command)
-        return tool_check
-    return wrapper
 
 
 @contextmanager

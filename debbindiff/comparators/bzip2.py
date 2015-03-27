@@ -21,8 +21,9 @@ from contextlib import contextmanager
 import os.path
 import subprocess
 import debbindiff.comparators
-from debbindiff.comparators.utils import binary_fallback, make_temp_directory, tool_required
+from debbindiff.comparators.utils import binary_fallback, make_temp_directory
 from debbindiff.difference import get_source
+from debbindiff import tool_required
 
 
 @contextmanager

@@ -29,21 +29,9 @@ def print_difference(difference, print_func):
     if difference.comment:
         for line in difference.comment.split('\n'):
             print_func(u"│┄ %s" % line)
-    if difference.lines1 or difference.lines2:
-        if difference.lines1 and not difference.lines1[-1].endswith('\n'):
-            difference.lines1[-1] = difference.lines1[-1] + '\n'
-            difference.lines1.append('<No newline at the end>\n')
-        if difference.lines2 and not difference.lines2[-1].endswith('\n'):
-            difference.lines2[-1] = difference.lines2[-1] + '\n'
-            difference.lines2.append('<No newline at the end>\n')
-        g = difflib.unified_diff(difference.lines1, difference.lines2)
-        # First skip lines with filename
-        g.next()
-        g.next()
-        for line in g:
-            if line.startswith('--- ') or line.startswith('+++ '):
-                continue
-            print_func(u"│ %s" % line, end='')
+    if difference.unified_diff:
+        for line in difference.unified_diff.splitlines():
+            print_func(u"│ %s" % line)
 
 def print_details(difference, print_func):
     if not difference.details:

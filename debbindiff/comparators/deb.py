@@ -57,8 +57,7 @@ def compare_deb_files(path1, path2, source=None):
     content2 = get_ar_content(path2)
     if content1 != content2:
         differences.append(Difference(
-            content1.splitlines(1), content2.splitlines(1),
-            path1, path2, source="metadata"))
+            content1, content2, path1, path2, source="metadata"))
     return differences
 
 

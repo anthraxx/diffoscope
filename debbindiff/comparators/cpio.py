@@ -20,8 +20,8 @@
 import subprocess
 import os.path
 import debbindiff.comparators
-from debbindiff import logger
-from debbindiff.comparators.utils import binary_fallback, make_temp_directory, tool_required
+from debbindiff import logger, tool_required
+from debbindiff.comparators.utils import binary_fallback, make_temp_directory
 from debbindiff.difference import Difference
 
 
@@ -54,8 +54,7 @@ def compare_cpio_files(path1, path2, source=None):
     content2 = get_cpio_content(path2, verbose=True)
     if content1 != content2:
         differences.append(Difference(
-            content1.splitlines(1), content2.splitlines(1),
-            path1, path2, source="metadata"))
+            content1, content2, path1, path2, source="metadata"))
 
     # compare files contained in archive
     content1 = get_cpio_content(path1, verbose=False)

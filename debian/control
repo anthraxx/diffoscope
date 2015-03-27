@@ -19,10 +19,7 @@ Vcs-Browser: https://anonscm.debian.org/cgit/reproducible/debbindiff.git
 
 Package: debbindiff
 Architecture: all
-Depends: diffutils,
-         gnupg,
-         vim,
-         vim-common,
+Depends: gnupg,
          ${misc:Depends},
          ${python:Depends},
 Recommends: ${debbindiff:Recommends}

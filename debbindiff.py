@@ -73,7 +73,7 @@ def make_printer(path):
 
 class ListToolsAction(argparse.Action):
     def __call__(self, parser, namespace, values, option_string=None):
-        from debbindiff.comparators.utils import tool_required, RequiredToolNotFound
+        from debbindiff import tool_required, RequiredToolNotFound
         print("External tools required:")
         print(', '.join(tool_required.all))
         print()

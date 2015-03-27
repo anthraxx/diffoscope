@@ -19,7 +19,8 @@
 
 import locale
 import subprocess
-from debbindiff.comparators.utils import binary_fallback, tool_required
+from debbindiff import tool_required
+from debbindiff.comparators.utils import binary_fallback
 from debbindiff.difference import Difference
 
 
@@ -33,6 +34,5 @@ def compare_ttf_files(path1, path2, source=None):
     ttf1 = show_ttf(path1)
     ttf2 = show_ttf(path2)
     if ttf1 != ttf2:
-        return [Difference(ttf1.splitlines(1), ttf2.splitlines(1),
-                           path1, path2, source='showttf')]
+        return [Difference(ttf1, ttf2, path1, path2, source='showttf')]
     return []

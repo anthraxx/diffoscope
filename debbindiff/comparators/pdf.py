@@ -18,7 +18,8 @@
 # along with debbindiff.  If not, see <http://www.gnu.org/licenses/>.
 
 import subprocess
-from debbindiff.comparators.utils import binary_fallback, tool_required
+from debbindiff import tool_required
+from debbindiff.comparators.utils import binary_fallback
 from debbindiff.difference import Difference, get_source
 
 
@@ -45,14 +46,12 @@ def compare_pdf_files(path1, path2, source=None):
     text2 = pdftotext(path2)
     if text1 != text2:
         differences.append(
-            Difference(text1.splitlines(1), text2.splitlines(1),
-                       text1, text2,
+            Difference(text1, text2, path1, path2,
                        source="pdftotext %s" % src))
     uncompressed1 = uncompress(path1)
     uncompressed2 = uncompress(path2)
     if uncompressed1 != uncompressed2:
         differences.append(
-            Difference(uncompressed1.splitlines(1), uncompressed2.splitlines(1),
-                       path1, path2,
+            Difference(uncompressed1, uncompressed2, path1, path2,
                        source="pdftk %s output - uncompress" % src))
     return differences

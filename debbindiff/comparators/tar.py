@@ -70,6 +70,5 @@ def compare_tar_files(path1, path2, source=None):
             content2 = get_tar_content(tar2).decode('utf-8')
             if content1 != content2:
                 differences.append(Difference(
-                    content1.splitlines(1), content2.splitlines(1),
-                    path1, path2, source="metadata"))
+                    content1, content2, path1, path2, source="metadata"))
     return differences

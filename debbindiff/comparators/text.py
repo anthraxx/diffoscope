@@ -26,11 +26,11 @@ def compare_text_files(path1, path2, encoding, source=None):
     if encoding is None:
         encoding = 'utf-8'
     try:
-        lines1 = codecs.open(path1, 'r', encoding=encoding).readlines()
-        lines2 = codecs.open(path2, 'r', encoding=encoding).readlines()
+        content1 = codecs.open(path1, 'r', encoding=encoding).read()
+        content2 = codecs.open(path2, 'r', encoding=encoding).read()
     except (LookupError, UnicodeDecodeError):
         # unknown or misdetected encoding
         return compare_binary_files(path1, path2, source)
-    if lines1 == lines2:
+    if content1 == content2:
         return []
-    return [Difference(lines1, lines2, path1, path2, source)]
+    return [Difference(content1, content2, path1, path2, source)]

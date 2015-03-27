@@ -30,5 +30,4 @@ def compare_binary_files(path1, path2, source=None):
     hexdump2 = get_hexdump(path2)
     if hexdump1 == hexdump2:
         return []
-    return [Difference(hexdump1.splitlines(1), hexdump2.splitlines(1),
-                       path1, path2, source)]
+    return [Difference(hexdump1, hexdump2, path1, path2, source)]

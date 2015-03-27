@@ -18,7 +18,8 @@
 # along with debbindiff.  If not, see <http://www.gnu.org/licenses/>.
 
 import subprocess
-from debbindiff.comparators.utils import binary_fallback, tool_required
+from debbindiff import tool_required
+from debbindiff.comparators.utils import binary_fallback
 from debbindiff.difference import Difference
 
 
@@ -32,6 +33,5 @@ def compare_mo_files(path1, path2, source=None):
     mo1 = msgunfmt(path1)
     mo2 = msgunfmt(path2)
     if mo1 != mo2:
-        return [Difference(mo1.splitlines(1), mo2.splitlines(1),
-                           path1, path2, source='msgunfmt')]
+        return [Difference(mo1, mo2, path1, path2, source='msgunfmt')]
     return []

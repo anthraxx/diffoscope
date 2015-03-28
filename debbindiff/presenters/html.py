@@ -253,62 +253,6 @@ def linediff(s, t):
     return r1, r2
 
 
-def diff_changed(old, new):
-    '''
-    Returns the differences basend on characters between two strings
-    wrapped with DIFFON and DIFFOFF using `diff`.
-    '''
-    con = {'=': (lambda x: x),
-           '+': (lambda x: DIFFON + x + DIFFOFF),
-           '-': (lambda x: '')}
-    return "".join([(con[a])("".join(b)) for a, b in diff(old, new)])
-
-
-def diff_changed_ts(old, new):
-    '''
-    Returns a tuple for a two sided comparison based on characters, see `diff_changed`.
-    '''
-    return (diff_changed(new, old), diff_changed(old, new))
-
-
-def word_diff(old, new):
-    '''
-    Returns the difference between the old and new strings based on words. Punctuation is not part of the word.
-
-    Params:
-        old the old string
-        new the new string
-
-    Returns:
-        the output of `diff` on the two strings after splitting them
-        on whitespace (a list of change instructions; see the docstring
-        of `diff`)
-    '''
-    separator_pattern = '(\W+)';
-    return diff(re.split(separator_pattern, old, flags=re.UNICODE), re.split(separator_pattern, new, flags=re.UNICODE))
-
-
-def diff_changed_words(old, new):
-    '''
-    Returns the difference between two strings based on words (see `word_diff`)
-    wrapped with DIFFON and DIFFOFF.
-
-    Returns:
-        the output of the diff expressed delimited with DIFFON and DIFFOFF.
-    '''
-    con = {'=': (lambda x: x),
-           '+': (lambda x: DIFFON + x + DIFFOFF),
-           '-': (lambda x: '')}
-    return "".join([(con[a])("".join(b)) for a, b in word_diff(old, new)])
-
-
-def diff_changed_words_ts(old, new):
-    '''
-    Returns a tuple for a two sided comparison based on words, see `diff_changed_words`.
-    '''
-    return (diff_changed_words(new, old), diff_changed_words(old, new))
-
-
 def convert(s, linesize=0, ponct=0):
     i = 0
     t = u""

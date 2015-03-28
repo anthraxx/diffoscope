@@ -20,7 +20,7 @@
 import os.path
 import re
 import subprocess
-from debbindiff import logger, tool_required
+from debbindiff import logger, tool_required, RequiredToolNotFound
 from debbindiff.difference import Difference
 import debbindiff.comparators
 

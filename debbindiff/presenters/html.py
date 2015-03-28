@@ -270,9 +270,9 @@ def convert(s, linesize=0, ponct=0):
 
         # special highlighted chars
         elif c == "\t" and ponct == 1:
-            n = tabsize-(i%tabsize)
+            n = TABSIZE-(i%TABSIZE)
             if n == 0:
-                n = tabsize
+                n = TABSIZE
             t += (u'<span class="diffponct">&raquo;</span>'+'&nbsp;'*(n-1))
         elif c == " " and ponct == 1:
             t += u'<span class="diffponct">&middot;</span>'

@@ -33,7 +33,7 @@
 
 from __future__ import print_function
 import os.path
-import htmlentitydefs
+import cgi
 import re
 import subprocess
 import sys
@@ -263,10 +263,10 @@ def convert(s, ponct=0):
         elif c == DIFFOFF:
             t += u"</span>"
 
-        # special html chars
-        elif htmlentitydefs.codepoint2name.has_key(ord(c)):
-            t += u"&%s;" % (htmlentitydefs.codepoint2name[ord(c)])
-            i += 1
+        elif ord(c) < 32:
+            conv = u"\\x%x" % ord(c)
+            t += u"<em>%s</em>" % conv
+            i += len(conv)
 
         # special highlighted chars
         elif c == "\t" and ponct == 1:
@@ -279,7 +279,7 @@ def convert(s, ponct=0):
         elif c == "\n" and ponct == 1:
             t += u'<br/><span class="diffponct">\</span>'
         else:
-            t += c
+            t += cgi.escape(c)
             i += 1
 
         if WORDBREAK.count(c) == 1:

@@ -26,7 +26,8 @@ from debbindiff.difference import Difference
 
 @tool_required('showttf')
 def show_ttf(path):
-    return subprocess.check_output(['showttf', path], shell=False).decode('latin-1')
+    return subprocess.check_output(['showttf', path], shell=False,
+                                   stderr=subprocess.PIPE).decode('latin-1')
 
 
 @binary_fallback

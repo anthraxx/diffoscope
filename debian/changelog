@@ -1,3 +1,21 @@
+debbindiff (13) unstable; urgency=low
+
+  [ Helmut Grohne ]
+  * Fix several imports for RequiredToolNotFound.
+
+  [ Jérémy Bobbio ]
+  * Remove dead code from HTML presenter.
+  * Fix tab handling in HTML presenter.
+  * Swallow stderr when running showttf. (Closes: #781374)
+  * Swallow stderr for readelf and objdump.
+  * Use pipes instead of temp files to feed diff.
+  * Stop processing diff output after too many lines.
+  * Use LINESIZE constant directly in HTML presenter.
+  * Better handle non-printable characters in HTML presenter.
+  * Cut long lines in HTML presenter.
+
+ -- Jérémy Bobbio <lunar@debian.org>  Sat, 28 Mar 2015 18:53:29 +0100
+
 debbindiff (12) unstable; urgency=low
 
   [ Helmut Grohne ]

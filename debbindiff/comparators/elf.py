@@ -29,7 +29,7 @@ from debbindiff.difference import Difference
 def readelf_all(path):
     output = subprocess.check_output(
         ['readelf', '--all', path],
-        shell=False).decode('ascii')
+        shell=False, stderr=subprocess.PIPE).decode('ascii')
     # the full path can appear in the output, we need to remove it
     return re.sub(re.escape(path), os.path.basename(path), output)
 
@@ -38,7 +38,7 @@ def readelf_all(path):
 def readelf_debug_dump(path):
     output = subprocess.check_output(
         ['readelf', '--debug-dump', path],
-        shell=False).decode('ascii')
+        shell=False, stderr=subprocess.PIPE).decode('ascii')
     # the full path can appear in the output, we need to remove it
     return re.sub(re.escape(path), os.path.basename(path), output)
 
@@ -47,7 +47,7 @@ def readelf_debug_dump(path):
 def objdump_disassemble(path):
     output = subprocess.check_output(
         ['objdump', '--disassemble', '--full-contents', path],
-        shell=False)
+        shell=False, stderr=subprocess.PIPE)
     # the full path appears in the output, we need to remove it
     return re.sub(re.escape(path), os.path.basename(path), output).decode('ascii')
 

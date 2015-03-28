@@ -253,7 +253,7 @@ def linediff(s, t):
     return r1, r2
 
 
-def convert(s, linesize=0, ponct=0):
+def convert(s, ponct=0):
     i = 0
     t = u""
     for c in s:
@@ -282,10 +282,10 @@ def convert(s, linesize=0, ponct=0):
             t += c
             i += 1
 
-        if linesize and (WORDBREAK.count(c) == 1):
+        if WORDBREAK.count(c) == 1:
             t += u'&#8203;'
             i = 0
-        if linesize and i > linesize:
+        if i > LINESIZE:
             i = 0
             t += u"&#8203;"
 
@@ -323,7 +323,7 @@ def output_line(print_func, s1, s2):
         if s1 is not None:
             print_func(u'<td class="diffline">%d </td>' % line1)
             print_func(u'<td class="diffpresent">')
-            print_func(convert(s1, linesize=LINESIZE, ponct=1))
+            print_func(convert(s1, ponct=1))
             print_func(u'</td>')
         else:
             s1 = ""
@@ -332,7 +332,7 @@ def output_line(print_func, s1, s2):
         if s2 is not None:
             print_func(u'<td class="diffline">%d </td>' % line2)
             print_func(u'<td class="diffpresent">')
-            print_func(convert(s2, linesize=LINESIZE, ponct=1))
+            print_func(convert(s2, ponct=1))
             print_func(u'</td>')
         else:
             s2 = ""

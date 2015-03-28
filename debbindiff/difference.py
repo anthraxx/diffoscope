@@ -17,11 +17,13 @@
 # You should have received a copy of the GNU General Public License
 # along with debbindiff.  If not, see <http://www.gnu.org/licenses/>.
 
+import os
 import os.path
 from functools import partial
 from tempfile import NamedTemporaryFile
 import re
 import subprocess
+from threading import Thread
 from debbindiff import logger, tool_required, RequiredToolNotFound
 
 
@@ -39,12 +41,13 @@ class DiffParser(object):
         self._block_len = None
         self._direction = None
 
+    @property
+    def diff(self):
+        return self._diff
+
     def parse(self):
-        while True:
-            line = self._output.readline().decode('utf-8')
-            if line == '': # EOF
-                return self._diff
-            self._action = self._action(line)
+        for line in iter(self._output.readline, b''):
+            self._action = self._action(line.decode('utf-8'))
 
     def read_headers(self, line):
         found = DiffParser.RANGE_RE.match(line)
@@ -101,33 +104,59 @@ class DiffParser(object):
         return self.skip_block
 
 
+
+
+DIFF_CHUNK = 4096
+
+
+def feed_content(f, content, add_ln):
+    for offset in range(0, len(content), DIFF_CHUNK):
+        f.write(content[offset:offset + DIFF_CHUNK].encode('utf-8'))
+    if add_ln:
+        f.write('\n')
+    f.close()
+
+
 @tool_required('diff')
 def diff(content1, content2):
-    with NamedTemporaryFile('w') as tmp_file1:
-        with NamedTemporaryFile('w') as tmp_file2:
-            # fill temporary files
-            tmp_file1.write(content1.encode('utf-8'))
-            tmp_file2.write(content2.encode('utf-8'))
-            # work-around unified diff limitation: if there's no newlines in both
-            # don't make it a difference
-            if content1[-1] != '\n' and content2[-1] != '\n':
-                tmp_file1.write('\n')
-                tmp_file2.write('\n')
-            tmp_file1.flush()
-            tmp_file2.flush()
-            # run diff
-            logger.debug('running diff')
-            cmd = ['diff', '-au7', tmp_file1.name, tmp_file2.name]
-            p = subprocess.Popen(cmd, shell=False,
-                                 close_fds=True, stdin=None, stdout=subprocess.PIPE,
-                                 stderr=subprocess.STDOUT)
-            # parse ouptut
-            logger.debug('parsing diff output')
-            diff = DiffParser(p.stdout).parse()
-            p.wait()
-            if p.returncode not in (0, 1):
-                raise subprocess.CalledProcessError(cmd, p.returncode, output=diff)
-            return diff
+    pipe_r1, pipe_w1 = os.pipe()
+    pipe_r2, pipe_w2 = os.pipe()
+    # run diff
+    logger.debug('running diff')
+    cmd = ['diff', '-au7', '/dev/fd/%d' % pipe_r1, '/dev/fd/%d' % pipe_r2]
+    def close_pipes():
+        os.close(pipe_w1)
+        os.close(pipe_w2)
+    p = subprocess.Popen(cmd, shell=False, bufsize=1,
+                         stdin=subprocess.PIPE,
+                         stdout=subprocess.PIPE,
+                         stderr=subprocess.STDOUT,
+                         preexec_fn=close_pipes)
+    os.close(pipe_r1)
+    os.close(pipe_r2)
+    p.stdin.close()
+    output1 = os.fdopen(pipe_w1, 'w')
+    output2 = os.fdopen(pipe_w2, 'w')
+    parser = DiffParser(p.stdout)
+    t_read = Thread(target=parser.parse)
+    t_read.daemon = True
+    t_read.start()
+    # work-around unified diff limitation: if there's no newlines in both
+    # don't make it a difference
+    add_ln = content1[-1] != '\n' and content2[-1] != '\n'
+    t_write1 = Thread(target=feed_content, args=(output1, content1, add_ln))
+    t_write1.daemon = True
+    t_write1.start()
+    t_write2 = Thread(target=feed_content, args=(output2, content2, add_ln))
+    t_write2.daemon = True
+    t_write2.start()
+    t_write1.join()
+    t_write2.join()
+    t_read.join()
+    p.wait()
+    if p.returncode not in (0, 1):
+        raise subprocess.CalledProcessError(cmd, p.returncode, output=diff)
+    return parser.diff
 
 
 class Difference(object):

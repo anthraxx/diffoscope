@@ -27,7 +27,7 @@ import subprocess
 import tempfile
 from debbindiff.comparators.binary import compare_binary_files
 from debbindiff.difference import Difference
-from debbindiff import logger
+from debbindiff import logger, RequiredToolNotFound
 
 
 def are_same_binaries(path1, path2):

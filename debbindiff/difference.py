@@ -28,6 +28,7 @@ from debbindiff import logger, tool_required, RequiredToolNotFound
 
 
 MAX_DIFF_BLOCK_LINES = 50
+MAX_DIFF_LINES = 10000
 
 
 class DiffParser(object):
@@ -37,6 +38,8 @@ class DiffParser(object):
         self._output = output
         self._action = self.read_headers
         self._diff = ''
+        self._success = False
+        self._line_count = 0
         self._remaining_hunk_lines = None
         self._block_len = None
         self._direction = None
@@ -45,9 +48,19 @@ class DiffParser(object):
     def diff(self):
         return self._diff
 
+    @property
+    def success(self):
+        return self._success
+
     def parse(self):
         for line in iter(self._output.readline, b''):
+            self._line_count += 1
+            if self._line_count >= MAX_DIFF_LINES:
+                self._diff += '\n[ Processing stopped after %d lines. ]' % self._line_count
+                break
             self._action = self._action(line.decode('utf-8'))
+        self._success = True
+        self._output.close()
 
     def read_headers(self, line):
         found = DiffParser.RANGE_RE.match(line)
@@ -154,7 +167,7 @@ def diff(content1, content2):
     t_write2.join()
     t_read.join()
     p.wait()
-    if p.returncode not in (0, 1):
+    if not parser.success and p.returncode not in (0, 1):
         raise subprocess.CalledProcessError(cmd, p.returncode, output=diff)
     return parser.diff
 

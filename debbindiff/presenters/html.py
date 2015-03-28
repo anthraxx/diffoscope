@@ -410,6 +410,10 @@ def output_unified_diff(print_func, unified_diff):
                 output_hunk(print_func)
                 continue
 
+            if re.match(r'^\[', l):
+                empty_buffer(print_func)
+                print_func(u'<td colspan="2">%s</td>\n' % l)
+
             if re.match(r"^\\ No newline", l):
                 if hunk_size2 == 0:
                     buf[-1] = (buf[-1][0], buf[-1][1] + '\n' + l[2:])

@@ -45,6 +45,7 @@ from debbindiff.comparators.utils import make_temp_directory
 # minimum line size, we add a zero-sized breakable space every
 # LINESIZE characters
 LINESIZE = 20
+MAX_LINE_SIZE = 1024
 TABSIZE = 8
 
 # Characters we're willing to word wrap on
@@ -304,6 +305,11 @@ def output_line(print_func, s1, s2):
     orig1 = s1
     orig2 = s2
 
+    if s1 and len(s1) > MAX_LINE_SIZE:
+        s1 = s1[:MAX_LINE_SIZE] + u" ✂"
+    if s2 and len(s2) > MAX_LINE_SIZE:
+        s2 = s2[:MAX_LINE_SIZE] + u" ✂"
+
     if s1 == None and s2 == None:
         type_name = "unmodified"
     elif s1 == "" and s2 == "":
@@ -312,11 +318,11 @@ def output_line(print_func, s1, s2):
         type_name = "added"
     elif s2 == None or s2 == "":
         type_name = "deleted"
-    elif s1 == s2 and not s1.endswith('lines removed ]') and not s2.endswith('lines removed ]'):
+    elif orig1 == orig2 and not s1.endswith('lines removed ]') and not s2.endswith('lines removed ]'):
         type_name = "unmodified"
     else:
         type_name = "changed"
-        s1, s2 = linediff(orig1, orig2)
+        s1, s2 = linediff(s1, s2)
 
     print_func(u'<tr class="diff%s">' % type_name)
     try:

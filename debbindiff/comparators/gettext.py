@@ -17,15 +17,24 @@
 # You should have received a copy of the GNU General Public License
 # along with debbindiff.  If not, see <http://www.gnu.org/licenses/>.
 
+import re
 import subprocess
 from debbindiff import tool_required
 from debbindiff.comparators.utils import binary_fallback
 from debbindiff.difference import Difference
+from debbindiff import logger
 
 
 @tool_required('msgunfmt')
 def msgunfmt(path):
-    return subprocess.check_output(['msgunfmt', path], shell=False).decode('utf-8')
+    output = subprocess.check_output(['msgunfmt', path], shell=False)
+    found = re.search(r'^"Content-Type: [^;]+; charset=([^\\]+)\\n"$', output, re.MULTILINE)
+    if found:
+        encoding = found.group(1)
+    else:
+        logger.debug('unable to determine PO encoding, falling back to utf-8')
+        encoding = 'utf-8'
+    return output.decode(encoding)
 
 
 @binary_fallback

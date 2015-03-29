@@ -59,7 +59,7 @@ def binary_fallback(original_function):
             # no differences detected inside? let's at least do a binary diff
             if len(inside_differences) == 0:
                 difference = compare_binary_files(path1, path2, source=source)[0]
-                difference.comment = \
+                difference.comment = (difference.comment or '') + \
                     "No differences found inside, yet data differs"
             else:
                 difference = Difference(None, None, path1, path2, source=source)
@@ -68,12 +68,12 @@ def binary_fallback(original_function):
             difference = compare_binary_files(path1, path2, source=source)[0]
             output = re.sub(r'^', '    ', e.output, flags=re.MULTILINE)
             cmd = ' '.join(e.cmd)
-            difference.comment = \
+            difference.comment = (difference.comment or '') + \
                 "Command `%s` exited with %d. Output:\n%s" \
                 % (cmd, e.returncode, output)
         except RequiredToolNotFound as e:
             difference = compare_binary_files(path1, path2, source=source)[0]
-            difference.comment = \
+            difference.comment = (difference.comment or '') + \
                 "'%s' not available in path. Falling back to binary comparison." % e.command
             package = e.get_package()
             if package:

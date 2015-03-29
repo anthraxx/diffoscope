@@ -17,17 +17,34 @@
 # You should have received a copy of the GNU General Public License
 # along with debbindiff.  If not, see <http://www.gnu.org/licenses/>.
 
-from debbindiff.difference import Difference
+from binascii import hexlify
 import subprocess
+from debbindiff.difference import Difference
+from debbindiff import tool_required, RequiredToolNotFound
 
 
-def get_hexdump(path):
+@tool_required('xxd')
+def xxd(path):
     return subprocess.check_output(['xxd', path], shell=False).decode('ascii')
 
 
+def hexdump_fallback(path):
+    hexdump = ''
+    with open(path) as f:
+        for buf in iter(lambda: f.read(32), b''):
+            hexdump += u'%s\n' % hexlify(buf)
+    return hexdump
+
+
 def compare_binary_files(path1, path2, source=None):
-    hexdump1 = get_hexdump(path1)
-    hexdump2 = get_hexdump(path2)
+    try:
+        hexdump1 = xxd(path1)
+        hexdump2 = xxd(path2)
+        comment = None
+    except RequiredToolNotFound:
+        hexdump1 = hexdump_fallback(path1)
+        hexdump2 = hexdump_fallback(path2)
+        comment = 'xxd not available in path. Falling back to Python hexlify.\n'
     if hexdump1 == hexdump2:
         return []
-    return [Difference(hexdump1, hexdump2, path1, path2, source)]
+    return [Difference(hexdump1, hexdump2, path1, path2, source, comment)]

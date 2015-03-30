@@ -21,16 +21,19 @@ import subprocess
 import os.path
 import debbindiff.comparators
 from debbindiff import logger, tool_required
-from debbindiff.comparators.utils import binary_fallback, make_temp_directory
+from debbindiff.comparators.utils import binary_fallback, make_temp_directory, Command
 from debbindiff.difference import Difference
+
+class CpioContent(Command):
+    @tool_required('cpio')
+    def cmdline(self):
+        return ['cpio', '-tvF', self.path]
 
 
 @tool_required('cpio')
-def get_cpio_content(path, verbose=False):
+def get_cpio_names(path):
     cmd = ['cpio', '--quiet', '-tF', path]
-    if verbose:
-        cmd = ['cpio', '-tvF', path]
-    return subprocess.check_output(cmd, stderr=subprocess.PIPE, shell=False).decode('utf-8')
+    return subprocess.check_output(cmd, stderr=subprocess.PIPE, shell=False)
 
 
 @tool_required('cpio')
@@ -49,17 +52,14 @@ def extract_cpio_archive(path, destdir):
 def compare_cpio_files(path1, path2, source=None):
     differences = []
 
-    # compare metadata
-    content1 = get_cpio_content(path1, verbose=True)
-    content2 = get_cpio_content(path2, verbose=True)
-    difference = Difference.from_unicode(
-                     content1, content2, path1, path2, source="metadata")
+    difference = Difference.from_command(
+                     CpioContent, path1, path2, source="file list")
     if difference:
         differences.append(difference)
 
     # compare files contained in archive
-    content1 = get_cpio_content(path1, verbose=False)
-    content2 = get_cpio_content(path2, verbose=False)
+    content1 = get_cpio_names(path1)
+    content2 = get_cpio_names(path2)
     with make_temp_directory() as temp_dir1:
         with make_temp_directory() as temp_dir2:
             extract_cpio_archive(path1, temp_dir1)

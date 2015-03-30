@@ -21,59 +21,50 @@ import os.path
 import re
 import subprocess
 from debbindiff import tool_required
-from debbindiff.comparators.utils import binary_fallback, get_ar_content
+from debbindiff.comparators.utils import binary_fallback, get_ar_content, Command
 from debbindiff.difference import Difference
 
 
-@tool_required('readelf')
-def readelf_all(path):
-    output = subprocess.check_output(
-        ['readelf', '--all', path],
-        shell=False, stderr=subprocess.PIPE).decode('ascii')
-    # the full path can appear in the output, we need to remove it
-    return re.sub(re.escape(path), os.path.basename(path), output)
+class ReadelfAll(Command):
+    @tool_required('readelf')
+    def cmdline(self):
+        return ['readelf', '--all', self.path]
+
+    def filter(self, line):
+        # the full path can appear in the output, we need to remove it
+        return line.replace(self.path, os.path.basename(self.path))
 
 
-@tool_required('readelf')
-def readelf_debug_dump(path):
-    output = subprocess.check_output(
-        ['readelf', '--debug-dump', path],
-        shell=False, stderr=subprocess.PIPE).decode('ascii')
-    # the full path can appear in the output, we need to remove it
-    return re.sub(re.escape(path), os.path.basename(path), output)
+class ReadelfDebugDump(Command):
+    @tool_required('readelf')
+    def cmdline(self):
+        return ['readelf', '--debug-dump', self.path]
+
+    def filter(self, line):
+        # the full path can appear in the output, we need to remove it
+        return line.replace(self.path, os.path.basename(self.path))
 
 
-@tool_required('objdump')
-def objdump_disassemble(path):
-    output = subprocess.check_output(
-        ['objdump', '--disassemble', '--full-contents', path],
-        shell=False, stderr=subprocess.PIPE)
-    # the full path appears in the output, we need to remove it
-    return re.sub(re.escape(path), os.path.basename(path), output).decode('ascii')
+class ObjdumpDisassemble(Command):
+    @tool_required('objdump')
+    def cmdline(self):
+        return ['objdump', '--disassemble', '--full-contents', self.path]
 
+    def filter(self, line):
+        # the full path can appear in the output, we need to remove it
+        return line.replace(self.path, os.path.basename(self.path))
 
 # this one is not wrapped with binary_fallback and is used
 # by both compare_elf_files and compare_static_lib_files
 def _compare_elf_data(path1, path2, source=None):
     differences = []
-    all1 = readelf_all(path1)
-    all2 = readelf_all(path2)
-    difference = Difference.from_unicode(
-                     all1, all2, path1, path2, source='readelf --all')
+    difference = Difference.from_command(ReadelfAll, path1, path2)
     if difference:
         differences.append(difference)
-    debug_dump1 = readelf_debug_dump(path1)
-    debug_dump2 = readelf_debug_dump(path2)
-    difference = Difference.from_unicode(
-                     debug_dump1, debug_dump2,
-                     path1, path2, source='readelf --debug-dump')
+    difference = Difference.from_command(ReadelfDebugDump, path1, path2)
     if difference:
         differences.append(difference)
-    objdump1 = objdump_disassemble(path1)
-    objdump2 = objdump_disassemble(path2)
-    difference = Difference.from_unicode(
-                     objdump1, objdump2,
-                     path1, path2, source='objdump --disassemble --full-contents')
+    difference = Difference.from_command(ObjdumpDisassemble, path1, path2)
     if difference:
         differences.append(difference)
     return differences

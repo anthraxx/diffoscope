@@ -60,7 +60,7 @@ def compare_meta(path1, path2):
     try:
         stat1 = stat(path1)
         stat2 = stat(path2)
-        difference = Difference.from_content(
+        difference = Difference.from_unicode(
                          stat1, stat2, path1, path2, source="stat")
         if difference:
             differences.append(difference)
@@ -70,7 +70,7 @@ def compare_meta(path1, path2):
     try:
         lsattr1 = lsattr(path1)
         lsattr2 = lsattr(path2)
-        difference = Difference.from_content(
+        difference = Difference.from_unicode(
                          lsattr1, lsattr2, path1, path2, source="lattr")
         if difference:
             differences.append(difference)
@@ -80,7 +80,7 @@ def compare_meta(path1, path2):
     try:
         acl1 = getfacl(path1)
         acl2 = getfacl(path2)
-        difference = Difference.from_content(
+        difference = Difference.from_unicode(
                          acl1, acl2, path1, path2, source="getfacl")
         if difference:
             differences.append(difference)
@@ -110,7 +110,7 @@ def compare_directories(path1, path2, source=None):
         differences.extend(in_differences)
     ls1 = sorted(ls(path1))
     ls2 = sorted(ls(path2))
-    difference = Difference.from_content(ls1, ls2, path1, path2, source="ls")
+    difference = Difference.from_unicode(ls1, ls2, path1, path2, source="ls")
     if difference:
         differences.append(difference)
     differences.extend(compare_meta(path1, path2))

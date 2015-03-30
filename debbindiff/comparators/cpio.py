@@ -52,7 +52,7 @@ def compare_cpio_files(path1, path2, source=None):
     # compare metadata
     content1 = get_cpio_content(path1, verbose=True)
     content2 = get_cpio_content(path2, verbose=True)
-    difference = Difference.from_content(
+    difference = Difference.from_unicode(
                      content1, content2, path1, path2, source="metadata")
     if difference:
         differences.append(difference)

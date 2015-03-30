@@ -38,7 +38,7 @@ def sng(path):
 def compare_png_files(path1, path2, source=None):
     sng1 = sng(path1)
     sng2 = sng(path2)
-    difference = Difference.from_content(sng1, sng2, path1, path2, source='sng')
+    difference = Difference.from_unicode(sng1, sng2, path1, path2, source='sng')
     if not difference:
         return []
     return [difference]

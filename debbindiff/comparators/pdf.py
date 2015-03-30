@@ -44,13 +44,13 @@ def compare_pdf_files(path1, path2, source=None):
     src = get_source(path1, path2) or 'FILE'
     text1 = pdftotext(path1)
     text2 = pdftotext(path2)
-    difference = Difference.from_content(text1, text2, path1, path2,
+    difference = Difference.from_unicode(text1, text2, path1, path2,
                                          source="pdftotext %s" % src)
     if difference:
         differences.append(difference)
     uncompressed1 = uncompress(path1)
     uncompressed2 = uncompress(path2)
-    difference = Difference.from_content(uncompressed1, uncompressed2, path1, path2,
+    difference = Difference.from_unicode(uncompressed1, uncompressed2, path1, path2,
                                          source="pdftk %s output - uncompress" % src)
     if difference:
         differences.append(difference)

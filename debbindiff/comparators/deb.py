@@ -55,7 +55,7 @@ def compare_deb_files(path1, path2, source=None):
     # look up differences in file list and file metadata
     content1 = get_ar_content(path1)
     content2 = get_ar_content(path2)
-    difference = Difference.from_content(
+    difference = Difference.from_unicode(
                      content1, content2, path1, path2, source="metadata")
     if difference:
         differences.append(difference)

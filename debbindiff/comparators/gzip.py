@@ -52,7 +52,7 @@ def compare_gzip_files(path1, path2, source=None):
     # check metadata
     metadata1 = get_gzip_metadata(path1)
     metadata2 = get_gzip_metadata(path2)
-    difference = Difference.from_content(
+    difference = Difference.from_unicode(
                      metadata1, metadata2, path1, path2, source='metadata')
     if difference:
         differences.append(difference)

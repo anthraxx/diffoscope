@@ -34,7 +34,7 @@ def show_ttf(path):
 def compare_ttf_files(path1, path2, source=None):
     ttf1 = show_ttf(path1)
     ttf2 = show_ttf(path2)
-    difference = Difference.from_content(ttf1, ttf2, path1, path2, source='showttf')
+    difference = Difference.from_unicode(ttf1, ttf2, path1, path2, source='showttf')
     if not difference:
         return []
     return [difference]

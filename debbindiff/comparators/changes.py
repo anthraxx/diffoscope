@@ -47,7 +47,7 @@ def compare_changes_files(path1, path2, source=None):
         if dot_changes1[field] != dot_changes2[field]:
             content1 = "%s: %s" % (field, dot_changes1[field])
             content2 = "%s: %s" % (field, dot_changes2[field])
-            difference = Difference.from_content(
+            difference = Difference.from_unicode(
                              content1, content2,
                              dot_changes1.get_changes_file(),
                              dot_changes2.get_changes_file(),
@@ -61,7 +61,7 @@ def compare_changes_files(path1, path2, source=None):
     files2 = dot_changes2.get('Files')
     logger.debug(dot_changes1.get_as_string('Files'))
 
-    files_difference = Difference.from_content(
+    files_difference = Difference.from_unicode(
         dot_changes1.get_as_string('Files'),
         dot_changes2.get_as_string('Files'),
         dot_changes1.get_changes_file(),

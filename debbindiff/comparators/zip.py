@@ -70,7 +70,7 @@ def compare_zip_files(path1, path2, source=None):
                 # search harder
                 zipinfo1 = get_zipinfo(path1, verbose=True)
                 zipinfo2 = get_zipinfo(path2, verbose=True)
-            difference = Difference.from_content(
+            difference = Difference.from_unicode(
                              zipinfo1, zipinfo2, path1, path2, source="metadata")
             if difference:
                 differences.append(difference)

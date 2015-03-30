@@ -80,7 +80,7 @@ def compare_rpm_files(path1, path2, source=None):
         ts.setVSFlags(-1)
         header1 = get_rpm_header(path1, ts)
         header2 = get_rpm_header(path2, ts)
-        difference = Difference.from_content(
+        difference = Difference.from_unicode(
                          header1, header2, path1, path2, source="header")
         if difference:
             differences.append(difference)

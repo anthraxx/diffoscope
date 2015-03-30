@@ -18,14 +18,18 @@
 # along with debbindiff.  If not, see <http://www.gnu.org/licenses/>.
 
 from binascii import hexlify
+from contextlib import contextmanager
 import subprocess
 from debbindiff.difference import Difference
 from debbindiff import tool_required, RequiredToolNotFound
 
 
+@contextmanager
 @tool_required('xxd')
 def xxd(path):
-    return subprocess.check_output(['xxd', path], shell=False).decode('ascii')
+    p = subprocess.Popen(['xxd', path], shell=False, stdout=subprocess.PIPE)
+    yield p.stdout
+    p.wait()
 
 
 def hexdump_fallback(path):
@@ -38,14 +42,14 @@ def hexdump_fallback(path):
 
 def compare_binary_files(path1, path2, source=None):
     try:
-        hexdump1 = xxd(path1)
-        hexdump2 = xxd(path2)
-        comment = None
+        with xxd(path1) as xxd1:
+            with xxd(path2) as xxd2:
+                difference = Difference.from_file(xxd1, xxd2, path1, path2, source)
     except RequiredToolNotFound:
         hexdump1 = hexdump_fallback(path1)
         hexdump2 = hexdump_fallback(path2)
         comment = 'xxd not available in path. Falling back to Python hexlify.\n'
-    difference = Difference.from_content(hexdump1, hexdump2, path1, path2, source, comment)
+        difference = Difference.from_unicode(hexdump1, hexdump2, path1, path2, source, comment)
     if not difference:
         return []
     return [difference]

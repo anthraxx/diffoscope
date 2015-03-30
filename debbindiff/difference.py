@@ -33,6 +33,7 @@ from debbindiff import logger, tool_required, RequiredToolNotFound
 
 MAX_DIFF_BLOCK_LINES = 50
 MAX_DIFF_LINES = 10000
+MAX_DIFF_INPUT_LINES = 100000 # GNU diff cannot process arbitrary large files :(
 
 
 class DiffParser(object):
@@ -231,9 +232,15 @@ def make_feeder_from_unicode(content):
 
 def make_feeder_from_file(in_file, filter=lambda buf: buf.encode('utf-8')):
     def feeder(out_file):
+        line_count = 0
         end_nl = False
         for buf in iter(in_file.readline, b''):
+            line_count += 1
             out_file.write(filter(buf))
+            if line_count >= MAX_DIFF_INPUT_LINES:
+                out_file.write('[ Too much input for diff ]%s\n' % (' ' * out_file.fileno()))
+                end_nl = True
+                break
             end_nl = buf[-1] == '\n'
         return end_nl
     return feeder

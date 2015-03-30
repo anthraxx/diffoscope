@@ -264,11 +264,6 @@ def convert(s, ponct=0):
         elif c == DIFFOFF:
             t += u"</span>"
 
-        elif ord(c) < 32:
-            conv = u"\\x%x" % ord(c)
-            t += u"<em>%s</em>" % conv
-            i += len(conv)
-
         # special highlighted chars
         elif c == "\t" and ponct == 1:
             n = TABSIZE-(i%TABSIZE)
@@ -279,6 +274,10 @@ def convert(s, ponct=0):
             t += u'<span class="diffponct">&middot;</span>'
         elif c == "\n" and ponct == 1:
             t += u'<br/><span class="diffponct">\</span>'
+        elif ord(c) < 32:
+            conv = u"\\x%x" % ord(c)
+            t += u"<em>%s</em>" % conv
+            i += len(conv)
         else:
             t += cgi.escape(c)
             i += 1

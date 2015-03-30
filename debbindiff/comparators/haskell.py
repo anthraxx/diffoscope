@@ -19,21 +19,19 @@
 
 import subprocess
 from debbindiff import tool_required
-from debbindiff.comparators.utils import binary_fallback
+from debbindiff.comparators.utils import binary_fallback, Command
 from debbindiff.difference import Difference
 
 
-@tool_required('ghc')
-def show_iface(path):
-    return subprocess.check_output(['ghc', '--show-iface', path], shell=False).decode('ascii')
+class ShowIface(Command):
+    @tool_required('ghc')
+    def cmdline(self):
+        return ['ghc', '--show-iface', path]
 
 
 @binary_fallback
 def compare_hi_files(path1, path2, source=None):
-    iface1 = show_iface(path1)
-    iface2 = show_iface(path2)
-    difference = Difference.from_unicode(
-                     iface1, iface2, path1, path2, source='ghc --show-iface')
+    difference = Difference.from_command(ShowIface, path1, path2)
     if not difference:
         return []
     return [difference]

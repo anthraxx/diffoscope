@@ -23,18 +23,25 @@ import subprocess
 from debbindiff import logger, tool_required, RequiredToolNotFound
 from debbindiff.difference import Difference
 import debbindiff.comparators
+from debbindiff.comparators.utils import Command
 
 
 def ls(path):
     return '\n'.join(sorted(subprocess.check_output(['ls', path], shell=False).decode('utf-8').splitlines()))
 
 
-@tool_required('stat')
-def stat(path):
-    output = subprocess.check_output(['stat', path], shell=False).decode('utf-8')
-    output = re.sub(r'^\s*File:.*$', '', output, flags=re.MULTILINE)
-    output = re.sub(r'Inode: [0-9]+', '', output)
-    return output
+class Stat(Command):
+    @tool_required('stat')
+    def cmdline(self):
+        return ['stat', self.path]
+
+    FILE_RE = re.compile(r'^\s*File:.*$')
+    INODE_RE = re.compile(r'Inode: [0-9]+')
+
+    def filter(self, line):
+        line = Stat.FILE_RE.sub('', line)
+        line = Stat.INODE_RE.sub('', line)
+        return line
 
 
 @tool_required('lsattr')
@@ -48,9 +55,10 @@ def lsattr(path):
             return ''
 
 
-@tool_required('getfacl')
-def getfacl(path):
-    return subprocess.check_output(['getfacl', '-p', '-c', path], shell=False).decode('utf-8')
+class Getfacl(Command):
+    @tool_required('getfacl')
+    def cmdline(self):
+        return ['getfacl', '-p', '-c', self.path]
 
 
 def compare_meta(path1, path2):
@@ -58,10 +66,7 @@ def compare_meta(path1, path2):
     differences = []
 
     try:
-        stat1 = stat(path1)
-        stat2 = stat(path2)
-        difference = Difference.from_unicode(
-                         stat1, stat2, path1, path2, source="stat")
+        difference = Difference.from_command(Stat, path1, path2)
         if difference:
             differences.append(difference)
     except RequiredToolNotFound:
@@ -78,10 +83,7 @@ def compare_meta(path1, path2):
         logger.info("Unable to find 'lsattr'.")
 
     try:
-        acl1 = getfacl(path1)
-        acl2 = getfacl(path2)
-        difference = Difference.from_unicode(
-                         acl1, acl2, path1, path2, source="getfacl")
+        difference = Difference.from_command(Getfacl, path1, path2)
         if difference:
             differences.append(difference)
     except RequiredToolNotFound:

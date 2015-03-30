@@ -52,9 +52,6 @@ def objdump_disassemble(path):
     return re.sub(re.escape(path), os.path.basename(path), output).decode('ascii')
 
 
-TOO_BIG_TO_DUMP = 10 * 2 ** 20 # 10 MiB
-
-
 # this one is not wrapped with binary_fallback and is used
 # by both compare_elf_files and compare_static_lib_files
 def _compare_elf_data(path1, path2, source=None):
@@ -64,20 +61,18 @@ def _compare_elf_data(path1, path2, source=None):
     if all1 != all2:
         differences.append(Difference(
             all1, all2, path1, path2, source='readelf --all'))
-    if os.stat(path1).st_size < TOO_BIG_TO_DUMP and \
-       os.stat(path2).st_size < TOO_BIG_TO_DUMP:
-        debug_dump1 = readelf_debug_dump(path1)
-        debug_dump2 = readelf_debug_dump(path2)
-        if debug_dump1 != debug_dump2:
-            differences.append(Difference(
-                debug_dump1, debug_dump2,
-                path1, path2, source='readelf --debug-dump'))
-        objdump1 = objdump_disassemble(path1)
-        objdump2 = objdump_disassemble(path2)
-        if objdump1 != objdump2:
-            differences.append(Difference(
-                objdump1, objdump2,
-                path1, path2, source='objdump --disassemble --full-contents'))
+    debug_dump1 = readelf_debug_dump(path1)
+    debug_dump2 = readelf_debug_dump(path2)
+    if debug_dump1 != debug_dump2:
+        differences.append(Difference(
+            debug_dump1, debug_dump2,
+            path1, path2, source='readelf --debug-dump'))
+    objdump1 = objdump_disassemble(path1)
+    objdump2 = objdump_disassemble(path2)
+    if objdump1 != objdump2:
+        differences.append(Difference(
+            objdump1, objdump2,
+            path1, path2, source='objdump --disassemble --full-contents'))
     return differences
 
 

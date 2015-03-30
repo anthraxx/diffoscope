@@ -20,28 +20,43 @@
 import re
 import subprocess
 from debbindiff import tool_required
-from debbindiff.comparators.utils import binary_fallback
+from debbindiff.comparators.utils import binary_fallback, Command
 from debbindiff.difference import Difference
 from debbindiff import logger
 
 
-@tool_required('msgunfmt')
-def msgunfmt(path):
-    output = subprocess.check_output(['msgunfmt', path], shell=False)
-    found = re.search(r'^"Content-Type: [^;]+; charset=([^\\]+)\\n"$', output, re.MULTILINE)
-    if found:
-        encoding = found.group(1)
-    else:
-        logger.debug('unable to determine PO encoding, falling back to utf-8')
-        encoding = 'utf-8'
-    return output.decode(encoding)
+class Msgunfmt(Command):
+    CHARSET_RE = re.compile(r'^"Content-Type: [^;]+; charset=([^\\]+)\\n"$')
+
+    def __init__(self, *args, **kwargs):
+        super(Msgunfmt, self).__init__(*args, **kwargs)
+        self._header = ''
+        self._encoding = None
+
+    @tool_required('msgunfmt')
+    def cmdline(self):
+        return ['msgunfmt', self.path]
+
+    def filter(self, line):
+        if not self._encoding:
+            if line == '':
+                logger.debug("unable to determine PO encoding, let's hope it's utf-8")
+                return self._header
+            self._header += line
+            found = Msgunfmt.CHARSET_RE.match(line)
+            if found:
+                self._encoding = found.group(1)
+                return self._header.decode(self._encoding).encode('utf-8')
+            return ''
+        if self._encoding != 'utf-8':
+            return line.decode(self._encoding).encode('utf-8')
+        else:
+            return line
 
 
 @binary_fallback
 def compare_mo_files(path1, path2, source=None):
-    mo1 = msgunfmt(path1)
-    mo2 = msgunfmt(path2)
-    difference = Difference.from_unicode(mo1, mo2, path1, path2, source='msgunfmt')
+    difference = Difference.from_command(Msgunfmt, path1, path2)
     if not difference:
         return []
     return [difference]

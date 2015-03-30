@@ -17,6 +17,7 @@
 # You should have received a copy of the GNU General Public License
 # along with debbindiff.  If not, see <http://www.gnu.org/licenses/>.
 
+from abc import ABCMeta, abstractmethod
 from contextlib import contextmanager
 # The following would be shutil.which in Python 3.3
 import hashlib
@@ -25,6 +26,7 @@ import os
 import shutil
 import subprocess
 import tempfile
+from threading import Thread
 from debbindiff.comparators.binary import compare_binary_files
 from debbindiff.difference import Difference
 from debbindiff import logger, RequiredToolNotFound
@@ -92,3 +94,73 @@ def make_temp_directory():
 def get_ar_content(path):
     return subprocess.check_output(
         ['ar', 'tv', path], stderr=subprocess.STDOUT, shell=False).decode('utf-8')
+
+
+class Command(object):
+    __metaclass__ = ABCMeta
+
+    def __init__(self, path):
+        self._path = path
+        self._process = subprocess.Popen(self.cmdline(),
+                                         shell=False, close_fds=True,
+                                         stdin=subprocess.PIPE,
+                                         stdout=subprocess.PIPE,
+                                         stderr=subprocess.PIPE)
+        if hasattr(self, 'feed_stdin'):
+            self._stdin_feeder = Thread(target=self.feed_stdin, args=(self._process.stdin,))
+            self._stdin_feeder.daemon = True
+            self._stdin_feeder.start()
+        else:
+            self._stdin_feeder = None
+            self._process.stdin.close()
+        self._stderr = ''
+        self._stderr_line_count = 0
+        self._stderr_reader = Thread(target=self._read_stderr)
+        self._stderr_reader.daemon = True
+        self._stderr_reader.start()
+
+    @property
+    def path(self):
+        return self._path
+
+    @abstractmethod
+    def cmdline(self):
+        raise NotImplemented
+
+    # Define only if needed
+    #def feed_stdin(self, f)
+
+    def filter(self, line):
+        # Assume command output is utf-8 by default
+        return line
+
+    def poll(self):
+        return self._process.poll()
+
+    def terminate(self):
+        return self._process.terminate()
+
+    def wait(self):
+        if self._stdin_feeder:
+            self._stdin_feeder.join()
+        self._stderr_reader.join()
+        self._process.wait()
+
+    MAX_STDERR_LINES = 50
+
+    def _read_stderr(self):
+        for line in iter(self._process.stderr.readline, b''):
+            self._stderr_line_count += 1
+            if self._stderr_line_count <= Command.MAX_STDERR_LINES:
+                self._stderr += line
+        if self._stderr_line_count > Command.MAX_STDERR_LINES:
+            self._stderr += '[ %d lines ignored ]\n' % (self._stderr_line_count - Command.MAX_STDERR_LINES)
+        self._process.stderr.close()
+
+    @property
+    def stderr_content(self):
+        return self._stderr
+
+    @property
+    def stdout(self):
+        return self._process.stdout

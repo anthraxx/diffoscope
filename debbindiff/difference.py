@@ -238,6 +238,14 @@ def make_feeder_from_file(in_file, filter=lambda buf: buf.encode('utf-8')):
         return end_nl
     return feeder
 
+def make_feeder_from_command(command):
+    def feeder(out_file):
+        end_nl = make_feeder_from_file(command.stdout, command.filter)(out_file)
+        if command.poll() is None:
+            command.terminate()
+        command.wait()
+        return end_nl
+    return feeder
 
 def diff(feeder1, feeder2):
     end_nl_q1 = Queue()
@@ -290,6 +298,28 @@ class Difference(object):
         return Difference.from_feeder(make_feeder_from_file(file1),
                                       make_feeder_from_file(file2),
                                       *args, **kwargs)
+
+    @staticmethod
+    def from_command(cls, path1, path2, *args, **kwargs):
+        command1 = cls(path1)
+        command2 = cls(path2)
+        if 'source' not in kwargs:
+            kwargs['source'] = ' '.join(map(lambda x: '{}' if x == command1.path else x, command1.cmdline()))
+        difference = Difference.from_feeder(make_feeder_from_command(command1),
+                                            make_feeder_from_command(command2),
+                                            path1, path2, *args, **kwargs)
+        if not difference:
+            return None
+        if command1.stderr_content or command2.stderr_content:
+            if difference.comment:
+                difference.comment += '\n'
+            else:
+                difference.comment = ''
+            if command1.stderr_content:
+                difference.comment += 'stderr from `%s`:\n%s\n' % (' '.join(command1.cmdline()), command1.stderr_content)
+            if command2.stderr_content:
+                difference.comment += 'stderr from `%s`:\n%s\n' % (' '.join(command2.cmdline()), command2.stderr_content)
+        return difference
 
     @property
     def comment(self):

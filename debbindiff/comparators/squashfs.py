@@ -48,7 +48,7 @@ class SquashfsListing(Command):
 def extract_squashfs(path, destdir):
     cmd = ['unsquashfs', '-n', '-f', '-d', destdir, path]
     logger.debug("extracting %s into %s", path, destdir)
-    p = subprocess.Popen(cmd, shell=False)
+    p = subprocess.Popen(cmd, shell=False, stdout=subprocess.PIPE)
     p.communicate()
     p.wait()
     if p.returncode != 0:

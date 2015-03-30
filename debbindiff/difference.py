@@ -17,6 +17,7 @@
 # You should have received a copy of the GNU General Public License
 # along with debbindiff.  If not, see <http://www.gnu.org/licenses/>.
 
+from contextlib import contextmanager
 import os
 import os.path
 from functools import partial
@@ -24,6 +25,7 @@ from tempfile import NamedTemporaryFile
 import re
 import subprocess
 from threading import Thread
+from multiprocessing import Queue
 from debbindiff import logger, tool_required, RequiredToolNotFound
 
 
@@ -34,8 +36,10 @@ MAX_DIFF_LINES = 10000
 class DiffParser(object):
     RANGE_RE = re.compile(r'^@@\s+-(?P<start1>\d+)(,(?P<len1>\d+))?\s+\+(?P<start2>\d+)(,(?P<len2>\d+))?\s+@@$')
 
-    def __init__(self, output):
+    def __init__(self, output, end_nl_q1, end_nl_q2):
         self._output = output
+        self._end_nl_q1 = end_nl_q1
+        self._end_nl_q2 = end_nl_q2
         self._action = self.read_headers
         self._diff = ''
         self._success = False
@@ -43,6 +47,7 @@ class DiffParser(object):
         self._remaining_hunk_lines = None
         self._block_len = None
         self._direction = None
+        self._end_nl = None
 
     @property
     def diff(self):
@@ -90,7 +95,13 @@ class DiffParser(object):
         elif line[0] == '-':
             self._remaining_hunk_lines -= 1
         elif line[0] == '\\':
-            pass
+            # When both files don't end with \n, do not show it as a difference
+            if self._end_nl is None:
+                end_nl1 = self._end_nl_q1.get()
+                end_nl2 = self._end_nl_q2.get()
+                self._end_nl = end_nl1 and end_nl2
+            if not self._end_nl:
+                return self.read_hunk
         elif self._remaining_hunk_lines == 0:
             return self.read_headers(line)
         else:
@@ -122,49 +133,28 @@ class DiffParser(object):
 DIFF_CHUNK = 4096
 
 
-def feed_content(f, content, add_ln):
-    for offset in range(0, len(content), DIFF_CHUNK):
-        f.write(content[offset:offset + DIFF_CHUNK].encode('utf-8'))
-    if add_ln:
-        f.write('\n')
-    f.close()
-
-
 @tool_required('diff')
-def diff(content1, content2):
-    pipe_r1, pipe_w1 = os.pipe()
-    pipe_r2, pipe_w2 = os.pipe()
-    # run diff
+def run_diff(fd1, fd2, end_nl_q1, end_nl_q2):
     logger.debug('running diff')
-    cmd = ['diff', '-au7', '/dev/fd/%d' % pipe_r1, '/dev/fd/%d' % pipe_r2]
-    def close_pipes():
-        os.close(pipe_w1)
-        os.close(pipe_w2)
+    cmd = ['diff', '-au7', '/dev/fd/%d' % fd1, '/dev/fd/%d' % fd2]
+    def close_fds():
+        fds = [int(fd) for fd in os.listdir('/dev/fd')
+                       if int(fd) not in (1, 2, fd1, fd2)]
+        for fd in fds:
+            try:
+                os.close(fd)
+            except OSError:
+                pass
     p = subprocess.Popen(cmd, shell=False, bufsize=1,
                          stdin=subprocess.PIPE,
                          stdout=subprocess.PIPE,
                          stderr=subprocess.STDOUT,
-                         preexec_fn=close_pipes)
-    os.close(pipe_r1)
-    os.close(pipe_r2)
+                         preexec_fn=close_fds)
     p.stdin.close()
-    output1 = os.fdopen(pipe_w1, 'w')
-    output2 = os.fdopen(pipe_w2, 'w')
-    parser = DiffParser(p.stdout)
+    parser = DiffParser(p.stdout, end_nl_q1, end_nl_q2)
     t_read = Thread(target=parser.parse)
     t_read.daemon = True
     t_read.start()
-    # work-around unified diff limitation: if there's no newlines in both
-    # don't make it a difference
-    add_ln = content1[-1] != '\n' and content2[-1] != '\n'
-    t_write1 = Thread(target=feed_content, args=(output1, content1, add_ln))
-    t_write1.daemon = True
-    t_write1.start()
-    t_write2 = Thread(target=feed_content, args=(output2, content2, add_ln))
-    t_write2.daemon = True
-    t_write2.start()
-    t_write1.join()
-    t_write2.join()
     t_read.join()
     p.wait()
     if not parser.success and p.returncode not in (0, 1):
@@ -172,6 +162,46 @@ def diff(content1, content2):
     if p.returncode == 0:
         return None
     return parser.diff
+
+
+def feed(feeder, f, end_nl_q):
+    # work-around unified diff limitation: if there's no newlines in both
+    # don't make it a difference
+    try:
+        end_nl = feeder(f)
+        end_nl_q.put(end_nl)
+    finally:
+        f.close()
+
+
+@contextmanager
+def fd_from_feeder(feeder, end_nl_q):
+    pipe_r, pipe_w = os.pipe()
+    outf = os.fdopen(pipe_w, 'w')
+    t = Thread(target=feed, args=(feeder, outf, end_nl_q))
+    t.daemon = True
+    t.start()
+    yield pipe_r
+    t.join()
+    outf.close()
+
+
+def make_feeder_from_content(content):
+    def feeder(f):
+        for offset in range(0, len(content), DIFF_CHUNK):
+            f.write(content[offset:offset + DIFF_CHUNK].encode('utf-8'))
+        return content and content[-1] == '\n'
+    return feeder
+
+
+def diff(content1, content2):
+    end_nl_q1 = Queue()
+    end_nl_q2 = Queue()
+    feeder1 = make_feeder_from_content(content1)
+    feeder2 = make_feeder_from_content(content2)
+    with fd_from_feeder(feeder1, end_nl_q1) as fd1:
+        with fd_from_feeder(feeder2, end_nl_q2) as fd2:
+            return run_diff(fd1, fd2, end_nl_q1, end_nl_q2)
 
 
 class Difference(object):

@@ -25,18 +25,23 @@ from debbindiff import logger
 from debbindiff.difference import Difference
 import debbindiff.comparators
 from debbindiff import tool_required
-from debbindiff.comparators.utils import binary_fallback, make_temp_directory
+from debbindiff.comparators.utils import binary_fallback, make_temp_directory, Command
 
 
-@tool_required('zipinfo')
-def get_zipinfo(path, verbose=False):
-    if verbose:
-        cmd = ['zipinfo', '-v', path]
-    else:
-        cmd = ['zipinfo', path]
-    output = subprocess.check_output(cmd, shell=False).decode('utf-8')
-    # the full path appears in the output, we need to remove it
-    return re.sub(re.escape(path), os.path.basename(path), output)
+class Zipinfo(Command):
+    @tool_required('zipinfo')
+    def cmdline(self):
+        return ['zipinfo', self.path]
+
+    def filter(self, line):
+        # the full path appears in the output, we need to remove it
+        return line.replace(self.path, os.path.basename(self.path))
+
+
+class ZipinfoVerbose(Zipinfo):
+    @tool_required('zipinfo')
+    def cmdline(self):
+        return ['zipinfo', '-v', self.path]
 
 
 @binary_fallback
@@ -64,14 +69,10 @@ def compare_zip_files(path1, path2, source=None):
                         os.unlink(in_path1)
                         os.unlink(in_path2)
             # look up differences in metadata
-            zipinfo1 = get_zipinfo(path1)
-            zipinfo2 = get_zipinfo(path2)
-            if zipinfo1 == zipinfo2:
+            difference = Difference.from_command(Zipinfo, path1, path2)
+            if not difference:
                 # search harder
-                zipinfo1 = get_zipinfo(path1, verbose=True)
-                zipinfo2 = get_zipinfo(path2, verbose=True)
-            difference = Difference.from_unicode(
-                             zipinfo1, zipinfo2, path1, path2, source="metadata")
+                difference = Difference.from_command(ZipinfoVerbose, path1, path2)
             if difference:
                 differences.append(difference)
     return differences

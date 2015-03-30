@@ -21,21 +21,27 @@ import subprocess
 import os.path
 import debbindiff.comparators
 from debbindiff import logger, tool_required
-from debbindiff.comparators.utils import binary_fallback, make_temp_directory
+from debbindiff.comparators.utils import binary_fallback, make_temp_directory, Command
 from debbindiff.difference import Difference
 
 
 @tool_required('unsquashfs')
-def get_squashfs_content(path, verbose=True):
+def get_squashfs_names(path):
     cmd = ['unsquashfs', '-d', '', '-ls', path]
-    content = ''
-    if verbose:
-        # first get superblock information
-        cmd = ['unsquashfs', '-s', path]
-        content = subprocess.check_output(cmd, shell=False).decode('utf-8')
-        # and then the verbose file listing
-        cmd = ['unsquashfs', '-d', '', '-lls', path]
-    return content + subprocess.check_output(cmd, shell=False).decode('utf-8')
+    output = subprocess.check_output(cmd, shell=False)
+    return [ f.lstrip('/') for f in output.split('\n') ]
+
+
+class SquashfsSuperblock(Command):
+    @tool_required('unsquashfs')
+    def cmdline(self):
+        return ['unsquashfs', '-s', self.path]
+
+
+class SquashfsListing(Command):
+    @tool_required('unsquashfs')
+    def cmdline(self):
+        return ['unsquashfs', '-d', '', '-lls', self.path]
 
 
 @tool_required('unsquashfs')
@@ -54,22 +60,20 @@ def compare_squashfs_files(path1, path2, source=None):
     differences = []
 
     # compare metadata
-    content1 = get_squashfs_content(path1)
-    content2 = get_squashfs_content(path2)
-    difference = Difference.from_unicode(
-                     content1, content2, path1, path2, source="metadata")
+    difference = Difference.from_command(SquashfsSuperblock, path1, path2)
+    if difference:
+        differences.append(difference)
+    difference = Difference.from_command(SquashfsListing, path1, path2)
     if difference:
         differences.append(difference)
 
     # compare files contained in archive
-    content1 = get_squashfs_content(path1, verbose=False)
-    content2 = get_squashfs_content(path2, verbose=False)
+    files1 = get_squashfs_names(path1)
+    files2 = get_squashfs_names(path2)
     with make_temp_directory() as temp_dir1:
         with make_temp_directory() as temp_dir2:
             extract_squashfs(path1, temp_dir1)
             extract_squashfs(path2, temp_dir2)
-            files1 = [ f.lstrip('/') for f in content1.split('\n') ]
-            files2 = [ f.lstrip('/') for f in content2.split('\n') ]
             for member in sorted(set(files1).intersection(set(files2))):
                 in_path1 = os.path.join(temp_dir1, member)
                 in_path2 = os.path.join(temp_dir2, member)

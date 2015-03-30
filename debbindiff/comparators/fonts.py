@@ -20,21 +20,21 @@
 import locale
 import subprocess
 from debbindiff import tool_required
-from debbindiff.comparators.utils import binary_fallback
+from debbindiff.comparators.utils import binary_fallback, Command
 from debbindiff.difference import Difference
 
 
-@tool_required('showttf')
-def show_ttf(path):
-    return subprocess.check_output(['showttf', path], shell=False,
-                                   stderr=subprocess.PIPE).decode('latin-1')
+class Showttf(Command):
+    @tool_required('showttf')
+    def cmdline(self):
+        return ['showttf', self.path]
 
+    def filter(self, line):
+        return line.decode('latin-1').encode('utf-8')
 
 @binary_fallback
 def compare_ttf_files(path1, path2, source=None):
-    ttf1 = show_ttf(path1)
-    ttf2 = show_ttf(path2)
-    difference = Difference.from_unicode(ttf1, ttf2, path1, path2, source='showttf')
+    difference = Difference.from_command(Showttf, path1, path2)
     if not difference:
         return []
     return [difference]

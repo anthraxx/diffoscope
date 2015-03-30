@@ -70,7 +70,8 @@ def compare_zip_files(path1, path2, source=None):
                 # search harder
                 zipinfo1 = get_zipinfo(path1, verbose=True)
                 zipinfo2 = get_zipinfo(path2, verbose=True)
-            if zipinfo1 != zipinfo2:
-                differences.append(Difference(
-                    zipinfo1, zipinfo2, path1, path2, source="metadata"))
+            difference = Difference.from_content(
+                             zipinfo1, zipinfo2, path1, path2, source="metadata")
+            if difference:
+                differences.append(difference)
     return differences

@@ -80,9 +80,10 @@ def compare_rpm_files(path1, path2, source=None):
         ts.setVSFlags(-1)
         header1 = get_rpm_header(path1, ts)
         header2 = get_rpm_header(path2, ts)
-        if header1 != header2:
-            differences.append(Difference(
-                header1, header2, path1, path2, source="header"))
+        difference = Difference.from_content(
+                         header1, header2, path1, path2, source="header")
+        if difference:
+            differences.append(difference)
 
     # extract cpio archive
     with extract_rpm_payload(path1) as archive1:

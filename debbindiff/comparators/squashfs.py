@@ -56,9 +56,10 @@ def compare_squashfs_files(path1, path2, source=None):
     # compare metadata
     content1 = get_squashfs_content(path1)
     content2 = get_squashfs_content(path2)
-    if content1 != content2:
-        differences.append(Difference(
-            content1, content2, path1, path2, source="metadata"))
+    difference = Difference.from_content(
+                     content1, content2, path1, path2, source="metadata")
+    if difference:
+        differences.append(difference)
 
     # compare files contained in archive
     content1 = get_squashfs_content(path1, verbose=False)

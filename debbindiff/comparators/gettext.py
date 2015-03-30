@@ -41,6 +41,7 @@ def msgunfmt(path):
 def compare_mo_files(path1, path2, source=None):
     mo1 = msgunfmt(path1)
     mo2 = msgunfmt(path2)
-    if mo1 != mo2:
-        return [Difference(mo1, mo2, path1, path2, source='msgunfmt')]
-    return []
+    difference = Difference.from_content(mo1, mo2, path1, path2, source='msgunfmt')
+    if not difference:
+        return []
+    return [difference]

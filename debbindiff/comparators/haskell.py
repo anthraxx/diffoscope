@@ -32,7 +32,8 @@ def show_iface(path):
 def compare_hi_files(path1, path2, source=None):
     iface1 = show_iface(path1)
     iface2 = show_iface(path2)
-    if iface1 != iface2:
-        return [Difference(iface1, iface2,
-                           path1, path2, source='ghc --show-iface')]
-    return []
+    difference = Difference.from_content(
+                     iface1, iface2, path1, path2, source='ghc --show-iface')
+    if not difference:
+        return []
+    return [difference]

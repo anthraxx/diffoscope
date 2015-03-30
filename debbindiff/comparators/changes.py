@@ -47,27 +47,30 @@ def compare_changes_files(path1, path2, source=None):
         if dot_changes1[field] != dot_changes2[field]:
             content1 = "%s: %s" % (field, dot_changes1[field])
             content2 = "%s: %s" % (field, dot_changes2[field])
-            differences.append(Difference(
-                content1, content2,
-                dot_changes1.get_changes_file(),
-                dot_changes2.get_changes_file(),
-                source=source))
+            difference = Difference.from_content(
+                             content1, content2,
+                             dot_changes1.get_changes_file(),
+                             dot_changes2.get_changes_file(),
+                             source=source)
+            if difference:
+                differences.append(difference)
 
     # This will handle differences in the list of files, checksums, priority
     # and section
     files1 = dot_changes1.get('Files')
     files2 = dot_changes2.get('Files')
     logger.debug(dot_changes1.get_as_string('Files'))
-    if files1 == files2:
-        return differences
 
-    files_difference = Difference(
+    files_difference = Difference.from_content(
         dot_changes1.get_as_string('Files'),
         dot_changes2.get_as_string('Files'),
         dot_changes1.get_changes_file(),
         dot_changes2.get_changes_file(),
         source=source,
         comment="List of files does not match")
+
+    if not files_difference:
+        return differences
 
     files1 = dict([(d['name'], d) for d in files1])
     files2 = dict([(d['name'], d) for d in files2])

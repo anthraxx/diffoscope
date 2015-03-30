@@ -45,6 +45,7 @@ def compare_binary_files(path1, path2, source=None):
         hexdump1 = hexdump_fallback(path1)
         hexdump2 = hexdump_fallback(path2)
         comment = 'xxd not available in path. Falling back to Python hexlify.\n'
-    if hexdump1 == hexdump2:
+    difference = Difference.from_content(hexdump1, hexdump2, path1, path2, source, comment)
+    if not difference:
         return []
-    return [Difference(hexdump1, hexdump2, path1, path2, source, comment)]
+    return [difference]

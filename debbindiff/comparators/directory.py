@@ -60,27 +60,30 @@ def compare_meta(path1, path2):
     try:
         stat1 = stat(path1)
         stat2 = stat(path2)
-        if stat1 != stat2:
-            differences.append(Difference(
-                stat1, stat2, path1, path2, source="stat"))
+        difference = Difference.from_content(
+                         stat1, stat2, path1, path2, source="stat")
+        if difference:
+            differences.append(difference)
     except RequiredToolNotFound:
         logger.warn("'stat' not found! Is PATH wrong?")
 
     try:
         lsattr1 = lsattr(path1)
         lsattr2 = lsattr(path2)
-        if lsattr1 != lsattr2:
-            differences.append(Difference(
-                lsattr1, lsattr2, path1, path2, source="lattr"))
+        difference = Difference.from_content(
+                         lsattr1, lsattr2, path1, path2, source="lattr")
+        if difference:
+            differences.append(difference)
     except RequiredToolNotFound:
         logger.info("Unable to find 'lsattr'.")
 
     try:
         acl1 = getfacl(path1)
         acl2 = getfacl(path2)
-        if acl1 != acl2:
-            differences.append(Difference(
-                acl1, acl2, path1, path2, source="getfacl"))
+        difference = Difference.from_content(
+                         acl1, acl2, path1, path2, source="getfacl")
+        if difference:
+            differences.append(difference)
     except RequiredToolNotFound:
         logger.info("Unable to find 'getfacl'.")
     return differences
@@ -101,17 +104,18 @@ def compare_directories(path1, path2, source=None):
             if in_differences:
                 in_differences[0].add_details(compare_meta(in_path1, in_path2))
             else:
-                d = Difference(None, None, path1, path2, source=name)
+                d = Difference(None, path1, path2, source=name)
                 d.add_details(compare_meta(in_path1, in_path2))
                 in_differences = [d]
         differences.extend(in_differences)
     ls1 = sorted(ls(path1))
     ls2 = sorted(ls(path2))
-    if ls1 != ls2:
-        differences.append(Difference(ls1, ls2, path1, path2, source="ls"))
+    difference = Difference.from_content(ls1, ls2, path1, path2, source="ls")
+    if difference:
+        differences.append(difference)
     differences.extend(compare_meta(path1, path2))
     if differences:
-        d = Difference(None, None, path1, path2, source=source)
+        d = Difference(None, path1, path2, source=source)
         d.add_details(differences)
         return [d]
     return []

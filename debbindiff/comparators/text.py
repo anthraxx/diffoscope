@@ -31,6 +31,7 @@ def compare_text_files(path1, path2, encoding, source=None):
     except (LookupError, UnicodeDecodeError):
         # unknown or misdetected encoding
         return compare_binary_files(path1, path2, source)
-    if content1 == content2:
+    difference = Difference.from_content(content1, content2, path1, path2, source)
+    if not difference:
         return []
-    return [Difference(content1, content2, path1, path2, source)]
+    return [difference]

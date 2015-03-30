@@ -62,7 +62,7 @@ def binary_fallback(original_function):
                 difference.comment = (difference.comment or '') + \
                     "No differences found inside, yet data differs"
             else:
-                difference = Difference(None, None, path1, path2, source=source)
+                difference = Difference(None, path1, path2, source=source)
                 difference.add_details(inside_differences)
         except subprocess.CalledProcessError as e:
             difference = compare_binary_files(path1, path2, source=source)[0]

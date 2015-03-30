@@ -55,15 +55,16 @@ def compare_deb_files(path1, path2, source=None):
     # look up differences in file list and file metadata
     content1 = get_ar_content(path1)
     content2 = get_ar_content(path2)
-    if content1 != content2:
-        differences.append(Difference(
-            content1, content2, path1, path2, source="metadata"))
+    difference = Difference.from_content(
+                     content1, content2, path1, path2, source="metadata")
+    if difference:
+        differences.append(difference)
     return differences
 
 
 def compare_md5sums_files(path1, path2, source=None):
     if are_same_binaries(path1, path2):
         return []
-    return [Difference(None, None, path1, path2,
+    return [Difference(None, path1, path2,
                        source=get_source(path1, path2),
                        comment="Files in package differs")]

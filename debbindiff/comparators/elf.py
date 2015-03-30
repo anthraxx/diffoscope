@@ -58,21 +58,24 @@ def _compare_elf_data(path1, path2, source=None):
     differences = []
     all1 = readelf_all(path1)
     all2 = readelf_all(path2)
-    if all1 != all2:
-        differences.append(Difference(
-            all1, all2, path1, path2, source='readelf --all'))
+    difference = Difference.from_content(
+                     all1, all2, path1, path2, source='readelf --all')
+    if difference:
+        differences.append(difference)
     debug_dump1 = readelf_debug_dump(path1)
     debug_dump2 = readelf_debug_dump(path2)
-    if debug_dump1 != debug_dump2:
-        differences.append(Difference(
-            debug_dump1, debug_dump2,
-            path1, path2, source='readelf --debug-dump'))
+    difference = Difference.from_content(
+                     debug_dump1, debug_dump2,
+                     path1, path2, source='readelf --debug-dump')
+    if difference:
+        differences.append(difference)
     objdump1 = objdump_disassemble(path1)
     objdump2 = objdump_disassemble(path2)
-    if objdump1 != objdump2:
-        differences.append(Difference(
-            objdump1, objdump2,
-            path1, path2, source='objdump --disassemble --full-contents'))
+    difference = Difference.from_content(
+                     objdump1, objdump2,
+                     path1, path2, source='objdump --disassemble --full-contents')
+    if difference:
+        differences.append(difference)
     return differences
 
 
@@ -87,8 +90,9 @@ def compare_static_lib_files(path1, path2, source=None):
     # look up differences in metadata
     content1 = get_ar_content(path1)
     content2 = get_ar_content(path2)
-    if content1 != content2:
-        differences.append(Difference(
-            content1, content2, path1, path2, source="metadata"))
+    difference = Difference.from_content(
+                     content1, content2, path1, path2, source="metadata")
+    if difference:
+        differences.append(difference)
     differences.extend(_compare_elf_data(path1, path2, source))
     return differences

@@ -169,25 +169,15 @@ def diff(content1, content2):
     p.wait()
     if not parser.success and p.returncode not in (0, 1):
         raise subprocess.CalledProcessError(cmd, p.returncode, output=diff)
+    if p.returncode == 0:
+        return None
     return parser.diff
 
 
 class Difference(object):
-    def __init__(self, content1, content2, path1, path2, source=None,
-                 comment=None):
+    def __init__(self, unified_diff, path1, path2, source=None, comment=None):
         self._comment = comment
-        if content1 and type(content1) is not unicode:
-            raise UnicodeError('content1 has not been decoded')
-        if content2 and type(content2) is not unicode:
-            raise UnicodeError('content2 has not been decoded')
-        self._unified_diff = None
-        if content1 is not None and content2 is not None:
-            try:
-                self._unified_diff = diff(content1, content2)
-            except RequiredToolNotFound:
-                self._comment = 'diff is not available!'
-                if comment:
-                    self._comment += '\n\n' + comment
+        self._unified_diff = unified_diff
         # allow to override declared file paths, useful when comparing
         # tempfiles
         if source:
@@ -200,6 +190,25 @@ class Difference(object):
             self._source1 = path1
             self._source2 = path2
         self._details = []
+
+    @staticmethod
+    def from_content(content1, content2, path1, path2, source=None,
+                     comment=None):
+        actual_comment = comment
+        if content1 and type(content1) is not unicode:
+            raise UnicodeError('content1 has not been decoded')
+        if content2 and type(content2) is not unicode:
+            raise UnicodeError('content2 has not been decoded')
+        unified_diff = None
+        try:
+            unified_diff = diff(content1, content2)
+        except RequiredToolNotFound:
+            actual_comment = 'diff is not available!'
+            if comment:
+                actual_comment += '\n\n' + orig_comment
+        if not unified_diff:
+            return None
+        return Difference(unified_diff, path1, path2, source, actual_comment)
 
     @property
     def comment(self):

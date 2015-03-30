@@ -26,7 +26,7 @@ import debbindiff.comparators
 
 
 def ls(path):
-    return subprocess.check_output(['ls', path], shell=False).decode('utf-8')
+    return '\n'.join(sorted(subprocess.check_output(['ls', path], shell=False).decode('utf-8').splitlines()))
 
 
 @tool_required('stat')
@@ -108,8 +108,8 @@ def compare_directories(path1, path2, source=None):
                 d.add_details(compare_meta(in_path1, in_path2))
                 in_differences = [d]
         differences.extend(in_differences)
-    ls1 = sorted(ls(path1))
-    ls2 = sorted(ls(path2))
+    ls1 = ls(path1)
+    ls2 = ls(path2)
     difference = Difference.from_unicode(ls1, ls2, path1, path2, source="ls")
     if difference:
         differences.append(difference)

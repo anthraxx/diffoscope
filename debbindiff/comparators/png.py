@@ -17,28 +17,30 @@
 # You should have received a copy of the GNU General Public License
 # along with debbindiff.  If not, see <http://www.gnu.org/licenses/>.
 
+from functools import partial
 import subprocess
 from debbindiff import tool_required
-from debbindiff.comparators.utils import binary_fallback
+from debbindiff.comparators.utils import binary_fallback, Command
 from debbindiff.difference import Difference
 
 
-@tool_required('sng')
-def sng(path):
-    with open(path) as f:
-        p = subprocess.Popen(['sng'], shell=False, close_fds=True,
-                             stdin=f, stdout=subprocess.PIPE)
-        out, err = p.communicate()
-        p.wait()
-        if p.returncode != 0:
-            return 'sng exited with error %d\n%s' % (p.returncode, err)
-        return out.decode('utf-8')
+class Sng(Command):
+    @tool_required('sng')
+    def cmdline(self):
+        return ['sng']
+
+    def feed_stdin(self, stdin):
+        try:
+            with open(self.path) as f:
+                for buf in iter(partial(f.read, 32768), b''):
+                    stdin.write(buf)
+        finally:
+            stdin.close()
+
 
 @binary_fallback
 def compare_png_files(path1, path2, source=None):
-    sng1 = sng(path1)
-    sng2 = sng(path2)
-    difference = Difference.from_unicode(sng1, sng2, path1, path2, source='sng')
+    difference = Difference.from_command(Sng, path1, path2, source='sng')
     if not difference:
         return []
     return [difference]

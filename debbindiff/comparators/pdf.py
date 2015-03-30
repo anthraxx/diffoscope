@@ -19,39 +19,32 @@
 
 import subprocess
 from debbindiff import tool_required
-from debbindiff.comparators.utils import binary_fallback
+from debbindiff.comparators.utils import binary_fallback, Command
 from debbindiff.difference import Difference, get_source
 
 
-@tool_required('pdftk')
-def uncompress(path):
-    output = subprocess.check_output(
-        ['pdftk', path, 'output', '-', 'uncompress'],
-        shell=False, close_fds=True)
-    return output.decode('latin-1')
+class Pdftotext(Command):
+    @tool_required('pdftotext')
+    def cmdline(self):
+        return ['pdftotext', self.path, '-']
 
 
-@tool_required('pdftotext')
-def pdftotext(path):
-    return subprocess.check_output(
-        ['pdftotext', path, '-'],
-        shell=False, close_fds=True).decode('utf-8')
+class Pdftk(Command):
+    @tool_required('pdftk')
+    def cmdline(self):
+        return ['pdftk', self.path, 'output', '-', 'uncompress']
+
+    def filter(self, line):
+        return line.decode('latin-1').encode('utf-8')
 
 
 @binary_fallback
 def compare_pdf_files(path1, path2, source=None):
     differences = []
-    src = get_source(path1, path2) or 'FILE'
-    text1 = pdftotext(path1)
-    text2 = pdftotext(path2)
-    difference = Difference.from_unicode(text1, text2, path1, path2,
-                                         source="pdftotext %s" % src)
+    difference = Difference.from_command(Pdftotext, path1, path2)
     if difference:
         differences.append(difference)
-    uncompressed1 = uncompress(path1)
-    uncompressed2 = uncompress(path2)
-    difference = Difference.from_unicode(uncompressed1, uncompressed2, path1, path2,
-                                         source="pdftk %s output - uncompress" % src)
+    difference = Difference.from_command(Pdftk, path1, path2)
     if difference:
         differences.append(difference)
     return differences

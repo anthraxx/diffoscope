@@ -1,3 +1,16 @@
+debbindiff (14) unstable; urgency=low
+
+  * Remove diffutils from Recommends as it is Essential:yes.
+  * Fallback to Python hexlify if xxd is not available.
+  * Decode msgunfmt output using the actual PO charset.
+  * Stop buffering output of most external commands and
+    send it to diff as it comes. (Closes: #781373)
+  * Stop feeding input to diff after a certain amount of lines,
+    as GNU diff cannot cope with arbitrary large output.
+  * Fix newline and tab handling in HTML presenter.
+
+ -- Jérémy Bobbio <lunar@debian.org>  Thu, 02 Apr 2015 16:16:59 +0200
+
 debbindiff (13) unstable; urgency=low
 
   [ Helmut Grohne ]

@@ -20,7 +20,7 @@
 import os.path
 import re
 import subprocess
-from zipfile import ZipFile
+from zipfile import ZipFile, BadZipfile
 from debbindiff import logger
 from debbindiff.difference import Difference
 import debbindiff.comparators
@@ -47,32 +47,36 @@ class ZipinfoVerbose(Zipinfo):
 @binary_fallback
 def compare_zip_files(path1, path2, source=None):
     differences = []
-    with ZipFile(path1, 'r') as zip1:
-        with ZipFile(path2, 'r') as zip2:
-            # look up differences in content
-            with make_temp_directory() as temp_dir1:
-                with make_temp_directory() as temp_dir2:
-                    for name in sorted(set(zip1.namelist())
-                                       .intersection(zip2.namelist())):
-                        # skip directories
-                        if name.endswith('/'):
-                            continue
-                        logger.debug('extract member %s', name)
-                        zip1.extract(name, temp_dir1)
-                        zip2.extract(name, temp_dir2)
-                        in_path1 = os.path.join(temp_dir1, name)
-                        in_path2 = os.path.join(temp_dir2, name)
-                        differences.extend(
-                            debbindiff.comparators.compare_files(
-                                in_path1, in_path2,
-                                source=name))
-                        os.unlink(in_path1)
-                        os.unlink(in_path2)
-            # look up differences in metadata
-            difference = Difference.from_command(Zipinfo, path1, path2)
-            if not difference:
-                # search harder
-                difference = Difference.from_command(ZipinfoVerbose, path1, path2)
-            if difference:
-                differences.append(difference)
+    try:
+        with ZipFile(path1, 'r') as zip1:
+            with ZipFile(path2, 'r') as zip2:
+                # look up differences in content
+                with make_temp_directory() as temp_dir1:
+                    with make_temp_directory() as temp_dir2:
+                        for name in sorted(set(zip1.namelist())
+                                           .intersection(zip2.namelist())):
+                            # skip directories
+                            if name.endswith('/'):
+                                continue
+                            logger.debug('extract member %s', name)
+                            zip1.extract(name, temp_dir1)
+                            zip2.extract(name, temp_dir2)
+                            in_path1 = os.path.join(temp_dir1, name)
+                            in_path2 = os.path.join(temp_dir2, name)
+                            differences.extend(
+                                debbindiff.comparators.compare_files(
+                                    in_path1, in_path2,
+                                    source=name))
+                            os.unlink(in_path1)
+                            os.unlink(in_path2)
+                # look up differences in metadata
+                difference = Difference.from_command(Zipinfo, path1, path2)
+                if not difference:
+                    # search harder
+                    difference = Difference.from_command(ZipinfoVerbose, path1, path2)
+                if difference:
+                    differences.append(difference)
+    except BadZipfile:
+        logger.debug('Either %s or %s is not a zip file.' % (path1, path2))
+        # we'll fallback on binary comparison
     return differences

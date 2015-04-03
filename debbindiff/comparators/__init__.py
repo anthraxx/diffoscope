@@ -77,7 +77,7 @@ COMPARATORS = [
     (r'^application/x-xz(;|$)', r'\.xz$', compare_xz_files),
     (r'^application/x-tar(;|$)', r'\.tar$', compare_tar_files),
     (r'^application/zip(;|$)', r'\.(zip|jar)$', compare_zip_files),
-    (r'^application/java-archive(;|$)', r'\.(jar|war)', compare_zip_files),
+    (r'^application/java-archive(;|$)', r'\.(jar|war)$', compare_zip_files),
     (r'^application/epub+zip(;|$)', r'\.epub$', compare_zip_files),
     (r'^application/(x-debian-package|vnd.debian.binary-package)(;|$)', r'\.u?deb$', compare_deb_files),
     (r'^application/x-rpm(;|$)', r'\.rpm$', compare_rpm_files),

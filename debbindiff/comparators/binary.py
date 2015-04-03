@@ -27,8 +27,11 @@ from debbindiff import tool_required, RequiredToolNotFound
 @contextmanager
 @tool_required('xxd')
 def xxd(path):
-    p = subprocess.Popen(['xxd', path], shell=False, stdout=subprocess.PIPE)
+    p = subprocess.Popen(['xxd', path], shell=False, stdout=subprocess.PIPE,
+                         stderr=subprocess.PIPE, close_fds=True)
     yield p.stdout
+    p.stdout.close()
+    p.stderr.close()
     if p.poll() is None:
         p.terminate()
     p.wait()

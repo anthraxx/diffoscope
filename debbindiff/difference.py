@@ -154,6 +154,8 @@ def run_diff(fd1, fd2, end_nl_q1, end_nl_q2):
                          stderr=subprocess.STDOUT,
                          preexec_fn=close_fds)
     p.stdin.close()
+    os.close(fd1)
+    os.close(fd2)
     parser = DiffParser(p.stdout, end_nl_q1, end_nl_q2)
     t_read = Thread(target=parser.parse)
     t_read.daemon = True

@@ -26,7 +26,7 @@ from debbindiff.difference import Difference
 class ShowIface(Command):
     @tool_required('ghc')
     def cmdline(self):
-        return ['ghc', '--show-iface', path]
+        return ['ghc', '--show-iface', self.path]
 
 
 @binary_fallback

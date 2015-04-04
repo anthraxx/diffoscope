@@ -1,3 +1,13 @@
+debbindiff (15) unstable; urgency=low
+
+  * Terminate xxd if its output was too long.
+  * Handle broken zip files by falling back on binary comparison.
+  * Fix an over-matching jar/war filename regexp.
+  * Fix .hi comparator.
+  * Fix some file descriptor leaks.
+
+ -- Jérémy Bobbio <lunar@debian.org>  Sat, 04 Apr 2015 18:30:48 +0200
+
 debbindiff (14) unstable; urgency=low
 
   * Remove diffutils from Recommends as it is Essential:yes.

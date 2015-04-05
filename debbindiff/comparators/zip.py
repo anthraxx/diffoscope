@@ -59,10 +59,8 @@ def compare_zip_files(path1, path2, source=None):
                             if name.endswith('/'):
                                 continue
                             logger.debug('extract member %s', name)
-                            zip1.extract(name, temp_dir1)
-                            zip2.extract(name, temp_dir2)
-                            in_path1 = os.path.join(temp_dir1, name)
-                            in_path2 = os.path.join(temp_dir2, name)
+                            in_path1 = zip1.extract(name, temp_dir1)
+                            in_path2 = zip2.extract(name, temp_dir2)
                             differences.extend(
                                 debbindiff.comparators.compare_files(
                                     in_path1, in_path2,

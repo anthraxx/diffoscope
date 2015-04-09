@@ -87,8 +87,10 @@ def binary_fallback(original_function):
 @contextmanager
 def make_temp_directory():
     temp_dir = tempfile.mkdtemp(suffix='debbindiff')
-    yield temp_dir
-    shutil.rmtree(temp_dir)
+    try:
+        yield temp_dir
+    finally:
+        shutil.rmtree(temp_dir)
 
 
 def get_ar_content(path):

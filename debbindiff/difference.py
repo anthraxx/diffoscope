@@ -256,9 +256,16 @@ def make_feeder_from_command(command):
         return end_nl
     return feeder
 
+
 def diff(feeder1, feeder2):
-    end_nl_q1 = Queue()
-    end_nl_q2 = Queue()
+    try:
+        end_nl_q1 = Queue()
+        end_nl_q2 = Queue()
+    except OSError as e:
+        if e.errno not in (13, 38):
+            raise
+        logger.critical('/dev/shm is not available or not on a tmpfs. Unable to create semaphore.')
+        sys.exit(2)
     with fd_from_feeder(feeder1, end_nl_q1) as fd1:
         with fd_from_feeder(feeder2, end_nl_q2) as fd2:
             return run_diff(fd1, fd2, end_nl_q1, end_nl_q2)

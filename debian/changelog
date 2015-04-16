@@ -1,3 +1,15 @@
+debbindiff (16) unstable; urgency=low
+
+  [ Reiner Herrmann ]
+  * Remove temporary directory when exception is raised. (Closes: #782253)
+  * Fix extraction when Zip member contain "../" in their path.
+
+  [ Jérémy Bobbio ]
+  * Fail with a better error message when unable to create a Queue.
+    (Closes: #782551)
+
+ -- Jérémy Bobbio <lunar@debian.org>  Thu, 16 Apr 2015 11:07:58 +0200
+
 debbindiff (15) unstable; urgency=low
 
   * Terminate xxd if its output was too long.

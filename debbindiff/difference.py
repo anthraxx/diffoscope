@@ -317,8 +317,12 @@ class Difference(object):
 
     @staticmethod
     def from_command(cls, path1, path2, *args, **kwargs):
-        command1 = cls(path1)
-        command2 = cls(path2)
+        command_args = []
+        if 'command_args' in kwargs:
+            command_args = kwargs['command_args']
+            del kwargs['command_args']
+        command1 = cls(path1, *command_args)
+        command2 = cls(path2, *command_args)
         if 'source' not in kwargs:
             kwargs['source'] = ' '.join(map(lambda x: '{}' if x == command1.path else x, command1.cmdline()))
         difference = Difference.from_feeder(make_feeder_from_command(command1),

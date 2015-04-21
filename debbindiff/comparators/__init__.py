@@ -35,6 +35,7 @@ from debbindiff.comparators.fonts import compare_ttf_files
 from debbindiff.comparators.gettext import compare_mo_files
 from debbindiff.comparators.gzip import compare_gzip_files
 from debbindiff.comparators.haskell import compare_hi_files
+from debbindiff.comparators.iso9660 import compare_iso9660_files
 from debbindiff.comparators.pdf import compare_pdf_files
 from debbindiff.comparators.png import compare_png_files
 from debbindiff.comparators.rpm import compare_rpm_files
@@ -94,6 +95,7 @@ COMPARATORS = [
     (r'^application/postscript; charset=(?P<encoding>[a-z0-9-]+)$', None, compare_text_files),
     (None, r'\.squashfs$', compare_squashfs_files),
     (None, r'\.a$', compare_static_lib_files),
+    (r'^application/x-iso9660-image(;|$)', None, compare_iso9660_files)
     ]
 
 SMALL_FILE_THRESHOLD = 65536 # 64 kiB

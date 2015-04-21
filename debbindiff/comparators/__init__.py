@@ -74,7 +74,7 @@ COMPARATORS = [
     (None, r'\.(p_)?hi$', compare_hi_files),
     (None, r'\/\./md5sums$', compare_md5sums_files),
     (None, r'\.mo$', compare_mo_files),
-    (None, r'\.cpio$', compare_cpio_files),
+    (None, r'(\.cpio|/initrd)$', compare_cpio_files),
     (r'^application/x-xz(;|$)', r'\.xz$', compare_xz_files),
     (r'^application/x-tar(;|$)', r'\.tar$', compare_tar_files),
     (r'^application/zip(;|$)', r'\.(zip|jar)$', compare_zip_files),

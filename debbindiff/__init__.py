@@ -41,6 +41,7 @@ class RequiredToolNotFound(Exception):
                 , 'ghc':        { 'debian': 'ghc' }
                 , 'gpg':        { 'debian': 'gnupg' }
                 , 'gzip':       { 'debian': 'gzip' }
+                , 'isoinfo':    { 'debian': 'genisoimage' }
                 , 'ls':         { 'debian': 'coreutils' }
                 , 'lsattr':     { 'debian': 'e2fsprogs' }
                 , 'msgunfmt':   { 'debian': 'gettext' }

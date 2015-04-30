@@ -34,6 +34,7 @@ ch.setFormatter(formatter)
 class RequiredToolNotFound(Exception):
     PROVIDERS = { 'ar':         { 'debian': 'binutils-multiarch' }
                 , 'bzip2':      { 'debian': 'bzip2' }
+                , 'cmp':        { 'debian': 'diffutils' }
                 , 'cpio':       { 'debian': 'cpio' }
                 , 'diff':       { 'debian': 'diffutils' }
                 , 'file':       { 'debian': 'file' }

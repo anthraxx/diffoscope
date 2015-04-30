@@ -22,8 +22,9 @@ from debian.arfile import ArFile
 from debbindiff import logger
 from debbindiff.difference import Difference, get_source
 import debbindiff.comparators
+from debbindiff.comparators.binary import are_same_binaries
 from debbindiff.comparators.utils import \
-    binary_fallback, make_temp_directory, are_same_binaries, get_ar_content
+    binary_fallback, make_temp_directory, get_ar_content
 
 
 @binary_fallback

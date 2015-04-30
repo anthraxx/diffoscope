@@ -58,3 +58,9 @@ def compare_binary_files(path1, path2, source=None):
     if not difference:
         return []
     return [difference]
+
+
+@tool_required('cmp')
+def are_same_binaries(path1, path2):
+    return 0 == subprocess.call(['cmp', '--silent', path1, path2],
+                                shell=False, close_fds=True)

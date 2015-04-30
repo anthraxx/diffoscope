@@ -22,8 +22,9 @@ import magic
 import os.path
 import re
 import sys
-from debbindiff import logger
-from debbindiff.comparators.binary import compare_binary_files
+from debbindiff import logger, tool_required
+from debbindiff.comparators.binary import \
+    compare_binary_files, are_same_binaries
 from debbindiff.comparators.bzip2 import compare_bzip2_files
 from debbindiff.comparators.changes import compare_changes_files
 from debbindiff.comparators.cpio import compare_cpio_files
@@ -55,6 +56,8 @@ def guess_mime_type(path):
 
 def compare_unknown(path1, path2, source=None):
     logger.debug("compare unknown path: %s and %s", path1, path2)
+    if are_same_binaries(path1, path2):
+        return []
     mime_type1 = guess_mime_type(path1)
     mime_type2 = guess_mime_type(path2)
     logger.debug("mime_type1: %s | mime_type2: %s", mime_type1, mime_type2)

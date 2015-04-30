@@ -27,27 +27,10 @@ import shutil
 import subprocess
 import tempfile
 from threading import Thread
-from debbindiff.comparators.binary import compare_binary_files
+from debbindiff.comparators.binary import \
+    compare_binary_files, are_same_binaries
 from debbindiff.difference import Difference
 from debbindiff import logger, RequiredToolNotFound
-
-
-def are_same_binaries(path1, path2):
-    BUF_SIZE = 20 * 2 ** 10  # 20 kB
-    h1 = hashlib.md5()
-    f1 = open(path1, 'rb')
-    h2 = hashlib.md5()
-    f2 = open(path2, 'rb')
-    while True:
-        buf1 = f1.read(BUF_SIZE)
-        buf2 = f2.read(BUF_SIZE)
-        if not buf1 or not buf2:
-            return not buf1 and not buf2
-        h1.update(buf1)
-        h2.update(buf2)
-        if h1.digest() != h2.digest():
-            return False
-    return True
 
 
 # decorator that will create a fallback on binary diff if no differences

@@ -1,3 +1,19 @@
+debbindiff (17) unstable; urgency=low
+
+  [ Jérémy Bobbio ]
+  * Add support for ISO9660 images.
+  * Catch a few more initrds as such.
+  * Reimplement are_same_binaries() using cmp.
+
+  [ Reiner Herrmann ]
+  * Use gzip comparator for .dz (dictzip) files.
+  * Added isoinfo to list of tool providers.
+
+  [ Yasushi SHOJI ]
+  * Disable 'Device' section diff in stat output. (Closes: #783792)
+
+ -- Jérémy Bobbio <lunar@debian.org>  Thu, 30 Apr 2015 19:29:26 +0200
+
 debbindiff (16) unstable; urgency=low
 
   [ Reiner Herrmann ]

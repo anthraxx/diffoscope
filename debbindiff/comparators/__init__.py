@@ -96,6 +96,7 @@ COMPARATORS = [
     (r'^text/plain; charset=(?P<encoding>[a-z0-9-]+)$', None, compare_text_files),
     (r'^application/xml; charset=(?P<encoding>[a-z0-9-]+)$', None, compare_text_files),
     (r'^application/postscript; charset=(?P<encoding>[a-z0-9-]+)$', None, compare_text_files),
+    (r'^application/octet-stream(;|$)', r'\.info$', compare_text_files),
     (None, r'\.squashfs$', compare_squashfs_files),
     (None, r'\.a$', compare_static_lib_files),
     (r'^application/x-iso9660-image(;|$)', None, compare_iso9660_files)

@@ -57,12 +57,12 @@ def compare_tar_files(path1, path2, source=None):
                         logger.debug('extract member %s', name)
                         tar1.extract(name, temp_dir1)
                         tar2.extract(name, temp_dir2)
-                        in_path1 = os.path.join(temp_dir1, name)
-                        in_path2 = os.path.join(temp_dir2, name)
+                        in_path1 = os.path.join(temp_dir1, name).decode('utf-8')
+                        in_path2 = os.path.join(temp_dir2, name).decode('utf-8')
                         differences.extend(
                             debbindiff.comparators.compare_files(
                                 in_path1, in_path2,
-                                source=name))
+                                source=name.decode('utf-8')))
                         os.unlink(in_path1)
                         os.unlink(in_path2)
             # look up differences in file list and file metadata

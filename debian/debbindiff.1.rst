@@ -22,8 +22,10 @@ DESCRIPTION
 debbindiff was designed to easily compare two builds of the same Debian
 package, and understand their differences.
 
-It can be scripted through error codes, and an HTML report can be produced
-with the detected differences.
+It can be scripted through error codes, and a report can be produced
+with the detected differences. The report can be text or HTML.
+When no type of report has been selected, debbindiff defaults
+to write a text report on the standard output.
 
 debbindiff was written as part of the “reproducible builds” Debian
 project.

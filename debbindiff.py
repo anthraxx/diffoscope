@@ -109,8 +109,8 @@ def main():
             with make_printer(parsed_args.html_output) as print_func:
                 output_html(differences, css_url=parsed_args.css_url, print_func=print_func,
                             max_page_size=parsed_args.max_report_size)
-        if parsed_args.text_output:
-            with make_printer(parsed_args.text_output) as print_func:
+        else:
+            with make_printer(parsed_args.text_output or '-') as print_func:
                 output_text(differences, print_func=print_func)
         return 1
     return 0

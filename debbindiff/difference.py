@@ -32,7 +32,6 @@ from debbindiff import logger, tool_required, RequiredToolNotFound
 
 
 MAX_DIFF_BLOCK_LINES = 50
-MAX_DIFF_LINES = 10000
 MAX_DIFF_INPUT_LINES = 100000 # GNU diff cannot process arbitrary large files :(
 
 
@@ -46,7 +45,6 @@ class DiffParser(object):
         self._action = self.read_headers
         self._diff = ''
         self._success = False
-        self._line_count = 0
         self._remaining_hunk_lines = None
         self._block_len = None
         self._direction = None
@@ -62,10 +60,6 @@ class DiffParser(object):
 
     def parse(self):
         for line in iter(self._output.readline, b''):
-            self._line_count += 1
-            if self._line_count >= MAX_DIFF_LINES:
-                self._diff += '\n[ Processing stopped after %d lines. ]' % self._line_count
-                break
             self._action = self._action(line.decode('utf-8'))
         self._success = True
         self._output.close()

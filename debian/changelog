@@ -1,3 +1,19 @@
+debbindiff (18) unstable; urgency=low
+
+  [ Reiner Herrmann ]
+  * Use zip comparator for pk3 files.
+  * Use text comparator for info files.
+  * Drop mime type for info files.
+  * Remove limit of diff output again.
+
+  [ Jérémy Bobbio ]
+  * Assume tar member names are UTF-8 encoded. This allows debbindiff to
+    process drmips.
+  * Write a text report on stdout as default behavior.
+  * Allow both --html and --text to produce output in one run.
+
+ -- Jérémy Bobbio <lunar@debian.org>  Sat, 09 May 2015 11:29:46 +0200
+
 debbindiff (17) unstable; urgency=low
 
   [ Jérémy Bobbio ]

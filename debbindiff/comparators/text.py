@@ -22,7 +22,7 @@ from debbindiff.comparators.binary import compare_binary_files
 from debbindiff.difference import Difference
 
 
-def compare_text_files(path1, path2, encoding, source=None):
+def compare_text_files(path1, path2, encoding=None, source=None):
     if encoding is None:
         encoding = 'utf-8'
     try:

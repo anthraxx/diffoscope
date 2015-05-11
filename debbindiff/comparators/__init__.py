@@ -125,7 +125,7 @@ def compare_files(path1, path2, source=None):
     for mime_type_regex, filename_regex, comparator in COMPARATORS:
         if filename_regex and re.search(filename_regex, path1) \
            and re.search(filename_regex, path2):
-            return comparator(path1, path2, source)
+            return comparator(path1, path2, source=source)
         if mime_type_regex:
             match1 = re.search(mime_type_regex, mime_type1)
             match2 = re.search(mime_type_regex, mime_type2)

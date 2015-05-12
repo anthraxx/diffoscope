@@ -1,3 +1,11 @@
+debbindiff (19) unstable; urgency=low
+
+  [ Reiner Herrmann ]
+  * Fix info files comparator by specifying the correct parameter name
+    for the text comparator. (Closes: #784891)
+
+ -- Jérémy Bobbio <lunar@debian.org>  Tue, 12 May 2015 10:35:48 +0200
+
 debbindiff (18) unstable; urgency=low
 
   [ Reiner Herrmann ]

@@ -61,6 +61,8 @@ def create_parser():
 def make_printer(path):
     if path == '-':
         output = sys.stdout
+        if not sys.stdout.isatty():
+            output = codecs.getwriter(sys.stdin.encoding)(sys.stdout)
     else:
         output = codecs.open(path, 'w', encoding='utf-8')
     def print_func(*args, **kwargs):

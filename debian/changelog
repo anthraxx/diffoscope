@@ -1,3 +1,14 @@
+debbindiff (20) unstable; urgency=low
+
+  [ Reiner Herrmann ]
+  * info files can contain numbers in the extension
+
+  [ Jérémy Bobbio ]
+  * Fix diff parser when skipping until the end of a file without a newline.
+  * Use same encoding as stdin when output is not a TTY. (Closes: #785288)
+
+ -- Jérémy Bobbio <lunar@debian.org>  Sun, 17 May 2015 16:05:14 +0200
+
 debbindiff (19) unstable; urgency=low
 
   [ Reiner Herrmann ]

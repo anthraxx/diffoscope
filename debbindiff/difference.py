@@ -114,14 +114,11 @@ class DiffParser(object):
         return self.read_hunk
 
     def skip_block(self, line):
-        if not line.startswith(self._direction):
+        if self._remaining_hunk_lines == 0 or line[0] != self._direction:
             self._diff += '%s[ %d lines removed ]\n' % (self._direction, self._block_len - MAX_DIFF_BLOCK_LINES)
             return self.read_hunk(line)
         self._block_len += 1
         self._remaining_hunk_lines -= 1
-        if self._remaining_hunk_lines == 0:
-            self._diff += '%s[ %d lines removed ]\n' % (self._direction, self._block_len - MAX_DIFF_BLOCK_LINES)
-            return self.read_headers
         return self.skip_block
 
 

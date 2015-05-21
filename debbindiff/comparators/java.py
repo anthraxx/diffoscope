@@ -29,7 +29,7 @@ class Javap(Command):
         return ['javap', '-verbose', '-constants', '-s', '-l', '-private', self.path]
 
     def filter(self, line):
-        if re.match(r'^Classfile %s$' % self.path, line):
+        if re.match(r'^Classfile %s$' % re.escape(self.path), line):
             return ''
         return line
 

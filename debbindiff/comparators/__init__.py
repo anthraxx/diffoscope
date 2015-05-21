@@ -27,6 +27,7 @@ from debbindiff.comparators.binary import \
     compare_binary_files, are_same_binaries
 from debbindiff.comparators.bzip2 import compare_bzip2_files
 from debbindiff.comparators.changes import compare_changes_files
+from debbindiff.comparators.java import compare_class_files
 from debbindiff.comparators.cpio import compare_cpio_files
 from debbindiff.comparators.deb import compare_deb_files, compare_md5sums_files
 from debbindiff.comparators.directory import compare_directories
@@ -96,6 +97,7 @@ COMPARATORS = [
     (r'^text/plain; charset=(?P<encoding>[a-z0-9-]+)$', None, compare_text_files),
     (r'^application/xml; charset=(?P<encoding>[a-z0-9-]+)$', None, compare_text_files),
     (r'^application/postscript; charset=(?P<encoding>[a-z0-9-]+)$', None, compare_text_files),
+    (r'^application/x-java-applet(;|$)', r'\.class$', compare_class_files),
     (None, r'\.info(-\d+)?$', compare_text_files),
     (None, r'\.squashfs$', compare_squashfs_files),
     (None, r'\.a$', compare_static_lib_files),

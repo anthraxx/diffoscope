@@ -1,3 +1,11 @@
+debbindiff (21) unstable; urgency=low
+
+  * Non-maintainer upload.
+  * Add support for Java .class files.
+  * Add support for .ipk package files.
+
+ -- Reiner Herrmann <reiner@reiner-h.de>  Sat, 13 Jun 2015 21:38:20 +0200
+
 debbindiff (20) unstable; urgency=low
 
   [ Reiner Herrmann ]

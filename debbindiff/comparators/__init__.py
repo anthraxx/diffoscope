@@ -37,6 +37,7 @@ from debbindiff.comparators.fonts import compare_ttf_files
 from debbindiff.comparators.gettext import compare_mo_files
 from debbindiff.comparators.gzip import compare_gzip_files
 from debbindiff.comparators.haskell import compare_hi_files
+from debbindiff.comparators.ipk import compare_ipk_files
 from debbindiff.comparators.iso9660 import compare_iso9660_files
 from debbindiff.comparators.pdf import compare_pdf_files
 from debbindiff.comparators.png import compare_png_files
@@ -87,6 +88,7 @@ COMPARATORS = [
     (r'^application/(x-debian-package|vnd.debian.binary-package)(;|$)', r'\.u?deb$', compare_deb_files),
     (r'^application/x-rpm(;|$)', r'\.rpm$', compare_rpm_files),
     (r'^application/x-gzip(;|$)', r'\.(dz|t?gz|svgz)$', compare_gzip_files),
+    (r'^application/x-gzip(;|$)', r'\.ipk$', compare_ipk_files),
     (r'^application/x-bzip2(;|$)', r'\.bzip2$', compare_bzip2_files),
     (r'^application/x-executable(;|$)', None, compare_elf_files),
     (r'^application/x-sharedlib(;|$)', r'\.so($|\.[0-9.]+$)',

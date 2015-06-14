@@ -43,7 +43,7 @@ class RequiredToolNotFound(Exception):
                 , 'gpg':        { 'debian': 'gnupg' }
                 , 'gzip':       { 'debian': 'gzip' }
                 , 'isoinfo':    { 'debian': 'genisoimage' }
-                , 'javap':      { 'debian': 'java-sdk | default-jdk' }
+                , 'javap':      { 'debian': 'default-jdk | java-sdk' }
                 , 'ls':         { 'debian': 'coreutils' }
                 , 'lsattr':     { 'debian': 'e2fsprogs' }
                 , 'msgunfmt':   { 'debian': 'gettext' }

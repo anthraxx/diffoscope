@@ -23,6 +23,7 @@ import os.path
 import re
 import sys
 from debbindiff import logger, tool_required
+from debbindiff.difference import Difference
 from debbindiff.comparators.binary import \
     compare_binary_files, are_same_binaries
 from debbindiff.comparators.bzip2 import compare_bzip2_files
@@ -110,6 +111,23 @@ SMALL_FILE_THRESHOLD = 65536 # 64 kiB
 
 
 def compare_files(path1, path2, source=None):
+    if os.path.islink(path1) or os.path.islink(path2):
+        try:
+            dest1 = os.readlink(path1)
+            text1 = "%s -> %s" % (path1, dest1)
+        except OSError:
+            text1 = "[ No symlink ]"
+
+        try:
+            dest2 = os.readlink(path2)
+            text2 = "%s -> %s" % (path2, dest2)
+        except OSError:
+            text2 = "[ No symlink ]"
+
+        if dest1 == dest2:
+            return []
+        return [Difference.from_unicode(text1, text2, path1, path2, source=source, comment="symlink")]
+
     if os.path.isdir(path1) and os.path.isdir(path2):
         return compare_directories(path1, path2, source)
     if not os.path.isfile(path1):

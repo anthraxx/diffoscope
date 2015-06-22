@@ -59,7 +59,7 @@ class DiffParser(object):
         return self._success
 
     def parse(self):
-        for line in iter(self._output.readline, b''):
+        for line in self._output.readlines():
             self._action = self._action(line.decode('utf-8'))
         self._success = True
         self._output.close()
@@ -227,7 +227,7 @@ def make_feeder_from_file(in_file, filter=lambda buf: buf.encode('utf-8')):
     def feeder(out_file):
         line_count = 0
         end_nl = False
-        for buf in iter(in_file.readline, b''):
+        for buf in in_file.readlines():
             line_count += 1
             out_file.write(filter(buf))
             if line_count >= MAX_DIFF_INPUT_LINES:

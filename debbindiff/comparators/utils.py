@@ -24,6 +24,7 @@ import hashlib
 import re
 import os
 import shutil
+from StringIO import StringIO
 import subprocess
 import tempfile
 from threading import Thread
@@ -98,7 +99,7 @@ class Command(object):
         else:
             self._stdin_feeder = None
             self._process.stdin.close()
-        self._stderr = ''
+        self._stderr = StringIO()
         self._stderr_line_count = 0
         self._stderr_reader = Thread(target=self._read_stderr)
         self._stderr_reader.daemon = True
@@ -137,14 +138,14 @@ class Command(object):
         for line in iter(self._process.stderr.readline, b''):
             self._stderr_line_count += 1
             if self._stderr_line_count <= Command.MAX_STDERR_LINES:
-                self._stderr += line
+                self._stderr.write(line)
         if self._stderr_line_count > Command.MAX_STDERR_LINES:
-            self._stderr += '[ %d lines ignored ]\n' % (self._stderr_line_count - Command.MAX_STDERR_LINES)
+            self._stderr.write('[ %d lines ignored ]\n' % (self._stderr_line_count - Command.MAX_STDERR_LINES))
         self._process.stderr.close()
 
     @property
     def stderr_content(self):
-        return self._stderr
+        return self._stderr.getvalue()
 
     @property
     def stdout(self):

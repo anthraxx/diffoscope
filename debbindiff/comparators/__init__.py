@@ -112,6 +112,7 @@ SMALL_FILE_THRESHOLD = 65536 # 64 kiB
 
 def compare_files(path1, path2, source=None):
     if os.path.islink(path1) or os.path.islink(path2):
+        dest1, dest2 = None, None
         try:
             dest1 = os.readlink(path1)
             text1 = "%s -> %s" % (path1, dest1)
@@ -124,7 +125,7 @@ def compare_files(path1, path2, source=None):
         except OSError:
             text2 = "[ No symlink ]"
 
-        if dest1 == dest2:
+        if dest1 and dest2 and dest1 == dest2:
             return []
         return [Difference.from_unicode(text1, text2, path1, path2, source=source, comment="symlink")]
 

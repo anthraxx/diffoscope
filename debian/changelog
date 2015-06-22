@@ -1,3 +1,14 @@
+debbindiff (23) unstable; urgency=medium
+
+  [ Helmut Grohne ]
+  * Speed up diff collection.
+  * Read lines in larger chunks.
+
+  [ Reiner Herrmann ]
+  * Don't follow symlinks, but print their targets.
+
+ -- Reiner Herrmann <reiner@reiner-h.de>  Mon, 22 Jun 2015 23:19:17 +0200
+
 debbindiff (22) unstable; urgency=low
 
   * Add myself to uploaders

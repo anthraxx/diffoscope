@@ -1,3 +1,9 @@
+debbindiff (24) unstable; urgency=medium
+
+  * Fix for undefined variables introduced in last release.
+
+ -- Reiner Herrmann <reiner@reiner-h.de>  Tue, 23 Jun 2015 00:15:28 +0200
+
 debbindiff (23) unstable; urgency=medium
 
   [ Helmut Grohne ]

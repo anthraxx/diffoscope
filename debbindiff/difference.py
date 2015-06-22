@@ -26,6 +26,7 @@ import re
 import subprocess
 import sys
 import traceback
+from StringIO import StringIO
 from threading import Thread
 from multiprocessing import Queue
 from debbindiff import logger, tool_required, RequiredToolNotFound
@@ -43,7 +44,7 @@ class DiffParser(object):
         self._end_nl_q1 = end_nl_q1
         self._end_nl_q2 = end_nl_q2
         self._action = self.read_headers
-        self._diff = ''
+        self._diff = StringIO()
         self._success = False
         self._remaining_hunk_lines = None
         self._block_len = None
@@ -52,7 +53,7 @@ class DiffParser(object):
 
     @property
     def diff(self):
-        return self._diff
+        return self._diff.getvalue()
 
     @property
     def success(self):
@@ -72,7 +73,7 @@ class DiffParser(object):
             return self.read_headers
         elif not found:
             raise ValueError('Unable to parse diff headers: %s' % repr(line))
-        self._diff += line
+        self._diff.write(line)
         if found.group('len1'):
             self._remaining_hunk_lines = int(found.group('len1'))
         else:
@@ -103,7 +104,7 @@ class DiffParser(object):
             return self.read_headers(line)
         else:
             raise ValueError('Unable to parse diff hunk: %s' % repr(line))
-        self._diff += line
+        self._diff.write(line)
         if line[0] in ('-', '+') and line[0] == self._direction:
             self._block_len += 1
             if self._block_len >= MAX_DIFF_BLOCK_LINES:
@@ -115,7 +116,7 @@ class DiffParser(object):
 
     def skip_block(self, line):
         if self._remaining_hunk_lines == 0 or line[0] != self._direction:
-            self._diff += '%s[ %d lines removed ]\n' % (self._direction, self._block_len - MAX_DIFF_BLOCK_LINES)
+            self._diff.write('%s[ %d lines removed ]\n' % (self._direction, self._block_len - MAX_DIFF_BLOCK_LINES))
             return self.read_hunk(line)
         self._block_len += 1
         self._remaining_hunk_lines -= 1

@@ -289,7 +289,7 @@ class Difference(object):
         except RequiredToolNotFound:
             actual_comment = 'diff is not available!'
             if comment:
-                actual_comment += '\n\n' + orig_comment
+                actual_comment += '\n\n' + comment
         if not unified_diff:
             return None
         return Difference(unified_diff, path1, path2, source, actual_comment)

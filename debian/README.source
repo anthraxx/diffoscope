@@ -1,0 +1,14 @@
+debbindiff: hacking tips
+========================
+
+Running the test suite
+----------------------
+
+Tests are meant to be run with PyTest. The easiest way is simple to run
+the tests are then:
+
+    $ py.test
+
+To get code coverage:
+
+    $ py.test --cov debbindiff --cov-report html

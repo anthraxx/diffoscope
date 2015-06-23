@@ -2,3 +2,5 @@
 *.pyc
 /debbindiff.egg-info/
 /dist/
+/.coverage
+/htmlcov/

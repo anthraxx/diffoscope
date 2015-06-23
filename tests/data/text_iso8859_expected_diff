@@ -1,0 +1,14 @@
+--- /dev/fd/63	2015-06-23 10:04:13.051750060 +0000
++++ tests/data/text_unicode1	2015-06-23 09:46:16.425827486 +0000
+@@ -3,10 +3,10 @@
+ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
+ incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis
+ nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+ Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
+ fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
+ culpa qui officia deserunt mollit anim id est laborum.
+ 
+-«Lorem ipsum» text is derived from sections 1.10.32--3 of Cicero's De finibus
++"Lorem ipsum" text is derived from sections 1.10.32–3 of Cicero's De finibus
+ bonorum et malorum (On the Ends of Goods and Evils, or alternatively [About]
+ The Purposes of Good and Evil).

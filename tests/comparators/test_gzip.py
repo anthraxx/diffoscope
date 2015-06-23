@@ -18,13 +18,10 @@
 # You should have received a copy of the GNU General Public License
 # along with debbindiff.  If not, see <http://www.gnu.org/licenses/>.
 
-from __future__ import print_function
-
 import os.path
 import shutil
 import pytest
 from debbindiff.comparators.gzip import compare_gzip_files
-from debbindiff.presenters.text import output_text
 
 TEST_FILE1_PATH = os.path.join(os.path.dirname(__file__), '../data/test1.gz') 
 TEST_FILE2_PATH = os.path.join(os.path.dirname(__file__), '../data/test2.gz') 

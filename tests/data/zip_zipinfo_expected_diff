@@ -1,0 +1,10 @@
+@@ -1,5 +1,5 @@
+-Archive:  test1.zip
+-Zip file size: 571 bytes, number of entries: 2
++Archive:  test2.zip
++Zip file size: 714 bytes, number of entries: 2
+ drwxr-xr-x  3.0 unx        0 bx stor 15-Jun-24 13:44 dir/
+--rw-r--r--  3.0 unx      446 tx defN 15-Jun-24 13:44 dir/text
+-2 files, 446 bytes uncompressed, 269 bytes compressed:  39.7%
++-rw-r--r--  3.0 unx      671 tx defN 15-Jun-24 13:45 dir/text
++2 files, 671 bytes uncompressed, 412 bytes compressed:  38.6%

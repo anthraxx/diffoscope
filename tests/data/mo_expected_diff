@@ -1,0 +1,19 @@
+@@ -1,14 +1,17 @@
+ msgid ""
+ msgstr ""
+ "Project-Id-Version: debbindiff\n"
+ "POT-Creation-Date: 2015-06-24 12:42+0200\n"
+-"PO-Revision-Date: 2015-06-24 12:42+0200\n"
++"PO-Revision-Date: 2015-06-24 14:57+0200\n"
+ "Last-Translator: Someone <user@example.org>\n"
+ "Language-Team: English <user@example.org>\n"
+ "Language: en\n"
+ "MIME-Version: 1.0\n"
+ "Content-Type: text/plain; charset=UTF-8\n"
+ "Content-Transfer-Encoding: 8bit\n"
+ 
++msgid "Another string"
++msgstr "Another string"
++
+ msgid "String"
+ msgstr "String"

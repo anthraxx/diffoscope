@@ -34,8 +34,10 @@ class Zipinfo(Command):
         return ['zipinfo', self.path]
 
     def filter(self, line):
-        # the full path appears in the output, we need to remove it
-        return line.replace(self.path, os.path.basename(self.path))
+        # we don't care about the archive file path
+        if re.match('^Archive:.*', line):
+            return ''
+        return line
 
 
 class ZipinfoVerbose(Zipinfo):

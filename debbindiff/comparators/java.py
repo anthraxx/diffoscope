@@ -17,6 +17,7 @@
 # You should have received a copy of the GNU General Public License
 # along with debbindiff.  If not, see <http://www.gnu.org/licenses/>.
 
+import os.path
 import re
 from debbindiff import tool_required
 from debbindiff.comparators.utils import binary_fallback, Command
@@ -24,12 +25,16 @@ from debbindiff.difference import Difference
 
 
 class Javap(Command):
+    def __init__(self, path, *args, **kwargs):
+        super(Javap, self).__init__(path, *args, **kwargs)
+        self.real_path = os.path.realpath(path)
+
     @tool_required('javap')
     def cmdline(self):
         return ['javap', '-verbose', '-constants', '-s', '-l', '-private', self.path]
 
     def filter(self, line):
-        if re.match(r'^Classfile %s$' % re.escape(self.path), line):
+        if re.match(r'^Classfile %s$' % re.escape(self.real_path), line):
             return ''
         return line
 

@@ -19,6 +19,7 @@
 
 import re
 import subprocess
+from StringIO import StringIO
 from debbindiff import tool_required
 from debbindiff.comparators.utils import binary_fallback, Command
 from debbindiff.difference import Difference
@@ -30,7 +31,7 @@ class Msgunfmt(Command):
 
     def __init__(self, *args, **kwargs):
         super(Msgunfmt, self).__init__(*args, **kwargs)
-        self._header = ''
+        self._header = StringIO()
         self._encoding = None
 
     @tool_required('msgunfmt')
@@ -39,15 +40,15 @@ class Msgunfmt(Command):
 
     def filter(self, line):
         if not self._encoding:
-            self._header += line
+            self._header.write(line)
             if line == '\n':
                 logger.debug("unable to determine PO encoding, let's hope it's utf-8")
                 self._encoding = 'utf-8'
-                return self._header
+                return self._header.getvalue()
             found = Msgunfmt.CHARSET_RE.match(line)
             if found:
                 self._encoding = found.group(1).lower()
-                return self._header.decode(self._encoding).encode('utf-8')
+                return self._header.getvalue().decode(self._encoding).encode('utf-8')
             return ''
         if self._encoding != 'utf-8':
             return line.decode(self._encoding).encode('utf-8')

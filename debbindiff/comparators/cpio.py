@@ -33,7 +33,7 @@ class CpioContent(Command):
 @tool_required('cpio')
 def get_cpio_names(path):
     cmd = ['cpio', '--quiet', '-tF', path]
-    return subprocess.check_output(cmd, stderr=subprocess.PIPE, shell=False)
+    return subprocess.check_output(cmd, stderr=subprocess.PIPE, shell=False).splitlines(False)
 
 
 @tool_required('cpio')
@@ -64,9 +64,7 @@ def compare_cpio_files(path1, path2, source=None):
         with make_temp_directory() as temp_dir2:
             extract_cpio_archive(path1, temp_dir1)
             extract_cpio_archive(path2, temp_dir2)
-            files1 = content1.splitlines(1)
-            files2 = content2.splitlines(1)
-            for member in sorted(set(files1).intersection(set(files2))):
+            for member in sorted(set(content1).intersection(set(content2))):
                 in_path1 = os.path.join(temp_dir1, member)
                 in_path2 = os.path.join(temp_dir2, member)
                 if not os.path.isfile(in_path1) or not os.path.isfile(in_path2):

@@ -1,0 +1,26 @@
+@@ -1,23 +1,23 @@
+ In archive:
+ 
+ test.o:     file format elf64-x86-64
+ 
+ Contents of section .text:
+- 0000 554889e5 b82a0000 005dc3             UH...*...].     
++ 0000 554889e5 b8ffffff ff5dc3             UH.......].     
+ Contents of section .comment:
+  0000 00474343 3a202844 65626961 6e20342e  .GCC: (Debian 4.
+  0010 372e322d 35292034 2e372e32 00        7.2-5) 4.7.2.   
+ Contents of section .eh_frame:
+  0000 14000000 00000000 017a5200 01781001  .........zR..x..
+  0010 1b0c0708 90010000 1c000000 1c000000  ................
+  0020 00000000 0b000000 00410e10 8602430d  .........A....C.
+  0030 06460c07 08000000                    .F......        
+ 
+ Disassembly of section .text:
+ 
+ 0000000000000000 <f>:
+    0:	55                   	push   %rbp
+    1:	48 89 e5             	mov    %rsp,%rbp
+-   4:	b8 2a 00 00 00       	mov    $0x2a,%eax
++   4:	b8 ff ff ff ff       	mov    $0xffffffff,%eax
+    9:	5d                   	pop    %rbp
+    a:	c3                   	retq   

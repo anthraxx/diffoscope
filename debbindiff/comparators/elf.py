@@ -53,6 +53,8 @@ class ObjdumpDisassemble(Command):
         return ['objdump', '--disassemble', '--full-contents', self.path]
 
     def filter(self, line):
+        # we don't care about the name of the archive
+        line = re.sub('^In archive %s:' % re.escape(self.path), 'In archive:', line)
         # the full path can appear in the output, we need to remove it
         return line.replace(self.path, os.path.basename(self.path))
 

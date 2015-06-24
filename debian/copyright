@@ -88,6 +88,11 @@ License: GPL-3.0+ with font exception
  font, but you are not obligated to do so. If you do not wish to do so, delete
  this exception statement from your version."
 
+Files: tests/data/base-files_157-*_ar71xx.ipk
+Copyright: 2007-2014 OpenWrt.org
+           2010 Vertical Communications
+License: GPL-2
+
 Files: debian/*
 Copyright: 2014-2015 Jérémy Bobbio <lunar@debian.org>
 License: GPL-3+
@@ -108,6 +113,10 @@ License: GPL-3+
  .
  On Debian systems, the complete text of the GNU General
  Public License version 3 can be found in "/usr/share/common-licenses/GPL-3".
+
+License: GPL-2
+ On Debian and Debian-based systems, a copy of the GNU General Public
+ License version 2 is available in /usr/share/common-licenses/GPL-2.
 
 License: Expat
  Permission is hereby granted, free of charge, to any person

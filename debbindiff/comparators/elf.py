@@ -25,25 +25,25 @@ from debbindiff.comparators.utils import binary_fallback, get_ar_content, Comman
 from debbindiff.difference import Difference
 
 
-class ReadelfAll(Command):
+class Readelf(Command):
     @tool_required('readelf')
     def cmdline(self):
-        return ['readelf', '--all', self.path]
+        return ['readelf'] + self.readelf_options() + [self.path]
+
+    def readelf_options(self):
+        return []
 
     def filter(self, line):
         # the full path can appear in the output, we need to remove it
         return line.replace(self.path, os.path.basename(self.path))
 
+class ReadelfAll(Readelf):
+    def readelf_options(self):
+        return ['-all']
 
-class ReadelfDebugDump(Command):
-    @tool_required('readelf')
-    def cmdline(self):
-        return ['readelf', '--debug-dump', self.path]
-
-    def filter(self, line):
-        # the full path can appear in the output, we need to remove it
-        return line.replace(self.path, os.path.basename(self.path))
-
+class ReadelfDebugDump(Readelf):
+    def readelf_options(self):
+        return ['--debug-dump']
 
 class ObjdumpDisassemble(Command):
     @tool_required('objdump')

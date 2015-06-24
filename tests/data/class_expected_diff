@@ -1,0 +1,29 @@
+@@ -1,10 +1,10 @@
+-Classfile /home/lunar/Documents/Debian/reproducible-builds/debbindiff/git/tests/data/Test1.class
+-  Last modified 24 juin 2015; size 255 bytes
+-  MD5 checksum b21793a1a687017fda223dba41bfcbf2
++Classfile /home/lunar/Documents/Debian/reproducible-builds/debbindiff/git/tests/data/Test2.class
++  Last modified 24 juin 2015; size 254 bytes
++  MD5 checksum 01a9e334bb654f7cde2e4cae29f92a99
+   Compiled from "Test.java"
+ class Test
+   SourceFile: "Test.java"
+   minor version: 0
+   major version: 50
+   flags: ACC_SUPER
+ Constant pool:
+@@ -39,12 +39,12 @@
+   public static int main(java.lang.String[]);
+     Signature: ([Ljava/lang/String;)I
+     flags: ACC_PUBLIC, ACC_STATIC
+     LineNumberTable:
+       line 3: 0
+     Code:
+       stack=1, locals=1, args_size=1
+-         0: bipush        42
+-         2: ireturn       
++         0: iconst_m1     
++         1: ireturn       
+       LineNumberTable:
+         line 3: 0
+ }

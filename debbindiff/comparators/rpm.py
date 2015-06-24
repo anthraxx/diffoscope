@@ -21,6 +21,7 @@ from __future__ import absolute_import
 import os.path
 import subprocess
 from contextlib import contextmanager
+import rpm
 import debbindiff.comparators
 from debbindiff import logger, tool_required
 from debbindiff.comparators.utils import binary_fallback, make_temp_directory
@@ -65,12 +66,6 @@ def extract_rpm_payload(path):
 
 @binary_fallback
 def compare_rpm_files(path1, path2, source=None):
-    try:
-        import rpm
-    except ImportError:
-        logger.info("Python module rpm not found.")
-        return []
-
     differences = []
 
     # compare headers

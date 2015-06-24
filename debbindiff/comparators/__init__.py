@@ -42,7 +42,18 @@ from debbindiff.comparators.ipk import compare_ipk_files
 from debbindiff.comparators.iso9660 import compare_iso9660_files
 from debbindiff.comparators.pdf import compare_pdf_files
 from debbindiff.comparators.png import compare_png_files
-from debbindiff.comparators.rpm import compare_rpm_files
+try:
+    from debbindiff.comparators.rpm import compare_rpm_files
+except ImportError as ex:
+    if ex.message != 'No module named rpm':
+        raise
+    def compare_rpm_files(path1, path2, source=None):
+        logger.info("Python rpm module not found.")
+        differences = compare_binary_files(path1, path2, source)
+        if differences:
+            differences[0].comment = (differences[0].comment or '') + \
+                '\nUnable to find Python rpm module. Falling back to binary comparison.'
+        return differences
 from debbindiff.comparators.squashfs import compare_squashfs_files
 from debbindiff.comparators.text import compare_text_files
 from debbindiff.comparators.tar import compare_tar_files

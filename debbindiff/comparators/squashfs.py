@@ -17,6 +17,7 @@
 # You should have received a copy of the GNU General Public License
 # along with debbindiff.  If not, see <http://www.gnu.org/licenses/>.
 
+import re
 import subprocess
 import os.path
 import debbindiff.comparators
@@ -36,6 +37,10 @@ class SquashfsSuperblock(Command):
     @tool_required('unsquashfs')
     def cmdline(self):
         return ['unsquashfs', '-s', self.path]
+
+    def filter(self, line):
+        # strip filename
+        return re.sub(r'^(Found a valid .*) on .*', '\\1', line)
 
 
 class SquashfsListing(Command):

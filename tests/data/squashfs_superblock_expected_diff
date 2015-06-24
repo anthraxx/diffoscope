@@ -1,0 +1,13 @@
+@@ -1,10 +1,10 @@
+ Found a valid SQUASHFS 4:0 superblock
+-Creation or last append time Wed Jun 24 14:49:50 2015
+-Filesystem size 0.55 Kbytes (0.00 Mbytes)
++Creation or last append time Wed Jun 24 14:50:09 2015
++Filesystem size 0.70 Kbytes (0.00 Mbytes)
+ Compression gzip
+ Block size 131072
+ Filesystem is exportable via NFS
+ Inodes are compressed
+ Data is compressed
+ Fragments are compressed
+ Always_use_fragments option is not specified

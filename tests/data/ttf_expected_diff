@@ -1,0 +1,71 @@
+@@ -6,33 +6,33 @@
+ GSUB checksum=83ea9f40 actual=83ea9f40 diff=0 offset=44256 len=2092
+ OS/2 checksum=8253044b actual=8253044b diff=0 offset=424 len=86
+ cmap checksum=635872c2 actual=635872c2 diff=0 offset=1356 len=434
+ cvt  checksum=e67de44f actual=e67de44f diff=0 offset=1960 len=82
+ fpgm checksum=8333c24f actual=8333c24f diff=0 offset=1792 len=20
+ gasp checksum=ffff0003 actual=ffff0003 diff=0 offset=44184 len=8
+ glyf checksum=c19163d1 actual=c19163d1 diff=0 offset=2468 len=33904
+-head checksum=ee7cdfb8 actual=1be360cb diff=f59fbf73 offset=300 len=54
++head checksum=ee7cdfb8 actual=17e360c7 diff=f99fbf7f offset=300 len=54
+ hhea checksum=0b070428 actual=0b070428 diff=0 offset=356 len=36
+ hmtx checksum=90d00254 actual=90d00254 diff=0 offset=512 len=844
+ loca checksum=7be19c62 actual=7be19c62 diff=0 offset=2044 len=424
+ maxp checksum=018d0241 actual=018d0241 diff=0 offset=392 len=32
+-name checksum=bb87b0d0 actual=bb87b0d0 diff=0 offset=36372 len=4743
++name checksum=bd87b0d2 actual=bd87b0d2 diff=0 offset=36372 len=4743
+ post checksum=9a0361df actual=9a0361df diff=0 offset=41116 len=3065
+ prep checksum=271c18e6 actual=271c18e6 diff=0 offset=1812 len=147
+ 
+ 
+ Created by FontForge 14:57 31-July-2012
+ 	Font created: Fri Jan  6 19:21:03 2006
+ 	Font modified: Tue May 11 11:54:49 2010
+ 
+ 
+ HEAD table (at 300)
+ 	Version=1
+ 	fontRevision=1.2
+-	checksumAdj=2d668113
++	checksumAdj=2966810f
+ 	magicNumber=5f0f3cf5 (0x5f0f3cf5, diff=0)
+ 	flags=1f baseline_at_0 lsb_at_0 instrs_depend_on_size ppem_to_int instr_set_width 
+ 	unitsPerEm=1024
+ 	create[0]=0
+ 	 create[1]=bfe4739f
+ 	File created: Fri Jan  6 19:21:03 2006
+ 	modtime[0]=0
+@@ -74,15 +74,15 @@
+ 	 platform=1 plat spec encoding=0 language=0 name=0 Copyright
+ 	 strlen=1259  stroff=2520	   Created by:^JRahul Bhalerao <b.rahul.pm@gmail.com>, ^JSandeep Shedmake <sandeep.shedmake@gmail.com>, ^JBageshri Salvi <sbageshri@gmail.com>, ^JPravin Satpute <pravin.d.s@gmail.com>^J^JModified by Hiran Venugopalan <hiran.v@gmail.com>^J^JGNU GPL V.3 or later (with Font Exception), Copyright `2005-2006 by  H.B.C.S.E., T.I.F.R.,^JHomi Bhabha Centre For Science Education, ^JTata Institute Of Fundamental Research,^JV.N. Purav Marg, Mankhurd, ^JMumbai 400 088, INDIA.^J^JAs a special exception, if you create a document which uses this font, and embed this font or unaltered portions of this font into the document, this font does not by itself cause the resulting document to be covered by the GNU General Public License. This exception does not however invalidate any other reasons why the document might be covered by the GNU General Public License. If you modify this font, you may extend this exception to your version of the font, but you are not obligated to do so. If you do not wish to do so, delete this exception statement from your version.  ^J^JFor detailed license see: ^Jwww.gnu.org and^Jhttp://www.gnu.org/licenses/gpl-faq.html#FontException^J^JFurther info :http://sarovar.org/projects/samyak/^Jwww.gnowledge.org^J^JCONTACTS:^JNagarjuna G.^JEmail:nagarjun@gnowledge.org
+ 	 platform=1 plat spec encoding=0 language=0 name=1 Family
+ 	 strlen=16  stroff=3814	   Samyak Malayalam
+ 	 platform=1 plat spec encoding=0 language=0 name=2 Subfamily
+ 	 strlen=6  stroff=3845	   Medium
+ 	 platform=1 plat spec encoding=0 language=0 name=3 UniqueID
+-	 strlen=44  stroff=3942	   FontForge 2.0 : Samyak Malayalam : 23-6-2015
++	 strlen=44  stroff=3942	   FontForge 2.0 : Samyak Malayalam : 25-6-2015
+ 	 platform=1 plat spec encoding=0 language=0 name=4 FullName
+ 	 strlen=16  stroff=4021	   Samyak Malayalam
+ 	 platform=1 plat spec encoding=0 language=0 name=5 Version
+ 	 strlen=28  stroff=4096	   Original Version 1.00 (2005)
+ 	 platform=1 plat spec encoding=0 language=0 name=6 Postscript
+ 	 strlen=16  stroff=4159	   Samyak-Malayalam
+ 	 platform=1 plat spec encoding=0 language=0 name=9 Designer
+@@ -94,15 +94,15 @@
+ 	 platform=3 plat spec encoding=1 language=409 name=0 Copyright
+ 	 strlen=2518  stroff=0	   ^@C^@r^@e^@a^@t^@e^@d^@ ^@b^@y^@:^@^J^@R^@a^@h^@u^@l^@ ^@B^@h^@a^@l^@e^@r^@a^@o^@ ^@<^@b^@.^@r^@a^@h^@u^@l^@.^@p^@m^@@^@g^@m^@a^@i^@l^@.^@c^@o^@m^@>^@,^@ ^@^J^@S^@a^@n^@d^@e^@e^@p^@ ^@S^@h^@e^@d^@m^@a^@k^@e^@ ^@<^@s^@a^@n^@d^@e^@e^@p^@.^@s^@h^@e^@d^@m^@a^@k^@e^@@^@g^@m^@a^@i^@l^@.^@c^@o^@m^@>^@,^@ ^@^J^@B^@a^@g^@e^@s^@h^@r^@i^@ ^@S^@a^@l^@v^@i^@ ^@<^@s^@b^@a^@g^@e^@s^@h^@r^@i^@@^@g^@m^@a^@i^@l^@.^@c^@o^@m^@>^@,^@ ^@^J^@P^@r^@a^@v^@i^@n^@ ^@S^@a^@t^@p^@u^@t^@e^@ ^@<^@p^@r^@a^@v^@i^@n^@.^@d^@.^@s^@@^@g^@m^@a^@i^@l^@.^@c^@o^@m^@>^@^J^@^J^@M^@o^@d^@i^@f^@i^@e^@d^@ ^@b^@y^@ ^@H^@i^@r^@a^@n^@ ^@V^@e^@n^@u^@g^@o^@p^@a^@l^@a^@n^@ ^@<^@h^@i^@r^@a^@n^@.^@v^@@^@g^@m^@a^@i^@l^@.^@c^@o^@m^@>^@^J^@^J^@G^@N^@U^@ ^@G^@P^@L^@ ^@V^@.^@3^@ ^@o^@r^@ ^@l^@a^@t^@e^@r^@ ^@(^@w^@i^@t^@h^@ ^@F^@o^@n^@t^@ ^@E^@x^@c^@e^@p^@t^@i^@o^@n^@)^@,^@ ^@C^@o^@p^@y^@r^@i^@g^@h^@t^@ ^@`^@2^@0^@0^@5^@-^@2^@0^@0^@6^@ ^@b^@y^@ ^@ ^@H^@.^@B^@.^@C^@.^@S^@.^@E^@.^@,^@ ^@T^@.^@I^@.^@F^@.^@R^@.^@,^@^J^@H^@o^@m^@i^@ ^@B^@h^@a^@b^@h^@a^@ ^@C^@e^@n^@t^@r^@e^@ ^@F^@o^@r^@ ^@S^@c^@i^@e^@n^@c^@e^@ ^@E^@d^@u^@c^@a^@t^@i^@o^@n^@,^@ ^@^J^@T^@a^@t^@a^@ ^@I^@n^@s^@t^@i^@t^@u^@t^@e^@ ^@O^@f^@ ^@F^@u^@n^@d^@a^@m^@e^@n^@t^@a^@l^@ ^@R^@e^@s^@e^@a^@r^@c^@h^@,^@^J^@V^@.^@N^@.^@ ^@P^@u^@r^@a^@v^@ ^@M^@a^@r^@g^@,^@ ^@M^@a^@n^@k^@h^@u^@r^@d^@,^@ ^@^J^@M^@u^@m^@b^@a^@i^@ ^@4^@0^@0^@ ^@0^@8^@8^@,^@ ^@I^@N^@D^@I^@A^@.^@^J^@^J^@A^@s^@ ^@a^@ ^@s^@p^@e^@c^@i^@a^@l^@ ^@e^@x^@c^@e^@p^@t^@i^@o^@n^@,^@ ^@i^@f^@ ^@y^@o^@u^@ ^@c^@r^@e^@a^@t^@e^@ ^@a^@ ^@d^@o^@c^@u^@m^@e^@n^@t^@ ^@w^@h^@i^@c^@h^@ ^@u^@s^@e^@s^@ ^@t^@h^@i^@s^@ ^@f^@o^@n^@t^@,^@ ^@a^@n^@d^@ ^@e^@m^@b^@e^@d^@ ^@t^@h^@i^@s^@ ^@f^@o^@n^@t^@ ^@o^@r^@ ^@u^@n^@a^@l^@t^@e^@r^@e^@d^@ ^@p^@o^@r^@t^@i^@o^@n^@s^@ ^@o^@f^@ ^@t^@h^@i^@s^@ ^@f^@o^@n^@t^@ ^@i^@n^@t^@o^@ ^@t^@h^@e^@ ^@d^@o^@c^@u^@m^@e^@n^@t^@,^@ ^@t^@h^@i^@s^@ ^@f^@o^@n^@t^@ ^@d^@o^@e^@s^@ ^@n^@o^@t^@ ^@b^@y^@ ^@i^@t^@s^@e^@l^@f^@ ^@c^@a^@u^@s^@e^@ ^@t^@h^@e^@ ^@r^@e^@s^@u^@l^@t^@i^@n^@g^@ ^@d^@o^@c^@u^@m^@e^@n^@t^@ ^@t^@o^@ ^@b^@e^@ ^@c^@o^@v^@e^@r^@e^@d^@ ^@b^@y^@ ^@t^@h^@e^@ ^@G^@N^@U^@ ^@G^@e^@n^@e^@r^@a^@l^@ ^@P^@u^@b^@l^@i^@c^@ ^@L^@i^@c^@e^@n^@s^@e^@.^@ ^@T^@h^@i^@s^@ ^@e^@x^@c^@e^@p^@t^@i^@o^@n^@ ^@d^@o^@e^@s^@ ^@n^@o^@t^@ ^@h^@o^@w^@e^@v^@e^@r^@ ^@i^@n^@v^@a^@l^@i^@d^@a^@t^@e^@ ^@a^@n^@y^@ ^@o^@t^@h^@e^@r^@ ^@r^@e^@a^@s^@o^@n^@s^@ ^@w^@h^@y^@ ^@t^@h^@e^@ ^@d^@o^@c^@u^@m^@e^@n^@t^@ ^@m^@i^@g^@h^@t^@ ^@b^@e^@ ^@c^@o^@v^@e^@r^@e^@d^@ ^@b^@y^@ ^@t^@h^@e^@ ^@G^@N^@U^@ ^@G^@e^@n^@e^@r^@a^@l^@ ^@P^@u^@b^@l^@i^@c^@ ^@L^@i^@c^@e^@n^@s^@e^@.^@ ^@I^@f^@ ^@y^@o^@u^@ ^@m^@o^@d^@i^@f^@y^@ ^@t^@h^@i^@s^@ ^@f^@o^@n^@t^@,^@ ^@y^@o^@u^@ ^@m^@a^@y^@ ^@e^@x^@t^@e^@n^@d^@ ^@t^@h^@i^@s^@ ^@e^@x^@c^@e^@p^@t^@i^@o^@n^@ ^@t^@o^@ ^@y^@o^@u^@r^@ ^@v^@e^@r^@s^@i^@o^@n^@ ^@o^@f^@ ^@t^@h^@e^@ ^@f^@o^@n^@t^@,^@ ^@b^@u^@t^@ ^@y^@o^@u^@ ^@a^@r^@e^@ ^@n^@o^@t^@ ^@o^@b^@l^@i^@g^@a^@t^@e^@d^@ ^@t^@o^@ ^@d^@o^@ ^@s^@o^@.^@ ^@I^@f^@ ^@y^@o^@u^@ ^@d^@o^@ ^@n^@o^@t^@ ^@w^@i^@s^@h^@ ^@t^@o^@ ^@d^@o^@ ^@s^@o^@,^@ ^@d^@e^@l^@e^@t^@e^@ ^@t^@h^@i^@s^@ ^@e^@x^@c^@e^@p^@t^@i^@o^@n^@ ^@s^@t^@a^@t^@e^@m^@e^@n^@t^@ ^@f^@r^@o^@m^@ ^@y^@o^@u^@r^@ ^@v^@e^@r^@s^@i^@o^@n^@.^@ ^@ ^@^J^@^J^@F^@o^@r^@ ^@d^@e^@t^@a^@i^@l^@e^@d^@ ^@l^@i^@c^@e^@n^@s^@e^@ ^@s^@e^@e^@:^@ ^@^J^@w^@w^@w^@.^@g^@n^@u^@.^@o^@r^@g^@ ^@a^@n^@d^@^J^@h^@t^@t^@p^@:^@/^@/^@w^@w^@w^@.^@g^@n^@u^@.^@o^@r^@g^@/^@l^@i^@c^@e^@n^@s^@e^@s^@/^@g^@p^@l^@-^@f^@a^@q^@.^@h^@t^@m^@l^@#^@F^@o^@n^@t^@E^@x^@c^@e^@p^@t^@i^@o^@n^@^J^@^J^@F^@u^@r^@t^@h^@e^@r^@ ^@i^@n^@f^@o^@ ^@:^@h^@t^@t^@p^@:^@/^@/^@s^@a^@r^@o^@v^@a^@r^@.^@o^@r^@g^@/^@p^@r^@o^@j^@e^@c^@t^@s^@/^@s^@a^@m^@y^@a^@k^@/^@^J^@w^@w^@w^@.^@g^@n^@o^@w^@l^@e^@d^@g^@e^@.^@o^@r^@g^@^J^@^J^@C^@O^@N^@T^@A^@C^@T^@S^@:^@^J^@N^@a^@g^@a^@r^@j^@u^@n^@a^@ ^@G^@.^@^J^@E^@m^@a^@i^@l^@:^@n^@a^@g^@a^@r^@j^@u^@n^@@^@g^@n^@o^@w^@l^@e^@d^@g^@e^@.^@o^@r^@g
+ 	 platform=3 plat spec encoding=1 language=409 name=1 Family
+ 	 strlen=32  stroff=3780	   ^@S^@a^@m^@y^@a^@k^@ ^@M^@a^@l^@a^@y^@a^@l^@a^@m
+ 	 platform=3 plat spec encoding=1 language=409 name=2 Subfamily
+ 	 strlen=12  stroff=3831	   ^@M^@e^@d^@i^@u^@m
+ 	 platform=3 plat spec encoding=1 language=409 name=3 UniqueID
+-	 strlen=88  stroff=3852	   ^@F^@o^@n^@t^@F^@o^@r^@g^@e^@ ^@2^@.^@0^@ ^@:^@ ^@S^@a^@m^@y^@a^@k^@ ^@M^@a^@l^@a^@y^@a^@l^@a^@m^@ ^@:^@ ^@2^@3^@-^@6^@-^@2^@0^@1^@5
++	 strlen=88  stroff=3852	   ^@F^@o^@n^@t^@F^@o^@r^@g^@e^@ ^@2^@.^@0^@ ^@:^@ ^@S^@a^@m^@y^@a^@k^@ ^@M^@a^@l^@a^@y^@a^@l^@a^@m^@ ^@:^@ ^@2^@5^@-^@6^@-^@2^@0^@1^@5
+ 	 platform=3 plat spec encoding=1 language=409 name=4 FullName
+ 	 strlen=32  stroff=3987	   ^@S^@a^@m^@y^@a^@k^@ ^@M^@a^@l^@a^@y^@a^@l^@a^@m
+ 	 platform=3 plat spec encoding=1 language=409 name=5 Version
+ 	 strlen=56  stroff=4038	   ^@O^@r^@i^@g^@i^@n^@a^@l^@ ^@V^@e^@r^@s^@i^@o^@n^@ ^@1^@.^@0^@0^@ ^@(^@2^@0^@0^@5^@)
+ 	 platform=3 plat spec encoding=1 language=409 name=6 Postscript
+ 	 strlen=32  stroff=4125	   ^@S^@a^@m^@y^@a^@k^@-^@M^@a^@l^@a^@y^@a^@l^@a^@m
+ 	 platform=3 plat spec encoding=1 language=409 name=9 Designer

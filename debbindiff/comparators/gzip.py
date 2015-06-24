@@ -33,7 +33,7 @@ def decompress_gzip(path):
         if path.endswith('.gz'):
             temp_path = os.path.join(temp_dir, os.path.basename(path[:-3]))
         else:
-            temp_path = os.path.join(temp_dir, "%s-content" % path)
+            temp_path = os.path.join(temp_dir, os.path.basename("%s-content" % path))
         with open(temp_path, 'wb') as temp_file:
             subprocess.check_call(
                 ["gzip", "--decompress", "--stdout", path],

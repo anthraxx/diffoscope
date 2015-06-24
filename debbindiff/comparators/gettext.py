@@ -39,13 +39,14 @@ class Msgunfmt(Command):
 
     def filter(self, line):
         if not self._encoding:
-            if line == '':
-                logger.debug("unable to determine PO encoding, let's hope it's utf-8")
-                return self._header
             self._header += line
+            if line == '\n':
+                logger.debug("unable to determine PO encoding, let's hope it's utf-8")
+                self._encoding = 'utf-8'
+                return self._header
             found = Msgunfmt.CHARSET_RE.match(line)
             if found:
-                self._encoding = found.group(1)
+                self._encoding = found.group(1).lower()
                 return self._header.decode(self._encoding).encode('utf-8')
             return ''
         if self._encoding != 'utf-8':

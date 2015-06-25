@@ -108,9 +108,11 @@ def compare_directories(path1, path2, source=None):
             if in_differences:
                 in_differences[0].add_details(compare_meta(in_path1, in_path2))
             else:
-                d = Difference(None, path1, path2, source=name)
-                d.add_details(compare_meta(in_path1, in_path2))
-                in_differences = [d]
+                details = compare_meta(in_path1, in_path2)
+                if details:
+                    d = Difference(None, path1, path2, source=name)
+                    d.add_details(details)
+                    in_differences = [d]
         differences.extend(in_differences)
     ls1 = ls(path1)
     ls2 = ls(path2)

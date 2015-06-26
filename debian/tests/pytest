@@ -1,0 +1,11 @@
+#!/bin/sh
+
+set -e
+
+if ! [ -d "$ADTTMP" ]; then
+	echo "ADTTMP not set." >&2
+	exit 1
+fi
+
+cp -r tests $ADTTMP
+(cd $ADTTMP; py.test)

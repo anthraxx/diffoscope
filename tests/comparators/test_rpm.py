@@ -37,7 +37,6 @@ def differences():
 
 def test_header(differences):
     assert differences[0].source1 == 'header'
-    open('/tmp/output', 'w').write(differences[0].unified_diff)
     expected_diff = open(os.path.join(os.path.dirname(__file__), '../data/rpm_header_expected_diff')).read()
     assert differences[0].unified_diff == expected_diff
 

@@ -21,7 +21,7 @@ import re
 import subprocess
 from StringIO import StringIO
 from debbindiff import tool_required
-from debbindiff.comparators.utils import binary_fallback, Command
+from debbindiff.comparators.utils import binary_fallback, returns_details, Command
 from debbindiff.difference import Difference
 from debbindiff import logger
 
@@ -57,8 +57,6 @@ class Msgunfmt(Command):
 
 
 @binary_fallback
+@returns_details
 def compare_mo_files(path1, path2, source=None):
-    difference = Difference.from_command(Msgunfmt, path1, path2)
-    if not difference:
-        return []
-    return [difference]
+    return [Difference.from_command(Msgunfmt, path1, path2)]

@@ -23,14 +23,14 @@ import shutil
 import subprocess
 import pytest
 from debbindiff import tool_required
-from debbindiff.comparators.utils import binary_fallback
+from debbindiff.comparators.utils import binary_fallback, returns_details
 from debbindiff.difference import Difference
 
 def test_same_binaries():
     @binary_fallback
     def mock_comparator(path1, path2, source=None):
         raise Exception('should not be run')
-    assert mock_comparator(__file__, __file__) == []
+    assert mock_comparator(__file__, __file__) is None
 
 TEST_FILE1_PATH = os.path.join(os.path.dirname(__file__), '../data/text_unicode1')
 TEST_FILE2_PATH = os.path.join(os.path.dirname(__file__), '../data/text_unicode2')
@@ -39,20 +39,18 @@ def test_return_differences():
     d = Difference('diff', TEST_FILE1_PATH, TEST_FILE2_PATH, source='source')
     @binary_fallback
     def mock_comparator(path1, path2, source=None):
-        return [d]
-    differences = mock_comparator(TEST_FILE1_PATH, TEST_FILE2_PATH)
-    assert len(differences) == 1
-    assert differences[0].details == [d]
+        return d
+    difference = mock_comparator(TEST_FILE1_PATH, TEST_FILE2_PATH)
+    assert difference == d
 
 def test_fallback():
     @binary_fallback
     def mock_comparator(path1, path2, source=None):
-        return []
-    differences = mock_comparator(TEST_FILE1_PATH, TEST_FILE2_PATH)
+        return None
+    difference = mock_comparator(TEST_FILE1_PATH, TEST_FILE2_PATH)
     expected_diff = open(os.path.join(os.path.dirname(__file__), '../data/text_unicode_binary_fallback')).read()
-    assert len(differences) == 1
-    assert 'yet data differs' in differences[0].comment
-    assert differences[0].unified_diff == expected_diff
+    assert 'yet data differs' in difference.comment
+    assert difference.unified_diff == expected_diff
 
 def test_process_failed():
     output = 'Free Jeremy Hammond'
@@ -60,12 +58,11 @@ def test_process_failed():
     def mock_comparator(path1, path2, source=None):
         subprocess.check_output(['sh', '-c', 'echo "%s"; exit 42' % output], shell=False)
         raise Exception('should not be run')
-    differences = mock_comparator(TEST_FILE1_PATH, TEST_FILE2_PATH)
+    difference = mock_comparator(TEST_FILE1_PATH, TEST_FILE2_PATH)
     expected_diff = open(os.path.join(os.path.dirname(__file__), '../data/text_unicode_binary_fallback')).read()
-    assert len(differences) == 1
-    assert output in differences[0].comment
-    assert '42' in differences[0].comment
-    assert differences[0].unified_diff == expected_diff
+    assert output in difference.comment
+    assert '42' in difference.comment
+    assert difference.unified_diff == expected_diff
 
 def test_tool_not_found(monkeypatch):
     monkeypatch.setattr('debbindiff.RequiredToolNotFound.get_package', lambda _: 'some-package')
@@ -73,9 +70,25 @@ def test_tool_not_found(monkeypatch):
     @tool_required('nonexistent')
     def mock_comparator(path1, path2, source=None):
         raise Exception('should not be run')
-    differences = mock_comparator(TEST_FILE1_PATH, TEST_FILE2_PATH)
+    difference = mock_comparator(TEST_FILE1_PATH, TEST_FILE2_PATH)
     expected_diff = open(os.path.join(os.path.dirname(__file__), '../data/text_unicode_binary_fallback')).read()
-    assert len(differences) == 1
-    assert 'nonexistent' in differences[0].comment
-    assert 'some-package' in differences[0].comment
-    assert differences[0].unified_diff == expected_diff
+    assert 'nonexistent' in difference.comment
+    assert 'some-package' in difference.comment
+    assert difference.unified_diff == expected_diff
+
+def test_no_details():
+    @returns_details
+    def mock_comparator(path1, path2, source=None):
+        return []
+    difference = mock_comparator(TEST_FILE1_PATH, TEST_FILE2_PATH)
+    assert difference is None
+
+def test_details():
+    d = Difference('diff', TEST_FILE1_PATH, TEST_FILE2_PATH)
+    @returns_details
+    def mock_comparator(path1, path2, source=None):
+        return [d]
+    difference = mock_comparator(TEST_FILE1_PATH, TEST_FILE2_PATH)
+    assert difference.source1 == TEST_FILE1_PATH
+    assert difference.source2 == TEST_FILE2_PATH
+    assert difference.details == [d]

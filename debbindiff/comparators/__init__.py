@@ -49,11 +49,11 @@ except ImportError as ex:
         raise
     def compare_rpm_files(path1, path2, source=None):
         logger.info("Python rpm module not found.")
-        differences = compare_binary_files(path1, path2, source)
-        if differences:
-            differences[0].comment = (differences[0].comment or '') + \
+        difference = compare_binary_files(path1, path2, source)
+        if difference:
+            difference.comment = (difference.comment or '') + \
                 '\nUnable to find Python rpm module. Falling back to binary comparison.'
-        return differences
+        return difference
 from debbindiff.comparators.squashfs import compare_squashfs_files
 from debbindiff.comparators.text import compare_text_files
 from debbindiff.comparators.tar import compare_tar_files
@@ -137,8 +137,8 @@ def compare_files(path1, path2, source=None):
             text2 = "[ No symlink ]"
 
         if dest1 and dest2 and dest1 == dest2:
-            return []
-        return [Difference.from_unicode(text1, text2, path1, path2, source=source, comment="symlink")]
+            return None
+        return Difference.from_unicode(text1, text2, path1, path2, source=source, comment="symlink")
 
     if os.path.isdir(path1) and os.path.isdir(path2):
         return compare_directories(path1, path2, source)
@@ -153,7 +153,7 @@ def compare_files(path1, path2, source=None):
     size2 = os.path.getsize(path2)
     if size1 == size2 and size1 <= SMALL_FILE_THRESHOLD:
         if file(path1).read() == file(path2).read():
-            return []
+            return None
     # ok, let's do the full thing
     mime_type1 = guess_mime_type(path1)
     mime_type2 = guess_mime_type(path2)

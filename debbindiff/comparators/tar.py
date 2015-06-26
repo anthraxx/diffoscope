@@ -24,7 +24,7 @@ import tarfile
 from debbindiff import logger
 from debbindiff.difference import Difference
 import debbindiff.comparators
-from debbindiff.comparators.utils import binary_fallback, make_temp_directory
+from debbindiff.comparators.utils import binary_fallback, returns_details, make_temp_directory
 
 
 def get_tar_content(tar):
@@ -39,6 +39,7 @@ def get_tar_content(tar):
 
 
 @binary_fallback
+@returns_details
 def compare_tar_files(path1, path2, source=None):
     differences = []
     with tarfile.open(path1, 'r') as tar1:
@@ -59,7 +60,7 @@ def compare_tar_files(path1, path2, source=None):
                         tar2.extract(name, temp_dir2)
                         in_path1 = os.path.join(temp_dir1, name).decode('utf-8')
                         in_path2 = os.path.join(temp_dir2, name).decode('utf-8')
-                        differences.extend(
+                        differences.append(
                             debbindiff.comparators.compare_files(
                                 in_path1, in_path2,
                                 source=name.decode('utf-8')))
@@ -68,8 +69,6 @@ def compare_tar_files(path1, path2, source=None):
             # look up differences in file list and file metadata
             content1 = get_tar_content(tar1).decode('utf-8')
             content2 = get_tar_content(tar2).decode('utf-8')
-            difference = Difference.from_unicode(
-                             content1, content2, path1, path2, source="metadata")
-            if difference:
-                differences.append(difference)
+            differences.append(Difference.from_unicode(
+                                   content1, content2, path1, path2, source="metadata"))
     return differences

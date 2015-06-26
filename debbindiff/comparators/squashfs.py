@@ -22,7 +22,7 @@ import subprocess
 import os.path
 import debbindiff.comparators
 from debbindiff import logger, tool_required
-from debbindiff.comparators.utils import binary_fallback, make_temp_directory, Command
+from debbindiff.comparators.utils import binary_fallback, returns_details, make_temp_directory, Command
 from debbindiff.difference import Difference
 
 
@@ -61,16 +61,13 @@ def extract_squashfs(path, destdir):
 
 
 @binary_fallback
+@returns_details
 def compare_squashfs_files(path1, path2, source=None):
     differences = []
 
     # compare metadata
-    difference = Difference.from_command(SquashfsSuperblock, path1, path2)
-    if difference:
-        differences.append(difference)
-    difference = Difference.from_command(SquashfsListing, path1, path2)
-    if difference:
-        differences.append(difference)
+    differences.append(Difference.from_command(SquashfsSuperblock, path1, path2))
+    differences.append(Difference.from_command(SquashfsListing, path1, path2))
 
     # compare files contained in archive
     files1 = get_squashfs_names(path1)
@@ -84,7 +81,7 @@ def compare_squashfs_files(path1, path2, source=None):
                 in_path2 = os.path.join(temp_dir2, member)
                 if not os.path.isfile(in_path1) or not os.path.isfile(in_path2):
                     continue
-                differences.extend(debbindiff.comparators.compare_files(
+                differences.append(debbindiff.comparators.compare_files(
                     in_path1, in_path2, source=member))
 
     return differences

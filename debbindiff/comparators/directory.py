@@ -23,7 +23,7 @@ import subprocess
 from debbindiff import logger, tool_required, RequiredToolNotFound
 from debbindiff.difference import Difference
 import debbindiff.comparators
-from debbindiff.comparators.utils import Command
+from debbindiff.comparators.utils import returns_details, Command
 
 
 def ls(path):
@@ -96,6 +96,7 @@ def compare_meta(path1, path2):
 
 
 @tool_required('ls')
+@returns_details
 def compare_directories(path1, path2, source=None):
     differences = []
     logger.debug('path1 files: %s' % sorted(set(os.listdir(path1))))
@@ -104,26 +105,20 @@ def compare_directories(path1, path2, source=None):
         logger.debug('compare %s' % name)
         in_path1 = os.path.join(path1, name)
         in_path2 = os.path.join(path2, name)
-        in_differences = debbindiff.comparators.compare_files(
-                             in_path1, in_path2, source=name)
+        in_difference = debbindiff.comparators.compare_files(
+                            in_path1, in_path2, source=name)
         if not os.path.isdir(in_path1):
-            if in_differences:
-                in_differences[0].add_details(compare_meta(in_path1, in_path2))
+            if in_difference:
+                in_difference.add_details(compare_meta(in_path1, in_path2))
             else:
                 details = compare_meta(in_path1, in_path2)
                 if details:
                     d = Difference(None, path1, path2, source=name)
                     d.add_details(details)
-                    in_differences = [d]
-        differences.extend(in_differences)
+                    in_difference = d
+        differences.append(in_difference)
     ls1 = ls(path1)
     ls2 = ls(path2)
-    difference = Difference.from_unicode(ls1, ls2, path1, path2, source="ls")
-    if difference:
-        differences.append(difference)
+    differences.append(Difference.from_unicode(ls1, ls2, path1, path2, source="ls"))
     differences.extend(compare_meta(path1, path2))
-    if differences:
-        d = Difference(None, path1, path2, source=source)
-        d.add_details(differences)
-        return [d]
-    return []
+    return differences

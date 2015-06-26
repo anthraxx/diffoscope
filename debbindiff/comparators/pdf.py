@@ -19,7 +19,7 @@
 
 import subprocess
 from debbindiff import tool_required
-from debbindiff.comparators.utils import binary_fallback, Command
+from debbindiff.comparators.utils import binary_fallback, returns_details, Command
 from debbindiff.difference import Difference, get_source
 
 
@@ -39,12 +39,9 @@ class Pdftk(Command):
 
 
 @binary_fallback
+@returns_details
 def compare_pdf_files(path1, path2, source=None):
     differences = []
-    difference = Difference.from_command(Pdftotext, path1, path2)
-    if difference:
-        differences.append(difference)
-    difference = Difference.from_command(Pdftk, path1, path2)
-    if difference:
-        differences.append(difference)
+    differences.append(Difference.from_command(Pdftotext, path1, path2))
+    differences.append(Difference.from_command(Pdftk, path1, path2))
     return differences

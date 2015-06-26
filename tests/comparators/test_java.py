@@ -27,12 +27,12 @@ TEST_FILE1_PATH = os.path.join(os.path.dirname(__file__), '../data/Test1.class')
 TEST_FILE2_PATH = os.path.join(os.path.dirname(__file__), '../data/Test2.class') 
 
 def test_no_differences():
-    differences = compare_class_files(TEST_FILE1_PATH, TEST_FILE1_PATH)
-    assert len(differences) == 0
+    difference = compare_class_files(TEST_FILE1_PATH, TEST_FILE1_PATH)
+    assert difference is None
 
 @pytest.fixture
 def differences():
-    return compare_class_files(TEST_FILE1_PATH, TEST_FILE2_PATH)[0].details # skip container with path
+    return compare_class_files(TEST_FILE1_PATH, TEST_FILE2_PATH).details
 
 def test_diff(differences):
     expected_diff = open(os.path.join(os.path.dirname(__file__), '../data/class_expected_diff')).read()

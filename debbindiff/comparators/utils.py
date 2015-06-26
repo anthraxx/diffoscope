@@ -39,34 +39,43 @@ from debbindiff import logger, RequiredToolNotFound
 def binary_fallback(original_function):
     def with_fallback(path1, path2, source=None):
         if are_same_binaries(path1, path2):
-            return []
+            return None
         try:
-            inside_differences = original_function(path1, path2, source)
+            difference = original_function(path1, path2, source)
             # no differences detected inside? let's at least do a binary diff
-            if len(inside_differences) == 0:
-                difference = compare_binary_files(path1, path2, source=source)[0]
+            if difference is None:
+                difference = compare_binary_files(path1, path2, source=source)
                 difference.comment = (difference.comment or '') + \
                     "No differences found inside, yet data differs"
-            else:
-                difference = Difference(None, path1, path2, source=source)
-                difference.add_details(inside_differences)
         except subprocess.CalledProcessError as e:
-            difference = compare_binary_files(path1, path2, source=source)[0]
+            difference = compare_binary_files(path1, path2, source=source)
             output = re.sub(r'^', '    ', e.output, flags=re.MULTILINE)
             cmd = ' '.join(e.cmd)
             difference.comment = (difference.comment or '') + \
                 "Command `%s` exited with %d. Output:\n%s" \
                 % (cmd, e.returncode, output)
         except RequiredToolNotFound as e:
-            difference = compare_binary_files(path1, path2, source=source)[0]
+            difference = compare_binary_files(path1, path2, source=source)
             difference.comment = (difference.comment or '') + \
                 "'%s' not available in path. Falling back to binary comparison." % e.command
             package = e.get_package()
             if package:
                 difference.comment += "\nInstall '%s' to get a better output." % package
-        return [difference]
+        return difference
     return with_fallback
 
+
+# decorator that will group multiple differences as details of an empty Difference
+# are detected or if an external tool fails
+def returns_details(original_function):
+    def wrap_details(path1, path2, source=None):
+        details = [d for d in original_function(path1, path2, source) if d is not None]
+        if len(details) == 0:
+            return None
+        difference = Difference(None, path1, path2, source=source)
+        difference.add_details(details)
+        return difference
+    return wrap_details
 
 @contextmanager
 def make_temp_directory():

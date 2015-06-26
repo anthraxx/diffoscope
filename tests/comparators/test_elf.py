@@ -27,12 +27,12 @@ TEST_OBJ1_PATH = os.path.join(os.path.dirname(__file__), '../data/test1.o')
 TEST_OBJ2_PATH = os.path.join(os.path.dirname(__file__), '../data/test2.o') 
 
 def test_obj_no_differences():
-    differences = compare_elf_files(TEST_OBJ1_PATH, TEST_OBJ1_PATH)
-    assert len(differences) == 0
+    difference = compare_elf_files(TEST_OBJ1_PATH, TEST_OBJ1_PATH)
+    assert difference is None
 
 @pytest.fixture
 def obj_differences():
-    return compare_elf_files(TEST_OBJ1_PATH, TEST_OBJ2_PATH)[0].details # skip container with path
+    return compare_elf_files(TEST_OBJ1_PATH, TEST_OBJ2_PATH).details
 
 def test_diff(obj_differences):
     assert len(obj_differences) == 1
@@ -43,12 +43,12 @@ TEST_LIB1_PATH = os.path.join(os.path.dirname(__file__), '../data/test1.a')
 TEST_LIB2_PATH = os.path.join(os.path.dirname(__file__), '../data/test2.a') 
 
 def test_lib_no_differences():
-    differences = compare_elf_files(TEST_LIB1_PATH, TEST_LIB1_PATH)
-    assert len(differences) == 0
+    difference = compare_elf_files(TEST_LIB1_PATH, TEST_LIB1_PATH)
+    assert difference is None
 
 @pytest.fixture
 def lib_differences():
-    return compare_static_lib_files(TEST_LIB1_PATH, TEST_LIB2_PATH)[0].details # skip container with path
+    return compare_static_lib_files(TEST_LIB1_PATH, TEST_LIB2_PATH).details
 
 def test_lib_differences(lib_differences):
     assert len(lib_differences) == 2

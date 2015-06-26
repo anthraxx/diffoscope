@@ -21,7 +21,7 @@ import os.path
 import re
 import subprocess
 from debbindiff import tool_required
-from debbindiff.comparators.utils import binary_fallback, get_ar_content, Command
+from debbindiff.comparators.utils import binary_fallback, returns_details, get_ar_content, Command
 from debbindiff.difference import Difference
 
 
@@ -62,32 +62,26 @@ class ObjdumpDisassemble(Command):
 # by both compare_elf_files and compare_static_lib_files
 def _compare_elf_data(path1, path2, source=None):
     differences = []
-    difference = Difference.from_command(ReadelfAll, path1, path2)
-    if difference:
-        differences.append(difference)
-    difference = Difference.from_command(ReadelfDebugDump, path1, path2)
-    if difference:
-        differences.append(difference)
-    difference = Difference.from_command(ObjdumpDisassemble, path1, path2)
-    if difference:
-        differences.append(difference)
+    differences.append(Difference.from_command(ReadelfAll, path1, path2))
+    differences.append(Difference.from_command(ReadelfDebugDump, path1, path2))
+    differences.append(Difference.from_command(ObjdumpDisassemble, path1, path2))
     return differences
 
 
 @binary_fallback
+@returns_details
 def compare_elf_files(path1, path2, source=None):
     return _compare_elf_data(path1, path2, source=None)
 
 
 @binary_fallback
+@returns_details
 def compare_static_lib_files(path1, path2, source=None):
     differences = []
     # look up differences in metadata
     content1 = get_ar_content(path1)
     content2 = get_ar_content(path2)
-    difference = Difference.from_unicode(
-                     content1, content2, path1, path2, source="metadata")
-    if difference:
-        differences.append(difference)
+    differences.append(Difference.from_unicode(
+                           content1, content2, path1, path2, source="metadata"))
     differences.extend(_compare_elf_data(path1, path2, source))
     return differences

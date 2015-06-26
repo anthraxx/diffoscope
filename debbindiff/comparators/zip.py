@@ -25,7 +25,7 @@ from debbindiff import logger
 from debbindiff.difference import Difference
 import debbindiff.comparators
 from debbindiff import tool_required
-from debbindiff.comparators.utils import binary_fallback, make_temp_directory, Command
+from debbindiff.comparators.utils import binary_fallback, returns_details, make_temp_directory, Command
 
 
 class Zipinfo(Command):
@@ -47,6 +47,7 @@ class ZipinfoVerbose(Zipinfo):
 
 
 @binary_fallback
+@returns_details
 def compare_zip_files(path1, path2, source=None):
     differences = []
     try:
@@ -63,7 +64,7 @@ def compare_zip_files(path1, path2, source=None):
                             logger.debug('extract member %s', name)
                             in_path1 = zip1.extract(name, temp_dir1)
                             in_path2 = zip2.extract(name, temp_dir2)
-                            differences.extend(
+                            differences.append(
                                 debbindiff.comparators.compare_files(
                                     in_path1, in_path2,
                                     source=name))
@@ -74,8 +75,7 @@ def compare_zip_files(path1, path2, source=None):
                 if not difference:
                     # search harder
                     difference = Difference.from_command(ZipinfoVerbose, path1, path2)
-                if difference:
-                    differences.append(difference)
+                differences.append(difference)
     except BadZipfile:
         logger.debug('Either %s or %s is not a zip file.' % (path1, path2))
         # we'll fallback on binary comparison

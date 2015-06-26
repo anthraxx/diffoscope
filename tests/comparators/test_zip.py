@@ -28,12 +28,12 @@ TEST_FILE1_PATH = os.path.join(os.path.dirname(__file__), '../data/test1.zip')
 TEST_FILE2_PATH = os.path.join(os.path.dirname(__file__), '../data/test2.zip') 
 
 def test_no_differences():
-    differences = compare_zip_files(TEST_FILE1_PATH, TEST_FILE1_PATH)
-    assert len(differences) == 0
+    difference = compare_zip_files(TEST_FILE1_PATH, TEST_FILE1_PATH)
+    assert difference is None
 
 @pytest.fixture
 def differences():
-    return compare_zip_files(TEST_FILE1_PATH, TEST_FILE2_PATH)[0].details # skip container with path
+    return compare_zip_files(TEST_FILE1_PATH, TEST_FILE2_PATH).details
 
 def test_compressed_files(differences):
     assert differences[0].source1 == 'dir/text'
@@ -46,7 +46,7 @@ def test_metadata(differences):
     assert differences[-1].unified_diff == expected_diff
 
 def test_bad_zip():
-    differences = compare_zip_files(os.path.join(os.path.dirname(__file__), '../data/text_unicode1'),
+    difference = compare_zip_files(os.path.join(os.path.dirname(__file__), '../data/text_unicode1'),
                                     os.path.join(os.path.dirname(__file__), '../data/text_unicode2'))
     expected_diff = open(os.path.join(os.path.dirname(__file__), '../data/text_unicode_binary_fallback')).read()
-    assert differences[0].unified_diff == expected_diff
+    assert difference.unified_diff == expected_diff

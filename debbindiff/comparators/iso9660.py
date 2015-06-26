@@ -21,7 +21,7 @@ import os.path
 import subprocess
 import debbindiff.comparators
 from debbindiff import logger, tool_required
-from debbindiff.comparators.utils import binary_fallback, make_temp_directory, Command
+from debbindiff.comparators.utils import binary_fallback, returns_details, make_temp_directory, Command
 from debbindiff.difference import Difference
 
 
@@ -67,17 +67,14 @@ def extract_from_iso9660(image_path, in_path, dest):
 
 
 @binary_fallback
+@returns_details
 def compare_iso9660_files(path1, path2, source=None):
     differences = []
 
     # compare metadata
-    difference = Difference.from_command(ISO9660PVD, path1, path2)
-    if difference:
-        differences.append(difference)
+    differences.append(Difference.from_command(ISO9660PVD, path1, path2))
     for extension in (None, 'joliet', 'rockridge'):
-        difference = Difference.from_command(ISO9660Listing, path1, path2, command_args=(extension,))
-        if difference:
-            differences.append(difference)
+        differences.append(Difference.from_command(ISO9660Listing, path1, path2, command_args=(extension,)))
 
     # compare files contained in image
     files1 = get_iso9660_names(path1)
@@ -92,7 +89,7 @@ def compare_iso9660_files(path1, path2, source=None):
                     extract_from_iso9660(path1, name, dest)
                 with open(in_path2, 'w') as dest:
                     extract_from_iso9660(path2, name, dest)
-                differences.extend(debbindiff.comparators.compare_files(
+                differences.append(debbindiff.comparators.compare_files(
                     in_path1, in_path2, source=name))
 
     return differences

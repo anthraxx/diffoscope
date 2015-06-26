@@ -280,6 +280,9 @@ class Difference(object):
             self._source2 = path2
         self._details = []
 
+    def __repr__(self):
+        return '<Difference %s -- %s %s>' % (self._source1, self._source2, self._details)
+
     @staticmethod
     def from_feeder(feeder1, feeder2, path1, path2, source=None,
                     comment=None):
@@ -358,6 +361,8 @@ class Difference(object):
         return self._details
 
     def add_details(self, differences):
+        if len([d for d in differences if type(d) is not Difference]) > 0:
+            raise TypeError("'differences' must contains Difference objects'")
         self._details.extend(differences)
 
 

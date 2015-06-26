@@ -20,7 +20,7 @@
 import locale
 import subprocess
 from debbindiff import tool_required
-from debbindiff.comparators.utils import binary_fallback, Command
+from debbindiff.comparators.utils import binary_fallback, returns_details, Command
 from debbindiff.difference import Difference
 
 
@@ -33,8 +33,6 @@ class Showttf(Command):
         return line.decode('latin-1').encode('utf-8')
 
 @binary_fallback
+@returns_details
 def compare_ttf_files(path1, path2, source=None):
-    difference = Difference.from_command(Showttf, path1, path2)
-    if not difference:
-        return []
-    return [difference]
+    return [Difference.from_command(Showttf, path1, path2)]

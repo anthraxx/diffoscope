@@ -21,7 +21,7 @@ import subprocess
 import os.path
 import debbindiff.comparators
 from debbindiff import logger, tool_required
-from debbindiff.comparators.utils import binary_fallback, make_temp_directory, Command
+from debbindiff.comparators.utils import binary_fallback, returns_details, make_temp_directory, Command
 from debbindiff.difference import Difference
 
 class CpioContent(Command):
@@ -49,13 +49,12 @@ def extract_cpio_archive(path, destdir):
 
 
 @binary_fallback
+@returns_details
 def compare_cpio_files(path1, path2, source=None):
     differences = []
 
-    difference = Difference.from_command(
-                     CpioContent, path1, path2, source="file list")
-    if difference:
-        differences.append(difference)
+    differences.append(Difference.from_command(
+                           CpioContent, path1, path2, source="file list"))
 
     # compare files contained in archive
     content1 = get_cpio_names(path1)
@@ -69,7 +68,7 @@ def compare_cpio_files(path1, path2, source=None):
                 in_path2 = os.path.join(temp_dir2, member)
                 if not os.path.isfile(in_path1) or not os.path.isfile(in_path2):
                     continue
-                differences.extend(debbindiff.comparators.compare_files(
+                differences.append(debbindiff.comparators.compare_files(
                     in_path1, in_path2, source=member))
 
     return differences

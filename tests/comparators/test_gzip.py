@@ -27,12 +27,12 @@ TEST_FILE1_PATH = os.path.join(os.path.dirname(__file__), '../data/test1.gz')
 TEST_FILE2_PATH = os.path.join(os.path.dirname(__file__), '../data/test2.gz') 
 
 def test_no_differences():
-    differences = compare_gzip_files(TEST_FILE1_PATH, TEST_FILE1_PATH)
-    assert len(differences) == 0
+    difference = compare_gzip_files(TEST_FILE1_PATH, TEST_FILE1_PATH)
+    assert difference is None
 
 @pytest.fixture
 def differences():
-    return compare_gzip_files(TEST_FILE1_PATH, TEST_FILE2_PATH)[0].details # skip container with path
+    return compare_gzip_files(TEST_FILE1_PATH, TEST_FILE2_PATH).details
 
 def test_metadata(differences):
     assert differences[0].source1 == 'metadata'
@@ -49,9 +49,9 @@ def test_content_source_without_extension(tmpdir):
     path2 = str(tmpdir.join('test2'))
     shutil.copy(TEST_FILE1_PATH, path1)
     shutil.copy(TEST_FILE2_PATH, path2)
-    differences = compare_gzip_files(path1, path2)[0].details # skip container
-    assert differences[1].source1 == 'test1-content'
-    assert differences[1].source2 == 'test2-content'
+    difference = compare_gzip_files(path1, path2).details
+    assert difference[1].source1 == 'test1-content'
+    assert difference[1].source2 == 'test2-content'
 
 def test_content_diff(differences):
     expected_diff = open(os.path.join(os.path.dirname(__file__), '../data/text_ascii_expected_diff')).read()

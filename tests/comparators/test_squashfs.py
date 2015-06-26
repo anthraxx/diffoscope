@@ -28,18 +28,18 @@ TEST_FILE1_PATH = os.path.join(os.path.dirname(__file__), '../data/test1.squashf
 TEST_FILE2_PATH = os.path.join(os.path.dirname(__file__), '../data/test2.squashfs')
 
 def test_no_differences():
-    differences = compare_squashfs_files(TEST_FILE1_PATH, TEST_FILE1_PATH)
-    assert len(differences) == 0
+    difference = compare_squashfs_files(TEST_FILE1_PATH, TEST_FILE1_PATH)
+    assert difference is None
 
 @pytest.mark.xfail
 def test_no_warnings(capfd, differences):
-     compare_squashfs_files(TEST_FILE1_PATH, TEST_FILE2_PATH)[0].details # skip container with path
+     compare_squashfs_files(TEST_FILE1_PATH, TEST_FILE2_PATH).details
      _, err = capfd.readouterr()
      assert err == ''
 
 @pytest.fixture
 def differences():
-    return compare_squashfs_files(TEST_FILE1_PATH, TEST_FILE2_PATH)[0].details # skip container with path
+    return compare_squashfs_files(TEST_FILE1_PATH, TEST_FILE2_PATH).details
 
 def test_superblock(differences):
     expected_diff = open(os.path.join(os.path.dirname(__file__), '../data/squashfs_superblock_expected_diff')).read()

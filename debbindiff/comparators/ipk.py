@@ -18,12 +18,13 @@
 # along with debbindiff.  If not, see <http://www.gnu.org/licenses/>.
 
 import os.path
-from debbindiff.comparators.utils import binary_fallback
+from debbindiff.comparators.utils import binary_fallback, returns_details
 from debbindiff.comparators.tar import compare_tar_files
 from debbindiff.comparators.gzip import decompress_gzip, get_gzip_metadata
 from debbindiff.difference import Difference
 
 @binary_fallback
+@returns_details
 # ipk packages are just .tar.gz archives
 def compare_ipk_files(path1, path2, source=None):
     differences = []
@@ -31,15 +32,13 @@ def compare_ipk_files(path1, path2, source=None):
     # metadata
     metadata1 = get_gzip_metadata(path1)
     metadata2 = get_gzip_metadata(path2)
-    difference = Difference.from_unicode(
-                     metadata1, metadata2, path1, path2, source='metadata')
-    if difference:
-        differences.append(difference)
+    differences.append(Difference.from_unicode(
+                           metadata1, metadata2, path1, path2, source='metadata'))
 
     # content
     with decompress_gzip(path1) as tar1:
         with decompress_gzip(path2) as tar2:
-            differences.extend(compare_tar_files(tar1, tar2,
+            differences.append(compare_tar_files(tar1, tar2,
                     source=[os.path.basename(tar1), os.path.basename(tar2)]))
 
     return differences

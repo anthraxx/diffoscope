@@ -22,7 +22,7 @@ import subprocess
 import os.path
 import debbindiff.comparators
 from debbindiff import tool_required
-from debbindiff.comparators.utils import binary_fallback, make_temp_directory
+from debbindiff.comparators.utils import binary_fallback, returns_details, make_temp_directory
 from debbindiff.difference import Difference, get_source
 
 
@@ -47,19 +47,18 @@ def get_gzip_metadata(path):
 
 
 @binary_fallback
+@returns_details
 def compare_gzip_files(path1, path2, source=None):
     differences = []
     # check metadata
     metadata1 = get_gzip_metadata(path1)
     metadata2 = get_gzip_metadata(path2)
-    difference = Difference.from_unicode(
-                     metadata1, metadata2, path1, path2, source='metadata')
-    if difference:
-        differences.append(difference)
+    differences.append(Difference.from_unicode(
+                           metadata1, metadata2, path1, path2, source='metadata'))
     # check content
     with decompress_gzip(path1) as new_path1:
         with decompress_gzip(path2) as new_path2:
-            differences.extend(debbindiff.comparators.compare_files(
+            differences.append(debbindiff.comparators.compare_files(
                 new_path1, new_path2,
                 source=[os.path.basename(new_path1), os.path.basename(new_path2)]))
     return differences

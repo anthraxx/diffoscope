@@ -28,12 +28,12 @@ TEST_FILE1_PATH = os.path.join(os.path.dirname(__file__), '../data/test1.iso')
 TEST_FILE2_PATH = os.path.join(os.path.dirname(__file__), '../data/test2.iso') 
 
 def test_no_differences():
-    differences = compare_iso9660_files(TEST_FILE1_PATH, TEST_FILE1_PATH)
-    assert len(differences) == 0
+    difference = compare_iso9660_files(TEST_FILE1_PATH, TEST_FILE1_PATH)
+    assert difference is None
 
 @pytest.fixture
 def differences():
-    return compare_iso9660_files(TEST_FILE1_PATH, TEST_FILE2_PATH)[0].details # skip container with path
+    return compare_iso9660_files(TEST_FILE1_PATH, TEST_FILE2_PATH).details
 
 def test_iso9660_content(differences):
     expected_diff = open(os.path.join(os.path.dirname(__file__), '../data/iso9660_content_expected_diff')).read()

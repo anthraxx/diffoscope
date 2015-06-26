@@ -21,7 +21,7 @@ from contextlib import contextmanager
 import os.path
 import subprocess
 import debbindiff.comparators
-from debbindiff.comparators.utils import binary_fallback, make_temp_directory
+from debbindiff.comparators.utils import binary_fallback, returns_details, make_temp_directory
 from debbindiff.difference import get_source
 from debbindiff import tool_required
 
@@ -42,9 +42,10 @@ def decompress_bzip2(path):
 
 
 @binary_fallback
+@returns_details
 def compare_bzip2_files(path1, path2, source=None):
     with decompress_bzip2(path1) as new_path1:
         with decompress_bzip2(path2) as new_path2:
-            return debbindiff.comparators.compare_files(
+            return [debbindiff.comparators.compare_files(
                 new_path1, new_path2,
-                source=[os.path.basename(new_path1), os.path.basename(new_path2)])
+                source=[os.path.basename(new_path1), os.path.basename(new_path2)])]

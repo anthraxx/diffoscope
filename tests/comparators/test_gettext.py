@@ -28,20 +28,19 @@ TEST_FILE1_PATH = os.path.join(os.path.dirname(__file__), '../data/test1.mo')
 TEST_FILE2_PATH = os.path.join(os.path.dirname(__file__), '../data/test2.mo') 
 
 def test_no_differences():
-    differences = compare_mo_files(TEST_FILE1_PATH, TEST_FILE1_PATH)
-    assert len(differences) == 0
+    difference = compare_mo_files(TEST_FILE1_PATH, TEST_FILE1_PATH)
+    assert difference is None
 
 @pytest.fixture
 def differences():
-    return compare_mo_files(TEST_FILE1_PATH, TEST_FILE2_PATH)[0].details # skip container with path
+    return compare_mo_files(TEST_FILE1_PATH, TEST_FILE2_PATH).details
 
 def test_diff(differences):
     expected_diff = open(os.path.join(os.path.dirname(__file__), '../data/mo_expected_diff')).read()
     assert differences[0].unified_diff == expected_diff
 
 def test_charsets():
-    differences = compare_mo_files(os.path.join(os.path.dirname(__file__), '../data/test_no_charset.mo'),
+    difference = compare_mo_files(os.path.join(os.path.dirname(__file__), '../data/test_no_charset.mo'),
                                    os.path.join(os.path.dirname(__file__), '../data/test_iso8859-1.mo'))
-    differences = differences[0].details # skip container with path
     expected_diff = codecs.open(os.path.join(os.path.dirname(__file__), '../data/mo_charsets_expected_diff'), encoding='utf-8').read()
-    assert differences[0].unified_diff == expected_diff
+    assert difference.details[0].unified_diff == expected_diff

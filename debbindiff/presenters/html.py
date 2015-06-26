@@ -512,7 +512,7 @@ def output_header(css_url, print_func):
                         })
 
 
-def output_html(differences, css_url=None, print_func=None, max_page_size=None):
+def output_html(difference, css_url=None, print_func=None, max_page_size=None):
     if print_func is None:
         print_func = print
     if max_page_size is None:
@@ -520,8 +520,7 @@ def output_html(differences, css_url=None, print_func=None, max_page_size=None):
     print_func = create_limited_print_func(print_func, max_page_size)
     try:
         output_header(css_url, print_func)
-        for difference in differences:
-            output_difference(difference, print_func, [])
+        output_difference(difference, print_func, [])
     except PrintLimitReached:
         logger.debug('print limit reached')
         print_func(u"<div class='error'>Max output size reached.</div>",

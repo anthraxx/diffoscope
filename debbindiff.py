@@ -104,16 +104,16 @@ def main():
     if parsed_args.debug:
         logger.setLevel(logging.DEBUG)
     set_locale()
-    differences = debbindiff.comparators.compare_files(
+    difference = debbindiff.comparators.compare_files(
         parsed_args.file1, parsed_args.file2)
-    if len(differences) > 0:
+    if difference:
         if parsed_args.html_output:
             with make_printer(parsed_args.html_output) as print_func:
-                output_html(differences, css_url=parsed_args.css_url, print_func=print_func,
+                output_html(difference, css_url=parsed_args.css_url, print_func=print_func,
                             max_page_size=parsed_args.max_report_size)
         if (parsed_args.text_output and parsed_args.text_output != parsed_args.html_output) or not parsed_args.html_output:
             with make_printer(parsed_args.text_output or '-') as print_func:
-                output_text(differences, print_func=print_func)
+                output_text(difference, print_func=print_func)
         return 1
     return 0
 

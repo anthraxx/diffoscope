@@ -19,7 +19,7 @@
 
 import subprocess
 from debbindiff import tool_required
-from debbindiff.comparators.utils import binary_fallback, Command
+from debbindiff.comparators.utils import binary_fallback, returns_details, Command
 from debbindiff.difference import Difference
 
 
@@ -30,8 +30,6 @@ class ShowIface(Command):
 
 
 @binary_fallback
+@returns_details
 def compare_hi_files(path1, path2, source=None):
-    difference = Difference.from_command(ShowIface, path1, path2)
-    if not difference:
-        return []
-    return [difference]
+    return [Difference.from_command(ShowIface, path1, path2)]

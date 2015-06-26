@@ -22,7 +22,7 @@ import os.path
 import subprocess
 import debbindiff.comparators
 from debbindiff import tool_required
-from debbindiff.comparators.utils import binary_fallback, make_temp_directory
+from debbindiff.comparators.utils import binary_fallback, returns_details, make_temp_directory
 from debbindiff.difference import get_source
 
 
@@ -42,9 +42,10 @@ def decompress_xz(path):
 
 
 @binary_fallback
+@returns_details
 def compare_xz_files(path1, path2, source=None):
     with decompress_xz(path1) as new_path1:
         with decompress_xz(path2) as new_path2:
-            return debbindiff.comparators.compare_files(
+            return [debbindiff.comparators.compare_files(
                 new_path1, new_path2,
-                source=[os.path.basename(new_path1), os.path.basename(new_path2)])
+                source=[os.path.basename(new_path1), os.path.basename(new_path2)])]

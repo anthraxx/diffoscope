@@ -37,14 +37,13 @@ def test_are_not_same_binaries(tmpdir):
     assert not are_same_binaries(TEST_FILE1_PATH, TEST_FILE2_PATH)
 
 def test_no_differences_with_xxd():
-    differences = compare_binary_files(TEST_FILE1_PATH, TEST_FILE1_PATH)
-    assert len(differences) == 0
+    difference = compare_binary_files(TEST_FILE1_PATH, TEST_FILE1_PATH)
+    assert difference is None
 
 def test_compare_with_xxd():
-    differences = compare_binary_files(TEST_FILE1_PATH, TEST_FILE2_PATH)
-    assert len(differences) == 1
+    difference = compare_binary_files(TEST_FILE1_PATH, TEST_FILE2_PATH)
     expected_diff = open(os.path.join(os.path.dirname(__file__), '../data/binary_expected_diff')).read()
-    assert differences[0].unified_diff == expected_diff
+    assert difference.unified_diff == expected_diff
 
 @pytest.fixture
 def xxd_not_found(monkeypatch):
@@ -53,11 +52,10 @@ def xxd_not_found(monkeypatch):
     monkeypatch.setattr(debbindiff.comparators.binary, 'xxd', mock_xxd)
 
 def test_no_differences_without_xxd(xxd_not_found):
-    differences = compare_binary_files(TEST_FILE1_PATH, TEST_FILE1_PATH)
-    assert len(differences) == 0
+    difference = compare_binary_files(TEST_FILE1_PATH, TEST_FILE1_PATH)
+    assert difference is None
 
 def test_compare_without_xxd(xxd_not_found):
-    differences = compare_binary_files(TEST_FILE1_PATH, TEST_FILE2_PATH)
-    assert len(differences) == 1
+    difference = compare_binary_files(TEST_FILE1_PATH, TEST_FILE2_PATH)
     expected_diff = open(os.path.join(os.path.dirname(__file__), '../data/binary_hexdump_expected_diff')).read()
-    assert differences[0].unified_diff == expected_diff
+    assert difference.unified_diff == expected_diff

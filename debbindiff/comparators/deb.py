@@ -26,10 +26,11 @@ from debbindiff.difference import Difference, get_source
 import debbindiff.comparators
 from debbindiff.comparators.binary import are_same_binaries
 from debbindiff.comparators.utils import \
-    binary_fallback, make_temp_directory, get_ar_content
+    binary_fallback, returns_details, make_temp_directory, get_ar_content
 
 
 @binary_fallback
+@returns_details
 def compare_deb_files(path1, path2, source=None):
     differences = []
     # look up differences in content
@@ -50,7 +51,7 @@ def compare_deb_files(path1, path2, source=None):
                     f1.write(member1.read())
                 with open(in_path2, 'w') as f2:
                     f2.write(member2.read())
-                differences.extend(
+                differences.append(
                     debbindiff.comparators.compare_files(
                         in_path1, in_path2, source=name))
                 os.unlink(in_path1)
@@ -58,16 +59,14 @@ def compare_deb_files(path1, path2, source=None):
     # look up differences in file list and file metadata
     content1 = get_ar_content(path1)
     content2 = get_ar_content(path2)
-    difference = Difference.from_unicode(
-                     content1, content2, path1, path2, source="metadata")
-    if difference:
-        differences.append(difference)
+    differences.append(Difference.from_unicode(
+                           content1, content2, path1, path2, source="metadata"))
     return differences
 
 
 def compare_md5sums_files(path1, path2, source=None):
     if are_same_binaries(path1, path2):
-        return []
-    return [Difference(None, path1, path2,
-                       source=get_source(path1, path2),
-                       comment="Files in package differs")]
+        return None
+    return Difference(None, path1, path2,
+                      source=get_source(path1, path2),
+                      comment="Files in package differs")

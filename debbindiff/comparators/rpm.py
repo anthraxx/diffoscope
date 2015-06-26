@@ -24,7 +24,7 @@ from contextlib import contextmanager
 import rpm
 import debbindiff.comparators
 from debbindiff import logger, tool_required
-from debbindiff.comparators.utils import binary_fallback, make_temp_directory
+from debbindiff.comparators.utils import binary_fallback, returns_details, make_temp_directory
 from debbindiff.difference import Difference, get_source
 
 def get_rpm_header(path, ts):
@@ -65,6 +65,7 @@ def extract_rpm_payload(path):
 
 
 @binary_fallback
+@returns_details
 def compare_rpm_files(path1, path2, source=None):
     differences = []
 
@@ -75,15 +76,13 @@ def compare_rpm_files(path1, path2, source=None):
         ts.setVSFlags(-1)
         header1 = get_rpm_header(path1, ts)
         header2 = get_rpm_header(path2, ts)
-        difference = Difference.from_unicode(
-                         header1, header2, path1, path2, source="header")
-        if difference:
-            differences.append(difference)
+        differences.append(Difference.from_unicode(
+                               header1, header2, path1, path2, source="header"))
 
     # extract cpio archive
     with extract_rpm_payload(path1) as archive1:
         with extract_rpm_payload(path2) as archive2:
-            differences.extend(debbindiff.comparators.compare_files(
+            differences.append(debbindiff.comparators.compare_files(
                 archive1, archive2, source=get_source(archive1, archive2)))
 
     return differences

@@ -28,10 +28,7 @@ def compare_text_files(path1, path2, encoding=None, source=None):
     try:
         file1 = codecs.open(path1, 'r', encoding=encoding)
         file2 = codecs.open(path2, 'r', encoding=encoding)
-        difference = Difference.from_file(file1, file2, path1, path2, source)
+        return Difference.from_file(file1, file2, path1, path2, source)
     except (LookupError, UnicodeDecodeError):
         # unknown or misdetected encoding
         return compare_binary_files(path1, path2, source)
-    if not difference:
-        return []
-    return [difference]

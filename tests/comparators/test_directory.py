@@ -32,9 +32,8 @@ TEST_FILE1_PATH = os.path.join(os.path.dirname(__file__), '../data/text_ascii1')
 TEST_FILE2_PATH = os.path.join(os.path.dirname(__file__), '../data/text_ascii2') 
 
 def test_no_differences():
-    differences = compare_directories(os.path.dirname(__file__), os.path.dirname(__file__))
-    output_text(differences, print_func=print)
-    assert len(differences) == 0
+    difference = compare_directories(os.path.dirname(__file__), os.path.dirname(__file__))
+    assert difference is None
 
 @pytest.fixture
 def differences(tmpdir):
@@ -46,14 +45,14 @@ def differences(tmpdir):
     shutil.copy(TEST_FILE2_PATH, str(tmpdir.join('b/dir/text')))
     os.utime(str(tmpdir.join('a/dir/text')), (0, 0))
     os.utime(str(tmpdir.join('b/dir/text')), (0, 0))
-    return compare_directories(str(tmpdir.join('a')), str(tmpdir.join('b')))
+    return compare_directories(str(tmpdir.join('a')), str(tmpdir.join('b'))).details
 
 def test_content(differences):
-    assert differences[0].details[0].source1 == 'dir'
-    assert differences[0].details[0].details[0].source1 == 'text'
+    assert differences[0].source1 == 'dir'
+    assert differences[0].details[0].source1 == 'text'
     expected_diff = open(os.path.join(os.path.dirname(__file__), '../data/text_ascii_expected_diff')).read()
-    assert differences[0].details[0].details[0].unified_diff == expected_diff
+    assert differences[0].details[0].unified_diff == expected_diff
 
 def test_stat(differences):
-    output_text(differences, print_func=print)
-    assert 'stat' in differences[0].details[0].details[0].details[0].source1
+    output_text(differences[0], print_func=print)
+    assert 'stat' in differences[0].details[0].details[0].source1

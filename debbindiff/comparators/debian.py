@@ -32,7 +32,7 @@ DOT_CHANGES_FIELDS = [
     ]
 
 
-def compare_changes_files(path1, path2, source=None):
+def compare_dot_changes_files(path1, path2, source=None):
     try:
         dot_changes1 = Changes(filename=path1)
         dot_changes1.validate(check_signature=False)

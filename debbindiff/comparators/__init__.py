@@ -27,10 +27,10 @@ from debbindiff.difference import Difference
 from debbindiff.comparators.binary import \
     compare_binary_files, are_same_binaries
 from debbindiff.comparators.bzip2 import compare_bzip2_files
-from debbindiff.comparators.changes import compare_changes_files
 from debbindiff.comparators.java import compare_class_files
 from debbindiff.comparators.cpio import compare_cpio_files
 from debbindiff.comparators.deb import compare_deb_files, compare_md5sums_files
+from debbindiff.comparators.debian import compare_dot_changes_files
 from debbindiff.comparators.directory import compare_directories
 from debbindiff.comparators.elf import \
     compare_elf_files, compare_static_lib_files
@@ -87,7 +87,7 @@ def compare_unknown(path1, path2, source=None):
 
 
 COMPARATORS = [
-    (None, r'\.changes$', compare_changes_files),
+    (None, r'\.changes$', compare_dot_changes_files),
     (None, r'\.(p_)?hi$', compare_hi_files),
     (None, r'\/\./md5sums$', compare_md5sums_files),
     (None, r'\.mo$', compare_mo_files),

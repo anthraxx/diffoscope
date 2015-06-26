@@ -31,7 +31,7 @@ setup(name='debbindiff',
       url='https://wiki.debian.org/ReproducibleBuilds',
       packages=find_packages(),
       tests_require=['pytest'],
-      cmdclass = {'test', PyTest},
+      cmdclass = {'test': PyTest},
       scripts=['debbindiff.py'],
       install_requires=[
           'python-debian',

@@ -21,6 +21,7 @@ import sys
 from debbindiff import logger
 from debbindiff.changes import Changes
 import debbindiff.comparators
+from debbindiff.comparators.utils import binary_fallback, returns_details
 from debbindiff.difference import Difference, get_source
 
 
@@ -32,6 +33,8 @@ DOT_CHANGES_FIELDS = [
     ]
 
 
+@binary_fallback
+@returns_details
 def compare_dot_changes_files(path1, path2, source=None):
     try:
         dot_changes1 = Changes(filename=path1)
@@ -44,36 +47,25 @@ def compare_dot_changes_files(path1, path2, source=None):
 
     differences = []
     for field in DOT_CHANGES_FIELDS:
-        if dot_changes1[field] != dot_changes2[field]:
-            content1 = "%s: %s" % (field, dot_changes1[field])
-            content2 = "%s: %s" % (field, dot_changes2[field])
-            difference = Difference.from_unicode(
-                             content1, content2,
-                             dot_changes1.get_changes_file(),
-                             dot_changes2.get_changes_file(),
-                             source=source)
-            if difference:
-                differences.append(difference)
-
-    # This will handle differences in the list of files, checksums, priority
-    # and section
-    files1 = dot_changes1.get('Files')
-    files2 = dot_changes2.get('Files')
-    logger.debug(dot_changes1.get_as_string('Files'))
+        differences.append(Difference.from_unicode(
+                               dot_changes1[field].lstrip(),
+                               dot_changes2[field].lstrip(),
+                               path1, path2, source=field))
 
     files_difference = Difference.from_unicode(
         dot_changes1.get_as_string('Files'),
         dot_changes2.get_as_string('Files'),
-        dot_changes1.get_changes_file(),
-        dot_changes2.get_changes_file(),
-        source=source,
-        comment="List of files does not match")
+        path1, path2,
+        source='Files')
 
     if not files_difference:
         return differences
 
-    files1 = dict([(d['name'], d) for d in files1])
-    files2 = dict([(d['name'], d) for d in files2])
+    differences.append(files_difference)
+
+    # we are only interested in file names
+    files1 = dict([(d['name'], d) for d in dot_changes1.get('Files')])
+    files2 = dict([(d['name'], d) for d in dot_changes2.get('Files')])
 
     for filename in sorted(set(files1.keys()).intersection(files2.keys())):
         d1 = files1[filename]
@@ -81,12 +73,11 @@ def compare_dot_changes_files(path1, path2, source=None):
         if d1['md5sum'] != d2['md5sum']:
             logger.debug("%s mentioned in .changes have "
                          "differences", filename)
-            files_difference.add_details(
+            differences.append(
                 debbindiff.comparators.compare_files(
                     dot_changes1.get_path(filename),
                     dot_changes2.get_path(filename),
                     source=get_source(dot_changes1.get_path(filename),
                                       dot_changes2.get_path(filename))))
 
-    differences.append(files_difference)
     return differences

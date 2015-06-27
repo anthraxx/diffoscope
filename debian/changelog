@@ -1,3 +1,28 @@
+debbindiff (25) unstable; urgency=low
+
+  * Comparators now have a test suite with 93% code coverage.
+  * Support autopkgtest to run the test suite.
+  * Properly strip path from javap output even when they are relative.
+  * Also remove 'Last modified' and 'MD5 checksum' lines from javap output.
+  * Factorize readelf commands.
+  * Filter archive name from readelf output.
+  * Filter archive name from objdump output.
+  * Fix charset handling of .mo files.
+  * Don't be quadratic when parsing .mo header.
+  * Skip archive name in zipinfo output.
+  * Fix destination path when decompressing gzip files not ending in .gz.
+  * Filter image name from squashfs superblock information.
+  * Fix comparison of files in cpio archives.
+  * Change how we handle a missing RPM module.
+  * Don't add empty Difference when comparing files with equal metadata in
+    directories.
+  * Filter access time from stat output.
+  * Rename .changes comparator.
+  * Rework .changes comparator.
+  * Comparators now return a single Difference instead of a list of Difference.
+
+ -- Jérémy Bobbio <lunar@debian.org>  Sat, 27 Jun 2015 14:32:58 +0000
+
 debbindiff (24) unstable; urgency=medium
 
   * Fix for undefined variables introduced in last release.

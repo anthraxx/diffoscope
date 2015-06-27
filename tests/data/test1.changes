@@ -1,0 +1,22 @@
+Format: 1.8
+Date: Sat, 04 Apr 2015 18:30:48 +0200
+Source: test
+Binary: test
+Architecture: source all
+Version: 1
+Distribution: unstable
+Urgency: low
+Maintainer: Someone Else <user@example.org>
+Changed-By: Someone Else <user@example.org>
+Description:
+ test - just a test package
+Changes:
+ test (1) unstable; urgency=low
+ .
+   * Test package.
+Checksums-Sha1:
+ b21eeec5004853c4955d5b856a6546068c2d7dc9 2262 test_1_all.deb
+Checksums-Sha256:
+ d2b2ea8b9cf8ef645a328cdb882586ee465e141fc66a2dbe1ad29b29ac1e7920 2262 test_1_all.deb
+Files:
+ 660ad4713e5d8271df2e7e86bf246dc0 2262 devel optional test_1_all.deb

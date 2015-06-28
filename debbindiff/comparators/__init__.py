@@ -71,7 +71,7 @@ def guess_mime_type(path):
 def compare_unknown(path1, path2, source=None):
     logger.debug("compare unknown path: %s and %s", path1, path2)
     if are_same_binaries(path1, path2):
-        return []
+        return None
     mime_type1 = guess_mime_type(path1)
     mime_type2 = guess_mime_type(path2)
     logger.debug("mime_type1: %s | mime_type2: %s", mime_type1, mime_type2)

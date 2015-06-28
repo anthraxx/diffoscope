@@ -1,3 +1,11 @@
+debbindiff (26) unstable; urgency=low
+
+  * Declare the package autopkgtestable.
+  * Fix comparator for unknown files.
+  * Add tests for unknown files comparator.
+
+ -- Jérémy Bobbio <lunar@debian.org>  Sun, 28 Jun 2015 09:22:21 +0000
+
 debbindiff (25) unstable; urgency=low
 
   * Comparators now have a test suite with 93% code coverage.

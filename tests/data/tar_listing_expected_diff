@@ -1,0 +1,9 @@
+@@ -1,4 +1,4 @@
+--rwxr-xr-x lunar/lunar          0 2015-06-29 15:49:09 dir/
+--rw-r--r-- lunar/lunar        446 2015-06-29 15:49:09 dir/text
+--rw-r--r-- root/root        1,3 2015-06-29 15:49:09 dir/null
+--rwxrwxrwx lunar/lunar          0 2015-06-29 15:49:09 dir/link -> broken
++-rwxr-xr-x lunar/lunar          0 2015-06-29 15:49:41 dir/
++-rw-r--r-- lunar/lunar        671 2015-06-29 15:49:41 dir/text
++-rw-r--r-- root/root        1,3 2015-06-29 15:49:41 dir/null
++-rwxrwxrwx lunar/lunar          0 2015-06-29 15:49:41 dir/link -> really-broken

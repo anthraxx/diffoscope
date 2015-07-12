@@ -4,6 +4,7 @@ Priority: optional
 Maintainer: Reproducible builds folks <reproducible-builds@lists.alioth.debian.org>
 Uploaders: Jérémy Bobbio <lunar@debian.org>, Reiner Herrmann <reiner@reiner-h.de>
 Build-Depends: debhelper (>= 9),
+               dh-python,
                python-all,
                python-debian,
                python-docutils,

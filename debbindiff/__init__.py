@@ -50,6 +50,7 @@ class RequiredToolNotFound(Exception):
                 , 'objdump':    { 'debian': 'binutils-multiarch' }
                 , 'pdftk':      { 'debian': 'pdftk' }
                 , 'pdftotext':  { 'debian': 'poppler-utils' }
+                , 'pedump':     { 'debian': 'mono-utils' }
                 , 'readelf':    { 'debian': 'binutils-multiarch' }
                 , 'rpm2cpio':   { 'debian': 'rpm2cpio' }
                 , 'showttf':    { 'debian': 'fontforge-extras' }

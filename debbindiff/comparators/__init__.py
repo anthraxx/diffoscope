@@ -41,6 +41,7 @@ from debbindiff.comparators.haskell import compare_hi_files
 from debbindiff.comparators.ipk import compare_ipk_files
 from debbindiff.comparators.iso9660 import compare_iso9660_files
 from debbindiff.comparators.pdf import compare_pdf_files
+from debbindiff.comparators.pe import compare_pe_files
 from debbindiff.comparators.png import compare_png_files
 try:
     from debbindiff.comparators.rpm import compare_rpm_files
@@ -110,6 +111,7 @@ COMPARATORS = [
     (r'^application/(x-font-ttf|vnd.ms-opentype)(;|$)', r'\.(ttf|otf)$', compare_ttf_files),
     (r'^image/png(;|$)', r'\.png$', compare_png_files),
     (r'^application/pdf(;|$)', r'\.pdf$', compare_pdf_files),
+    (r'^application/x-dosexec(;|$)', r'\.(exe|dll)$', compare_pe_files),
     (r'^text/plain; charset=(?P<encoding>[a-z0-9-]+)$', None, compare_text_files),
     (r'^application/xml; charset=(?P<encoding>[a-z0-9-]+)$', None, compare_text_files),
     (r'^application/postscript; charset=(?P<encoding>[a-z0-9-]+)$', None, compare_text_files),

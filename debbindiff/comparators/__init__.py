@@ -78,11 +78,13 @@ def compare_unknown(path1, path2, source=None):
     if mime_type1.startswith('text/') and mime_type2.startswith('text/'):
         encodings1 = re.findall(r'; charset=([^ ]+)', mime_type1)
         encodings2 = re.findall(r'; charset=([^ ]+)', mime_type2)
-        if len(encodings1) > 0 and encodings1 == encodings2:
+        encoding = None
+        encoding2 = None
+        if len(encodings1) > 0:
             encoding = encodings1[0]
-        else:
-            encoding = None
-        return compare_text_files(path1, path2, encoding, source)
+        if len(encodings2) > 0 and encodings1 != encodings2:
+            encoding2 = encodings2[0]
+        return compare_text_files(path1, path2, encoding, source, encoding2)
     return compare_binary_files(path1, path2, source)
 
 

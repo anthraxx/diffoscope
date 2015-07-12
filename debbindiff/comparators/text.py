@@ -22,12 +22,15 @@ from debbindiff.comparators.binary import compare_binary_files
 from debbindiff.difference import Difference
 
 
-def compare_text_files(path1, path2, encoding=None, source=None):
+def compare_text_files(path1, path2, encoding=None, source=None, encoding2=None):
     if encoding is None:
         encoding = 'utf-8'
+    if encoding2 is None:
+        encoding2 = encoding
+
     try:
         file1 = codecs.open(path1, 'r', encoding=encoding)
-        file2 = codecs.open(path2, 'r', encoding=encoding)
+        file2 = codecs.open(path2, 'r', encoding=encoding2)
         return Difference.from_file(file1, file2, path1, path2, source)
     except (LookupError, UnicodeDecodeError):
         # unknown or misdetected encoding

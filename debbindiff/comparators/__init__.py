@@ -25,149 +25,97 @@ import sys
 from debbindiff import logger, tool_required
 from debbindiff.difference import Difference
 from debbindiff.comparators.binary import \
-    compare_binary_files, are_same_binaries
-from debbindiff.comparators.bzip2 import compare_bzip2_files
-from debbindiff.comparators.java import compare_class_files
-from debbindiff.comparators.cpio import compare_cpio_files
-from debbindiff.comparators.deb import compare_deb_files, compare_md5sums_files
-from debbindiff.comparators.debian import compare_dot_changes_files
-from debbindiff.comparators.directory import compare_directories
-from debbindiff.comparators.elf import \
-    compare_elf_files, compare_static_lib_files
-from debbindiff.comparators.fonts import compare_ttf_files
-from debbindiff.comparators.gettext import compare_mo_files
-from debbindiff.comparators.gzip import compare_gzip_files
-from debbindiff.comparators.haskell import compare_hi_files
-from debbindiff.comparators.ipk import compare_ipk_files
-from debbindiff.comparators.iso9660 import compare_iso9660_files
-from debbindiff.comparators.pdf import compare_pdf_files
-from debbindiff.comparators.pe import compare_pe_files
-from debbindiff.comparators.png import compare_png_files
+    File, FilesystemFile, compare_binary_files
+from debbindiff.comparators.bzip2 import Bzip2File
+from debbindiff.comparators.java import ClassFile
+from debbindiff.comparators.cpio import CpioFile
+from debbindiff.comparators.deb import DebFile, Md5sumsFile
+from debbindiff.comparators.debian import DotChangesFile
+from debbindiff.comparators.device import Device
+from debbindiff.comparators.directory import Directory, compare_directories
+from debbindiff.comparators.elf import ElfFile, StaticLibFile
+from debbindiff.comparators.fonts import TtfFile
+from debbindiff.comparators.gettext import MoFile
+from debbindiff.comparators.gzip import GzipFile
+from debbindiff.comparators.haskell import HiFile
+from debbindiff.comparators.ipk import IpkFile
+from debbindiff.comparators.iso9660 import Iso9660File
+from debbindiff.comparators.mono import MonoExeFile
+from debbindiff.comparators.pdf import PdfFile
+from debbindiff.comparators.png import PngFile
 try:
-    from debbindiff.comparators.rpm import compare_rpm_files
+    from debbindiff.comparators.rpm import RpmFile
 except ImportError as ex:
     if ex.message != 'No module named rpm':
         raise
-    def compare_rpm_files(path1, path2, source=None):
-        logger.info("Python rpm module not found.")
-        difference = compare_binary_files(path1, path2, source)
-        if difference:
-            difference.comment = (difference.comment or '') + \
-                '\nUnable to find Python rpm module. Falling back to binary comparison.'
-        return difference
-from debbindiff.comparators.squashfs import compare_squashfs_files
-from debbindiff.comparators.text import compare_text_files
-from debbindiff.comparators.tar import compare_tar_files
-from debbindiff.comparators.xz import compare_xz_files
-from debbindiff.comparators.zip import compare_zip_files
+    from debbindiff.comparators.rpm_fallback import RpmFile
+from debbindiff.comparators.squashfs import SquashfsFile
+from debbindiff.comparators.symlink import Symlink
+from debbindiff.comparators.text import TextFile
+from debbindiff.comparators.tar import TarFile
+from debbindiff.comparators.xz import XzFile
+from debbindiff.comparators.zip import ZipFile
 
 
-def guess_mime_type(path):
-    if not hasattr(guess_mime_type, 'mimedb'):
-        guess_mime_type.mimedb = magic.open(magic.MIME)
-        guess_mime_type.mimedb.load()
-    return guess_mime_type.mimedb.file(path)
-
-
-def compare_unknown(path1, path2, source=None):
-    logger.debug("compare unknown path: %s and %s", path1, path2)
-    if are_same_binaries(path1, path2):
-        return None
-    mime_type1 = guess_mime_type(path1)
-    mime_type2 = guess_mime_type(path2)
-    logger.debug("mime_type1: %s | mime_type2: %s", mime_type1, mime_type2)
-    if mime_type1.startswith('text/') and mime_type2.startswith('text/'):
-        encodings1 = re.findall(r'; charset=([^ ]+)', mime_type1)
-        encodings2 = re.findall(r'; charset=([^ ]+)', mime_type2)
-        encoding = None
-        encoding2 = None
-        if len(encodings1) > 0:
-            encoding = encodings1[0]
-        if len(encodings2) > 0 and encodings1 != encodings2:
-            encoding2 = encodings2[0]
-        return compare_text_files(path1, path2, encoding, source, encoding2)
-    return compare_binary_files(path1, path2, source)
-
-
-COMPARATORS = [
-    (None, r'\.changes$', compare_dot_changes_files),
-    (None, r'\.(p_)?hi$', compare_hi_files),
-    (None, r'\/\./md5sums$', compare_md5sums_files),
-    (None, r'\.mo$', compare_mo_files),
-    (None, r'(\.cpio|/initrd)$', compare_cpio_files),
-    (r'^application/x-xz(;|$)', r'\.xz$', compare_xz_files),
-    (r'^application/x-tar(;|$)', r'\.tar$', compare_tar_files),
-    (r'^application/zip(;|$)', r'\.(zip|jar|pk3)$', compare_zip_files),
-    (r'^application/java-archive(;|$)', r'\.(jar|war)$', compare_zip_files),
-    (r'^application/epub+zip(;|$)', r'\.epub$', compare_zip_files),
-    (r'^application/(x-debian-package|vnd.debian.binary-package)(;|$)', r'\.u?deb$', compare_deb_files),
-    (r'^application/x-rpm(;|$)', r'\.rpm$', compare_rpm_files),
-    (r'^application/x-gzip(;|$)', r'\.(dz|t?gz|svgz)$', compare_gzip_files),
-    (r'^application/x-gzip(;|$)', r'\.ipk$', compare_ipk_files),
-    (r'^application/x-bzip2(;|$)', r'\.bzip2$', compare_bzip2_files),
-    (r'^application/x-executable(;|$)', None, compare_elf_files),
-    (r'^application/x-sharedlib(;|$)', r'\.so($|\.[0-9.]+$)',
-     compare_elf_files),
-    (r'^application/(x-font-ttf|vnd.ms-opentype)(;|$)', r'\.(ttf|otf)$', compare_ttf_files),
-    (r'^image/png(;|$)', r'\.png$', compare_png_files),
-    (r'^application/pdf(;|$)', r'\.pdf$', compare_pdf_files),
-    (r'^application/x-dosexec(;|$)', r'\.(exe|dll)$', compare_pe_files),
-    (r'^text/plain; charset=(?P<encoding>[a-z0-9-]+)$', None, compare_text_files),
-    (r'^application/xml; charset=(?P<encoding>[a-z0-9-]+)$', None, compare_text_files),
-    (r'^application/postscript; charset=(?P<encoding>[a-z0-9-]+)$', None, compare_text_files),
-    (r'^application/x-java-applet(;|$)', r'\.class$', compare_class_files),
-    (None, r'\.info(-\d+)?$', compare_text_files),
-    (None, r'\.squashfs$', compare_squashfs_files),
-    (None, r'\.a$', compare_static_lib_files),
-    (r'^application/x-iso9660-image(;|$)', None, compare_iso9660_files)
-    ]
-
-SMALL_FILE_THRESHOLD = 65536 # 64 kiB
-
-
-def compare_files(path1, path2, source=None):
-    if os.path.islink(path1) or os.path.islink(path2):
-        dest1, dest2 = None, None
-        try:
-            dest1 = os.readlink(path1)
-            text1 = "%s -> %s" % (path1, dest1)
-        except OSError:
-            text1 = "[ No symlink ]"
-
-        try:
-            dest2 = os.readlink(path2)
-            text2 = "%s -> %s" % (path2, dest2)
-        except OSError:
-            text2 = "[ No symlink ]"
-
-        if dest1 and dest2 and dest1 == dest2:
-            return None
-        return Difference.from_unicode(text1, text2, path1, path2, source=source, comment="symlink")
-
+def compare_root_paths(path1, path2):
     if os.path.isdir(path1) and os.path.isdir(path2):
-        return compare_directories(path1, path2, source)
-    if not os.path.isfile(path1):
-        logger.critical("%s is not a file", path1)
-        sys.exit(2)
-    if not os.path.isfile(path2):
-        logger.critical("%s is not a file", path2)
-        sys.exit(2)
-    # try comparing small files directly first
-    size1 = os.path.getsize(path1)
-    size2 = os.path.getsize(path2)
-    if size1 == size2 and size1 <= SMALL_FILE_THRESHOLD:
-        if file(path1).read() == file(path2).read():
+        return compare_directories(path1, path2)
+    return compare_files(FilesystemFile(path1), FilesystemFile(path2))
+
+
+def compare_files(file1, file2, source=None):
+    logger.debug('compare files %s and %s' % (file1, file2))
+    with file1.get_content(), file2.get_content():
+        if file1.has_same_content_as(file2):
+            logger.debug('same content, skipping')
             return None
-    # ok, let's do the full thing
-    mime_type1 = guess_mime_type(path1)
-    mime_type2 = guess_mime_type(path2)
-    for mime_type_regex, filename_regex, comparator in COMPARATORS:
-        if filename_regex and re.search(filename_regex, path1) \
-           and re.search(filename_regex, path2):
-            return comparator(path1, path2, source=source)
-        if mime_type_regex:
-            match1 = re.search(mime_type_regex, mime_type1)
-            match2 = re.search(mime_type_regex, mime_type2)
-            if match1 and match2 and match1.groupdict() == match2.groupdict():
-                return comparator(path1, path2, source=source, **match1.groupdict())
-    return compare_unknown(path1, path2, source)
+        specialize(file1)
+        specialize(file2)
+        if file1.__class__.__name__ != file2.__class__.__name__:
+            return file1.compare_bytes(file2, source)
+        return file1.compare(file2, source)
+
+
+# The order matters! They will be tried in turns.
+FILE_CLASSES = (
+    Directory,
+    Symlink,
+    Device,
+    DotChangesFile,
+    Md5sumsFile,
+    TextFile,
+    Bzip2File,
+    CpioFile,
+    DebFile,
+    ElfFile,
+    StaticLibFile,
+    TtfFile,
+    MoFile,
+    IpkFile,
+    GzipFile,
+    HiFile,
+    Iso9660File,
+    ClassFile,
+    MonoExeFile,
+    PdfFile,
+    PngFile,
+    RpmFile,
+    SquashfsFile,
+    TarFile,
+    XzFile,
+    ZipFile
+    )
+
+
+def specialize(file):
+    for cls in FILE_CLASSES:
+        if isinstance(file, cls):
+            logger.debug("%s is already specialized", file.name)
+            return file
+        if cls.recognizes(file):
+            logger.debug("Using %s for %s", cls.__name__, file.name)
+            new_cls = type(cls.__name__, (cls, type(file)), {})
+            file.__class__ = new_cls
+            return file
+    logger.debug('Unidentified file. Magic says: %s' % file.magic_file_type)
+    return file

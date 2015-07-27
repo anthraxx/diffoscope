@@ -17,17 +17,21 @@
 # You should have received a copy of the GNU General Public License
 # along with debbindiff.  If not, see <http://www.gnu.org/licenses/>.
 
+from contextlib import contextmanager
 import os.path
 import re
 import subprocess
 from debbindiff import logger, tool_required, RequiredToolNotFound
 from debbindiff.difference import Difference
 import debbindiff.comparators
-from debbindiff.comparators.utils import returns_details, Command
+from debbindiff.comparators.binary import FilesystemFile
+from debbindiff.comparators.utils import Container, Command
 
 
-def ls(path):
-    return '\n'.join(sorted(subprocess.check_output(['ls', path], shell=False).decode('utf-8').splitlines()))
+class FindAll(Command):
+    @tool_required('find')
+    def cmdline(self):
+        return ['find', self.path, '-printf', '%P\n']
 
 
 class Stat(Command):
@@ -68,57 +72,106 @@ class Getfacl(Command):
 def compare_meta(path1, path2):
     logger.debug('compare_meta(%s, %s)' % (path1, path2))
     differences = []
-
     try:
-        difference = Difference.from_command(Stat, path1, path2)
-        if difference:
-            differences.append(difference)
+        differences.append(Difference.from_command(Stat, path1, path2))
     except RequiredToolNotFound:
         logger.warn("'stat' not found! Is PATH wrong?")
-
     try:
         lsattr1 = lsattr(path1)
         lsattr2 = lsattr(path2)
-        difference = Difference.from_unicode(
-                         lsattr1, lsattr2, path1, path2, source="lattr")
-        if difference:
-            differences.append(difference)
+        differences.append(Difference.from_unicode(
+                               lsattr1, lsattr2, path1, path2, source="lattr"))
     except RequiredToolNotFound:
         logger.info("Unable to find 'lsattr'.")
-
     try:
-        difference = Difference.from_command(Getfacl, path1, path2)
-        if difference:
-            differences.append(difference)
+        differences.append(Difference.from_command(Getfacl, path1, path2))
     except RequiredToolNotFound:
         logger.info("Unable to find 'getfacl'.")
-    return differences
+    return [d for d in differences if d is not None]
 
 
-@tool_required('ls')
-@returns_details
 def compare_directories(path1, path2, source=None):
-    differences = []
-    logger.debug('path1 files: %s' % sorted(set(os.listdir(path1))))
-    logger.debug('path2 files: %s' % sorted(set(os.listdir(path2))))
-    for name in sorted(set(os.listdir(path1)).intersection(set(os.listdir(path2)))):
-        logger.debug('compare %s' % name)
-        in_path1 = os.path.join(path1, name)
-        in_path2 = os.path.join(path2, name)
-        in_difference = debbindiff.comparators.compare_files(
-                            in_path1, in_path2, source=name)
-        if not os.path.isdir(in_path1):
-            if in_difference:
-                in_difference.add_details(compare_meta(in_path1, in_path2))
+    return FilesystemDirectory(path1).compare(FilesystemDirectory(path2))
+
+
+class Directory(object):
+    @staticmethod
+    def recognizes(file):
+        return file.is_directory()
+
+
+class FilesystemDirectory(object):
+    def __init__(self, path):
+        self._path = path
+
+    @property
+    def path(self):
+        return self._path
+
+    @property
+    def name(self):
+        return self._path
+
+    @contextmanager
+    def get_content(self):
+        yield
+
+    def is_directory(self):
+        return True
+
+    def has_same_content_as(self, other):
+        # no shortcut
+        return False
+
+    def compare(self, other, source=None):
+        differences = []
+        try:
+            find_diff = Difference.from_command(FindAll, self.path, other.path)
+            if find_diff:
+                differences.append(find_diff)
+        except RequiredToolNotFound:
+            logger.info("Unable to find 'getfacl'.")
+        differences.extend(compare_meta(self.path, other.path))
+        with DirectoryContainer(self).open() as my_container, \
+             DirectoryContainer(other).open() as other_container:
+            my_names = my_container.get_member_names()
+            other_names = other_container.get_member_names()
+            for name in sorted(set(my_names).intersection(other_names)):
+                my_file = my_container.get_member(name)
+                other_file = other_container.get_member(name)
+                with my_file.get_content(), other_file.get_content():
+                    inner_difference = debbindiff.comparators.compare_files(
+                                           my_file, other_file, source=name)
+                    meta_differences = compare_meta(my_file.path, other_file.path)
+                    if meta_differences and not inner_difference:
+                        inner_difference = Difference(None, my_file.path, other_file.path)
+                    if inner_difference:
+                        inner_difference.add_details(meta_differences)
+                        differences.append(inner_difference)
+        if not differences:
+            return None
+        difference = Difference(None, self.path, other.path, source)
+        difference.add_details(differences)
+        return difference
+
+
+class DirectoryContainer(Container):
+    @contextmanager
+    def open(self):
+        with self.source.get_content():
+            self._path = self.source.path
+            yield self
+            self._path = None
+
+    def get_member_names(self):
+        names = []
+        for root, _, files in os.walk(self._path):
+            if root == self._path:
+                root = ''
             else:
-                details = compare_meta(in_path1, in_path2)
-                if details:
-                    d = Difference(None, path1, path2, source=name)
-                    d.add_details(details)
-                    in_difference = d
-        differences.append(in_difference)
-    ls1 = ls(path1)
-    ls2 = ls(path2)
-    differences.append(Difference.from_unicode(ls1, ls2, path1, path2, source="ls"))
-    differences.extend(compare_meta(path1, path2))
-    return differences
+                root = root[len(self._path) + 1:]
+            names.extend([os.path.join(root, f) for f in files])
+        return names
+
+    def get_member(self, member_name):
+        return FilesystemFile(os.path.join(self._path, member_name))

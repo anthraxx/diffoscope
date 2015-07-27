@@ -22,24 +22,45 @@ import codecs
 import os.path
 import shutil
 import pytest
-from debbindiff.comparators.rpm import compare_rpm_files
+from debbindiff.comparators import specialize
+from debbindiff.comparators.binary import FilesystemFile
+from debbindiff.comparators.rpm import RpmFile
 
 TEST_FILE1_PATH = os.path.join(os.path.dirname(__file__), '../data/test1.rpm')
 TEST_FILE2_PATH = os.path.join(os.path.dirname(__file__), '../data/test2.rpm')
 
-def test_no_differences():
-    difference = compare_rpm_files(TEST_FILE1_PATH, TEST_FILE1_PATH)
+@pytest.fixture
+def rpm1():
+    return specialize(FilesystemFile(TEST_FILE1_PATH))
+
+@pytest.fixture
+def rpm2():
+    return specialize(FilesystemFile(TEST_FILE2_PATH))
+
+def test_identification(rpm1):
+    assert isinstance(rpm1, RpmFile)
+
+def test_no_differences(rpm1):
+    difference = rpm1.compare(rpm1)
     assert difference is None
 
 @pytest.fixture
-def differences():
-    return compare_rpm_files(TEST_FILE1_PATH, TEST_FILE2_PATH).details
+def differences(rpm1, rpm2):
+    return rpm1.compare(rpm2).details
 
 def test_header(differences):
     assert differences[0].source1 == 'header'
     expected_diff = open(os.path.join(os.path.dirname(__file__), '../data/rpm_header_expected_diff')).read()
     assert differences[0].unified_diff == expected_diff
 
+def test_listing(differences):
+    assert differences[1].source1 == 'content'
+    assert differences[1].details[0].source1 == 'file list'
+    expected_diff = open(os.path.join(os.path.dirname(__file__), '../data/rpm_listing_expected_diff')).read()
+    assert differences[1].details[0].unified_diff == expected_diff
+
 def test_content(differences):
-    assert differences[1].source1 == 'CONTENTS.cpio'
+    assert differences[1].source1 == 'content'
     assert differences[1].details[1].source1 == './dir/text'
+    expected_diff = open(os.path.join(os.path.dirname(__file__), '../data/text_ascii_expected_diff')).read()
+    assert differences[1].details[1].unified_diff == expected_diff

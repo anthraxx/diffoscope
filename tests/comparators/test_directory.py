@@ -28,8 +28,8 @@ import debbindiff.comparators.binary
 from debbindiff.comparators.directory import compare_directories
 from debbindiff.presenters.text import output_text
 
-TEST_FILE1_PATH = os.path.join(os.path.dirname(__file__), '../data/text_ascii1') 
-TEST_FILE2_PATH = os.path.join(os.path.dirname(__file__), '../data/text_ascii2') 
+TEST_FILE1_PATH = os.path.join(os.path.dirname(__file__), '../data/text_ascii1')
+TEST_FILE2_PATH = os.path.join(os.path.dirname(__file__), '../data/text_ascii2')
 
 def test_no_differences():
     difference = compare_directories(os.path.dirname(__file__), os.path.dirname(__file__))
@@ -48,11 +48,10 @@ def differences(tmpdir):
     return compare_directories(str(tmpdir.join('a')), str(tmpdir.join('b'))).details
 
 def test_content(differences):
-    assert differences[0].source1 == 'dir'
-    assert differences[0].details[0].source1 == 'text'
+    assert differences[0].source1 == 'dir/text'
     expected_diff = open(os.path.join(os.path.dirname(__file__), '../data/text_ascii_expected_diff')).read()
-    assert differences[0].details[0].unified_diff == expected_diff
+    assert differences[0].unified_diff == expected_diff
 
 def test_stat(differences):
     output_text(differences[0], print_func=print)
-    assert 'stat' in differences[0].details[0].details[0].source1
+    assert 'stat' in differences[0].details[0].source1

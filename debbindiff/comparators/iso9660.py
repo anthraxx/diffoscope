@@ -18,10 +18,13 @@
 # along with debbindiff.  If not, see <http://www.gnu.org/licenses/>.
 
 import os.path
+import re
 import subprocess
 import debbindiff.comparators
 from debbindiff import logger, tool_required
-from debbindiff.comparators.utils import binary_fallback, returns_details, make_temp_directory, Command
+from debbindiff.comparators.binary import File, needs_content
+from debbindiff.comparators.libarchive import LibarchiveContainer
+from debbindiff.comparators.utils import Command
 from debbindiff.difference import Difference
 
 
@@ -59,37 +62,21 @@ class ISO9660Listing(Command):
         else:
             return line
 
-@tool_required('isoinfo')
-def extract_from_iso9660(image_path, in_path, dest):
-    # Use RockRidge, same as get_iso9660_names
-    cmd = ['isoinfo', '-i', image_path, '-R', '-x', in_path]
-    return subprocess.check_call(cmd, shell=False, stdout=dest)
 
+class Iso9660File(File):
+    RE_FILE_TYPE = re.compile(r'\bISO 9660\b')
 
-@binary_fallback
-@returns_details
-def compare_iso9660_files(path1, path2, source=None):
-    differences = []
+    @staticmethod
+    def recognizes(file):
+        return Iso9660File.RE_FILE_TYPE.search(file.magic_file_type)
 
-    # compare metadata
-    differences.append(Difference.from_command(ISO9660PVD, path1, path2))
-    for extension in (None, 'joliet', 'rockridge'):
-        differences.append(Difference.from_command(ISO9660Listing, path1, path2, command_args=(extension,)))
-
-    # compare files contained in image
-    files1 = get_iso9660_names(path1)
-    files2 = get_iso9660_names(path2)
-    with make_temp_directory() as temp_dir1:
-        with make_temp_directory() as temp_dir2:
-            for name in sorted(set(files1).intersection(files2)):
-                logger.debug('extract file %s' % name)
-                in_path1 = os.path.join(temp_dir1, os.path.basename(name))
-                in_path2 = os.path.join(temp_dir2, os.path.basename(name))
-                with open(in_path1, 'w') as dest:
-                    extract_from_iso9660(path1, name, dest)
-                with open(in_path2, 'w') as dest:
-                    extract_from_iso9660(path2, name, dest)
-                differences.append(debbindiff.comparators.compare_files(
-                    in_path1, in_path2, source=name))
-
-    return differences
+    @needs_content
+    def compare_details(self, other, source=None):
+        differences = []
+        differences.append(Difference.from_command(ISO9660PVD, self.path, other.path))
+        for extension in (None, 'joliet', 'rockridge'):
+            differences.append(Difference.from_command(ISO9660Listing, self.path, other.path, command_args=(extension,)))
+        with LibarchiveContainer(self).open() as my_container, \
+             LibarchiveContainer(other).open() as other_container:
+            differences.extend(my_container.compare(other_container, source))
+        return differences

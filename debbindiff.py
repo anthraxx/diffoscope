@@ -104,7 +104,7 @@ def main():
     if parsed_args.debug:
         logger.setLevel(logging.DEBUG)
     set_locale()
-    difference = debbindiff.comparators.compare_files(
+    difference = debbindiff.comparators.compare_root_paths(
         parsed_args.file1, parsed_args.file2)
     if difference:
         if parsed_args.html_output:

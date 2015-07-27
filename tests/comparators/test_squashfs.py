@@ -22,24 +22,36 @@ import codecs
 import os.path
 import shutil
 import pytest
-from debbindiff.comparators.squashfs import compare_squashfs_files
+from debbindiff.comparators import specialize
+from debbindiff.comparators.binary import FilesystemFile
+from debbindiff.comparators.squashfs import SquashfsFile
 
 TEST_FILE1_PATH = os.path.join(os.path.dirname(__file__), '../data/test1.squashfs')
 TEST_FILE2_PATH = os.path.join(os.path.dirname(__file__), '../data/test2.squashfs')
 
-def test_no_differences():
-    difference = compare_squashfs_files(TEST_FILE1_PATH, TEST_FILE1_PATH)
+@pytest.fixture
+def squashfs1():
+    return specialize(FilesystemFile(TEST_FILE1_PATH))
+
+@pytest.fixture
+def squashfs2():
+    return specialize(FilesystemFile(TEST_FILE2_PATH))
+
+def test_identification(squashfs1):
+    assert isinstance(squashfs1, SquashfsFile)
+
+def test_no_differences(squashfs1):
+    difference = squashfs1.compare(squashfs1)
     assert difference is None
 
-@pytest.mark.xfail
-def test_no_warnings(capfd, differences):
-     compare_squashfs_files(TEST_FILE1_PATH, TEST_FILE2_PATH).details
+def test_no_warnings(capfd, squashfs1, squashfs2):
+     _ = squashfs1.compare(squashfs2)
      _, err = capfd.readouterr()
      assert err == ''
 
 @pytest.fixture
-def differences():
-    return compare_squashfs_files(TEST_FILE1_PATH, TEST_FILE2_PATH).details
+def differences(squashfs1, squashfs2):
+    return squashfs1.compare(squashfs2).details
 
 def test_superblock(differences):
     expected_diff = open(os.path.join(os.path.dirname(__file__), '../data/squashfs_superblock_expected_diff')).read()
@@ -49,8 +61,13 @@ def test_listing(differences):
     expected_diff = open(os.path.join(os.path.dirname(__file__), '../data/squashfs_listing_expected_diff')).read()
     assert differences[1].unified_diff == expected_diff
 
-def test_compressed_files(differences):
-    assert differences[2].source1 == 'text'
-    assert differences[2].source2 == 'text'
-    expected_diff = open(os.path.join(os.path.dirname(__file__), '../data/text_ascii_expected_diff')).read()
+def test_symlink(differences):
+    assert differences[2].comment == 'symlink'
+    expected_diff = open(os.path.join(os.path.dirname(__file__), '../data/symlink_expected_diff')).read()
     assert differences[2].unified_diff == expected_diff
+
+def test_compressed_files(differences):
+    assert differences[3].source1 == '/text'
+    assert differences[3].source2 == '/text'
+    expected_diff = open(os.path.join(os.path.dirname(__file__), '../data/text_ascii_expected_diff')).read()
+    assert differences[3].unified_diff == expected_diff

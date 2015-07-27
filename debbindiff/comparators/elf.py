@@ -2,7 +2,7 @@
 #
 # debbindiff: highlight differences between two builds of Debian packages
 #
-# Copyright © 2014 Jérémy Bobbio <lunar@debian.org>
+# Copyright © 2014-2015 Jérémy Bobbio <lunar@debian.org>
 #
 # debbindiff is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -21,7 +21,8 @@ import os.path
 import re
 import subprocess
 from debbindiff import tool_required
-from debbindiff.comparators.utils import binary_fallback, returns_details, get_ar_content, Command
+from debbindiff.comparators.binary import File, needs_content
+from debbindiff.comparators.utils import get_ar_content, Command
 from debbindiff.difference import Difference
 
 
@@ -58,30 +59,39 @@ class ObjdumpDisassemble(Command):
         # the full path can appear in the output, we need to remove it
         return line.replace(self.path, os.path.basename(self.path))
 
-# this one is not wrapped with binary_fallback and is used
-# by both compare_elf_files and compare_static_lib_files
-def _compare_elf_data(path1, path2, source=None):
+def _compare_elf_data(path1, path2):
     differences = []
     differences.append(Difference.from_command(ReadelfAll, path1, path2))
     differences.append(Difference.from_command(ReadelfDebugDump, path1, path2))
     differences.append(Difference.from_command(ObjdumpDisassemble, path1, path2))
     return differences
 
+class ElfFile(File):
+    RE_FILE_TYE = re.compile(r'^ELF ')
 
-@binary_fallback
-@returns_details
-def compare_elf_files(path1, path2, source=None):
-    return _compare_elf_data(path1, path2, source=None)
+    @staticmethod
+    def recognizes(file):
+        return ElfFile.RE_FILE_TYE.match(file.magic_file_type)
 
+    @needs_content
+    def compare_details(self, other, source=None):
+        return _compare_elf_data(self.path, other.path)
 
-@binary_fallback
-@returns_details
-def compare_static_lib_files(path1, path2, source=None):
-    differences = []
-    # look up differences in metadata
-    content1 = get_ar_content(path1)
-    content2 = get_ar_content(path2)
-    differences.append(Difference.from_unicode(
-                           content1, content2, path1, path2, source="metadata"))
-    differences.extend(_compare_elf_data(path1, path2, source))
-    return differences
+class StaticLibFile(File):
+    RE_FILE_TYPE = re.compile(r'\bar archive\b')
+    RE_FILE_EXTENSION = re.compile(r'\.a$')
+
+    @staticmethod
+    def recognizes(file):
+        return StaticLibFile.RE_FILE_TYPE.search(file.magic_file_type) and StaticLibFile.RE_FILE_EXTENSION.search(file.name)
+
+    @needs_content
+    def compare_details(self, other, source=None):
+        differences = []
+        # look up differences in metadata
+        content1 = get_ar_content(self.path)
+        content2 = get_ar_content(other.path)
+        differences.append(Difference.from_unicode(
+                               content1, content2, self.path, other.path, source="metadata"))
+        differences.extend(_compare_elf_data(self.path, other.path))
+        return differences

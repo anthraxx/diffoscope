@@ -21,29 +21,46 @@
 import os.path
 import shutil
 import pytest
-from debbindiff.comparators.xz import compare_xz_files
+from debbindiff.comparators import specialize
+from debbindiff.comparators.binary import FilesystemFile
+from debbindiff.comparators.xz import XzFile
 
-TEST_FILE1_PATH = os.path.join(os.path.dirname(__file__), '../data/test1.xz') 
-TEST_FILE2_PATH = os.path.join(os.path.dirname(__file__), '../data/test2.xz') 
+TEST_FILE1_PATH = os.path.join(os.path.dirname(__file__), '../data/test1.xz')
+TEST_FILE2_PATH = os.path.join(os.path.dirname(__file__), '../data/test2.xz')
 
-def test_no_differences():
-    difference = compare_xz_files(TEST_FILE1_PATH, TEST_FILE1_PATH)
+@pytest.fixture
+def xz1():
+    return specialize(FilesystemFile(TEST_FILE1_PATH))
+
+@pytest.fixture
+def xz2():
+    return specialize(FilesystemFile(TEST_FILE2_PATH))
+
+def test_identification(xz1):
+    assert isinstance(xz1, XzFile)
+
+def test_no_differences(xz1):
+    difference = xz1.compare(xz1)
     assert difference is None
 
 @pytest.fixture
-def differences():
-    return compare_xz_files(TEST_FILE1_PATH, TEST_FILE2_PATH).details
+def differences(xz1, xz2):
+    return xz1.compare(xz2).details
 
+@pytest.mark.xfail # need fuzzy
 def test_content_source(differences):
     assert differences[0].source1 == 'test1'
     assert differences[0].source2 == 'test2'
 
+@pytest.mark.xfail # need fuzzy
 def test_content_source_without_extension(tmpdir):
     path1 = str(tmpdir.join('test1'))
     path2 = str(tmpdir.join('test2'))
     shutil.copy(TEST_FILE1_PATH, path1)
     shutil.copy(TEST_FILE2_PATH, path2)
-    difference = compare_xz_files(path1, path2).details
+    xz1 = specialize(FilesystemFile(path1))
+    xz2 = specialize(FilesystemFile(path2))
+    difference = xz1.compare(xz2).details
     assert difference[0].source1 == 'test1-content'
     assert difference[0].source2 == 'test2-content'
 

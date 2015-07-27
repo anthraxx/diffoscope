@@ -20,28 +20,55 @@
 
 import os.path
 import shutil
+import subprocess
 import pytest
+from debbindiff.comparators import specialize
 import debbindiff.comparators.binary
-from debbindiff.comparators.binary import compare_binary_files, are_same_binaries
-from debbindiff import RequiredToolNotFound
+from debbindiff.comparators.binary import File, FilesystemFile
+from debbindiff.difference import Difference
+from debbindiff import RequiredToolNotFound, tool_required
 
-TEST_FILE1_PATH = os.path.join(os.path.dirname(__file__), '../data/binary1') 
-TEST_FILE2_PATH = os.path.join(os.path.dirname(__file__), '../data/binary2') 
+TEST_FILE1_PATH = os.path.join(os.path.dirname(__file__), '../data/binary1')
+TEST_FILE2_PATH = os.path.join(os.path.dirname(__file__), '../data/binary2')
+TEST_ASCII_PATH = os.path.join(os.path.dirname(__file__), '../data/text_ascii1')
+TEST_UNICODE_PATH = os.path.join(os.path.dirname(__file__), '../data/text_unicode1')
+TEST_ISO8859_PATH = os.path.join(os.path.dirname(__file__), '../data/text_iso8859')
 
-def test_are_same_binaries(tmpdir):
-    new_path = str(tmpdir.join('binary2'))
-    shutil.copy(TEST_FILE1_PATH, new_path)
-    assert are_same_binaries(TEST_FILE1_PATH, new_path)
+@pytest.fixture
+def binary1():
+    return specialize(FilesystemFile(TEST_FILE1_PATH))
 
-def test_are_not_same_binaries(tmpdir):
-    assert not are_same_binaries(TEST_FILE1_PATH, TEST_FILE2_PATH)
+@pytest.fixture
+def binary2():
+    return specialize(FilesystemFile(TEST_FILE2_PATH))
 
-def test_no_differences_with_xxd():
-    difference = compare_binary_files(TEST_FILE1_PATH, TEST_FILE1_PATH)
+def test_same_content(binary1):
+    assert binary1.has_same_content_as(binary1) is True
+
+def test_not_same_content(binary1, binary2):
+    assert binary1.has_same_content_as(binary2) is False
+
+def test_guess_file_type():
+    assert File.guess_file_type(TEST_FILE1_PATH) == 'data'
+
+def test_guess_encoding_binary():
+    assert File.guess_encoding(TEST_FILE1_PATH) == 'binary'
+
+def test_guess_encoding_ascii():
+    assert File.guess_encoding(TEST_ASCII_PATH) == 'us-ascii'
+
+def test_guess_encoding_unicode():
+    assert File.guess_encoding(TEST_UNICODE_PATH) == 'utf-8'
+
+def test_guess_encoding_iso8859():
+    assert File.guess_encoding(TEST_ISO8859_PATH) == 'iso-8859-1'
+
+def test_no_differences_with_xxd(binary1):
+    difference = binary1.compare_bytes(binary1)
     assert difference is None
 
-def test_compare_with_xxd():
-    difference = compare_binary_files(TEST_FILE1_PATH, TEST_FILE2_PATH)
+def test_compare_with_xxd(binary1, binary2):
+    difference = binary1.compare_bytes(binary2)
     expected_diff = open(os.path.join(os.path.dirname(__file__), '../data/binary_expected_diff')).read()
     assert difference.unified_diff == expected_diff
 
@@ -51,11 +78,59 @@ def xxd_not_found(monkeypatch):
         raise RequiredToolNotFound('xxd')
     monkeypatch.setattr(debbindiff.comparators.binary, 'xxd', mock_xxd)
 
-def test_no_differences_without_xxd(xxd_not_found):
-    difference = compare_binary_files(TEST_FILE1_PATH, TEST_FILE1_PATH)
+def test_no_differences_without_xxd(xxd_not_found, binary1):
+    difference = binary1.compare_bytes(binary1)
     assert difference is None
 
-def test_compare_without_xxd(xxd_not_found):
-    difference = compare_binary_files(TEST_FILE1_PATH, TEST_FILE2_PATH)
+def test_compare_without_xxd(xxd_not_found, binary1, binary2):
+    difference = binary1.compare(binary2)
     expected_diff = open(os.path.join(os.path.dirname(__file__), '../data/binary_hexdump_expected_diff')).read()
+    assert difference.unified_diff == expected_diff
+
+def test_with_compare_details():
+    d = Difference('diff', TEST_FILE1_PATH, TEST_FILE2_PATH, source='source')
+    class MockFile(FilesystemFile):
+        def compare_details(self, other, source=None):
+            return [d]
+    difference = MockFile(TEST_FILE1_PATH).compare(MockFile(TEST_FILE2_PATH), source='source')
+    assert difference.details[0] == d
+
+def test_with_compare_details_and_fallback():
+    class MockFile(FilesystemFile):
+        def compare_details(self, other, source=None):
+            return []
+    difference = MockFile(TEST_FILE1_PATH).compare(MockFile(TEST_FILE2_PATH))
+    expected_diff = open(os.path.join(os.path.dirname(__file__), '../data/binary_expected_diff')).read()
+    assert 'yet data differs' in difference.comment
+    assert difference.unified_diff == expected_diff
+
+def test_with_compare_details_and_no_actual_differences():
+    class MockFile(FilesystemFile):
+        def compare_details(self, other, source=None):
+            return []
+    difference = MockFile(TEST_FILE1_PATH).compare(MockFile(TEST_FILE1_PATH))
+    assert difference is None
+
+def test_with_compare_details_and_failed_process():
+    output = 'Free Jeremy Hammond'
+    class MockFile(FilesystemFile):
+        def compare_details(self, other, source=None):
+            subprocess.check_output(['sh', '-c', 'echo "%s"; exit 42' % output], shell=False)
+            raise Exception('should not be run')
+    difference = MockFile(TEST_FILE1_PATH).compare(MockFile(TEST_FILE2_PATH))
+    expected_diff = open(os.path.join(os.path.dirname(__file__), '../data/binary_expected_diff')).read()
+    assert output in difference.comment
+    assert '42' in difference.comment
+    assert difference.unified_diff == expected_diff
+
+def test_with_compare_details_and_tool_not_found(monkeypatch):
+    monkeypatch.setattr('debbindiff.RequiredToolNotFound.get_package', lambda _: 'some-package')
+    class MockFile(FilesystemFile):
+        @tool_required('nonexistent')
+        def compare_details(self, other, source=None):
+            raise Exception('should not be run')
+    difference = MockFile(TEST_FILE1_PATH).compare(MockFile(TEST_FILE2_PATH))
+    expected_diff = open(os.path.join(os.path.dirname(__file__), '../data/binary_expected_diff')).read()
+    assert 'nonexistent' in difference.comment
+    assert 'some-package' in difference.comment
     assert difference.unified_diff == expected_diff

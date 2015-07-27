@@ -21,18 +21,31 @@
 import os.path
 import shutil
 import pytest
-from debbindiff.comparators.png import compare_png_files
+from debbindiff.comparators import specialize
+from debbindiff.comparators.binary import FilesystemFile
+from debbindiff.comparators.png import PngFile
 
-TEST_FILE1_PATH = os.path.join(os.path.dirname(__file__), '../data/test1.png') 
-TEST_FILE2_PATH = os.path.join(os.path.dirname(__file__), '../data/test2.png') 
+TEST_FILE1_PATH = os.path.join(os.path.dirname(__file__), '../data/test1.png')
+TEST_FILE2_PATH = os.path.join(os.path.dirname(__file__), '../data/test2.png')
 
-def test_no_differences():
-    difference = compare_png_files(TEST_FILE1_PATH, TEST_FILE1_PATH)
+@pytest.fixture
+def png1():
+    return specialize(FilesystemFile(TEST_FILE1_PATH))
+
+@pytest.fixture
+def png2():
+    return specialize(FilesystemFile(TEST_FILE2_PATH))
+
+def test_identification(png1):
+    assert isinstance(png1, PngFile)
+
+def test_no_differences(png1):
+    difference = png1.compare(png1)
     assert difference is None
 
 @pytest.fixture
-def differences():
-    return compare_png_files(TEST_FILE1_PATH, TEST_FILE2_PATH).details
+def differences(png1, png2):
+    return png1.compare(png2).details
 
 def test_diff(differences):
     expected_diff = open(os.path.join(os.path.dirname(__file__), '../data/png_expected_diff')).read()

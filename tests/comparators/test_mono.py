@@ -21,7 +21,9 @@
 import os.path
 import shutil
 import pytest
-from debbindiff.comparators.pe import compare_pe_files
+from debbindiff.comparators import specialize
+from debbindiff.comparators.binary import FilesystemFile
+from debbindiff.comparators.mono import MonoExeFile
 
 # these were generated with:
 
@@ -31,13 +33,24 @@ from debbindiff.comparators.pe import compare_pe_files
 TEST_FILE1_PATH = os.path.join(os.path.dirname(__file__), '../data/test1.exe') 
 TEST_FILE2_PATH = os.path.join(os.path.dirname(__file__), '../data/test2.exe') 
 
-def test_no_differences():
-    difference = compare_pe_files(TEST_FILE1_PATH, TEST_FILE1_PATH)
+@pytest.fixture
+def exe1():
+    return specialize(FilesystemFile(TEST_FILE1_PATH))
+
+@pytest.fixture
+def exe2():
+    return specialize(FilesystemFile(TEST_FILE2_PATH))
+
+def test_identification(exe1):
+    assert isinstance(exe1, MonoExeFile)
+
+def test_no_differences(exe1):
+    difference = exe1.compare(exe1)
     assert difference is None
 
 @pytest.fixture
-def differences():
-    return compare_pe_files(TEST_FILE1_PATH, TEST_FILE2_PATH).details
+def differences(exe1, exe2):
+    return exe1.compare(exe2).details
 
 def test_diff(differences):
     expected_diff = open(os.path.join(os.path.dirname(__file__), '../data/pe_expected_diff')).read()

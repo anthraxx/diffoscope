@@ -22,26 +22,45 @@ import codecs
 import os.path
 import shutil
 import pytest
-from debbindiff.comparators.tar import compare_tar_files
+from debbindiff.comparators import specialize
+from debbindiff.comparators.binary import FilesystemFile
+from debbindiff.comparators.tar import TarFile
 
 TEST_FILE1_PATH = os.path.join(os.path.dirname(__file__), '../data/test1.tar')
 TEST_FILE2_PATH = os.path.join(os.path.dirname(__file__), '../data/test2.tar')
 
-def test_no_differences():
-    difference = compare_tar_files(TEST_FILE1_PATH, TEST_FILE1_PATH)
+@pytest.fixture
+def tar1():
+    return specialize(FilesystemFile(TEST_FILE1_PATH))
+
+@pytest.fixture
+def tar2():
+    return specialize(FilesystemFile(TEST_FILE2_PATH))
+
+def test_identification(tar1):
+    assert isinstance(tar1, TarFile)
+
+def test_no_differences(tar1):
+    difference = tar1.compare(tar1)
     assert difference is None
 
 @pytest.fixture
-def differences():
-    return compare_tar_files(TEST_FILE1_PATH, TEST_FILE2_PATH).details
-
-def test_compressed_files(differences):
-    assert differences[0].source1 == 'dir/text'
-    assert differences[0].source2 == 'dir/text'
-    expected_diff = open(os.path.join(os.path.dirname(__file__), '../data/text_ascii_expected_diff')).read()
-    assert differences[0].unified_diff == expected_diff
+def differences(tar1, tar2):
+    return tar1.compare(tar2).details
 
 def test_listing(differences):
     expected_diff = open(os.path.join(os.path.dirname(__file__), '../data/tar_listing_expected_diff')).read()
+    assert differences[0].unified_diff == expected_diff
+
+def test_symlinks(differences):
+    assert differences[1].source1 == 'dir/link'
+    assert differences[1].source2 == 'dir/link'
+    assert differences[1].comment == 'symlink'
+    expected_diff = open(os.path.join(os.path.dirname(__file__), '../data/symlink_expected_diff')).read()
     assert differences[1].unified_diff == expected_diff
 
+def test_text_file(differences):
+    assert differences[2].source1 == 'dir/text'
+    assert differences[2].source2 == 'dir/text'
+    expected_diff = open(os.path.join(os.path.dirname(__file__), '../data/text_ascii_expected_diff')).read()
+    assert differences[2].unified_diff == expected_diff

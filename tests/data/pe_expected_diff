@@ -1,4 +1,5 @@
-@@ -2,7 +2,7 @@
+@@ -1,12 +1,12 @@
+ 
  COFF Header:
  	                Machine: 0x014c
  	               Sections: 0x0003
@@ -7,3 +8,7 @@
  	Pointer to Symbol Table: 0x00000000
  	   	   Symbol Count: 0x00000000
  	   Optional Header Size: 0x00e0
+ 	   	Characteristics: 0x0102
+ 
+ PE Header:
+ 	         Magic (0x010b): 0x010b

@@ -2,7 +2,7 @@
 #
 # debbindiff: highlight differences between two builds of Debian packages
 #
-# Copyright © 2014 Jérémy Bobbio <lunar@debian.org>
+# Copyright © 2014-2015 Jérémy Bobbio <lunar@debian.org>
 #
 # debbindiff is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -21,7 +21,8 @@ import re
 import subprocess
 from StringIO import StringIO
 from debbindiff import tool_required
-from debbindiff.comparators.utils import binary_fallback, returns_details, Command
+from debbindiff.comparators.binary import File, needs_content
+from debbindiff.comparators.utils import Command
 from debbindiff.difference import Difference
 from debbindiff import logger
 
@@ -56,7 +57,13 @@ class Msgunfmt(Command):
             return line
 
 
-@binary_fallback
-@returns_details
-def compare_mo_files(path1, path2, source=None):
-    return [Difference.from_command(Msgunfmt, path1, path2)]
+class MoFile(File):
+    RE_FILE_TYPE = re.compile(r'^GNU message catalog\b')
+
+    @staticmethod
+    def recognizes(file):
+        return MoFile.RE_FILE_TYPE.match(file.magic_file_type)
+
+    @needs_content
+    def compare_details(self, other, source=None):
+        return [Difference.from_command(Msgunfmt, self.path, other.path)]

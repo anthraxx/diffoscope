@@ -2,7 +2,7 @@
 #
 # debbindiff: highlight differences between two builds of Debian packages
 #
-# Copyright © 2014 Jérémy Bobbio <lunar@debian.org>
+# Copyright © 2014-2015 Jérémy Bobbio <lunar@debian.org>
 #
 # debbindiff is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -18,47 +18,56 @@
 # along with debbindiff.  If not, see <http://www.gnu.org/licenses/>.
 
 from contextlib import contextmanager
+import re
 import subprocess
 import os.path
 import debbindiff.comparators
 from debbindiff import tool_required
-from debbindiff.comparators.utils import binary_fallback, returns_details, make_temp_directory
-from debbindiff.difference import Difference, get_source
+from debbindiff.comparators.binary import File, needs_content
+from debbindiff.comparators.utils import Archive, get_compressed_content_name
+from debbindiff.difference import Difference
+from debbindiff import logger, tool_required
 
 
-@contextmanager
-@tool_required('gzip')
-def decompress_gzip(path):
-    with make_temp_directory() as temp_dir:
-        if path.endswith('.gz'):
-            temp_path = os.path.join(temp_dir, os.path.basename(path[:-3]))
-        else:
-            temp_path = os.path.join(temp_dir, os.path.basename("%s-content" % path))
-        with open(temp_path, 'wb') as temp_file:
+class GzipContainer(Archive):
+    @property
+    def path(self):
+        return self._path
+
+    def open_archive(self, path):
+        self._path = path
+        return self
+
+    def close_archive(self):
+        self._path = None
+
+    def get_member_names(self):
+        return [get_compressed_content_name(self.path, '.gz')]
+
+    @tool_required('gzip')
+    def extract(self, member_name, dest_dir):
+        dest_path = os.path.join(dest_dir, member_name)
+        logger.debug('gzip extracting to %s' % dest_path)
+        with open(dest_path, 'wb') as fp:
             subprocess.check_call(
-                ["gzip", "--decompress", "--stdout", path],
-                shell=False, stdout=temp_file, stderr=None)
-            yield temp_path
+                ["gzip", "--decompress", "--stdout", self.path],
+                shell=False, stdout=fp, stderr=None)
+        return dest_path
 
 
-@tool_required('file')
-def get_gzip_metadata(path):
-    return subprocess.check_output(['file', '--brief', path]).decode('utf-8')
+class GzipFile(object):
+    RE_FILE_TYPE = re.compile(r'^gzip compressed data\b')
 
+    @staticmethod
+    def recognizes(file):
+        return GzipFile.RE_FILE_TYPE.match(file.magic_file_type)
 
-@binary_fallback
-@returns_details
-def compare_gzip_files(path1, path2, source=None):
-    differences = []
-    # check metadata
-    metadata1 = get_gzip_metadata(path1)
-    metadata2 = get_gzip_metadata(path2)
-    differences.append(Difference.from_unicode(
-                           metadata1, metadata2, path1, path2, source='metadata'))
-    # check content
-    with decompress_gzip(path1) as new_path1:
-        with decompress_gzip(path2) as new_path2:
-            differences.append(debbindiff.comparators.compare_files(
-                new_path1, new_path2,
-                source=[os.path.basename(new_path1), os.path.basename(new_path2)]))
-    return differences
+    @needs_content
+    def compare_details(self, other, source=None):
+        differences = []
+        differences.append(Difference.from_unicode(
+                               self.magic_file_type, other.magic_file_type, self, other, source='metadata'))
+        with GzipContainer(self).open() as my_container, \
+             GzipContainer(other).open() as other_container:
+            differences.extend(my_container.compare(other_container, source))
+        return differences

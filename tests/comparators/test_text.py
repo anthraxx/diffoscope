@@ -21,41 +21,48 @@
 import codecs
 import os.path
 import pytest
-from debbindiff.comparators.text import compare_text_files
+from debbindiff.comparators import specialize
+from debbindiff.comparators.binary import FilesystemFile
+from debbindiff.comparators.text import TextFile
 
-def test_no_differences():
-    text1 = os.path.join(os.path.dirname(__file__), '../data/text_ascii1')
-    text2 = os.path.join(os.path.dirname(__file__), '../data/text_ascii1')
-    assert compare_text_files(text1, text2) is None
+@pytest.fixture
+def ascii1():
+    return specialize(FilesystemFile(os.path.join(os.path.dirname(__file__), '../data/text_ascii1')))
 
-def test_difference_in_ascii():
-    text1 = os.path.join(os.path.dirname(__file__), '../data/text_ascii1')
-    text2 = os.path.join(os.path.dirname(__file__), '../data/text_ascii2')
-    difference = compare_text_files(text1, text2)
+@pytest.fixture
+def ascii2():
+    return specialize(FilesystemFile(os.path.join(os.path.dirname(__file__), '../data/text_ascii2')))
+
+def test_no_differences(ascii1):
+    difference = ascii1.compare(ascii1)
+    assert difference is None
+
+def test_difference_in_ascii(ascii1, ascii2):
+    difference = ascii1.compare(ascii2)
     assert difference is not None
     expected_diff = open(os.path.join(os.path.dirname(__file__), '../data/text_ascii_expected_diff')).read()
     assert difference.unified_diff == expected_diff
     assert difference.comment is None
     assert len(difference.details) == 0
 
-def test_difference_in_unicode():
-    text1 = os.path.join(os.path.dirname(__file__), '../data/text_unicode1')
-    text2 = os.path.join(os.path.dirname(__file__), '../data/text_unicode2')
-    difference = compare_text_files(text1, text2)
+@pytest.fixture
+def unicode1():
+    return specialize(FilesystemFile(os.path.join(os.path.dirname(__file__), '../data/text_unicode1')))
+
+@pytest.fixture
+def unicode2():
+    return specialize(FilesystemFile(os.path.join(os.path.dirname(__file__), '../data/text_unicode2')))
+
+def test_difference_in_unicode(unicode1, unicode2):
+    difference = unicode1.compare(unicode2)
     expected_diff = codecs.open(os.path.join(os.path.dirname(__file__), '../data/text_unicode_expected_diff'), encoding='utf-8').read()
     assert difference.unified_diff == expected_diff
 
-def test_fallback_to_binary():
-    text1 = os.path.join(os.path.dirname(__file__), '../data/text_unicode1')
-    text2 = os.path.join(os.path.dirname(__file__), '../data/text_unicode2')
-    difference = compare_text_files(text1, text2, encoding='ascii')
-    expected_diff = open(os.path.join(os.path.dirname(__file__), '../data/text_unicode_binary_fallback')).read()
-    assert difference.unified_diff == expected_diff
+@pytest.fixture
+def iso8859():
+    return specialize(FilesystemFile(os.path.join(os.path.dirname(__file__), '../data/text_iso8859')))
 
-@pytest.mark.xfail
-def test_difference_between_iso88591_and_unicode():
-    text1 = os.path.join(os.path.dirname(__file__), '../data/text_unicode1')
-    text2 = os.path.join(os.path.dirname(__file__), '../data/text_iso8859')
-    difference = compare_text_files(text1, text2)
+def test_difference_between_iso88591_and_unicode(iso8859, unicode1):
+    difference = iso8859.compare(unicode1)
     expected_diff = codecs.open(os.path.join(os.path.dirname(__file__), '../data/text_iso8859_expected_diff'), encoding='utf-8').read()
-    assert differences.unified_diff == expected_diff
+    assert difference.unified_diff == expected_diff

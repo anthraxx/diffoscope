@@ -22,25 +22,44 @@ import codecs
 import os.path
 import shutil
 import pytest
-from debbindiff.comparators.cpio import compare_cpio_files
+from debbindiff.comparators import specialize
+from debbindiff.comparators.binary import FilesystemFile
+from debbindiff.comparators.cpio import CpioFile
 
 TEST_FILE1_PATH = os.path.join(os.path.dirname(__file__), '../data/test1.cpio')
 TEST_FILE2_PATH = os.path.join(os.path.dirname(__file__), '../data/test2.cpio')
 
-def test_no_differences():
-    difference = compare_cpio_files(TEST_FILE1_PATH, TEST_FILE1_PATH)
+@pytest.fixture
+def cpio1():
+    return specialize(FilesystemFile(TEST_FILE1_PATH))
+
+@pytest.fixture
+def cpio2():
+    return specialize(FilesystemFile(TEST_FILE2_PATH))
+
+def test_identification(cpio1):
+    assert isinstance(cpio1, CpioFile)
+
+def test_no_differences(cpio1):
+    difference = cpio1.compare(cpio1)
     assert difference is None
 
 @pytest.fixture
-def differences():
-    return compare_cpio_files(TEST_FILE1_PATH, TEST_FILE2_PATH).details
+def differences(cpio1, cpio2):
+    return cpio1.compare(cpio2).details
 
 def test_listing(differences):
     expected_diff = open(os.path.join(os.path.dirname(__file__), '../data/cpio_listing_expected_diff')).read()
     assert differences[0].unified_diff == expected_diff
 
-def test_compressed_files(differences):
-    assert differences[1].source1 == 'dir/text'
-    assert differences[1].source2 == 'dir/text'
-    expected_diff = open(os.path.join(os.path.dirname(__file__), '../data/text_ascii_expected_diff')).read()
+def test_symlink(differences):
+    assert differences[1].source1 == 'dir/link'
+    assert differences[1].comment == 'symlink'
+    expected_diff = open(os.path.join(os.path.dirname(__file__), '../data/symlink_expected_diff')).read()
     assert differences[1].unified_diff == expected_diff
+
+def test_compressed_files(differences):
+    assert differences[2].source1 == 'dir/text'
+    assert differences[2].source2 == 'dir/text'
+    expected_diff = open(os.path.join(os.path.dirname(__file__), '../data/text_ascii_expected_diff')).read()
+    assert differences[2].unified_diff == expected_diff

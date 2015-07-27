@@ -22,25 +22,45 @@ import codecs
 import os.path
 import shutil
 import pytest
-from debbindiff.comparators.gettext import compare_mo_files
+from debbindiff.comparators import specialize
+from debbindiff.comparators.binary import FilesystemFile
+from debbindiff.comparators.gettext import MoFile
 
-TEST_FILE1_PATH = os.path.join(os.path.dirname(__file__), '../data/test1.mo') 
-TEST_FILE2_PATH = os.path.join(os.path.dirname(__file__), '../data/test2.mo') 
+TEST_FILE1_PATH = os.path.join(os.path.dirname(__file__), '../data/test1.mo')
+TEST_FILE2_PATH = os.path.join(os.path.dirname(__file__), '../data/test2.mo')
 
-def test_no_differences():
-    difference = compare_mo_files(TEST_FILE1_PATH, TEST_FILE1_PATH)
+@pytest.fixture
+def mo1():
+    return specialize(FilesystemFile(TEST_FILE1_PATH))
+
+@pytest.fixture
+def mo2():
+    return specialize(FilesystemFile(TEST_FILE2_PATH))
+
+def test_identification(mo1):
+    assert isinstance(mo1, MoFile)
+
+def test_no_differences(mo1):
+    difference = mo1.compare(mo1)
     assert difference is None
 
 @pytest.fixture
-def differences():
-    return compare_mo_files(TEST_FILE1_PATH, TEST_FILE2_PATH).details
+def differences(mo1, mo2):
+    return mo1.compare(mo2).details
 
 def test_diff(differences):
     expected_diff = open(os.path.join(os.path.dirname(__file__), '../data/mo_expected_diff')).read()
     assert differences[0].unified_diff == expected_diff
 
-def test_charsets():
-    difference = compare_mo_files(os.path.join(os.path.dirname(__file__), '../data/test_no_charset.mo'),
-                                   os.path.join(os.path.dirname(__file__), '../data/test_iso8859-1.mo'))
+@pytest.fixture
+def mo_no_charset():
+    return specialize(FilesystemFile(os.path.join(os.path.dirname(__file__), '../data/test_no_charset.mo')))
+
+@pytest.fixture
+def mo_iso8859_1():
+    return specialize(FilesystemFile(os.path.join(os.path.dirname(__file__), '../data/test_iso8859-1.mo')))
+
+def test_charsets(mo_no_charset, mo_iso8859_1):
+    difference = mo_no_charset.compare(mo_iso8859_1)
     expected_diff = codecs.open(os.path.join(os.path.dirname(__file__), '../data/mo_charsets_expected_diff'), encoding='utf-8').read()
     assert difference.details[0].unified_diff == expected_diff

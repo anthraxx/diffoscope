@@ -2,7 +2,7 @@
 #
 # debbindiff: highlight differences between two builds of Debian packages
 #
-# Copyright © 2014 Jérémy Bobbio <lunar@debian.org>
+# Copyright © 2014-2015 Jérémy Bobbio <lunar@debian.org>
 #
 # debbindiff is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -19,54 +19,75 @@
 
 from __future__ import absolute_import
 
+import re
 import os.path
 from debian.arfile import ArFile
 from debbindiff import logger
-from debbindiff.difference import Difference, get_source
+from debbindiff.difference import Difference
 import debbindiff.comparators
-from debbindiff.comparators.binary import are_same_binaries
+from debbindiff.comparators.binary import File, needs_content
 from debbindiff.comparators.utils import \
-    binary_fallback, returns_details, make_temp_directory, get_ar_content
+    Archive, ArchiveMember, get_ar_content
+
+AR_EXTRACTION_BUFFER_SIZE = 32768
+
+class ArContainer(Archive):
+    def open_archive(self, path):
+        return ArFile(filename=path)
+
+    def close_archive(self):
+        # ArFile don't have to be closed
+        pass
+
+    def get_member_names(self):
+        return self.archive.getnames()
+
+    def extract(self, member_name, dest_dir):
+        logger.debug('ar extracting %s to %s', member_name, dest_dir)
+        member = self.archive.getmember(member_name)
+        dest_path = os.path.join(dest_dir, os.path.basename(member_name))
+        member.seek(0)
+        with open(dest_path, 'w') as fp:
+            for buf in iter(lambda: member.read(AR_EXTRACTION_BUFFER_SIZE), b''):
+                fp.write(buf)
+        return dest_path
 
 
-@binary_fallback
-@returns_details
-def compare_deb_files(path1, path2, source=None):
-    differences = []
-    # look up differences in content
-    ar1 = ArFile(filename=path1)
-    ar2 = ArFile(filename=path2)
-    with make_temp_directory() as temp_dir1:
-        with make_temp_directory() as temp_dir2:
-            logger.debug('content1 %s', ar1.getnames())
-            logger.debug('content2 %s', ar2.getnames())
-            for name in sorted(set(ar1.getnames())
-                               .intersection(ar2.getnames())):
-                logger.debug('extract member %s', name)
-                member1 = ar1.getmember(name)
-                member2 = ar2.getmember(name)
-                in_path1 = os.path.join(temp_dir1, name)
-                in_path2 = os.path.join(temp_dir2, name)
-                with open(in_path1, 'w') as f1:
-                    f1.write(member1.read())
-                with open(in_path2, 'w') as f2:
-                    f2.write(member2.read())
-                differences.append(
-                    debbindiff.comparators.compare_files(
-                        in_path1, in_path2, source=name))
-                os.unlink(in_path1)
-                os.unlink(in_path2)
-    # look up differences in file list and file metadata
-    content1 = get_ar_content(path1)
-    content2 = get_ar_content(path2)
-    differences.append(Difference.from_unicode(
-                           content1, content2, path1, path2, source="metadata"))
-    return differences
+class DebContainer(ArContainer):
+    pass
 
 
-def compare_md5sums_files(path1, path2, source=None):
-    if are_same_binaries(path1, path2):
-        return None
-    return Difference(None, path1, path2,
-                      source=get_source(path1, path2),
-                      comment="Files in package differs")
+class DebFile(File):
+    RE_FILE_TYPE = re.compile(r'^Debian binary package')
+
+    @staticmethod
+    def recognizes(file):
+        return DebFile.RE_FILE_TYPE.match(file.magic_file_type)
+
+    @needs_content
+    def compare_details(self, other, source=None):
+        differences = []
+        my_content = get_ar_content(self.path)
+        other_content = get_ar_content(other.path)
+        differences.append(Difference.from_unicode(
+                               my_content, other_content, self.path, other.path, source="metadata"))
+        with DebContainer(self).open() as my_container, \
+             DebContainer(other).open() as other_container:
+            differences.extend(my_container.compare(other_container, source))
+        return differences
+
+
+class Md5sumsFile(File):
+    @staticmethod
+    def recognizes(file):
+        return isinstance(file, ArchiveMember) and \
+               file.name == './md5sums' and \
+               isinstance(file.container.source, ArchiveMember) and \
+               isinstance(file.container.source.container.source, ArchiveMember) and \
+               file.container.source.container.source.name.startswith('control.tar.')
+
+    def compare(self, other, source=None):
+        if self.has_same_content_as(other):
+           return None
+        return Difference(None, self.path, other.path, source='md5sums',
+                          comment="Files in package differs")

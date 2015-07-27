@@ -23,8 +23,9 @@ from __future__ import print_function
 import os.path
 import shutil
 import pytest
-import debbindiff.comparators.deb
-from debbindiff.comparators.debian import compare_dot_changes_files
+from debbindiff.comparators import specialize
+from debbindiff.comparators.binary import FilesystemFile
+from debbindiff.comparators.debian import DotChangesFile
 from debbindiff.presenters.text import output_text
 
 TEST_DOT_CHANGES_FILE1_PATH = os.path.join(os.path.dirname(__file__), '../data/test1.changes')
@@ -32,27 +33,34 @@ TEST_DOT_CHANGES_FILE2_PATH = os.path.join(os.path.dirname(__file__), '../data/t
 TEST_DEB_FILE1_PATH = os.path.join(os.path.dirname(__file__), '../data/test1.deb')
 TEST_DEB_FILE2_PATH = os.path.join(os.path.dirname(__file__), '../data/test2.deb')
 
-@pytest.fixture
-def copydeb(tmpdir):
-    changes1_path = str(tmpdir.join('a/test_1.changes'))
-    changes2_path = str(tmpdir.join('b/test_1.changes'))
-    tmpdir.mkdir('a')
-    tmpdir.mkdir('b')
-    shutil.copy(TEST_DOT_CHANGES_FILE1_PATH, changes1_path)
-    shutil.copy(TEST_DOT_CHANGES_FILE2_PATH, changes2_path)
-    shutil.copy(TEST_DEB_FILE1_PATH, str(tmpdir.join('a/test_1_all.deb')))
-    shutil.copy(TEST_DEB_FILE2_PATH, str(tmpdir.join('b/test_1_all.deb')))
-    return (changes1_path, changes2_path)
+# XXX: test validate failure
 
-def test_no_differences(copydeb):
-    changes1_path, _ = copydeb
-    difference = compare_dot_changes_files(changes1_path, changes1_path)
+@pytest.fixture
+def dot_changes1(tmpdir):
+    tmpdir.mkdir('a')
+    dot_changes_path = str(tmpdir.join('a/test_1.changes'))
+    shutil.copy(TEST_DOT_CHANGES_FILE1_PATH, dot_changes_path)
+    shutil.copy(TEST_DEB_FILE1_PATH, str(tmpdir.join('a/test_1_all.deb')))
+    return specialize(FilesystemFile(dot_changes_path))
+
+@pytest.fixture
+def dot_changes2(tmpdir):
+    tmpdir.mkdir('b')
+    dot_changes_path = str(tmpdir.join('b/test_1.changes'))
+    shutil.copy(TEST_DOT_CHANGES_FILE2_PATH, dot_changes_path)
+    shutil.copy(TEST_DEB_FILE2_PATH, str(tmpdir.join('b/test_1_all.deb')))
+    return specialize(FilesystemFile(dot_changes_path))
+
+def test_identification(dot_changes1):
+    assert isinstance(dot_changes1, DotChangesFile)
+
+def test_no_differences(dot_changes1):
+    difference = dot_changes1.compare(dot_changes1)
     assert difference is None
 
 @pytest.fixture
-def differences(copydeb):
-    changes1_path, changes2_path = copydeb
-    difference = compare_dot_changes_files(changes1_path, changes2_path)
+def differences(dot_changes1, dot_changes2):
+    difference = dot_changes1.compare(dot_changes2)
     output_text(difference, print_func=print)
     return difference.details
 

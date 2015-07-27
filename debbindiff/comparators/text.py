@@ -18,23 +18,37 @@
 # along with debbindiff.  If not, see <http://www.gnu.org/licenses/>.
 
 import codecs
-from debbindiff.comparators.binary import compare_binary_files
+import re
+from debbindiff.comparators.binary import File, needs_content
 from debbindiff.difference import Difference
+from debbindiff import logger
 
 
-def compare_text_files(path1, path2, encoding=None, source=None, encoding2=None):
-    if encoding is None:
-        encoding = 'utf-8'
-    if encoding2 is None:
-        encoding2 = encoding
+class TextFile(File):
+    RE_FILE_TYPE = re.compile(r'\btext\b')
 
-    try:
-        file1 = codecs.open(path1, 'r', encoding=encoding)
-        file2 = codecs.open(path2, 'r', encoding=encoding2)
-        return Difference.from_file(file1, file2, path1, path2, source)
-    except (LookupError, UnicodeDecodeError):
-        # unknown or misdetected encoding
-        if encoding is not 'utf-8':
-            return compare_text_files(path1, path2, 'utf-8', source)
-        else:
-            return compare_binary_files(path1, path2, source)
+    @staticmethod
+    def recognizes(file):
+        return TextFile.RE_FILE_TYPE.search(file.magic_file_type)
+
+    @property
+    def encoding(self):
+        if not hasattr(self, '_encoding'):
+            with self.get_content():
+                self._encoding = File.guess_encoding(self.path)
+        return self._encoding
+
+    @needs_content
+    def compare(self, other, source=None):
+        my_encoding = self.encoding or 'utf-8'
+        other_encoding = other.encoding or 'utf-8'
+        try:
+            with codecs.open(self.path, 'r', encoding=my_encoding) as my_content, \
+                 codecs.open(other.path, 'r', encoding=other_encoding) as other_content:
+                difference = Difference.from_file(my_content, other_content, self.name, other.name, source)
+                if my_encoding != other_encoding:
+                    difference.add_details([Difference.from_unicode(my_encoding, other_encoding, None, None, source='encoding')])
+                return difference
+        except (LookupError, UnicodeDecodeError):
+            # unknown or misdetected encoding
+            return self.compare_bytes(other, source)

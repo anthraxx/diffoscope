@@ -21,34 +21,58 @@
 import os.path
 import shutil
 import pytest
-from debbindiff.comparators.elf import compare_elf_files, compare_static_lib_files
+from debbindiff.comparators import specialize
+from debbindiff.comparators.binary import FilesystemFile
+from debbindiff.comparators.elf import ElfFile, StaticLibFile
 
-TEST_OBJ1_PATH = os.path.join(os.path.dirname(__file__), '../data/test1.o') 
-TEST_OBJ2_PATH = os.path.join(os.path.dirname(__file__), '../data/test2.o') 
+TEST_OBJ1_PATH = os.path.join(os.path.dirname(__file__), '../data/test1.o')
+TEST_OBJ2_PATH = os.path.join(os.path.dirname(__file__), '../data/test2.o')
 
-def test_obj_no_differences():
-    difference = compare_elf_files(TEST_OBJ1_PATH, TEST_OBJ1_PATH)
+@pytest.fixture
+def obj1():
+    return specialize(FilesystemFile(TEST_OBJ1_PATH))
+
+@pytest.fixture
+def obj2():
+    return specialize(FilesystemFile(TEST_OBJ2_PATH))
+
+def test_obj_identification(obj1):
+    assert isinstance(obj1, ElfFile)
+
+def test_obj_no_differences(obj1):
+    difference = obj1.compare(obj1)
     assert difference is None
 
 @pytest.fixture
-def obj_differences():
-    return compare_elf_files(TEST_OBJ1_PATH, TEST_OBJ2_PATH).details
+def obj_differences(obj1, obj2):
+    return obj1.compare(obj2).details
 
 def test_diff(obj_differences):
     assert len(obj_differences) == 1
     expected_diff = open(os.path.join(os.path.dirname(__file__), '../data/elf_obj_expected_diff')).read()
     assert obj_differences[0].unified_diff == expected_diff
 
-TEST_LIB1_PATH = os.path.join(os.path.dirname(__file__), '../data/test1.a') 
-TEST_LIB2_PATH = os.path.join(os.path.dirname(__file__), '../data/test2.a') 
+TEST_LIB1_PATH = os.path.join(os.path.dirname(__file__), '../data/test1.a')
+TEST_LIB2_PATH = os.path.join(os.path.dirname(__file__), '../data/test2.a')
 
-def test_lib_no_differences():
-    difference = compare_elf_files(TEST_LIB1_PATH, TEST_LIB1_PATH)
+@pytest.fixture
+def lib1():
+    return specialize(FilesystemFile(TEST_LIB1_PATH))
+
+@pytest.fixture
+def lib2():
+    return specialize(FilesystemFile(TEST_LIB2_PATH))
+
+def test_lib_identification(lib1):
+    assert isinstance(lib1, StaticLibFile)
+
+def test_lib_no_differences(lib1):
+    difference = lib1.compare(lib1)
     assert difference is None
 
 @pytest.fixture
-def lib_differences():
-    return compare_static_lib_files(TEST_LIB1_PATH, TEST_LIB2_PATH).details
+def lib_differences(lib1, lib2):
+    return lib1.compare(lib2).details
 
 def test_lib_differences(lib_differences):
     assert len(lib_differences) == 2

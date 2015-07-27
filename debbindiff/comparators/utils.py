@@ -24,58 +24,17 @@ import hashlib
 import re
 import os
 import shutil
+from stat import S_ISCHR, S_ISBLK
 from StringIO import StringIO
 import subprocess
 import tempfile
 from threading import Thread
+import debbindiff.comparators
 from debbindiff.comparators.binary import \
-    compare_binary_files, are_same_binaries
+    File, compare_binary_files
 from debbindiff.difference import Difference
 from debbindiff import logger, RequiredToolNotFound
 
-
-# decorator that will create a fallback on binary diff if no differences
-# are detected or if an external tool fails
-def binary_fallback(original_function):
-    def with_fallback(path1, path2, source=None):
-        if are_same_binaries(path1, path2):
-            return None
-        try:
-            difference = original_function(path1, path2, source)
-            # no differences detected inside? let's at least do a binary diff
-            if difference is None:
-                difference = compare_binary_files(path1, path2, source=source)
-                difference.comment = (difference.comment or '') + \
-                    "No differences found inside, yet data differs"
-        except subprocess.CalledProcessError as e:
-            difference = compare_binary_files(path1, path2, source=source)
-            output = re.sub(r'^', '    ', e.output, flags=re.MULTILINE)
-            cmd = ' '.join(e.cmd)
-            difference.comment = (difference.comment or '') + \
-                "Command `%s` exited with %d. Output:\n%s" \
-                % (cmd, e.returncode, output)
-        except RequiredToolNotFound as e:
-            difference = compare_binary_files(path1, path2, source=source)
-            difference.comment = (difference.comment or '') + \
-                "'%s' not available in path. Falling back to binary comparison." % e.command
-            package = e.get_package()
-            if package:
-                difference.comment += "\nInstall '%s' to get a better output." % package
-        return difference
-    return with_fallback
-
-
-# decorator that will group multiple differences as details of an empty Difference
-# are detected or if an external tool fails
-def returns_details(original_function):
-    def wrap_details(path1, path2, source=None):
-        details = [d for d in original_function(path1, path2, source) if d is not None]
-        if len(details) == 0:
-            return None
-        difference = Difference(None, path1, path2, source=source)
-        difference.add_details(details)
-        return difference
-    return wrap_details
 
 @contextmanager
 def make_temp_directory():
@@ -159,3 +118,146 @@ class Command(object):
     @property
     def stdout(self):
         return self._process.stdout
+
+
+
+
+def format_symlink(destination):
+    return 'destination: %s\n' % destination
+
+
+def format_device(mode, major, minor):
+    if S_ISCHR(mode):
+        kind = 'character'
+    elif S_ISBLK(mode):
+        kind = 'block'
+    else:
+        kind = 'weird'
+    return 'device:%s\nmajor: %d\n minor: %d\n' % (kind, major, minor)
+
+
+def get_compressed_content_name(path, expected_extension):
+    return 'content'
+    # XXX: implement fuzzy-matching support to get the thing below to work
+    basename = os.path.basename(path)
+    if basename.endswith(expected_extension):
+        name = basename[:-3]
+    else:
+        name = "%s-content" % basename
+    return name
+
+
+class Container(object):
+    __metaclass__ = ABCMeta
+
+    def __init__(self, source):
+        self._source = source
+
+    @property
+    def source(self):
+        return self._source
+
+    @contextmanager
+    def open(self):
+        raise NotImplemented
+
+    @abstractmethod
+    def get_member_names(self):
+        raise NotImplemented
+
+    @abstractmethod
+    def get_member(self, member_name):
+        raise NotImplemented
+
+    def compare(self, other, source=None):
+        differences = []
+        my_names = self.get_member_names()
+        other_names = other.get_member_names()
+        for name in sorted(set(my_names).intersection(other_names)):
+            logger.debug('compare member %s', name)
+            my_file = self.get_member(name)
+            other_file = other.get_member(name)
+            differences.append(
+                debbindiff.comparators.compare_files(
+                    my_file, other_file, source=name))
+        return differences
+
+
+class ArchiveMember(File):
+    def __init__(self, container, member_name):
+        self._container = container
+        self._name = member_name
+        self._path = None
+
+    @property
+    def container(self):
+        return self._container
+
+    @property
+    def name(self):
+        return self._name
+
+    @contextmanager
+    def get_content(self):
+        logger.debug('%s get_content; path %s', self, self._path)
+        if self._path is not None:
+            yield
+        else:
+            with make_temp_directory() as temp_dir, \
+                 self._container.open() as container:
+                self._path = container.extract(self._name, temp_dir)
+                yield
+                self._path = None
+
+    def is_directory(self):
+        return False
+
+    def is_symlink(self):
+        return False
+
+    def is_device(self):
+        return False
+
+
+class Archive(Container):
+    __metaclass__ = ABCMeta
+
+    def __init__(self, *args, **kwargs):
+        super(Archive, self).__init__(*args, **kwargs)
+        self._archive = None
+
+    @contextmanager
+    def open(self):
+        if self._archive is not None:
+            yield self
+        else:
+            with self.source.get_content():
+                self._archive = self.open_archive(self.source.path)
+                try:
+                    yield self
+                finally:
+                    self.close_archive()
+                    self._archive = None
+
+    @property
+    def archive(self):
+        return self._archive
+
+    @abstractmethod
+    def open_archive(self, path):
+        raise NotImplemented
+
+    @abstractmethod
+    def close_archive(self):
+        raise NotImplemented
+
+    @abstractmethod
+    def get_member_names(self):
+        raise NotImplemented
+
+    @abstractmethod
+    def extract(self, member_name, dest_dir):
+        raise NotImplemented
+
+    def get_member(self, member_name):
+        return ArchiveMember(self, member_name)

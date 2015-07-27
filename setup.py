@@ -37,6 +37,7 @@ setup(name='debbindiff',
           'python-debian',
           'magic',
           'rpm',
+          'libarchive-c',
           ],
       classifiers=[
           'Development Status :: 3 - Alpha',

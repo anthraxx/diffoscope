@@ -1,5 +1,3 @@
---- /dev/fd/63	2015-06-23 10:04:13.051750060 +0000
-+++ tests/data/text_unicode1	2015-06-23 09:46:16.425827486 +0000
 @@ -3,10 +3,10 @@
  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
  incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis

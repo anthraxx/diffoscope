@@ -3,6 +3,7 @@
 # debbindiff: highlight differences between two builds of Debian packages
 #
 # Copyright © 2015 Reiner Herrmann <reiner@reiner-h.de>
+#             2015 Jérémy Bobbio <lunar@debian.org>
 #
 # debbindiff is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -19,12 +20,15 @@
 
 from __future__ import absolute_import
 import os.path
+import re
 import subprocess
 from contextlib import contextmanager
 import rpm
-import debbindiff.comparators
 from debbindiff import logger, tool_required
-from debbindiff.comparators.utils import binary_fallback, returns_details, make_temp_directory
+import debbindiff.comparators
+from debbindiff.comparators.rpm_fallback import AbstractRpmFile
+from debbindiff.comparators.binary import File, FilesystemFile, needs_content
+from debbindiff.comparators.utils import Archive, make_temp_directory
 from debbindiff.difference import Difference, get_source
 
 def get_rpm_header(path, ts):
@@ -48,27 +52,7 @@ def get_rpm_header(path, ts):
     return header
 
 
-@contextmanager
-@tool_required('rpm2cpio')
-def extract_rpm_payload(path):
-    cmd = ['rpm2cpio', path]
-    with make_temp_directory() as temp_dir:
-        temp_path = os.path.join(temp_dir, "CONTENTS.cpio")
-        with open(temp_path, 'wb') as temp_file:
-            p = subprocess.Popen(cmd, shell=False,
-                stdout=temp_file, stderr=subprocess.PIPE)
-            p.wait()
-            if p.returncode != 0:
-                logger.error("rpm2cpio exited with error code %d", p.returncode)
-
-            yield temp_path
-
-
-@binary_fallback
-@returns_details
-def compare_rpm_files(path1, path2, source=None):
-    differences = []
-
+def compare_rpm_headers(path1, path2):
     # compare headers
     with make_temp_directory() as rpmdb_dir:
         rpm.addMacro("_dbpath", rpmdb_dir)
@@ -76,13 +60,40 @@ def compare_rpm_files(path1, path2, source=None):
         ts.setVSFlags(-1)
         header1 = get_rpm_header(path1, ts)
         header2 = get_rpm_header(path2, ts)
-        differences.append(Difference.from_unicode(
-                               header1, header2, path1, path2, source="header"))
+    return Difference.from_unicode(header1, header2, path1, path2, source="header")
 
-    # extract cpio archive
-    with extract_rpm_payload(path1) as archive1:
-        with extract_rpm_payload(path2) as archive2:
-            differences.append(debbindiff.comparators.compare_files(
-                archive1, archive2, source=get_source(archive1, archive2)))
 
-    return differences
+class RpmContainer(Archive):
+    @property
+    def path(self):
+        return self._path
+
+    def open_archive(self, path):
+        self._path = path
+        return self
+
+    def close_archive(self):
+        self._path = None
+
+    def get_member_names(self):
+        return ['content']
+
+    @tool_required('rpm2cpio')
+    def extract(self, member_name, dest_dir):
+        assert member_name == 'content'
+        dest_path = os.path.join(dest_dir, 'content')
+        cmd = ['rpm2cpio', self._path]
+        with open(dest_path, 'wb') as dest:
+            subprocess.check_call(cmd, shell=False, stdout=dest, stderr=subprocess.PIPE)
+        return dest_path
+
+
+class RpmFile(AbstractRpmFile):
+    @needs_content
+    def compare_details(self, other, source=None):
+        differences = []
+        differences.append(compare_rpm_headers(self.path, other.path))
+        with RpmContainer(self).open() as my_container, \
+             RpmContainer(other).open() as other_container:
+            differences.extend(my_container.compare(other_container, source))
+        return differences

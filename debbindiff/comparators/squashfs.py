@@ -3,6 +3,7 @@
 # debbindiff: highlight differences between two builds of Debian packages
 #
 # Copyright © 2015 Reiner Herrmann <reiner@reiner-h.de>
+#             2015 Jérémy Bobbio <lunar@debian.org>
 #
 # debbindiff is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -20,17 +21,17 @@
 import re
 import subprocess
 import os.path
+import stat
 import debbindiff.comparators
 from debbindiff import logger, tool_required
-from debbindiff.comparators.utils import binary_fallback, returns_details, make_temp_directory, Command
+from debbindiff.comparators.binary import File, needs_content
+from debbindiff.comparators.device import Device
+from debbindiff.comparators.directory import Directory
+from debbindiff.comparators.libarchive import LibarchiveContainer
+from debbindiff.comparators.symlink import Symlink
+from debbindiff.comparators.utils import Archive, ArchiveMember, Command
 from debbindiff.difference import Difference
-
-
-@tool_required('unsquashfs')
-def get_squashfs_names(path):
-    cmd = ['unsquashfs', '-d', '', '-ls', path]
-    output = subprocess.check_output(cmd, shell=False)
-    return [ f.lstrip('/') for f in output.split('\n') ]
+from debbindiff import logger
 
 
 class SquashfsSuperblock(Command):
@@ -49,39 +50,156 @@ class SquashfsListing(Command):
         return ['unsquashfs', '-d', '', '-lls', self.path]
 
 
-@tool_required('unsquashfs')
-def extract_squashfs(path, destdir):
-    cmd = ['unsquashfs', '-n', '-f', '-d', destdir, path]
-    logger.debug("extracting %s into %s", path, destdir)
-    p = subprocess.Popen(cmd, shell=False, stdout=subprocess.PIPE)
-    p.communicate()
-    p.wait()
-    if p.returncode != 0:
-        logger.error('unsquashfs exited with error code %d', p.returncode)
+class SquashfsMember(ArchiveMember):
+    def is_directory(self):
+        return False
+
+    def is_symlink(self):
+        return False
+
+    def is_device(self):
+        return False
 
 
-@binary_fallback
-@returns_details
-def compare_squashfs_files(path1, path2, source=None):
-    differences = []
+class SquashfsRegularFile(SquashfsMember):
+    # Example line:
+    # -rw-r--r-- user/group   446 2015-06-24 14:49 squashfs-root/text
+    LINE_RE = re.compile(r'^\S+\s+\S+\s+\S+\s+\S+\s+\S+\s+(?P<member_name>.*)$')
 
-    # compare metadata
-    differences.append(Difference.from_command(SquashfsSuperblock, path1, path2))
-    differences.append(Difference.from_command(SquashfsListing, path1, path2))
+    def __init__(self, archive, line):
+        m = SquashfsRegularFile.LINE_RE.match(line)
+        logger.debug('line %s m %s', line, m)
+        SquashfsMember.__init__(self, archive, m.group('member_name'))
 
-    # compare files contained in archive
-    files1 = get_squashfs_names(path1)
-    files2 = get_squashfs_names(path2)
-    with make_temp_directory() as temp_dir1:
-        with make_temp_directory() as temp_dir2:
-            extract_squashfs(path1, temp_dir1)
-            extract_squashfs(path2, temp_dir2)
-            for member in sorted(set(files1).intersection(set(files2))):
-                in_path1 = os.path.join(temp_dir1, member)
-                in_path2 = os.path.join(temp_dir2, member)
-                if not os.path.isfile(in_path1) or not os.path.isfile(in_path2):
-                    continue
-                differences.append(debbindiff.comparators.compare_files(
-                    in_path1, in_path2, source=member))
 
-    return differences
+class SquashfsDirectory(Directory, SquashfsMember):
+    # Example line:
+    # drwxr-xr-x user/group    51 2015-06-24 14:47 squashfs-root
+    LINE_RE = re.compile(r'^\S+\s+\S+\s+\S+\s+\S+\s+\S+\s+(?P<member_name>.*)$')
+
+    def __init__(self, archive, line):
+        m = SquashfsDirectory.LINE_RE.match(line)
+        SquashfsMember.__init__(self, archive, m.group('member_name') or '/')
+
+    def compare(self, other, source=None):
+        return None
+
+    def has_same_content_as(self, other):
+        return False
+
+    def is_directory(self):
+        return True
+
+    def get_member_names(self):
+        raise ValueError("squashfs are compared as a whole.")
+
+    def get_member(self, member_name):
+        raise ValueError("squashfs are compared as a whole.")
+
+
+class SquashfsSymlink(Symlink, SquashfsMember):
+    # Example line:
+    # lrwxrwxrwx user/group   6 2015-06-24 14:47 squashfs-root/link -> broken
+    LINE_RE = re.compile(r'^\S+\s+\S+\s+\S+\s+\S+\s+\S+\s+(?P<member_name>.*)\s+->\s+(?P<destination>.*)$')
+
+    def __init__(self, archive, line):
+        m = SquashfsSymlink.LINE_RE.match(line)
+        SquashfsMember.__init__(self, archive, m.group('member_name'))
+        self._destination = m.group('destination')
+
+    def is_symlink(self):
+        return True
+
+    @property
+    def symlink_destination(self):
+        return self._destination
+
+
+class SquashfsDevice(Device, SquashfsMember):
+    # Example line:
+    # crw-r--r-- root/root  1,  3 2015-06-24 14:47 squashfs-root/null
+    LINE_RE = re.compile(r'^(?P<kind>c|b)\S+\s+\S+\s+(?P<major>\d+),\s+(?P<minor>\d+)\s+\S+\s+\S+\s+(?P<member_name>.*)$')
+
+    KIND_MAP = { 'c': stat.S_IFCHR,
+                 'b': stat.S_IFBLK,
+               }
+
+    def __init__(self, archive, line):
+        m = SquashfsDevice.LINE_RE.match(line)
+        SquashfsMember.__init__(self, archive, m.group('member_name'))
+        self._mode = SquashfsDevice.KIND_MAP[m.group('kind')]
+        self._major = int(m.group('major'))
+        self._minor = int(m.group('minor'))
+
+    def get_device(self):
+        return (self._mode, self._major, self._minor)
+
+    def is_device(self):
+        return True
+
+
+SQUASHFS_LS_MAPPING = {
+        'd': SquashfsDirectory,
+        'l': SquashfsSymlink,
+        'c': SquashfsDevice,
+        'b': SquashfsDevice,
+        '-': SquashfsRegularFile
+    }
+
+
+class SquashfsContainer(Archive):
+    @tool_required('unsquashfs')
+    def entries(self, path):
+        # We pass `-d ''` in order to get a listing with the names we actually
+        # need to use when extracting files
+        cmd = ['unsquashfs', '-d', '', '-lls', path]
+        output = subprocess.check_output(cmd, shell=False)
+        header = True
+        for line in output.split('\n'):
+            if header:
+                if line == '':
+                    header = False
+                continue
+            if len(line) > 0 and line[0] in SQUASHFS_LS_MAPPING:
+                yield SQUASHFS_LS_MAPPING[line[0]](self, line)
+            else:
+                logger.warning('Unknown squashfs entry: %s', line)
+
+    def open_archive(self, path):
+        return dict([(m.name, m) for m in self.entries(path)])
+
+    def close_archive(self):
+        pass
+
+    def get_member_names(self):
+        return self.archive.keys()
+
+    @tool_required('unsquashfs')
+    def extract(self, member_name, dest_dir):
+        if '..' in member_name.split('/'):
+            raise ValueError('relative path in squashfs')
+        cmd = ['unsquashfs', '-n', '-f', '-d', dest_dir, self.source.path, member_name]
+        logger.debug("unquashfs %s into %s", member_name, dest_dir)
+        subprocess.check_call(cmd, shell=False, stdout=subprocess.PIPE)
+        return '%s%s' % (dest_dir, member_name)
+
+    def get_member(self, member_name):
+        return self.archive[member_name]
+
+
+class SquashfsFile(File):
+    RE_FILE_TYPE = re.compile(r'^Squashfs filesystem\b')
+
+    @staticmethod
+    def recognizes(file):
+        return SquashfsFile.RE_FILE_TYPE.match(file.magic_file_type)
+
+    @needs_content
+    def compare_details(self, other, source=None):
+        differences = []
+        differences.append(Difference.from_command(SquashfsSuperblock, self.path, other.path))
+        differences.append(Difference.from_command(SquashfsListing, self.path, other.path))
+        with SquashfsContainer(self).open() as my_container, \
+             SquashfsContainer(other).open() as other_container:
+            differences.extend(my_container.compare(other_container, source))
+        return differences

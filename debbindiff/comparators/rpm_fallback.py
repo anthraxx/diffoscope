@@ -2,8 +2,7 @@
 #
 # debbindiff: highlight differences between two builds of Debian packages
 #
-# Copyright © 2015 Reiner Herrmann <reiner@reiner-h.de>
-#             2015 Jérémy Bobbio <lunar@debian.org>
+# Copyright © 2015 Jérémy Bobbio <lunar@debian.org>
 #
 # debbindiff is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -19,14 +18,19 @@
 # along with debbindiff.  If not, see <http://www.gnu.org/licenses/>.
 
 import re
-import os.path
-from debbindiff.comparators.gzip import GzipFile
-from debbindiff.difference import Difference
+from debbindiff.comparators.binary import File
 
-
-class IpkFile(GzipFile):
-    RE_FILE_EXTENSION = re.compile('\.ipk$')
+class AbstractRpmFile(File):
+    RE_FILE_TYPE = re.compile('^RPM\s')
 
     @staticmethod
     def recognizes(file):
-        return IpkFile.RE_FILE_EXTENSION.search(file.name)
+        return AbstractRpmFile.RE_FILE_TYPE.search(file.magic_file_type)
+
+class RpmFile(File):
+    def compare(self, other, source=None):
+        difference = self.compare_bytes(other)
+        if not difference:
+            return None
+        difference.comment = 'Unable to find Python rpm module. Falling back to binary comparison.'
+        return difference

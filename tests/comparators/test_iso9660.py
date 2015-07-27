@@ -22,18 +22,31 @@ import codecs
 import os.path
 import shutil
 import pytest
-from debbindiff.comparators.iso9660 import compare_iso9660_files
+from debbindiff.comparators import specialize
+from debbindiff.comparators.binary import FilesystemFile
+from debbindiff.comparators.iso9660 import Iso9660File
 
-TEST_FILE1_PATH = os.path.join(os.path.dirname(__file__), '../data/test1.iso') 
-TEST_FILE2_PATH = os.path.join(os.path.dirname(__file__), '../data/test2.iso') 
+TEST_FILE1_PATH = os.path.join(os.path.dirname(__file__), '../data/test1.iso')
+TEST_FILE2_PATH = os.path.join(os.path.dirname(__file__), '../data/test2.iso')
 
-def test_no_differences():
-    difference = compare_iso9660_files(TEST_FILE1_PATH, TEST_FILE1_PATH)
+@pytest.fixture
+def iso1():
+    return specialize(FilesystemFile(TEST_FILE1_PATH))
+
+@pytest.fixture
+def iso2():
+    return specialize(FilesystemFile(TEST_FILE2_PATH))
+
+def test_identification(iso1):
+    assert isinstance(iso1, Iso9660File)
+
+def test_no_differences(iso1):
+    difference = iso1.compare(iso1)
     assert difference is None
 
 @pytest.fixture
-def differences():
-    return compare_iso9660_files(TEST_FILE1_PATH, TEST_FILE2_PATH).details
+def differences(iso1, iso2):
+    return iso1.compare(iso2).details
 
 def test_iso9660_content(differences):
     expected_diff = open(os.path.join(os.path.dirname(__file__), '../data/iso9660_content_expected_diff')).read()
@@ -43,8 +56,13 @@ def test_iso9660_rockridge(differences):
     expected_diff = open(os.path.join(os.path.dirname(__file__), '../data/iso9660_rockridge_expected_diff')).read()
     assert differences[1].unified_diff == expected_diff
 
-def test_compressed_files(differences):
-    assert differences[2].source1 == '/text'
-    assert differences[2].source2 == '/text'
-    expected_diff = open(os.path.join(os.path.dirname(__file__), '../data/text_ascii_expected_diff')).read()
+def test_symlink(differences):
+    assert differences[2].comment == 'symlink'
+    expected_diff = open(os.path.join(os.path.dirname(__file__), '../data/symlink_expected_diff')).read()
     assert differences[2].unified_diff == expected_diff
+
+def test_compressed_files(differences):
+    assert differences[3].source1 == 'text'
+    assert differences[3].source2 == 'text'
+    expected_diff = open(os.path.join(os.path.dirname(__file__), '../data/text_ascii_expected_diff')).read()
+    assert differences[3].unified_diff == expected_diff

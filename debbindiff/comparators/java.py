@@ -3,6 +3,7 @@
 # debbindiff: highlight differences between two builds of Debian packages
 #
 # Copyright © 2015 Reiner Herrmann <reiner@reiner-h.de>
+#             2015 Jérémy Bobbio <lunar@debian.org>
 #
 # debbindiff is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -20,7 +21,8 @@
 import os.path
 import re
 from debbindiff import tool_required
-from debbindiff.comparators.utils import binary_fallback, returns_details, Command
+from debbindiff.comparators.binary import File, needs_content
+from debbindiff.comparators.utils import Command
 from debbindiff.difference import Difference
 
 
@@ -38,7 +40,14 @@ class Javap(Command):
             return ''
         return line
 
-@binary_fallback
-@returns_details
-def compare_class_files(path1, path2, source=None):
-    return [Difference.from_command(Javap, path1, path2)]
+
+class ClassFile(File):
+    RE_FILE_TYPE = re.compile(r'^compiled Java class data\b')
+
+    @staticmethod
+    def recognizes(file):
+        return ClassFile.RE_FILE_TYPE.match(file.magic_file_type)
+
+    @needs_content
+    def compare_details(self, other, source=None):
+        return [Difference.from_command(Javap, self.path, other.path)]

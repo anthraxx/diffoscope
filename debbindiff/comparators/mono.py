@@ -3,6 +3,7 @@
 # debbindiff: highlight differences between two builds of Debian packages
 #
 # Copyright © 2015 Daniel Kahn Gillmor <dkg@fifthhorseman.net>
+#             2015 Jérémy Bobbio <lunar@debian.org>
 #
 # debbindiff is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -17,8 +18,10 @@
 # You should have received a copy of the GNU General Public License
 # along with debbindiff.  If not, see <http://www.gnu.org/licenses/>.
 
+import re
 from debbindiff import tool_required
-from debbindiff.comparators.utils import binary_fallback, returns_details, Command
+from debbindiff.comparators.binary import File, needs_content
+from debbindiff.comparators.utils import Command
 from debbindiff.difference import Difference
 
 
@@ -28,7 +31,13 @@ class Pedump(Command):
         return ['pedump', self.path]
 
 
-@binary_fallback
-@returns_details
-def compare_pe_files(path1, path2, source=None):
-    return [Difference.from_command(Pedump, path1, path2)]
+class MonoExeFile(File):
+    RE_FILE_TYPE = re.compile(r'\bPE[0-9]+\b.*\bMono\b')
+
+    @staticmethod
+    def recognizes(file):
+        return MonoExeFile.RE_FILE_TYPE.search(file.magic_file_type)
+
+    @needs_content
+    def compare_details(self, other, source=None):
+        return [Difference.from_command(Pedump, self.path, other.path)]

@@ -21,18 +21,31 @@
 import os.path
 import shutil
 import pytest
-from debbindiff.comparators.java import compare_class_files
+from debbindiff.comparators import specialize
+from debbindiff.comparators.binary import FilesystemFile
+from debbindiff.comparators.java import ClassFile
 
-TEST_FILE1_PATH = os.path.join(os.path.dirname(__file__), '../data/Test1.class') 
-TEST_FILE2_PATH = os.path.join(os.path.dirname(__file__), '../data/Test2.class') 
+TEST_FILE1_PATH = os.path.join(os.path.dirname(__file__), '../data/Test1.class')
+TEST_FILE2_PATH = os.path.join(os.path.dirname(__file__), '../data/Test2.class')
 
-def test_no_differences():
-    difference = compare_class_files(TEST_FILE1_PATH, TEST_FILE1_PATH)
+@pytest.fixture
+def class1():
+    return specialize(FilesystemFile(TEST_FILE1_PATH))
+
+@pytest.fixture
+def class2():
+    return specialize(FilesystemFile(TEST_FILE2_PATH))
+
+def test_identification(class1):
+    assert isinstance(class1, ClassFile)
+
+def test_no_differences(class1):
+    difference = class1.compare(class1)
     assert difference is None
 
 @pytest.fixture
-def differences():
-    return compare_class_files(TEST_FILE1_PATH, TEST_FILE2_PATH).details
+def differences(class1, class2):
+    return class1.compare(class2).details
 
 def test_diff(differences):
     expected_diff = open(os.path.join(os.path.dirname(__file__), '../data/class_expected_diff')).read()

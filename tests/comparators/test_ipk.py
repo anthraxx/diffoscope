@@ -22,23 +22,37 @@ import codecs
 import os.path
 import shutil
 import pytest
-from debbindiff.comparators.ipk import compare_ipk_files
+from debbindiff.comparators import specialize
+from debbindiff.comparators.binary import FilesystemFile
+from debbindiff.comparators.ipk import IpkFile
 
 TEST_FILE1_PATH = os.path.join(os.path.dirname(__file__), '../data/base-files_157-r45695_ar71xx.ipk')
 TEST_FILE2_PATH = os.path.join(os.path.dirname(__file__), '../data/base-files_157-r45918_ar71xx.ipk')
 
-def test_no_differences():
-    difference = compare_ipk_files(TEST_FILE1_PATH, TEST_FILE1_PATH)
+@pytest.fixture
+def ipk1():
+    return specialize(FilesystemFile(TEST_FILE1_PATH))
+
+@pytest.fixture
+def ipk2():
+    return specialize(FilesystemFile(TEST_FILE2_PATH))
+
+def test_identification(ipk1):
+    assert isinstance(ipk1, IpkFile)
+
+def test_no_differences(ipk1):
+    difference = ipk1.compare(ipk1)
     assert difference is None
 
 @pytest.fixture
-def differences():
-    return compare_ipk_files(TEST_FILE1_PATH, TEST_FILE2_PATH).details
+def differences(ipk1, ipk2):
+    return ipk1.compare(ipk2).details
 
 def test_metadata(differences):
+    assert differences[0].source1 == 'metadata'
     expected_diff = open(os.path.join(os.path.dirname(__file__), '../data/ipk_metadata_expected_diff')).read()
     assert differences[0].unified_diff == expected_diff
 
 def test_compressed_files(differences):
-    assert differences[1].details[0].source1 == './control.tar.gz'
-    assert differences[1].details[1].source1 == './data.tar.gz'
+    assert differences[1].details[1].source1 == './control.tar.gz'
+    assert differences[1].details[2].source1 == './data.tar.gz'

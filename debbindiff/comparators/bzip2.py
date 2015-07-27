@@ -2,7 +2,7 @@
 #
 # debbindiff: highlight differences between two builds of Debian packages
 #
-# Copyright © 2014 Jérémy Bobbio <lunar@debian.org>
+# Copyright © 2014-2015 Jérémy Bobbio <lunar@debian.org>
 #
 # debbindiff is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -19,33 +19,49 @@
 
 from contextlib import contextmanager
 import os.path
+import re
 import subprocess
 import debbindiff.comparators
-from debbindiff.comparators.utils import binary_fallback, returns_details, make_temp_directory
-from debbindiff.difference import get_source
-from debbindiff import tool_required
+from debbindiff.comparators.binary import File, needs_content
+from debbindiff.comparators.utils import Archive, get_compressed_content_name
+from debbindiff import logger, tool_required
 
 
-@contextmanager
-@tool_required('bzip2')
-def decompress_bzip2(path):
-    with make_temp_directory() as temp_dir:
-        if path.endswith('.bz2'):
-            temp_path = os.path.join(temp_dir, os.path.basename(path[:-4]))
-        else:
-            temp_path = os.path.join(temp_dir, "%s-content" % path)
-        with open(temp_path, 'wb') as temp_file:
+class Bzip2Container(Archive):
+    @property
+    def path(self):
+        return self._path
+
+    def open_archive(self, path):
+        self._path = path
+        return self
+
+    def close_archive(self):
+        self._path = None
+
+    def get_member_names(self):
+        return [get_compressed_content_name(self.path, '.bz2')]
+
+    @tool_required('bzip2')
+    def extract(self, member_name, dest_dir):
+        dest_path = os.path.join(dest_dir, member_name)
+        logger.debug('bzip2 extracting to %s' % dest_path)
+        with open(dest_path, 'wb') as fp:
             subprocess.check_call(
-                ["bzip2", "--decompress", "--stdout", path],
-                shell=False, stdout=temp_file, stderr=None)
-            yield temp_path
+                ["bzip2", "--decompress", "--stdout", self.path],
+                shell=False, stdout=fp, stderr=None)
+        return dest_path
 
 
-@binary_fallback
-@returns_details
-def compare_bzip2_files(path1, path2, source=None):
-    with decompress_bzip2(path1) as new_path1:
-        with decompress_bzip2(path2) as new_path2:
-            return [debbindiff.comparators.compare_files(
-                new_path1, new_path2,
-                source=[os.path.basename(new_path1), os.path.basename(new_path2)])]
+class Bzip2File(File):
+    RE_FILE_TYPE = re.compile(r'^bzip2 compressed data\b')
+
+    @staticmethod
+    def recognizes(file):
+        return Bzip2File.RE_FILE_TYPE.match(file.magic_file_type)
+
+    @needs_content
+    def compare_details(self, other, source=None):
+        with Bzip2Container(self).open() as my_container, \
+             Bzip2Container(other).open() as other_container:
+            return my_container.compare(other_container, source)

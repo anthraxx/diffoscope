@@ -2,7 +2,7 @@
 #
 # debbindiff: highlight differences between two builds of Debian packages
 #
-# Copyright © 2014 Jérémy Bobbio <lunar@debian.org>
+# Copyright © 2014-2015 Jérémy Bobbio <lunar@debian.org>
 #
 # debbindiff is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -20,12 +20,14 @@
 import os.path
 import re
 import subprocess
-from zipfile import ZipFile, BadZipfile
+import zipfile
 from debbindiff import logger
 from debbindiff.difference import Difference
 import debbindiff.comparators
 from debbindiff import tool_required
-from debbindiff.comparators.utils import binary_fallback, returns_details, make_temp_directory, Command
+from debbindiff.comparators.binary import File, needs_content
+from debbindiff.comparators.directory import Directory
+from debbindiff.comparators.utils import Archive, ArchiveMember, Command
 
 
 class Zipinfo(Command):
@@ -46,37 +48,62 @@ class ZipinfoVerbose(Zipinfo):
         return ['zipinfo', '-v', self.path]
 
 
-@binary_fallback
-@returns_details
-def compare_zip_files(path1, path2, source=None):
-    differences = []
-    try:
-        with ZipFile(path1, 'r') as zip1:
-            with ZipFile(path2, 'r') as zip2:
-                # look up differences in content
-                with make_temp_directory() as temp_dir1:
-                    with make_temp_directory() as temp_dir2:
-                        for name in sorted(set(zip1.namelist())
-                                           .intersection(zip2.namelist())):
-                            # skip directories
-                            if name.endswith('/'):
-                                continue
-                            logger.debug('extract member %s', name)
-                            in_path1 = zip1.extract(name, temp_dir1)
-                            in_path2 = zip2.extract(name, temp_dir2)
-                            differences.append(
-                                debbindiff.comparators.compare_files(
-                                    in_path1, in_path2,
-                                    source=name))
-                            os.unlink(in_path1)
-                            os.unlink(in_path2)
-                # look up differences in metadata
-                difference = Difference.from_command(Zipinfo, path1, path2)
-                if not difference:
-                    # search harder
-                    difference = Difference.from_command(ZipinfoVerbose, path1, path2)
-                differences.append(difference)
-    except BadZipfile:
-        logger.debug('Either %s or %s is not a zip file.' % (path1, path2))
-        # we'll fallback on binary comparison
-    return differences
+class ZipDirectory(Directory, ArchiveMember):
+    def __init__(self, archive, member_name):
+        ArchiveMember.__init__(self, archive, member_name)
+
+    def compare(self, other, source=None):
+        return None
+
+    def has_same_content_as(self, other):
+        return False
+
+    def is_directory(self):
+        return True
+
+    def get_member_names(self):
+        raise ValueError("Zip archives are compared as a whole.")
+
+    def get_member(self, member_name):
+        raise ValueError("Zip archives are compared as a whole.")
+
+
+class ZipContainer(Archive):
+    def open_archive(self, path):
+        return zipfile.ZipFile(path, 'r')
+
+    def close_archive(self):
+        self.archive.close()
+
+    def get_member_names(self):
+        return self.archive.namelist()
+
+    def extract(self, member_name, dest_dir):
+        return self.archive.extract(member_name, dest_dir)
+
+    def get_member(self, member_name):
+        zipinfo = self.archive.getinfo(member_name)
+        if zipinfo.filename[-1] == '/':
+            return ZipDirectory(self, member_name)
+        else:
+            return ArchiveMember(self, member_name)
+
+
+class ZipFile(File):
+    RE_FILE_TYPE = re.compile(r'^(Zip archive|EPUB ebook) data\b')
+
+    @staticmethod
+    def recognizes(file):
+        return ZipFile.RE_FILE_TYPE.match(file.magic_file_type)
+
+    @needs_content
+    def compare_details(self, other, source=None):
+        differences = []
+        # look up differences in metadata
+        zipinfo_difference = Difference.from_command(Zipinfo, self.path, other.path) or \
+                             Difference.from_command(ZipinfoVerbose, self.path, other.path)
+        differences.append(zipinfo_difference)
+        with ZipContainer(self).open() as my_container, \
+             ZipContainer(other).open() as other_container:
+            differences.extend(my_container.compare(other_container, source))
+        return differences

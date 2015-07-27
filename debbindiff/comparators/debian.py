@@ -2,7 +2,7 @@
 #
 # debbindiff: highlight differences between two builds of Debian packages
 #
-# Copyright © 2014 Jérémy Bobbio <lunar@debian.org>
+# Copyright © 2014-2015 Jérémy Bobbio <lunar@debian.org>
 #
 # debbindiff is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -17,11 +17,15 @@
 # You should have received a copy of the GNU General Public License
 # along with debbindiff.  If not, see <http://www.gnu.org/licenses/>.
 
+from contextlib import contextmanager
+import os.path
+import re
 import sys
 from debbindiff import logger
 from debbindiff.changes import Changes
 import debbindiff.comparators
-from debbindiff.comparators.utils import binary_fallback, returns_details
+from debbindiff.comparators.binary import File, needs_content
+from debbindiff.comparators.utils import Container
 from debbindiff.difference import Difference, get_source
 
 
@@ -33,51 +37,84 @@ DOT_CHANGES_FIELDS = [
     ]
 
 
-@binary_fallback
-@returns_details
-def compare_dot_changes_files(path1, path2, source=None):
-    try:
-        dot_changes1 = Changes(filename=path1)
-        dot_changes1.validate(check_signature=False)
-        dot_changes2 = Changes(filename=path2)
-        dot_changes2.validate(check_signature=False)
-    except IOError, e:
-        logger.critical(e)
-        sys.exit(2)
+class DotChangesMember(File):
+    def __init__(self, container, member_name):
+        self._container = container
+        self._name = member_name
+        self._path = None
 
-    differences = []
-    for field in DOT_CHANGES_FIELDS:
-        differences.append(Difference.from_unicode(
-                               dot_changes1[field].lstrip(),
-                               dot_changes2[field].lstrip(),
-                               path1, path2, source=field))
+    @property
+    def container(self):
+        return self._container
 
-    files_difference = Difference.from_unicode(
-        dot_changes1.get_as_string('Files'),
-        dot_changes2.get_as_string('Files'),
-        path1, path2,
-        source='Files')
+    @property
+    def name(self):
+        return self._name
 
-    if not files_difference:
+    @contextmanager
+    def get_content(self):
+       if self._path is not None:
+           yield
+       else:
+           with self.container.source.get_content():
+               self._path = os.path.join(os.path.dirname(self.container.source.path), self.name)
+               yield
+               self._path = None
+
+    def is_directory(self):
+        return False
+
+    def is_symlink(self):
+        return False
+
+    def is_device(self):
+        return False
+
+
+class DotChangesContainer(Container):
+    @contextmanager
+    def open(self):
+        yield self
+
+    def get_member_names(self):
+        return [d['name'] for d in self.source.changes.get('Files')]
+
+    def get_member(self, member_name):
+        return DotChangesMember(self, member_name)
+
+
+class DotChangesFile(File):
+    RE_FILE_EXTENSION = re.compile(r'\.changes$')
+
+    @staticmethod
+    def recognizes(file):
+        if not DotChangesFile.RE_FILE_EXTENSION.search(file.name):
+            return False
+        with file.get_content():
+            changes = Changes(filename=file.path)
+            changes.validate(check_signature=False)
+            file._changes = changes
+            return True
+
+    @property
+    def changes(self):
+        return self._changes
+
+    @needs_content
+    def compare_details(self, other, source=None):
+        differences = []
+
+        for field in DOT_CHANGES_FIELDS:
+            differences.append(Difference.from_unicode(
+                                   self.changes[field].lstrip(),
+                                   other.changes[field].lstrip(),
+                                   self.path, other.path, source=field))
+        # compare Files as string
+        differences.append(Difference.from_unicode(self.changes.get_as_string('Files'),
+                                                   other.changes.get_as_string('Files'),
+                                                   self.path, other.path, source=field))
+        with DotChangesContainer(self).open() as my_container, \
+             DotChangesContainer(other).open() as other_container:
+            differences.extend(my_container.compare(other_container, source))
+
         return differences
-
-    differences.append(files_difference)
-
-    # we are only interested in file names
-    files1 = dict([(d['name'], d) for d in dot_changes1.get('Files')])
-    files2 = dict([(d['name'], d) for d in dot_changes2.get('Files')])
-
-    for filename in sorted(set(files1.keys()).intersection(files2.keys())):
-        d1 = files1[filename]
-        d2 = files2[filename]
-        if d1['md5sum'] != d2['md5sum']:
-            logger.debug("%s mentioned in .changes have "
-                         "differences", filename)
-            differences.append(
-                debbindiff.comparators.compare_files(
-                    dot_changes1.get_path(filename),
-                    dot_changes2.get_path(filename),
-                    source=get_source(dot_changes1.get_path(filename),
-                                      dot_changes2.get_path(filename))))
-
-    return differences

@@ -2,7 +2,7 @@
 #
 # debbindiff: highlight differences between two builds of Debian packages
 #
-# Copyright © 2014 Jérémy Bobbio <lunar@debian.org>
+# Copyright © 2014-2015 Jérémy Bobbio <lunar@debian.org>
 #
 # debbindiff is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -38,6 +38,7 @@ class RequiredToolNotFound(Exception):
                 , 'cpio':       { 'debian': 'cpio' }
                 , 'diff':       { 'debian': 'diffutils' }
                 , 'file':       { 'debian': 'file' }
+                , 'find':       { 'debian': 'findutils' }
                 , 'getfacl':    { 'debian': 'acl' }
                 , 'ghc':        { 'debian': 'ghc' }
                 , 'gpg':        { 'debian': 'gnupg' }

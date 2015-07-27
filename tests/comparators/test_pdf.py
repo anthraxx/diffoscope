@@ -21,18 +21,31 @@
 import os.path
 import shutil
 import pytest
-from debbindiff.comparators.pdf import compare_pdf_files
+from debbindiff.comparators import specialize
+from debbindiff.comparators.binary import FilesystemFile
+from debbindiff.comparators.pdf import PdfFile
 
-TEST_FILE1_PATH = os.path.join(os.path.dirname(__file__), '../data/test1.pdf') 
-TEST_FILE2_PATH = os.path.join(os.path.dirname(__file__), '../data/test2.pdf') 
+TEST_FILE1_PATH = os.path.join(os.path.dirname(__file__), '../data/test1.pdf')
+TEST_FILE2_PATH = os.path.join(os.path.dirname(__file__), '../data/test2.pdf')
 
-def test_no_differences():
-    difference = compare_pdf_files(TEST_FILE1_PATH, TEST_FILE1_PATH)
+@pytest.fixture
+def pdf1():
+    return specialize(FilesystemFile(TEST_FILE1_PATH))
+
+@pytest.fixture
+def pdf2():
+    return specialize(FilesystemFile(TEST_FILE2_PATH))
+
+def test_identification(pdf1):
+    assert isinstance(pdf1, PdfFile)
+
+def test_no_differences(pdf1):
+    difference = pdf1.compare(pdf1)
     assert difference is None
 
 @pytest.fixture
-def differences():
-    return compare_pdf_files(TEST_FILE1_PATH, TEST_FILE2_PATH).details
+def differences(pdf1, pdf2):
+    return pdf1.compare(pdf2).details
 
 def test_text_diff(differences):
     expected_diff = open(os.path.join(os.path.dirname(__file__), '../data/pdf_text_expected_diff')).read()

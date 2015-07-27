@@ -21,18 +21,31 @@
 import os.path
 import shutil
 import pytest
-from debbindiff.comparators.fonts import compare_ttf_files
+from debbindiff.comparators import specialize
+from debbindiff.comparators.binary import FilesystemFile
+from debbindiff.comparators.fonts import TtfFile
 
-TEST_FILE1_PATH = os.path.join(os.path.dirname(__file__), '../data/Samyak-Malayalam1.ttf') 
-TEST_FILE2_PATH = os.path.join(os.path.dirname(__file__), '../data/Samyak-Malayalam2.ttf') 
+TEST_FILE1_PATH = os.path.join(os.path.dirname(__file__), '../data/Samyak-Malayalam1.ttf')
+TEST_FILE2_PATH = os.path.join(os.path.dirname(__file__), '../data/Samyak-Malayalam2.ttf')
 
-def test_no_differences():
-    difference = compare_ttf_files(TEST_FILE1_PATH, TEST_FILE1_PATH)
+@pytest.fixture
+def ttf1():
+    return specialize(FilesystemFile(TEST_FILE1_PATH))
+
+@pytest.fixture
+def ttf2():
+    return specialize(FilesystemFile(TEST_FILE2_PATH))
+
+def test_identification(ttf1):
+    assert isinstance(ttf1, TtfFile)
+
+def test_no_differences(ttf1):
+    difference = ttf1.compare(ttf1)
     assert difference is None
 
 @pytest.fixture
-def differences():
-    return compare_ttf_files(TEST_FILE1_PATH, TEST_FILE2_PATH).details
+def differences(ttf1, ttf2):
+    return ttf1.compare(ttf2).details
 
 def test_diff(differences):
     expected_diff = open(os.path.join(os.path.dirname(__file__), '../data/ttf_expected_diff')).read()

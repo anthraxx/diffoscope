@@ -2,7 +2,9 @@ Source: debbindiff
 Section: devel
 Priority: optional
 Maintainer: Reproducible builds folks <reproducible-builds@lists.alioth.debian.org>
-Uploaders: Jérémy Bobbio <lunar@debian.org>, Reiner Herrmann <reiner@reiner-h.de>
+Uploaders: Jérémy Bobbio <lunar@debian.org>,
+ Reiner Herrmann <reiner@reiner-h.de>,
+ Holger Levsen <holger@debian.org>
 Build-Depends: debhelper (>= 9),
                dh-python,
                python-all,

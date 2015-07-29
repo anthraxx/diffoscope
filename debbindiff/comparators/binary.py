@@ -20,6 +20,7 @@
 from abc import ABCMeta, abstractproperty, abstractmethod
 from binascii import hexlify
 from contextlib import contextmanager
+from functools import wraps
 import os
 import os.path
 import re
@@ -67,6 +68,7 @@ SMALL_FILE_THRESHOLD = 65536 # 64 kiB
 # decorator for functions which needs to access the file content
 # (and so requires a path to be set)
 def needs_content(original_method):
+    @wraps(original_method)
     def wrapper(self, other, *args, **kwargs):
         with self.get_content(), other.get_content():
             return original_method(self, other, *args, **kwargs)

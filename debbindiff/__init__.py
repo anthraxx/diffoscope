@@ -17,6 +17,7 @@
 # You should have received a copy of the GNU General Public License
 # along with debbindiff.  If not, see <http://www.gnu.org/licenses/>.
 
+from functools import wraps
 import logging
 from distutils.spawn import find_executable
 
@@ -81,9 +82,11 @@ def tool_required(command):
     tool_required.all.add(command)
     def wrapper(original_function):
         if find_executable(command):
+            @wraps(original_function)
             def tool_check(*args, **kwargs):
                 return original_function(*args, **kwargs)
         else:
+            @wraps(original_function)
             def tool_check(*args, **kwargs):
                 raise RequiredToolNotFound(command)
         return tool_check

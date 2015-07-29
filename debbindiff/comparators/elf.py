@@ -27,6 +27,11 @@ from debbindiff.difference import Difference
 
 
 class Readelf(Command):
+    def __init__(self, *args, **kwargs):
+        super(Readelf, self).__init__(*args, **kwargs)
+        # we don't care about the name of the archive
+        self._archive_re = re.compile(r'^File: %s\(' % re.escape(self.path))
+
     @tool_required('readelf')
     def cmdline(self):
         return ['readelf'] + self.readelf_options() + [self.path]
@@ -36,7 +41,7 @@ class Readelf(Command):
 
     def filter(self, line):
         # we don't care about the name of the archive
-        line = re.sub('^File: %s\(' % re.escape(self.path), 'File: lib.a(', line)
+        line = self._archive_re.sub('File: lib.a(', line)
         # the full path can appear in the output, we need to remove it
         return line.replace(self.path, os.path.basename(self.path))
 
@@ -49,13 +54,18 @@ class ReadelfDebugDump(Readelf):
         return ['--debug-dump']
 
 class ObjdumpDisassemble(Command):
+    def __init__(self, *args, **kwargs):
+        super(ObjdumpDisassemble, self).__init__(*args, **kwargs)
+        # we don't care about the name of the archive
+        self._archive_re = re.compile(r'^In archive %s:' % re.escape(self.path))
+
     @tool_required('objdump')
     def cmdline(self):
         return ['objdump', '--disassemble', '--full-contents', self.path]
 
     def filter(self, line):
         # we don't care about the name of the archive
-        line = re.sub('^In archive %s:' % re.escape(self.path), 'In archive:', line)
+        line = self._archive_re.sub('In archive:', line)
         # the full path can appear in the output, we need to remove it
         return line.replace(self.path, os.path.basename(self.path))
 

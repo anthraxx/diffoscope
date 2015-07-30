@@ -29,7 +29,7 @@ from debbindiff.comparators.binary import \
 from debbindiff.comparators.bzip2 import Bzip2File
 from debbindiff.comparators.java import ClassFile
 from debbindiff.comparators.cpio import CpioFile
-from debbindiff.comparators.deb import DebFile, Md5sumsFile
+from debbindiff.comparators.deb import DebFile, Md5sumsFile, DebDataTarFile
 from debbindiff.comparators.debian import DotChangesFile
 from debbindiff.comparators.device import Device
 from debbindiff.comparators.directory import Directory, compare_directories
@@ -83,6 +83,7 @@ FILE_CLASSES = (
     Device,
     DotChangesFile,
     Md5sumsFile,
+    DebDataTarFile,
     TextFile,
     Bzip2File,
     CpioFile,

@@ -28,6 +28,7 @@ import debbindiff.comparators
 from debbindiff.comparators.binary import File, needs_content
 from debbindiff.comparators.utils import \
     Archive, ArchiveMember, get_ar_content
+from debbindiff.comparators.tar import TarContainer, get_tar_listing
 
 AR_EXTRACTION_BUFFER_SIZE = 32768
 
@@ -64,6 +65,13 @@ class DebFile(File):
     def recognizes(file):
         return DebFile.RE_FILE_TYPE.match(file.magic_file_type)
 
+    @property
+    def files_with_same_content_in_data(self):
+        return self._files_with_same_content_in_data
+
+    def set_files_with_same_content_in_data(self, files):
+        self._files_with_same_content_in_data = files
+
     @needs_content
     def compare_details(self, other, source=None):
         differences = []
@@ -84,10 +92,68 @@ class Md5sumsFile(File):
                file.name == './md5sums' and \
                isinstance(file.container.source, ArchiveMember) and \
                isinstance(file.container.source.container.source, ArchiveMember) and \
-               file.container.source.container.source.name.startswith('control.tar.')
+               file.container.source.container.source.name.startswith('control.tar.') and \
+               isinstance(file.container.source.container.source.container.source, DebFile)
 
+    @staticmethod
+    def parse_md5sums(path):
+        d = {}
+        with open(path) as f:
+            for line in f.readlines():
+                md5sum, path = re.split(r'\s+', line.strip(), maxsplit=1)
+                d[path] = md5sum
+        return d
+
+    @needs_content
     def compare(self, other, source=None):
         if self.has_same_content_as(other):
            return None
-        return Difference(None, self.path, other.path, source='md5sums',
-                          comment="Files in package differs")
+        try:
+            my_md5sums = Md5sumsFile.parse_md5sums(self.path)
+            other_md5sums = Md5sumsFile.parse_md5sums(other.path)
+            same = set()
+            for path in set(my_md5sums.keys()).intersection(set(other_md5sums.keys())):
+                if my_md5sums[path] == other_md5sums[path]:
+                    same.add('./%s' % path)
+            self.container.source.container.source.container.source.set_files_with_same_content_in_data(same)
+            logger.debug('Identifed %d files as identical in data archive', len(same))
+            return Difference(None, self.path, other.path, source='md5sums',
+                              comment="Files in package differs")
+        except ValueError as e:
+            difference = self.compare_bytes(other)
+            difference.comment = 'Malformed md5sums file'
+            return Difference
+
+
+class DebTarContainer(TarContainer):
+    def __init__(self, archive, ignore_files):
+        super(DebTarContainer, self).__init__(archive)
+        assert type(ignore_files) is set
+        self._ignore_files = ignore_files
+
+    def get_member_names(self):
+        names = set(super(DebTarContainer, self).get_member_names())
+        return names - self._ignore_files
+
+
+class DebDataTarFile(File):
+    @staticmethod
+    def recognizes(file):
+        return isinstance(file, ArchiveMember) and \
+               isinstance(file.container.source, ArchiveMember) and \
+               file.container.source.name.startswith('data.tar.') and \
+               isinstance(file.container.source.container.source, DebFile)
+
+    @needs_content
+    def compare_details(self, other, source=None):
+        differences = []
+        ignore_files = self.container.source.container.source.files_with_same_content_in_data
+        with DebTarContainer(self, ignore_files).open() as my_container, \
+             DebTarContainer(other, ignore_files).open() as other_container:
+            # look up differences in file list and file metadata
+            my_listing = get_tar_listing(my_container.archive)
+            other_listing = get_tar_listing(other_container.archive)
+            differences.append(Difference.from_unicode(
+                                  my_listing, other_listing, self.name, other.name, source="metadata"))
+            differences.extend(my_container.compare(other_container, source))
+        return differences

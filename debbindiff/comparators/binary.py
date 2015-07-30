@@ -177,6 +177,8 @@ class File(object):
                     % (cmd, e.returncode, output)
             except RequiredToolNotFound as e:
                 difference = self.compare_bytes(other, source=source)
+                if difference is None:
+                    return None
                 difference.comment = (difference.comment or '') + \
                     "'%s' not available in path. Falling back to binary comparison." % e.command
                 package = e.get_package()

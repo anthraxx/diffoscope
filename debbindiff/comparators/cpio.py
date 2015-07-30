@@ -32,7 +32,7 @@ from debbindiff.difference import Difference
 class CpioContent(Command):
     @tool_required('cpio')
     def cmdline(self):
-        return ['cpio', '--quiet', '-tvF', self.path]
+        return ['cpio', '--quiet', '--numeric-uid-gid', '-tvF', self.path]
 
 
 class CpioFile(File):

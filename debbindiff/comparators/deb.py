@@ -67,7 +67,10 @@ class DebFile(File):
 
     @property
     def files_with_same_content_in_data(self):
-        return self._files_with_same_content_in_data
+        if hasattr(self, '_files_with_same_content_in_data'):
+            return self._files_with_same_content_in_data
+        else:
+            return set()
 
     def set_files_with_same_content_in_data(self, files):
         self._files_with_same_content_in_data = files

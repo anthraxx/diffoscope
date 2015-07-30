@@ -106,6 +106,7 @@ def set_locale():
                 'LC_TELEPHONE', 'LC_MEASUREMENT', 'LC_IDENTIFICATION']:
         os.environ[var] = 'C'
     os.environ['LC_CTYPE'] = 'C.UTF-8'
+    os.environ['TZ'] = 'UTC'
 
 
 

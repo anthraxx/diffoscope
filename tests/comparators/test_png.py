@@ -24,6 +24,7 @@ import pytest
 from debbindiff.comparators import specialize
 from debbindiff.comparators.binary import FilesystemFile
 from debbindiff.comparators.png import PngFile
+from conftest import tool_missing
 
 TEST_FILE1_PATH = os.path.join(os.path.dirname(__file__), '../data/test1.png')
 TEST_FILE2_PATH = os.path.join(os.path.dirname(__file__), '../data/test2.png')
@@ -47,6 +48,7 @@ def test_no_differences(png1):
 def differences(png1, png2):
     return png1.compare(png2).details
 
+@pytest.mark.skipif(tool_missing('sng'), reason='missing sng')
 def test_diff(differences):
     expected_diff = open(os.path.join(os.path.dirname(__file__), '../data/png_expected_diff')).read()
     assert differences[0].unified_diff == expected_diff

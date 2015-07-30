@@ -18,9 +18,14 @@
 # You should have received a copy of the GNU General Public License
 # along with debbindiff.  If not, see <http://www.gnu.org/licenses/>.
 
+from distutils.spawn import find_executable
 import debbindiff
 import pytest
 
 @pytest.fixture(autouse=True)
 def set_locale():
     debbindiff.set_locale()    
+
+
+def tool_missing(cmd):
+    return find_executable(cmd) is None

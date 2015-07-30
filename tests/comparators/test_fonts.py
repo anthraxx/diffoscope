@@ -24,6 +24,7 @@ import pytest
 from debbindiff.comparators import specialize
 from debbindiff.comparators.binary import FilesystemFile
 from debbindiff.comparators.fonts import TtfFile
+from conftest import tool_missing
 
 TEST_FILE1_PATH = os.path.join(os.path.dirname(__file__), '../data/Samyak-Malayalam1.ttf')
 TEST_FILE2_PATH = os.path.join(os.path.dirname(__file__), '../data/Samyak-Malayalam2.ttf')
@@ -47,6 +48,7 @@ def test_no_differences(ttf1):
 def differences(ttf1, ttf2):
     return ttf1.compare(ttf2).details
 
+@pytest.mark.skipif(tool_missing('showttf'), reason='missing showttf')
 def test_diff(differences):
     expected_diff = open(os.path.join(os.path.dirname(__file__), '../data/ttf_expected_diff')).read()
     assert differences[0].unified_diff == expected_diff

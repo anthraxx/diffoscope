@@ -25,6 +25,7 @@ import pytest
 from debbindiff.comparators import specialize
 from debbindiff.comparators.binary import FilesystemFile
 from debbindiff.comparators.rpm import RpmFile
+from conftest import tool_missing
 
 TEST_FILE1_PATH = os.path.join(os.path.dirname(__file__), '../data/test1.rpm')
 TEST_FILE2_PATH = os.path.join(os.path.dirname(__file__), '../data/test2.rpm')
@@ -48,17 +49,20 @@ def test_no_differences(rpm1):
 def differences(rpm1, rpm2):
     return rpm1.compare(rpm2).details
 
+@pytest.mark.skipif(tool_missing('rpm2cpio'), reason='missing rpm2cpio')
 def test_header(differences):
     assert differences[0].source1 == 'header'
     expected_diff = open(os.path.join(os.path.dirname(__file__), '../data/rpm_header_expected_diff')).read()
     assert differences[0].unified_diff == expected_diff
 
+@pytest.mark.skipif(tool_missing('rpm2cpio'), reason='missing rpm2cpio')
 def test_listing(differences):
     assert differences[1].source1 == 'content'
     assert differences[1].details[0].source1 == 'file list'
     expected_diff = open(os.path.join(os.path.dirname(__file__), '../data/rpm_listing_expected_diff')).read()
     assert differences[1].details[0].unified_diff == expected_diff
 
+@pytest.mark.skipif(tool_missing('rpm2cpio'), reason='missing rpm2cpio')
 def test_content(differences):
     assert differences[1].source1 == 'content'
     assert differences[1].details[1].source1 == './dir/text'

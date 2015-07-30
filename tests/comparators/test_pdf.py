@@ -24,6 +24,7 @@ import pytest
 from debbindiff.comparators import specialize
 from debbindiff.comparators.binary import FilesystemFile
 from debbindiff.comparators.pdf import PdfFile
+from conftest import tool_missing
 
 TEST_FILE1_PATH = os.path.join(os.path.dirname(__file__), '../data/test1.pdf')
 TEST_FILE2_PATH = os.path.join(os.path.dirname(__file__), '../data/test2.pdf')
@@ -47,10 +48,14 @@ def test_no_differences(pdf1):
 def differences(pdf1, pdf2):
     return pdf1.compare(pdf2).details
 
+@pytest.mark.skipif(tool_missing('pdftk') or tool_missing('pdftotext'),
+                    reason='missing pdftk or pdftotext')
 def test_text_diff(differences):
     expected_diff = open(os.path.join(os.path.dirname(__file__), '../data/pdf_text_expected_diff')).read()
     assert differences[0].unified_diff == expected_diff
 
+@pytest.mark.skipif(tool_missing('pdftk') or tool_missing('pdftotext'),
+                    reason='missing pdftk or pdftotext')
 def test_internal_diff(differences):
     expected_diff = open(os.path.join(os.path.dirname(__file__), '../data/pdf_internal_expected_diff')).read()
     assert differences[1].unified_diff == expected_diff

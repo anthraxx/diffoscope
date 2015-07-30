@@ -24,6 +24,7 @@ import pytest
 from debbindiff.comparators import specialize
 from debbindiff.comparators.binary import FilesystemFile
 from debbindiff.comparators.mono import MonoExeFile
+from conftest import tool_missing
 
 # these were generated with:
 
@@ -52,6 +53,7 @@ def test_no_differences(exe1):
 def differences(exe1, exe2):
     return exe1.compare(exe2).details
 
+@pytest.mark.skipif(tool_missing('pedump'), reason='missing pedump')
 def test_diff(differences):
     expected_diff = open(os.path.join(os.path.dirname(__file__), '../data/pe_expected_diff')).read()
     assert differences[0].unified_diff == expected_diff

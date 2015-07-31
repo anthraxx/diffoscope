@@ -1,3 +1,43 @@
+debbindiff (27) unstable; urgency=low
+
+  [ Reiner Herrmann ]
+  * Add dh-python to Build-Depends.
+
+  [ Daniel Kahn Gillmor ]
+  * Add support for Mono PE executables.
+
+  [ Holger Levsen ]
+  * Add myself to Uploaders.
+
+  [ Jérémy Bobbio ]
+  * Add tests for tar comparator.
+  * Massive rearchitecturing.
+  * Now use libarchive to handle cpio archives and iso9660 images.
+  * find is now used to compare directory listings.
+  * Symlinks and devices can now be properly compared.
+  * Files in squashfs are now extracted one by one.
+  * Text files are now compared after being decoded with the detected
+    encoding. Encoding differences are reported. (Closes: #785777)
+  * Pre-compile regexps for ELF archives to get a good performance gain
+    when comparing ELF objects.
+  * Display better stacktrace for functions and methods using decorators.
+  * Reset locale environment during tests.
+  * Use numeric uid/gid when listing cpio content.
+  * Set timezone to UTC when configuring locale.
+  * Return no differences when there's none even when a required tool is
+    unavailable.
+  * Fix rpm expected listing after cpio change.
+  * Skip tests when required tools are missing.
+  * Skip squashfs listing test until #794096 is solved.
+  * Analyze md5sums in .deb and skip identical files.
+  * Add support for sqlite3 databases.
+  * Implement fuzzy-matching of files in the same container using ssdeep.
+  * Add pydist-overrides for magic and rpm.
+  * When comparing .changes, match names without version numbers.
+  * Switch to pybuild as dh buildsystem.
+
+ -- Jérémy Bobbio <lunar@debian.org>  Fri, 31 Jul 2015 08:38:10 +0000
+
 debbindiff (26) unstable; urgency=low
 
   * Declare the package autopkgtestable.

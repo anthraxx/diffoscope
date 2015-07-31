@@ -26,7 +26,7 @@ import os.path
 import re
 from stat import S_ISCHR, S_ISBLK
 import subprocess
-import ssdeep
+import tlsh
 import magic
 from diffoscope.difference import Difference
 from diffoscope import tool_required, RequiredToolNotFound, logger
@@ -116,7 +116,11 @@ class File(object):
     def fuzzy_hash(self):
         if not hasattr(self, '_fuzzy_hash'):
             with self.get_content():
-                self._fuzzy_hash = ssdeep.hash_from_file(self.path)
+                # tlsh is not meaningful with files smaller than 512 bytes
+                if os.stat(self.path).st_size >= 512:
+                    self._fuzzy_hash = tlsh.hash(open(self.path).read())
+                else:
+                    self._fuzzy_hash = None
         return self._fuzzy_hash
 
     @abstractmethod

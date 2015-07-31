@@ -180,12 +180,12 @@ class Container(object):
                     my_file, other_file, source=name))
         my_extra_files = map(self.get_member, my_names.difference(other_names))
         other_extra_files = map(other.get_member, other_names.difference(my_names))
-        for my_file, other_file, similarity in diffoscope.comparators.perform_fuzzy_matching(my_extra_files, other_extra_files):
+        for my_file, other_file, score in diffoscope.comparators.perform_fuzzy_matching(my_extra_files, other_extra_files):
             difference = diffoscope.comparators.compare_files(my_file, other_file)
             if difference is None:
                 difference = Difference(None, my_file.name, other_file.name)
             difference.add_comment(
-                'Files similar (%d%%) despite different names' % similarity)
+                'Files similar despite different names (difference score: %d)' % score)
             differences.append(difference)
         return differences
 

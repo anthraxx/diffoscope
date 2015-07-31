@@ -38,7 +38,7 @@ setup(name='diffoscope',
           'magic',
           'rpm',
           'libarchive-c',
-          'ssdeep',
+          'tlsh',
           ],
       classifiers=[
           'Development Status :: 3 - Alpha',

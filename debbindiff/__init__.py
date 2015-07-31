@@ -59,6 +59,7 @@ class RequiredToolNotFound(Exception):
                 , 'showttf':    { 'debian': 'fontforge-extras' }
                 , 'sng':        { 'debian': 'sng' }
                 , 'stat':       { 'debian': 'coreutils' }
+                , 'sqlite3':    { 'debian': 'sqlite3'}
                 , 'unsquashfs': { 'debian': 'squashfs-tools' }
                 , 'xxd':        { 'debian': 'vim-common' }
                 , 'xz':         { 'debian': 'xz-utils' }

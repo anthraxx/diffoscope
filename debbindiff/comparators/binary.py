@@ -26,6 +26,7 @@ import os.path
 import re
 from stat import S_ISCHR, S_ISBLK
 import subprocess
+import ssdeep
 import magic
 from debbindiff.difference import Difference
 from debbindiff import tool_required, RequiredToolNotFound, logger
@@ -110,6 +111,13 @@ class File(object):
             with self.get_content():
                 self._magic_file_type = File.guess_file_type(self.path)
         return self._magic_file_type
+
+    @property
+    def fuzzy_hash(self):
+        if not hasattr(self, '_fuzzy_hash'):
+            with self.get_content():
+                self._fuzzy_hash = ssdeep.hash_from_file(self.path)
+        return self._fuzzy_hash
 
     @abstractmethod
     @contextmanager

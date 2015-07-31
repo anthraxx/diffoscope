@@ -38,6 +38,7 @@ setup(name='debbindiff',
           'magic',
           'rpm',
           'libarchive-c',
+          'ssdeep',
           ],
       classifiers=[
           'Development Status :: 3 - Alpha',

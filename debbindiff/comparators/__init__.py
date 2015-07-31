@@ -22,6 +22,7 @@ import magic
 import os.path
 import re
 import sys
+import ssdeep
 from debbindiff import logger, tool_required
 from debbindiff.difference import Difference
 from debbindiff.comparators.binary import \
@@ -122,3 +123,18 @@ def specialize(file):
             return file
     logger.debug('Unidentified file. Magic says: %s' % file.magic_file_type)
     return file
+
+
+fuzzy_threshold = 85
+
+
+def perform_fuzzy_matching(files1, files2):
+    already_compared = set()
+    for file1 in filter(lambda f: not f.is_directory(), files1):
+        for file2 in filter(lambda f: not f.is_directory(), files2):
+            similarity = ssdeep.compare(file1.fuzzy_hash, file2.fuzzy_hash)
+            logger.debug('fuzzy matching %s %s: %d', file1.name, file2.name, similarity)
+            if similarity >= fuzzy_threshold:
+                yield file1, file2, similarity
+                already_compared.add(file2)
+                break

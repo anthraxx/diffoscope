@@ -171,15 +171,24 @@ class Container(object):
 
     def compare(self, other, source=None):
         differences = []
-        my_names = self.get_member_names()
-        other_names = other.get_member_names()
-        for name in sorted(set(my_names).intersection(other_names)):
+        my_names = set(self.get_member_names())
+        other_names = set(other.get_member_names())
+        for name in sorted(my_names.intersection(other_names)):
             logger.debug('compare member %s', name)
             my_file = self.get_member(name)
             other_file = other.get_member(name)
             differences.append(
                 debbindiff.comparators.compare_files(
                     my_file, other_file, source=name))
+        my_extra_files = map(self.get_member, my_names.difference(other_names))
+        other_extra_files = map(other.get_member, other_names.difference(my_names))
+        for my_file, other_file, similarity in debbindiff.comparators.perform_fuzzy_matching(my_extra_files, other_extra_files):
+            difference = debbindiff.comparators.compare_files(my_file, other_file)
+            if difference is None:
+                difference = Difference(None, my_file.name, other_file.name)
+            difference.comment = (difference.comment or '') + \
+                'Files similar (%d%%) despite different names' % similarity
+            differences.append(difference)
         return differences
 
 

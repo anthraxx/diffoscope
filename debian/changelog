@@ -14,7 +14,7 @@ debbindiff (27) unstable; urgency=low
   * Massive rearchitecturing.
   * Now use libarchive to handle cpio archives and iso9660 images.
   * find is now used to compare directory listings.
-  * Symlinks and devices can now be properly compared.
+  * Symlinks and devices can now be properly compared. (Closes: #789003)
   * Files in squashfs are now extracted one by one.
   * Text files are now compared after being decoded with the detected
     encoding. Encoding differences are reported. (Closes: #785777)

@@ -1,0 +1,7 @@
+@@ -1,5 +1,5 @@
+ PRAGMA foreign_keys=OFF;
+ BEGIN TRANSACTION;
+ CREATE TABLE test (value val);
+-INSERT INTO "test" VALUES(1);
++INSERT INTO "test" VALUES(2);
+ COMMIT;

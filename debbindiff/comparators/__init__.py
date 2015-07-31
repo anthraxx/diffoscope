@@ -49,6 +49,7 @@ except ImportError as ex:
     if ex.message != 'No module named rpm':
         raise
     from debbindiff.comparators.rpm_fallback import RpmFile
+from debbindiff.comparators.sqlite import Sqlite3Database
 from debbindiff.comparators.squashfs import SquashfsFile
 from debbindiff.comparators.symlink import Symlink
 from debbindiff.comparators.text import TextFile
@@ -90,6 +91,7 @@ FILE_CLASSES = (
     DebFile,
     ElfFile,
     StaticLibFile,
+    Sqlite3Database,
     TtfFile,
     MoFile,
     IpkFile,

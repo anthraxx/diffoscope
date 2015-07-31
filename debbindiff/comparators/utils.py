@@ -137,11 +137,9 @@ def format_device(mode, major, minor):
 
 
 def get_compressed_content_name(path, expected_extension):
-    return 'content'
-    # XXX: implement fuzzy-matching support to get the thing below to work
     basename = os.path.basename(path)
     if basename.endswith(expected_extension):
-        name = basename[:-3]
+        name = basename[:-len(expected_extension)]
     else:
         name = "%s-content" % basename
     return name

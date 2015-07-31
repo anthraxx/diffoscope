@@ -53,12 +53,10 @@ def test_metadata(differences):
     expected_diff = open(os.path.join(os.path.dirname(__file__), '../data/gzip_metadata_expected_diff')).read()
     assert differences[0].unified_diff == expected_diff
 
-@pytest.mark.xfail # need fuzzy matching
 def test_content_source(differences):
     assert differences[1].source1 == 'test1'
     assert differences[1].source2 == 'test2'
 
-@pytest.mark.xfail # need fuzzy matching
 def test_content_source_without_extension(tmpdir):
     path1 = str(tmpdir.join('test1'))
     path2 = str(tmpdir.join('test2'))

@@ -49,12 +49,10 @@ def test_no_differences(bzip1):
 def differences(bzip1, bzip2):
     return bzip1.compare(bzip2).details
 
-@pytest.mark.xfail # need fuzzy
 def test_content_source(differences):
     assert differences[0].source1 == 'test1'
     assert differences[0].source2 == 'test2'
 
-@pytest.mark.xfail # need fuzzy
 def test_content_source_without_extension(tmpdir):
     path1 = str(tmpdir.join('test1'))
     path2 = str(tmpdir.join('test2'))

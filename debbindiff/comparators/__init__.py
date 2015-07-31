@@ -19,6 +19,7 @@
 # along with debbindiff.  If not, see <http://www.gnu.org/licenses/>.
 
 import magic
+import operator
 import os.path
 import re
 import sys
@@ -129,12 +130,16 @@ fuzzy_threshold = 85
 
 
 def perform_fuzzy_matching(files1, files2):
+    files2 = set(files2)
     already_compared = set()
     for file1 in filter(lambda f: not f.is_directory(), files1):
-        for file2 in filter(lambda f: not f.is_directory(), files2):
-            similarity = ssdeep.compare(file1.fuzzy_hash, file2.fuzzy_hash)
-            logger.debug('fuzzy matching %s %s: %d', file1.name, file2.name, similarity)
+        comparisons = [(ssdeep.compare(file1.fuzzy_hash, file2.fuzzy_hash), file2)
+                       for file2 in files2 - already_compared
+                       if not file2.is_directory()]
+        if comparisons:
+            comparisons.sort(key=operator.itemgetter(0))
+            similarity, file2 = comparisons[-1]
+            logger.debug('fuzzy top  match %s %s: %d', file1.name, file2.name, similarity)
             if similarity >= fuzzy_threshold:
                 yield file1, file2, similarity
                 already_compared.add(file2)
-                break

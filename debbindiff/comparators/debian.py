@@ -82,6 +82,28 @@ class DotChangesContainer(Container):
     def get_member(self, member_name):
         return DotChangesMember(self, member_name)
 
+    TRIM_RE = re.compile(r'^([^_]+)_\w[\w.+~-]*(?:_[^.]+)?(\..+)$')
+
+    @staticmethod
+    def trim_version_number(name):
+        return DotChangesContainer.TRIM_RE.sub('\\1\\2', name)
+
+    def compare(self, other, source=None):
+        differences = []
+        my_names = set(self.get_member_names())
+        my_canonical_names = dict([(DotChangesContainer.trim_version_number(name), name) for name in my_names])
+        other_names = set(other.get_member_names())
+        other_canonical_names = dict([(DotChangesContainer.trim_version_number(name), name) for name in other_names])
+        for canonical_name in sorted(set(my_canonical_names.keys()).intersection(other_canonical_names.keys())):
+            my_file = self.get_member(my_canonical_names[canonical_name])
+            other_file = other.get_member(other_canonical_names[canonical_name])
+            source = None
+            if my_canonical_names[canonical_name] == other_canonical_names[canonical_name]:
+                source = my_canonical_names[canonical_name]
+            differences.append(
+                debbindiff.comparators.compare_files(my_file, other_file, source=source))
+        return differences
+
 
 class DotChangesFile(File):
     RE_FILE_EXTENSION = re.compile(r'\.changes$')

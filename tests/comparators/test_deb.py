@@ -22,9 +22,10 @@ import codecs
 import os.path
 import shutil
 import pytest
+import debbindiff.comparators
 from debbindiff.comparators import specialize
 from debbindiff.comparators.binary import FilesystemFile
-from debbindiff.comparators.deb import DebFile, Md5sumsFile
+from debbindiff.comparators.deb import DebFile, Md5sumsFile, DebDataTarFile
 
 TEST_FILE1_PATH = os.path.join(os.path.dirname(__file__), '../data/test1.deb')
 TEST_FILE2_PATH = os.path.join(os.path.dirname(__file__), '../data/test2.deb')
@@ -77,3 +78,31 @@ def test_identification_of_md5sums_in_deb(deb1, deb2, monkeypatch):
 
 def test_md5sums(differences):
     assert differences[1].details[0].details[1].comment == 'Files in package differs'
+
+def test_identical_files_in_md5sums(deb1, deb2):
+    deb1.compare(deb2)
+    assert deb1.files_with_same_content_in_data == set(['./usr/share/doc/test/README.Debian',
+                                                        './usr/share/doc/test/copyright'])
+
+def test_identification_of_data_tar(deb1, deb2, monkeypatch):
+    orig_func = DebDataTarFile.recognizes
+    @staticmethod
+    def probe(file):
+        ret = orig_func(file)
+        if ret:
+            test_identification_of_data_tar.found = True
+        return ret
+    test_identification_of_data_tar.found = False
+    monkeypatch.setattr(DebDataTarFile, 'recognizes', probe)
+    deb1.compare(deb2)
+    assert test_identification_of_data_tar.found
+
+def test_skip_comparison_of_known_identical_files(deb1, deb2, monkeypatch):
+    compared = set()
+    orig_func = debbindiff.comparators.compare_files
+    def probe(file1, file2, source=None):
+        compared.add(file1.name)
+        return orig_func(file1, file2, source=None)
+    monkeypatch.setattr(debbindiff.comparators, 'compare_files', probe)
+    deb1.compare(deb2)
+    assert './usr/share/doc/test/README.Debian' not in compared

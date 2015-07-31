@@ -3,10 +3,7 @@
 VERSION = $(shell dpkg-parsechangelog --show-field Version)
 
 %:
-	dh $@ --with python2 --buildsystem=python_distutils
-
-override_dh_auto_build:
-	dh_auto_build -O--buildsystem=python_distutils
+	dh $@ --with python2 --buildsystem=pybuild
 
 override_dh_gencontrol:
 	echo "debbindiff:Recommends=$$(./debbindiff.py --list-tools | tail -n 1 | \

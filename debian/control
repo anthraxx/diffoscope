@@ -22,7 +22,7 @@ X-Python-Version: >= 2.7
 Homepage: https://wiki.debian.org/ReproducibleBuilds
 Vcs-Git: git://anonscm.debian.org/reproducible/debbindiff.git
 Vcs-Browser: https://anonscm.debian.org/cgit/reproducible/debbindiff.git
-Testsuite: autopkgtest
+XS-Testsuite: autopkgtest
 
 Package: debbindiff
 Architecture: all

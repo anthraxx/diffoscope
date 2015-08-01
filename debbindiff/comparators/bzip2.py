@@ -55,6 +55,9 @@ class Bzip2Container(Archive):
     def compare(self, other, source=None):
         my_file = self.get_member(self.get_member_names()[0])
         other_file = other.get_member(other.get_member_names()[0])
+        source = None
+        if my_file.name == other_file.name:
+            source = my_file.name
         return [debbindiff.comparators.compare_files(my_file, other_file, source)]
 
 

@@ -42,7 +42,7 @@ def test_difference_in_ascii(ascii1, ascii2):
     assert difference is not None
     expected_diff = open(os.path.join(os.path.dirname(__file__), '../data/text_ascii_expected_diff')).read()
     assert difference.unified_diff == expected_diff
-    assert difference.comment is None
+    assert not difference.comments
     assert len(difference.details) == 0
 
 @pytest.fixture

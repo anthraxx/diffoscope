@@ -174,24 +174,22 @@ class File(object):
                     difference = self.compare_bytes(other, source=source)
                     if difference is None:
                         return None
-                    difference.comment = (difference.comment or '') + \
-                        "No differences found inside, yet data differs"
+                    difference.add_comment("No differences found inside, yet data differs")
             except subprocess.CalledProcessError as e:
                 difference = self.compare_bytes(other, source=source)
                 output = re.sub(r'^', '    ', e.output, flags=re.MULTILINE)
                 cmd = ' '.join(e.cmd)
-                difference.comment = (difference.comment or '') + \
-                    "Command `%s` exited with %d. Output:\n%s" \
-                    % (cmd, e.returncode, output)
+                difference.add_comment("Command `%s` exited with %d. Output:\n%s"
+                                       % (cmd, e.returncode, output))
             except RequiredToolNotFound as e:
                 difference = self.compare_bytes(other, source=source)
                 if difference is None:
                     return None
-                difference.comment = (difference.comment or '') + \
-                    "'%s' not available in path. Falling back to binary comparison." % e.command
+                difference.add_comment(
+                    "'%s' not available in path. Falling back to binary comparison." % e.command)
                 package = e.get_package()
                 if package:
-                    difference.comment += "\nInstall '%s' to get a better output." % package
+                    difference.add_comment("Install '%s' to get a better output." % package)
             return difference
         return self.compare_bytes(other, source)
 

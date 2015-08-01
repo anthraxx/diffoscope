@@ -184,8 +184,8 @@ class Container(object):
             difference = debbindiff.comparators.compare_files(my_file, other_file)
             if difference is None:
                 difference = Difference(None, my_file.name, other_file.name)
-            difference.comment = (difference.comment or '') + \
-                'Files similar (%d%%) despite different names' % similarity
+            difference.add_comment(
+                'Files similar (%d%%) despite different names' % similarity)
             differences.append(difference)
         return differences
 

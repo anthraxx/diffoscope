@@ -265,7 +265,9 @@ def diff(feeder1, feeder2):
 
 class Difference(object):
     def __init__(self, unified_diff, path1, path2, source=None, comment=None):
-        self._comment = comment
+        self._comments = []
+        if comment:
+            self._comments.append(comment)
         self._unified_diff = unified_diff
         # allow to override declared file paths, useful when comparing
         # tempfiles
@@ -284,19 +286,18 @@ class Difference(object):
         return '<Difference %s -- %s %s>' % (self._source1, self._source2, self._details)
 
     @staticmethod
-    def from_feeder(feeder1, feeder2, path1, path2, source=None,
-                    comment=None):
-        actual_comment = comment
-        unified_diff = None
+    def from_feeder(feeder1, feeder2, path1, path2, source=None, comment=None):
         try:
             unified_diff = diff(feeder1, feeder2)
+            if not unified_diff:
+                return None
+            return Difference(unified_diff, path1, path2, source, comment)
         except RequiredToolNotFound:
-            actual_comment = 'diff is not available!'
+            difference = Difference(None, path1, path2, source)
+            difference.add_comment('diff is not available!')
             if comment:
-                actual_comment += '\n\n' + comment
-        if not unified_diff:
-            return None
-        return Difference(unified_diff, path1, path2, source, actual_comment)
+                difference.add_comment(comment)
+            return difference
 
     @staticmethod
     def from_unicode(content1, content2, *args, **kwargs):
@@ -326,23 +327,24 @@ class Difference(object):
         if not difference:
             return None
         if command1.stderr_content or command2.stderr_content:
-            if difference.comment:
-                difference.comment += '\n'
-            else:
-                difference.comment = ''
             if command1.stderr_content:
-                difference.comment += 'stderr from `%s`:\n%s\n' % (' '.join(command1.cmdline()), command1.stderr_content)
+                difference.add_comment('stderr from `%s`:' % ' '.join(command1.cmdline()))
+                difference.add_comment(command1.stderr_content)
             if command2.stderr_content:
-                difference.comment += 'stderr from `%s`:\n%s\n' % (' '.join(command2.cmdline()), command2.stderr_content)
+                difference.add_comment('stderr from `%s`:' % ' '.join(command2.cmdline()))
+                difference.add_comment(command2.stderr_content)
         return difference
 
     @property
     def comment(self):
-        return self._comment
+        return '\n'.join(self._comments)
 
-    @comment.setter
-    def comment(self, comment):
-        self._comment = comment
+    @property
+    def comments(self):
+        return self._comments
+
+    def add_comment(self, comment):
+        self._comments.append(comment)
 
     @property
     def source1(self):

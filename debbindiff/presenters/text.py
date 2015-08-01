@@ -26,9 +26,10 @@ from debbindiff import logger
 
 
 def print_difference(difference, print_func):
-    if difference.comment:
-        for line in difference.comment.split('\n'):
-            print_func(u"│┄ %s" % line)
+    if difference.comments:
+        for comment in difference.comments:
+            for line in comment.split('\n'):
+                print_func(u"│┄ %s" % line)
     if difference.unified_diff:
         for line in difference.unified_diff.splitlines():
             print_func(u"│ %s" % line)

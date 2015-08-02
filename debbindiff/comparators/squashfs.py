@@ -155,7 +155,7 @@ class SquashfsContainer(Archive):
         cmd = ['unsquashfs', '-d', '', '-lls', path]
         output = subprocess.check_output(cmd, shell=False)
         header = True
-        for line in output.split('\n'):
+        for line in output.rstrip('\n').split('\n'):
             if header:
                 if line == '':
                     header = False

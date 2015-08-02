@@ -1,3 +1,12 @@
+debbindiff (28) unstable; urgency=low
+
+  * Improve code quality by storing comments for Difference as lists.
+  * Fix label for content of gzip, bzip2, and xz files.
+  * Handle when only the encoding is different when comparing text files.
+    (Closes: #794347)
+
+ -- Jérémy Bobbio <lunar@debian.org>  Sun, 02 Aug 2015 17:21:52 +0200
+
 debbindiff (27) unstable; urgency=low
 
   [ Reiner Herrmann ]

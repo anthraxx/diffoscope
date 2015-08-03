@@ -1,3 +1,17 @@
+diffoscope (29) unstable; urgency=low
+
+  [ Reiner Herrmann ]
+  * Prevent empty line at the end of squashfs listing.
+
+  [ Jérémy Bobbio ]
+  * Rename to diffoscope. debbindiff has grown way beyond a being just a tool
+    to compare Debian packages. Let's rename it to better reflect this state of
+    things.
+  * Add a favicon to HTML reports.
+  * Always use pybuild in debian/rules.
+
+ -- Jérémy Bobbio <lunar@debian.org>  Mon, 03 Aug 2015 15:55:07 +0200
+
 debbindiff (28) unstable; urgency=low
 
   * Improve code quality by storing comments for Difference as lists.

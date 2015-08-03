@@ -41,6 +41,7 @@ from tempfile import NamedTemporaryFile
 from xml.sax.saxutils import escape
 from diffoscope import logger, VERSION
 from diffoscope.comparators.utils import make_temp_directory
+from diffoscope.presenters.icon import FAVICON_BASE64
 
 # minimum line size, we add a zero-sized breakable space every
 # LINESIZE characters
@@ -60,6 +61,7 @@ HEADER = """
 <head>
   <meta charset="utf-8">
   <meta name="generator" content="diffoscope">
+  <link rel="icon" type="image/png" href="data:image/png;base64,%(favicon)s" />
   <title>%(title)s</title>
   <style>
     body {
@@ -508,6 +510,7 @@ def output_header(css_url, print_func):
     else:
         css_link = ''
     print_func(HEADER % {'title': escape(' '.join(sys.argv)),
+                         'favicon': FAVICON_BASE64,
                          'css_link': css_link,
                         })
 

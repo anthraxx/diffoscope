@@ -27,3 +27,13 @@ override_dh_clean:
 		exit 1; \
 	fi
 	dh_clean -O--buildsystem=python_distutils
+
+diffoscope/presenters/icon.py: favicon.png
+	(echo '# Generated from favicon.png'; \
+	 echo 'FAVICON_BASE64 = """'; \
+	 base64 $<; \
+	 echo '""".replace("\\n", "")'; \
+	) > $@
+
+favicon.png: logo.svg
+	inkscape -w 32 -h 32 -e $@ $<

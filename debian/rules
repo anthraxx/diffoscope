@@ -8,17 +8,17 @@ VERSION = $(shell dpkg-parsechangelog --show-field Version)
 override_dh_gencontrol:
 	echo "diffoscope:Recommends=$$(./diffoscope.py --list-tools | tail -n 1 | \
 		sed -e 's/\(^\| \)\(coreutils\|diffutils\|e2fsprogs\|findutils\|gzip\)\(,\|$$\)//g')" >> debian/diffoscope.substvars
-	dh_gencontrol -O--buildsystem=python_distutils
+	dh_gencontrol -O--buildsystem=pybuild
 
 override_dh_install:
+	dh_install -O--buildsystem=pybuild
 	mv debian/diffoscope/usr/bin/diffoscope.py debian/diffoscope/usr/bin/diffoscope
-	dh_install -O--buildsystem=python_distutils
 
 debian/diffoscope.1: debian/diffoscope.1.rst
 	rst2man $< $@
 
 override_dh_installman: debian/diffoscope.1
-	dh_installman -O--buildsystem=python_distutils
+	dh_installman -O--buildsystem=pybuild
 
 override_dh_clean:
 	rm -f debian/diffoscope.1
@@ -26,7 +26,7 @@ override_dh_clean:
 		echo "Version in debian/changelog doesn't match diffoscope version"; \
 		exit 1; \
 	fi
-	dh_clean -O--buildsystem=python_distutils
+	dh_clean -O--buildsystem=pybuild
 
 diffoscope/presenters/icon.py: favicon.png
 	(echo '# Generated from favicon.png'; \

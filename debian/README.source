@@ -1,4 +1,4 @@
-debbindiff: hacking tips
+diffoscope: hacking tips
 ========================
 
 Running the test suite
@@ -11,4 +11,4 @@ the tests are then:
 
 To get code coverage:
 
-    $ py.test --cov debbindiff --cov-report html
+    $ py.test --cov diffoscope --cov-report html

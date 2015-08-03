@@ -2,7 +2,7 @@
 
 from setuptools import setup, find_packages
 from setuptools.command.test import test as TestCommand
-import debbindiff
+import diffoscope
 
 class PyTest(TestCommand):
     user_options = [('pytest-args=', 'a', "Arguments to pass to py.test")]
@@ -22,8 +22,8 @@ class PyTest(TestCommand):
         errno = pytest.main(self.pytest_args)
         sys.exit(errno)
 
-setup(name='debbindiff',
-      version=debbindiff.VERSION,
+setup(name='diffoscope',
+      version=diffoscope.VERSION,
       description='display differences between files',
       long_description=open('README').read(),
       author='Lunar',
@@ -32,7 +32,7 @@ setup(name='debbindiff',
       packages=find_packages(),
       tests_require=['pytest'],
       cmdclass = {'test': PyTest},
-      scripts=['debbindiff.py'],
+      scripts=['diffoscope.py'],
       install_requires=[
           'python-debian',
           'magic',

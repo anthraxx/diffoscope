@@ -1,12 +1,12 @@
 Format: http://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
-Upstream-Name: debbindiff
-Source: https://anonscm.debian.org/cgit/reproducible/debbindiff.git/
+Upstream-Name: diffoscope
+Source: https://anonscm.debian.org/cgit/reproducible/diffoscope.git/
 
 Files: *
 Copyright: 2014-2015 Jérémy Bobbio <lunar@debian.org>
 License: GPL-3+
 
-Files: debbindiff/changes.py
+Files: diffoscope/changes.py
 Copyright:      2008 Jonny Lamb <jonny@debian.org>
                 2010 Jan Dittberner <jandd@debian.org>
                 2012 Arno Töll <arno@debian.org>
@@ -14,37 +14,37 @@ Copyright:      2008 Jonny Lamb <jonny@debian.org>
            2014-2015 Jérémy Bobbio <lunar@debian.org>
 License: Expat
 
-Files: debbindiff/comparators/__init__.py
+Files: diffoscope/comparators/__init__.py
 Copyright: 2014-2015 Jérémy Bobbio <lunar@debian.org>
                 2015 Helmut Grohne <helmut@subdivi.de>
                 2015 Chris Lamb <lamby@debian.org>
                 2015 Reiner Herrmann <reiner@reiner-h.de>
 License: GPL-3+
 
-Files: debbindiff/comparators/bzip2.py
-       debbindiff/comparators/elf.py
-       debbindiff/comparators/fonts.py
-       debbindiff/comparators/gettext.py
-       debbindiff/comparators/gzip.py
-       debbindiff/comparators/haskell.py
-       debbindiff/comparators/pdf.py
-       debbindiff/comparators/png.py
-       debbindiff/comparators/utils.py
-       debbindiff/comparators/xz.py
-       debbindiff/comparators/zip.py
+Files: diffoscope/comparators/bzip2.py
+       diffoscope/comparators/elf.py
+       diffoscope/comparators/fonts.py
+       diffoscope/comparators/gettext.py
+       diffoscope/comparators/gzip.py
+       diffoscope/comparators/haskell.py
+       diffoscope/comparators/pdf.py
+       diffoscope/comparators/png.py
+       diffoscope/comparators/utils.py
+       diffoscope/comparators/xz.py
+       diffoscope/comparators/zip.py
 Copyright: 2014-2015 Jérémy Bobbio <lunar@debian.org>
                 2015 Reiner Herrmann <reiner@reiner-h.de>
 License: GPL-3+
 
-Files: debbindiff/comparators/cpio.py
-       debbindiff/comparators/directory.py
-       debbindiff/comparators/rpm.py
-       debbindiff/comparators/squashfs.py
+Files: diffoscope/comparators/cpio.py
+       diffoscope/comparators/directory.py
+       diffoscope/comparators/rpm.py
+       diffoscope/comparators/squashfs.py
 Copyright: 2015 Reiner Herrmann <reiner@reiner-h.de>
            2015 Jérémy Bobbio <lunar@debian.org>
 License: GPL-3+
 
-Files: debbindiff/presenters/html.py
+Files: diffoscope/presenters/html.py
 Copyright: 2014-2015 Jérémy Bobbio <lunar@debian.org>
                 2015 Reiner Herrmann <reiner@reiner-h.de>
            2012-2013 Olivier Matz <zer0@droids-corp.org>
@@ -53,7 +53,7 @@ Copyright: 2014-2015 Jérémy Bobbio <lunar@debian.org>
                 2012 scito <info@scito.ch>
 License: GPL-3+
 
-Files: debbindiff/presenters/text.py
+Files: diffoscope/presenters/text.py
 Copyright: 2015 Jérémy Bobbio <lunar@debian.org>
            2015 Helmut Grohne <helmut@subdivi.de>
 License: GPL-3+

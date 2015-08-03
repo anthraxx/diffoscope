@@ -1,4 +1,4 @@
-Source: debbindiff
+Source: diffoscope
 Section: devel
 Priority: optional
 Maintainer: Reproducible builds folks <reproducible-builds@lists.alioth.debian.org>
@@ -19,22 +19,33 @@ Build-Depends: debhelper (>= 9),
                rpm-common
 Standards-Version: 3.9.6
 X-Python-Version: >= 2.7
-Homepage: https://wiki.debian.org/ReproducibleBuilds
-Vcs-Git: git://anonscm.debian.org/reproducible/debbindiff.git
-Vcs-Browser: https://anonscm.debian.org/cgit/reproducible/debbindiff.git
+Homepage: http://diffoscope.org/
+Vcs-Git: git://anonscm.debian.org/reproducible/diffoscope.git
+Vcs-Browser: https://anonscm.debian.org/cgit/reproducible/diffoscope.git
 XS-Testsuite: autopkgtest
 
-Package: debbindiff
+Package: diffoscope
 Architecture: all
 Depends: ${misc:Depends},
          ${python:Depends},
-Recommends: ${debbindiff:Recommends}
-Description: highlight differences between two builds of Debian packages
- debbindiff was designed to easily compare two builds of the same Debian
- package, and understand their differences.
+Recommends: ${diffoscope:Recommends}
+Breaks: debbindiff (<< 29)
+Replaces: debbindiff (<< 29)
+Description: in-depth comparison of files, archives, and directories
+ diffoscope will try to get to the bottom of what makes files or directories
+ different. It will recursively unpack archives of many kinds and transform
+ various binary formats into more human readable form to compare them. It can
+ compare two tarballs, ISO images, or PDF just as easily. The differences can
+ be shown in a text or HTML report.
  .
- It can be scripted through error codes, and an HTML report can be produced
- with the detected differences.
- .
- debbindiff was written as part of the “reproducible builds” Debian
- project.
+ diffoscope is developed as part of the “reproducible builds” Debian
+ project and was formerly known as “debbindiff”.
+
+Package: debbindiff
+Depends: diffoscope, ${misc:Depends}
+Architecture: all
+Priority: extra
+Section: oldlibs
+Description: transitional package
+ This is a transitional package. It can safely be removed once
+ callers have been update to use 'diffoscope' instead of 'debbindiff'.

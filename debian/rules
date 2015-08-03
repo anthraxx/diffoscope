@@ -6,24 +6,24 @@ VERSION = $(shell dpkg-parsechangelog --show-field Version)
 	dh $@ --with python2 --buildsystem=pybuild
 
 override_dh_gencontrol:
-	echo "debbindiff:Recommends=$$(./debbindiff.py --list-tools | tail -n 1 | \
-		sed -e 's/\(^\| \)\(coreutils\|diffutils\|e2fsprogs\|findutils\|gzip\)\(,\|$$\)//g')" >> debian/debbindiff.substvars
+	echo "diffoscope:Recommends=$$(./diffoscope.py --list-tools | tail -n 1 | \
+		sed -e 's/\(^\| \)\(coreutils\|diffutils\|e2fsprogs\|findutils\|gzip\)\(,\|$$\)//g')" >> debian/diffoscope.substvars
 	dh_gencontrol -O--buildsystem=python_distutils
 
 override_dh_install:
-	mv debian/debbindiff/usr/bin/debbindiff.py debian/debbindiff/usr/bin/debbindiff
+	mv debian/diffoscope/usr/bin/diffoscope.py debian/diffoscope/usr/bin/diffoscope
 	dh_install -O--buildsystem=python_distutils
 
-debian/debbindiff.1: debian/debbindiff.1.rst
+debian/diffoscope.1: debian/diffoscope.1.rst
 	rst2man $< $@
 
-override_dh_installman: debian/debbindiff.1
+override_dh_installman: debian/diffoscope.1
 	dh_installman -O--buildsystem=python_distutils
 
 override_dh_clean:
-	rm -f debian/debbindiff.1
-	@if ! grep -q 'VERSION = "$(VERSION)"' debbindiff/__init__.py; then \
-		echo "Version in debian/changelog doesn't match debbindiff version"; \
+	rm -f debian/diffoscope.1
+	@if ! grep -q 'VERSION = "$(VERSION)"' diffoscope/__init__.py; then \
+		echo "Version in debian/changelog doesn't match diffoscope version"; \
 		exit 1; \
 	fi
 	dh_clean -O--buildsystem=python_distutils

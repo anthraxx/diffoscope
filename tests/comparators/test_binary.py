@@ -1,32 +1,32 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# debbindiff: highlight differences between two builds of Debian packages
+# diffoscope: in-depth comparison of files, archives, and directories
 #
 # Copyright © 2015 Jérémy Bobbio <lunar@debian.org>
 #
-# debbindiff is free software: you can redistribute it and/or modify
+# diffoscope is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 #
-# debbindiff is distributed in the hope that it will be useful,
+# diffoscope is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with debbindiff.  If not, see <http://www.gnu.org/licenses/>.
+# along with diffoscope.  If not, see <http://www.gnu.org/licenses/>.
 
 import os.path
 import shutil
 import subprocess
 import pytest
-from debbindiff.comparators import specialize
-import debbindiff.comparators.binary
-from debbindiff.comparators.binary import File, FilesystemFile
-from debbindiff.difference import Difference
-from debbindiff import RequiredToolNotFound, tool_required
+from diffoscope.comparators import specialize
+import diffoscope.comparators.binary
+from diffoscope.comparators.binary import File, FilesystemFile
+from diffoscope.difference import Difference
+from diffoscope import RequiredToolNotFound, tool_required
 
 TEST_FILE1_PATH = os.path.join(os.path.dirname(__file__), '../data/binary1')
 TEST_FILE2_PATH = os.path.join(os.path.dirname(__file__), '../data/binary2')
@@ -76,7 +76,7 @@ def test_compare_with_xxd(binary1, binary2):
 def xxd_not_found(monkeypatch):
     def mock_xxd(path):
         raise RequiredToolNotFound('xxd')
-    monkeypatch.setattr(debbindiff.comparators.binary, 'xxd', mock_xxd)
+    monkeypatch.setattr(diffoscope.comparators.binary, 'xxd', mock_xxd)
 
 def test_no_differences_without_xxd(xxd_not_found, binary1):
     difference = binary1.compare_bytes(binary1)
@@ -124,7 +124,7 @@ def test_with_compare_details_and_failed_process():
     assert difference.unified_diff == expected_diff
 
 def test_with_compare_details_and_tool_not_found(monkeypatch):
-    monkeypatch.setattr('debbindiff.RequiredToolNotFound.get_package', lambda _: 'some-package')
+    monkeypatch.setattr('diffoscope.RequiredToolNotFound.get_package', lambda _: 'some-package')
     class MockFile(FilesystemFile):
         @tool_required('nonexistent')
         def compare_details(self, other, source=None):

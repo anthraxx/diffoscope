@@ -1,3 +1,3 @@
 Tests: pytest
-Depends: debbindiff, python-pytest
+Depends: diffoscope, python-pytest
 Restrictions: needs-recommends

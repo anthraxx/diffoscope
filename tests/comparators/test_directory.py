@@ -1,22 +1,22 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# debbindiff: highlight differences between two builds of Debian packages
+# diffoscope: in-depth comparison of files, archives, and directories
 #
 # Copyright © 2015 Jérémy Bobbio <lunar@debian.org>
 #
-# debbindiff is free software: you can redistribute it and/or modify
+# diffoscope is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 #
-# debbindiff is distributed in the hope that it will be useful,
+# diffoscope is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with debbindiff.  If not, see <http://www.gnu.org/licenses/>.
+# along with diffoscope.  If not, see <http://www.gnu.org/licenses/>.
 
 from __future__ import print_function
 
@@ -24,9 +24,9 @@ import os
 import os.path
 import shutil
 import pytest
-import debbindiff.comparators.binary
-from debbindiff.comparators.directory import compare_directories
-from debbindiff.presenters.text import output_text
+import diffoscope.comparators.binary
+from diffoscope.comparators.directory import compare_directories
+from diffoscope.presenters.text import output_text
 
 TEST_FILE1_PATH = os.path.join(os.path.dirname(__file__), '../data/text_ascii1')
 TEST_FILE2_PATH = os.path.join(os.path.dirname(__file__), '../data/text_ascii2')

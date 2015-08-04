@@ -55,8 +55,7 @@ WORDBREAK = " \t;.,/):-"
 DIFFON = "\x01"
 DIFFOFF = "\x02"
 
-HEADER = """
-<!DOCTYPE html>
+HEADER = """<!DOCTYPE html>
 <html>
 <head>
   <meta charset="utf-8">

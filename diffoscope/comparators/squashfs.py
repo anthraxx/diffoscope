@@ -18,6 +18,7 @@
 # You should have received a copy of the GNU General Public License
 # along with diffoscope.  If not, see <http://www.gnu.org/licenses/>.
 
+from contextlib import contextmanager
 import re
 import subprocess
 import os.path
@@ -85,6 +86,10 @@ class SquashfsDirectory(Directory, SquashfsMember):
 
     def has_same_content_as(self, other):
         return False
+
+    @contextmanager
+    def get_content(self):
+        yield
 
     def is_directory(self):
         return True

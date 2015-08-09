@@ -29,3 +29,11 @@ def set_locale():
 
 def tool_missing(cmd):
     return find_executable(cmd) is None
+
+
+# from Jerry Kindall at http://stackoverflow.com/a/7088133
+def try_except(success, failure, *exceptions):
+    try:
+        return success()
+    except exceptions or Exception:
+        return failure() if callable(failure) else failure

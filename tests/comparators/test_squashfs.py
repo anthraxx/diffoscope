@@ -26,7 +26,7 @@ import pytest
 from diffoscope.comparators import specialize
 from diffoscope.comparators.binary import FilesystemFile
 from diffoscope.comparators.squashfs import SquashfsFile
-from conftest import tool_missing
+from conftest import tool_missing, try_except
 
 TEST_FILE1_PATH = os.path.join(os.path.dirname(__file__), '../data/test1.squashfs')
 TEST_FILE2_PATH = os.path.join(os.path.dirname(__file__), '../data/test2.squashfs')
@@ -61,7 +61,7 @@ def test_superblock(differences):
     assert differences[0].unified_diff == expected_diff
 
 # I know, the next line is pretty lame. But fixing #794096 would be the real fix for this.
-@pytest.mark.skipif(pwd.getpwuid(1000).pw_name != 'lunar', reason='uid 1000 is not lunar')
+@pytest.mark.skipif(try_except(lambda: pwd.getpwuid(1000).pw_name != 'lunar', False, KeyError), reason='uid 1000 is not lunar')
 @pytest.mark.skipif(tool_missing('unsquashfs'), reason='missing unsquashfs')
 def test_listing(differences):
     expected_diff = open(os.path.join(os.path.dirname(__file__), '../data/squashfs_listing_expected_diff')).read()

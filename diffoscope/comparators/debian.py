@@ -72,6 +72,17 @@ class DotChangesMember(File):
 
 
 class DotChangesContainer(Container):
+    @staticmethod
+    def get_version_trimming_re(dcc):
+        version = dcc.source.changes.get('Version')
+        # remove the epoch as it's not in the filename
+        version = re.sub(r'^\d+:', '', version)
+        if '-' in version:
+            upstream, revision = version.rsplit('-', 1)
+            return re.compile(r'_%s(?:-%s)?' % (re.escape(upstream), re.escape(revision)))
+        else:
+            return re.compile(re.escape(version))
+
     @contextmanager
     def open(self):
         yield self
@@ -82,18 +93,17 @@ class DotChangesContainer(Container):
     def get_member(self, member_name):
         return DotChangesMember(self, member_name)
 
-    TRIM_RE = re.compile(r'^([^_]+)_\w[\w.+~-]*(?:_[^.]+)?(\..+)$')
-
-    @staticmethod
-    def trim_version_number(name):
-        return DotChangesContainer.TRIM_RE.sub('\\1\\2', name)
+    def _trim_version_number(self, name):
+        return self._version_re.sub('', name)
 
     def compare(self, other, source=None):
         differences = []
         my_names = set(self.get_member_names())
-        my_canonical_names = dict([(DotChangesContainer.trim_version_number(name), name) for name in my_names])
+        my_trim_re = DotChangesContainer.get_version_trimming_re(self)
+        my_canonical_names = dict([(my_trim_re.sub('', name), name) for name in my_names])
         other_names = set(other.get_member_names())
-        other_canonical_names = dict([(DotChangesContainer.trim_version_number(name), name) for name in other_names])
+        other_trim_re = DotChangesContainer.get_version_trimming_re(other)
+        other_canonical_names = dict([(other_trim_re.sub('', name), name) for name in other_names])
         for canonical_name in sorted(set(my_canonical_names.keys()).intersection(other_canonical_names.keys())):
             my_file = self.get_member(my_canonical_names[canonical_name])
             other_file = other.get_member(other_canonical_names[canonical_name])

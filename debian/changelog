@@ -1,3 +1,14 @@
+diffoscope (30) unstable; urgency=low
+
+  * Remove empty line at the beginning of HTML reports.
+  * Stop failing to run the tests when uid 1000 doesn't exist.
+  * Make .changes file matching more accurate.
+  * Move the sanity check for version number from clean to build rule.
+  * Remove leftover debug in squashfs comparator.
+  * Stop decompressing squashfs directories as we compare content already.
+
+ -- Jérémy Bobbio <lunar@debian.org>  Sun, 09 Aug 2015 12:18:30 +0200
+
 diffoscope (29) unstable; urgency=low
 
   [ Reiner Herrmann ]

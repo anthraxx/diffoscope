@@ -68,7 +68,6 @@ class SquashfsRegularFile(SquashfsMember):
 
     def __init__(self, archive, line):
         m = SquashfsRegularFile.LINE_RE.match(line)
-        logger.debug('line %s m %s', line, m)
         SquashfsMember.__init__(self, archive, m.group('member_name'))
 
 

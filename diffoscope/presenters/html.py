@@ -154,7 +154,6 @@ FOOTER = """
 """
 
 DEFAULT_MAX_PAGE_SIZE = 2000 * 2 ** 10  # 2000 kB
-MAX_DIFF_BLOCK_LINES = 50
 
 
 class PrintLimitReached(Exception):

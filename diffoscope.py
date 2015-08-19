@@ -29,6 +29,7 @@ import sys
 import traceback
 from diffoscope import logger, VERSION, set_locale
 import diffoscope.comparators
+from diffoscope.config import Config
 from diffoscope.presenters.html import output_html
 from diffoscope.presenters.text import output_text
 
@@ -50,6 +51,10 @@ def create_parser():
     parser.add_argument('--max-report-size', metavar='BYTES',
                         dest='max_report_size', type=int,
                         help='maximum bytes written in report')
+    parser.add_argument('--max-diff-block-lines', dest='max_diff_block_lines', type=int,
+                        help='maximum number of lines per diff block')
+    parser.add_argument('--max-diff-input-lines', dest='max_diff_input_lines', type=int,
+                        help='maximum number of lines fed to diff')
     parser.add_argument('--css', metavar='url', dest='css_url',
                         help='link to an extra CSS for the HTML report')
     parser.add_argument('file1', help='first file to compare')
@@ -87,6 +92,9 @@ class ListToolsAction(argparse.Action):
 def main():
     parser = create_parser()
     parsed_args = parser.parse_args(sys.argv[1:])
+    Config.setMaxDiffBlockLines(parsed_args.max_diff_block_lines)
+    Config.setMaxDiffInputLines(parsed_args.max_diff_input_lines)
+    Config.setMaxReportSize(parsed_args.max_report_size)
     if parsed_args.debug:
         logger.setLevel(logging.DEBUG)
     set_locale()
@@ -95,8 +103,7 @@ def main():
     if difference:
         if parsed_args.html_output:
             with make_printer(parsed_args.html_output) as print_func:
-                output_html(difference, css_url=parsed_args.css_url, print_func=print_func,
-                            max_page_size=parsed_args.max_report_size)
+                output_html(difference, css_url=parsed_args.css_url, print_func=print_func)
         if (parsed_args.text_output and parsed_args.text_output != parsed_args.html_output) or not parsed_args.html_output:
             with make_printer(parsed_args.text_output or '-') as print_func:
                 output_text(difference, print_func=print_func)

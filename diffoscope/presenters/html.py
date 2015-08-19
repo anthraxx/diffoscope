@@ -40,6 +40,7 @@ import sys
 from tempfile import NamedTemporaryFile
 from xml.sax.saxutils import escape
 from diffoscope import logger, VERSION
+from diffoscope.config import Config
 from diffoscope.comparators.utils import make_temp_directory
 from diffoscope.presenters.icon import FAVICON_BASE64
 
@@ -152,8 +153,6 @@ FOOTER = """
 </body>
 </html>
 """
-
-DEFAULT_MAX_PAGE_SIZE = 2000 * 2 ** 10  # 2000 kB
 
 
 class PrintLimitReached(Exception):
@@ -513,12 +512,10 @@ def output_header(css_url, print_func):
                         })
 
 
-def output_html(difference, css_url=None, print_func=None, max_page_size=None):
+def output_html(difference, css_url=None, print_func=None):
     if print_func is None:
         print_func = print
-    if max_page_size is None:
-        max_page_size = DEFAULT_MAX_PAGE_SIZE
-    print_func = create_limited_print_func(print_func, max_page_size)
+    print_func = create_limited_print_func(print_func, Config.maxReportSize())
     try:
         output_header(css_url, print_func)
         output_difference(difference, print_func, [])

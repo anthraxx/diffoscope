@@ -29,11 +29,8 @@ import traceback
 from StringIO import StringIO
 from threading import Thread
 from multiprocessing import Queue
+from diffoscope.config import Config
 from diffoscope import logger, tool_required, RequiredToolNotFound
-
-
-MAX_DIFF_BLOCK_LINES = 50
-MAX_DIFF_INPUT_LINES = 100000 # GNU diff cannot process arbitrary large files :(
 
 
 class DiffParser(object):
@@ -107,7 +104,8 @@ class DiffParser(object):
         self._diff.write(line)
         if line[0] in ('-', '+') and line[0] == self._direction:
             self._block_len += 1
-            if self._block_len >= MAX_DIFF_BLOCK_LINES:
+            max_lines = Config.maxDiffBlockLines()
+            if max_lines > 0 and self._block_len >= max_lines:
                 return self.skip_block
         else:
             self._block_len = 1
@@ -116,7 +114,7 @@ class DiffParser(object):
 
     def skip_block(self, line):
         if self._remaining_hunk_lines == 0 or line[0] != self._direction:
-            self._diff.write('%s[ %d lines removed ]\n' % (self._direction, self._block_len - MAX_DIFF_BLOCK_LINES))
+            self._diff.write('%s[ %d lines removed ]\n' % (self._direction, self._block_len - Config.maxDiffBlockLines()))
             return self.read_hunk(line)
         self._block_len += 1
         self._remaining_hunk_lines -= 1
@@ -231,7 +229,8 @@ def make_feeder_from_file(in_file, filter=lambda buf: buf.encode('utf-8')):
         for buf in in_file.readlines():
             line_count += 1
             out_file.write(filter(buf))
-            if line_count >= MAX_DIFF_INPUT_LINES:
+            max_lines = Config.maxDiffInputLines()
+            if max_lines > 0 and line_count >= max_lines:
                 out_file.write('[ Too much input for diff ]%s\n' % (' ' * out_file.fileno()))
                 end_nl = True
                 break

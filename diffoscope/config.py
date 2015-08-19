@@ -19,34 +19,43 @@
 
 
 class Config(object):
-    MAX_DIFF_BLOCK_LINES = 50
-    MAX_DIFF_INPUT_LINES = 100000 # GNU diff cannot process arbitrary large files :(
-    MAX_REPORT_SIZE = 2000 * 2 ** 10 # 2000 kB
+    _config = None
+
+    def __init__(self):
+        self._max_diff_block_lines = 50
+        self._max_diff_input_lines = 100000 # GNU diff cannot process arbitrary large files :(
+        self._max_report_size = 2000 * 2 ** 10 # 2000 kB
 
     @classmethod
-    def setMaxDiffBlockLines(cls, lines):
-        if lines:
-            cls.MAX_DIFF_BLOCK_LINES = lines
+    def config(cls):
+        if not cls._config:
+            cls._config = Config()
+        return cls._config
 
-    @classmethod
-    def setMaxDiffInputLines(cls, lines):
-        if lines:
-            cls.MAX_DIFF_INPUT_LINES = lines
+    @property
+    def max_diff_block_lines(self):
+        return self._max_diff_block_lines
 
-    @classmethod
-    def setMaxReportSize(cls, bytes):
-        if bytes:
-            cls.MAX_REPORT_SIZE = bytes
+    @property
+    def max_diff_input_lines(self):
+        return self._max_diff_input_lines
 
-    @classmethod
-    def maxReportSize(cls):
-        return cls.MAX_REPORT_SIZE
+    @property
+    def max_report_size(self):
+        return self._max_report_size
 
-    @classmethod
-    def maxDiffBlockLines(cls):
-        return cls.MAX_DIFF_BLOCK_LINES
+    @max_diff_block_lines.setter
+    def max_diff_block_lines(self, value):
+        if value:
+            self._max_diff_block_lines = value
 
-    @classmethod
-    def maxDiffInputLines(cls):
-        return cls.MAX_DIFF_INPUT_LINES
+    @max_diff_input_lines.setter
+    def max_diff_input_lines(self, value):
+        if value:
+            self._max_diff_input_lines = value
+
+    @max_report_size.setter
+    def max_report_size(self, value):
+        if value:
+            self._max_report_size = value
 

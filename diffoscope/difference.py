@@ -104,7 +104,7 @@ class DiffParser(object):
         self._diff.write(line)
         if line[0] in ('-', '+') and line[0] == self._direction:
             self._block_len += 1
-            max_lines = Config.maxDiffBlockLines()
+            max_lines = Config.config().max_diff_block_lines
             if max_lines > 0 and self._block_len >= max_lines:
                 return self.skip_block
         else:
@@ -114,7 +114,7 @@ class DiffParser(object):
 
     def skip_block(self, line):
         if self._remaining_hunk_lines == 0 or line[0] != self._direction:
-            self._diff.write('%s[ %d lines removed ]\n' % (self._direction, self._block_len - Config.maxDiffBlockLines()))
+            self._diff.write('%s[ %d lines removed ]\n' % (self._direction, self._block_len - Config.config().max_diff_block_lines))
             return self.read_hunk(line)
         self._block_len += 1
         self._remaining_hunk_lines -= 1
@@ -229,7 +229,7 @@ def make_feeder_from_file(in_file, filter=lambda buf: buf.encode('utf-8')):
         for buf in in_file.readlines():
             line_count += 1
             out_file.write(filter(buf))
-            max_lines = Config.maxDiffInputLines()
+            max_lines = Config.config().max_diff_input_lines
             if max_lines > 0 and line_count >= max_lines:
                 out_file.write('[ Too much input for diff ]%s\n' % (' ' * out_file.fileno()))
                 end_nl = True

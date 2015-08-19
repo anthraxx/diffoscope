@@ -92,9 +92,9 @@ class ListToolsAction(argparse.Action):
 def main():
     parser = create_parser()
     parsed_args = parser.parse_args(sys.argv[1:])
-    Config.setMaxDiffBlockLines(parsed_args.max_diff_block_lines)
-    Config.setMaxDiffInputLines(parsed_args.max_diff_input_lines)
-    Config.setMaxReportSize(parsed_args.max_report_size)
+    Config.config().max_diff_block_lines = parsed_args.max_diff_block_lines
+    Config.config().max_diff_input_lines = parsed_args.max_diff_input_lines
+    Config.config().max_report_size = parsed_args.max_report_size
     if parsed_args.debug:
         logger.setLevel(logging.DEBUG)
     set_locale()

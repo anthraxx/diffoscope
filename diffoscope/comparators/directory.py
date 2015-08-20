@@ -169,7 +169,7 @@ class DirectoryContainer(Container):
             if root == self._path:
                 root = ''
             else:
-                root = root[len(self._path) + 1:]
+                root = root[len(os.path.commonprefix((root, self._path))):]
             names.extend([os.path.join(root, f) for f in files])
         return names
 

@@ -144,7 +144,7 @@ class DotChangesFile(File):
         # compare Files as string
         differences.append(Difference.from_unicode(self.changes.get_as_string('Files'),
                                                    other.changes.get_as_string('Files'),
-                                                   self.path, other.path, source=field))
+                                                   self.path, other.path, source='Files'))
         with DotChangesContainer(self).open() as my_container, \
              DotChangesContainer(other).open() as other_container:
             differences.extend(my_container.compare(other_container, source))

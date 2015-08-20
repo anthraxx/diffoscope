@@ -44,6 +44,8 @@ def create_parser():
                         help='show external tools required and exit')
     parser.add_argument('--debug', dest='debug', action='store_true',
                         default=False, help='display debug messages')
+    parser.add_argument('--debugger', action='store_true',
+                        help='Open the python debugger in case of crashes.')
     parser.add_argument('--html', metavar='output', dest='html_output',
                         help='write HTML report to given file (use - for stdout)')
     parser.add_argument('--text', metavar='output', dest='text_output',
@@ -90,8 +92,6 @@ class ListToolsAction(argparse.Action):
 
 
 def main():
-    parser = create_parser()
-    parsed_args = parser.parse_args(sys.argv[1:])
     Config.config().max_diff_block_lines = parsed_args.max_diff_block_lines
     Config.config().max_diff_input_lines = parsed_args.max_diff_input_lines
     Config.config().max_report_size = parsed_args.max_report_size
@@ -112,10 +112,15 @@ def main():
 
 if __name__ == '__main__':
     try:
+        parser = create_parser()
+        parsed_args = parser.parse_args(sys.argv[1:])
         sys.exit(main())
     except KeyboardInterrupt:
         logger.info('Keyboard Interrupt')
         sys.exit(2)
     except:
         traceback.print_exc()
+        if parsed_args.debugger:
+            import pdb
+            pdb.post_mortem()
         sys.exit(2)

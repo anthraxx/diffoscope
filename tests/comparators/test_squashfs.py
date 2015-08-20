@@ -47,9 +47,9 @@ def test_no_differences(squashfs1):
     assert difference is None
 
 def test_no_warnings(capfd, squashfs1, squashfs2):
-     _ = squashfs1.compare(squashfs2)
-     _, err = capfd.readouterr()
-     assert err == ''
+    _ = squashfs1.compare(squashfs2)
+    _, err = capfd.readouterr()
+    assert err == ''
 
 @pytest.fixture
 def differences(squashfs1, squashfs2):

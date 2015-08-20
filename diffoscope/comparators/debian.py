@@ -53,13 +53,13 @@ class DotChangesMember(File):
 
     @contextmanager
     def get_content(self):
-       if self._path is not None:
-           yield
-       else:
-           with self.container.source.get_content():
-               self._path = os.path.join(os.path.dirname(self.container.source.path), self.name)
-               yield
-               self._path = None
+        if self._path is not None:
+            yield
+        else:
+            with self.container.source.get_content():
+                self._path = os.path.join(os.path.dirname(self.container.source.path), self.name)
+                yield
+                self._path = None
 
     def is_directory(self):
         return False

@@ -110,7 +110,7 @@ class Md5sumsFile(File):
     @needs_content
     def compare(self, other, source=None):
         if self.has_same_content_as(other):
-           return None
+            return None
         try:
             my_md5sums = Md5sumsFile.parse_md5sums(self.path)
             other_md5sums = Md5sumsFile.parse_md5sums(other.path)

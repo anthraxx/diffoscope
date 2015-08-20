@@ -113,6 +113,9 @@ def main():
 if __name__ == '__main__':
     try:
         sys.exit(main())
-    except (Exception, KeyboardInterrupt):
+    except KeyboardInterrupt:
+        logger.info('Keyboard Interrupt')
+        sys.exit(2)
+    except:
         traceback.print_exc()
         sys.exit(2)

@@ -1,3 +1,27 @@
+diffoscope (31) unstable; urgency=low
+
+  [ Reiner Herrman ]
+  * Fix detection of jar archives.
+  * Make some hardcoded limits configurable. (Closes: #795292)
+
+  [ Mattia Rizzolo ]
+  * Don't print the traceback when killed by KeyboardInterrupt.
+  * Add a --debugger option to dump the user into pdb in case of crashes.
+    (Closes: #796204)
+
+  [ Jérémy Bobbio ]
+  * Replace ssdeep by tlsh
+
+  [ Chris Lamb ]
+  * Unify to 4 spaces everywhere.
+  * Leave string interpolation to logging.$level(..) calls.
+  * Add missing 'sys' import.
+  * Specify source of 'Files' correct; was using "Changes" leaked from for loop.
+  * Remove unused and duplicate imports.
+  * Support passing directories as "foo/" or "foo".
+
+ -- Jérémy Bobbio <lunar@debian.org>  Fri, 21 Aug 2015 00:03:11 +0200
+
 diffoscope (30) unstable; urgency=low
 
   * Remove empty line at the beginning of HTML reports.

@@ -515,7 +515,7 @@ def output_header(css_url, print_func):
 def output_html(difference, css_url=None, print_func=None):
     if print_func is None:
         print_func = print
-    print_func = create_limited_print_func(print_func, Config.config().max_report_size)
+    print_func = create_limited_print_func(print_func, Config.general.max_report_size)
     try:
         output_header(css_url, print_func)
         output_difference(difference, print_func, [])

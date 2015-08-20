@@ -18,19 +18,24 @@
 # along with diffoscope.  If not, see <http://www.gnu.org/licenses/>.
 
 
-class Config(object):
-    _config = None
+# From http://stackoverflow.com/a/7864317
+# Credits to kylealanhale
+class classproperty(property):
+    def __get__(self, cls, owner):
+        return classmethod(self.fget).__get__(None, owner)()
 
+
+class Config(object):
     def __init__(self):
         self._max_diff_block_lines = 50
         self._max_diff_input_lines = 100000 # GNU diff cannot process arbitrary large files :(
         self._max_report_size = 2000 * 2 ** 10 # 2000 kB
 
-    @classmethod
-    def config(cls):
-        if not cls._config:
-            cls._config = Config()
-        return cls._config
+    @classproperty
+    def general(cls):
+        if not hasattr(cls, '_general_config'):
+            cls._general_config = Config()
+        return cls._general_config
 
     @property
     def max_diff_block_lines(self):

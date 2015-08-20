@@ -118,7 +118,7 @@ if __name__ == '__main__':
     except KeyboardInterrupt:
         logger.info('Keyboard Interrupt')
         sys.exit(2)
-    except:
+    except Exception:
         traceback.print_exc()
         if parsed_args.debugger:
             import pdb

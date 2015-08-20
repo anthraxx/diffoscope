@@ -21,7 +21,6 @@ import codecs
 import re
 from diffoscope.comparators.binary import File, needs_content
 from diffoscope.difference import Difference
-from diffoscope import logger
 
 
 class TextFile(File):

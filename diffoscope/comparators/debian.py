@@ -20,13 +20,11 @@
 from contextlib import contextmanager
 import os.path
 import re
-import sys
-from diffoscope import logger
 from diffoscope.changes import Changes
 import diffoscope.comparators
 from diffoscope.comparators.binary import File, needs_content
 from diffoscope.comparators.utils import Container
-from diffoscope.difference import Difference, get_source
+from diffoscope.difference import Difference
 
 
 DOT_CHANGES_FIELDS = [

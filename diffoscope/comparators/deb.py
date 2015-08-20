@@ -24,7 +24,6 @@ import os.path
 from debian.arfile import ArFile
 from diffoscope import logger
 from diffoscope.difference import Difference
-import diffoscope.comparators
 from diffoscope.comparators.binary import File, needs_content
 from diffoscope.comparators.utils import \
     Archive, ArchiveMember, get_ar_content

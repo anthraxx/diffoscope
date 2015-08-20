@@ -18,7 +18,6 @@
 # along with diffoscope.  If not, see <http://www.gnu.org/licenses/>.
 
 import re
-import subprocess
 from StringIO import StringIO
 from diffoscope import tool_required
 from diffoscope.comparators.binary import File, needs_content

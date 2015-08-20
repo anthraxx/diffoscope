@@ -17,12 +17,10 @@
 # You should have received a copy of the GNU General Public License
 # along with diffoscope.  If not, see <http://www.gnu.org/licenses/>.
 
-from contextlib import contextmanager
 import os.path
 import re
 import subprocess
 import diffoscope.comparators
-from diffoscope import tool_required
 from diffoscope.comparators.binary import File, needs_content
 from diffoscope.comparators.utils import Archive, get_compressed_content_name
 from diffoscope import logger, tool_required

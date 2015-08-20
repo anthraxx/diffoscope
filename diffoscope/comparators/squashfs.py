@@ -21,18 +21,14 @@
 from contextlib import contextmanager
 import re
 import subprocess
-import os.path
 import stat
-import diffoscope.comparators
 from diffoscope import logger, tool_required
 from diffoscope.comparators.binary import File, needs_content
 from diffoscope.comparators.device import Device
 from diffoscope.comparators.directory import Directory
-from diffoscope.comparators.libarchive import LibarchiveContainer
 from diffoscope.comparators.symlink import Symlink
 from diffoscope.comparators.utils import Archive, ArchiveMember, Command
 from diffoscope.difference import Difference
-from diffoscope import logger
 
 
 class SquashfsSuperblock(Command):

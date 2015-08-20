@@ -23,7 +23,6 @@ import os.path
 import pytest
 from diffoscope.comparators import specialize
 from diffoscope.comparators.binary import FilesystemFile
-from diffoscope.comparators.text import TextFile
 
 @pytest.fixture
 def ascii1():

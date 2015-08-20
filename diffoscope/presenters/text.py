@@ -20,8 +20,6 @@
 # along with diffoscope.  If not, see <http://www.gnu.org/licenses/>.
 
 import sys
-import difflib
-import locale
 from diffoscope import logger
 
 

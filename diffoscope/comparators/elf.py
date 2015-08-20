@@ -19,7 +19,6 @@
 
 import os.path
 import re
-import subprocess
 from diffoscope import tool_required
 from diffoscope.comparators.binary import File, needs_content
 from diffoscope.comparators.utils import get_ar_content, Command

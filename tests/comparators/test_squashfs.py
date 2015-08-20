@@ -18,10 +18,8 @@
 # You should have received a copy of the GNU General Public License
 # along with diffoscope.  If not, see <http://www.gnu.org/licenses/>.
 
-import codecs
 import os.path
 import pwd
-import shutil
 import pytest
 from diffoscope.comparators import specialize
 from diffoscope.comparators.binary import FilesystemFile

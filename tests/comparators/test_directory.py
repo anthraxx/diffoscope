@@ -24,7 +24,6 @@ import os
 import os.path
 import shutil
 import pytest
-import diffoscope.comparators.binary
 from diffoscope.comparators.directory import compare_directories
 from diffoscope.presenters.text import output_text
 

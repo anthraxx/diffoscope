@@ -32,16 +32,12 @@
 #
 
 from __future__ import print_function
-import os.path
 import cgi
 import re
-import subprocess
 import sys
-from tempfile import NamedTemporaryFile
 from xml.sax.saxutils import escape
 from diffoscope import logger, VERSION
 from diffoscope.config import Config
-from diffoscope.comparators.utils import make_temp_directory
 from diffoscope.presenters.icon import FAVICON_BASE64
 
 # minimum line size, we add a zero-sized breakable space every

@@ -19,9 +19,7 @@
 # along with diffoscope.  If not, see <http://www.gnu.org/licenses/>.
 
 import re
-import os.path
 from diffoscope.comparators.gzip import GzipFile
-from diffoscope.difference import Difference
 
 
 class IpkFile(GzipFile):

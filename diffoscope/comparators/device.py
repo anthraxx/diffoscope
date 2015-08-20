@@ -19,7 +19,6 @@
 
 from contextlib import contextmanager
 import os
-from stat import S_ISCHR, S_ISBLK
 import tempfile
 from diffoscope.comparators.binary import File, FilesystemFile, needs_content
 from diffoscope.comparators.utils import format_device

@@ -20,16 +20,13 @@
 
 from __future__ import absolute_import
 import os.path
-import re
 import subprocess
-from contextlib import contextmanager
 import rpm
 from diffoscope import logger, tool_required
-import diffoscope.comparators
 from diffoscope.comparators.rpm_fallback import AbstractRpmFile
-from diffoscope.comparators.binary import File, FilesystemFile, needs_content
+from diffoscope.comparators.binary import needs_content
 from diffoscope.comparators.utils import Archive, make_temp_directory
-from diffoscope.difference import Difference, get_source
+from diffoscope.difference import Difference
 
 def get_rpm_header(path, ts):
     header = ''

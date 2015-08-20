@@ -19,7 +19,6 @@
 # along with diffoscope.  If not, see <http://www.gnu.org/licenses/>.
 
 import os.path
-import shutil
 import subprocess
 import pytest
 from diffoscope.comparators import specialize

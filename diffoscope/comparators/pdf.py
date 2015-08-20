@@ -18,11 +18,10 @@
 # along with diffoscope.  If not, see <http://www.gnu.org/licenses/>.
 
 import re
-import subprocess
 from diffoscope import tool_required
 from diffoscope.comparators.binary import File, needs_content
 from diffoscope.comparators.utils import Command
-from diffoscope.difference import Difference, get_source
+from diffoscope.difference import Difference
 
 
 class Pdftotext(Command):

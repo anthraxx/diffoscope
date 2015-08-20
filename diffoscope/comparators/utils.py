@@ -20,8 +20,6 @@
 from abc import ABCMeta, abstractmethod
 from contextlib import contextmanager
 # The following would be shutil.which in Python 3.3
-import hashlib
-import re
 import os
 import shutil
 from stat import S_ISCHR, S_ISBLK
@@ -30,10 +28,9 @@ import subprocess
 import tempfile
 from threading import Thread
 import diffoscope.comparators
-from diffoscope.comparators.binary import \
-    File, compare_binary_files
+from diffoscope.comparators.binary import File
 from diffoscope.difference import Difference
-from diffoscope import logger, RequiredToolNotFound
+from diffoscope import logger
 
 
 @contextmanager

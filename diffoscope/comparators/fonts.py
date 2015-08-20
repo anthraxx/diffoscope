@@ -17,9 +17,7 @@
 # You should have received a copy of the GNU General Public License
 # along with diffoscope.  If not, see <http://www.gnu.org/licenses/>.
 
-import locale
 import re
-import subprocess
 from diffoscope import tool_required
 from diffoscope.comparators.binary import File, needs_content
 from diffoscope.comparators.utils import Command

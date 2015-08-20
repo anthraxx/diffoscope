@@ -21,7 +21,6 @@ from __future__ import absolute_import
 
 from contextlib import contextmanager
 import ctypes
-from itertools import dropwhile
 import os.path
 import libarchive
 from diffoscope import logger

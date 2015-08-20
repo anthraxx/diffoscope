@@ -20,7 +20,6 @@
 
 import codecs
 import os.path
-import shutil
 import pytest
 from diffoscope.comparators import specialize
 from diffoscope.comparators.binary import FilesystemFile

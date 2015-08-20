@@ -20,8 +20,6 @@
 from contextlib import contextmanager
 import os
 import os.path
-from functools import partial
-from tempfile import NamedTemporaryFile
 import re
 import subprocess
 import sys

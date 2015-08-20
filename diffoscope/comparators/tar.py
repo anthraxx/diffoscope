@@ -25,7 +25,6 @@ import sys
 import tarfile
 from diffoscope import logger
 from diffoscope.difference import Difference
-import diffoscope.comparators
 from diffoscope.comparators.binary import File, needs_content
 from diffoscope.comparators.device import Device
 from diffoscope.comparators.directory import Directory

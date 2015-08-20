@@ -70,7 +70,7 @@ class Getfacl(Command):
 
 
 def compare_meta(path1, path2):
-    logger.debug('compare_meta(%s, %s)' % (path1, path2))
+    logger.debug('compare_meta(%s, %s)', path1, path2)
     differences = []
     try:
         differences.append(Difference.from_command(Stat, path1, path2))

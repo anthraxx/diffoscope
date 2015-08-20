@@ -47,7 +47,7 @@ class GzipContainer(Archive):
     @tool_required('gzip')
     def extract(self, member_name, dest_dir):
         dest_path = os.path.join(dest_dir, member_name)
-        logger.debug('gzip extracting to %s' % dest_path)
+        logger.debug('gzip extracting to %s', dest_path)
         with open(dest_path, 'wb') as fp:
             subprocess.check_call(
                 ["gzip", "--decompress", "--stdout", self.path],

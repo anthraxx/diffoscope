@@ -67,7 +67,7 @@ def compare_root_paths(path1, path2):
 
 
 def compare_files(file1, file2, source=None):
-    logger.debug('compare files %s and %s' % (file1, file2))
+    logger.debug('compare files %s and %s', file1, file2)
     with file1.get_content(), file2.get_content():
         if file1.has_same_content_as(file2):
             logger.debug('same content, skipping')
@@ -122,7 +122,7 @@ def specialize(file):
             new_cls = type(cls.__name__, (cls, type(file)), {})
             file.__class__ = new_cls
             return file
-    logger.debug('Unidentified file. Magic says: %s' % file.magic_file_type)
+    logger.debug('Unidentified file. Magic says: %s', file.magic_file_type)
     return file
 
 

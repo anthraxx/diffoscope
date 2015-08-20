@@ -46,7 +46,7 @@ class XzContainer(Archive):
     @tool_required('xz')
     def extract(self, member_name, dest_dir):
         dest_path = os.path.join(dest_dir, member_name)
-        logger.debug('xz extracting to %s' % dest_path)
+        logger.debug('xz extracting to %s', dest_path)
         with open(dest_path, 'wb') as fp:
             subprocess.check_call(
                 ["xz", "--decompress", "--stdout", self.path],

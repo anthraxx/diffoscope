@@ -59,7 +59,7 @@ class HiFile(File):
                 buf = fp.read(32)
                 magic = struct.unpack_from('!I', buf)[0]
                 if magic != HI_MAGIC:
-                    logger.debug('Haskell interface magic mismatch. Found %d instead of %d' % (magic, HI_MAGIC))
+                    logger.debug('Haskell interface magic mismatch. Found %d instead of %d', magic, HI_MAGIC)
                     return False
                 # XXX: what is second field for?
                 version_found = map(unichr, struct.unpack_from('<I4xIB', buf, 16))

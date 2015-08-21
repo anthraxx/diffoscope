@@ -50,4 +50,4 @@ class Device(File):
         logger.debug('my_content %s', self.path)
         with open(self.path) as my_content, \
              open(other.path) as other_content:
-            return Difference.from_file(my_content, other_content, self.name, other.name, source=source, comment="symlink")
+            return Difference.from_file(my_content, other_content, self.name, other.name, source=source, comment="device")

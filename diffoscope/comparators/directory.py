@@ -131,7 +131,7 @@ class FilesystemDirectory(object):
                 differences.append(find_diff)
         except RequiredToolNotFound:
             logger.info("Unable to find 'getfacl'.")
-        differences.extend(compare_meta(self.path, other.path))
+        differences.extend(compare_meta(self.name, other.name))
         with DirectoryContainer(self).open() as my_container, \
              DirectoryContainer(other).open() as other_container:
             my_names = my_container.get_member_names()
@@ -142,7 +142,7 @@ class FilesystemDirectory(object):
                 with my_file.get_content(), other_file.get_content():
                     inner_difference = diffoscope.comparators.compare_files(
                                            my_file, other_file, source=name)
-                    meta_differences = compare_meta(my_file.path, other_file.path)
+                    meta_differences = compare_meta(my_file.name, other_file.name)
                     if meta_differences and not inner_difference:
                         inner_difference = Difference(None, my_file.path, other_file.path)
                     if inner_difference:

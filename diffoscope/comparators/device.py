@@ -32,9 +32,12 @@ class Device(File):
         return file.is_device()
 
     def get_device(self):
-        assert self is FilesystemFile
+        assert isinstance(self, FilesystemFile)
         st = os.lstat(self.name)
-        return st.st_mode, os.major(st.st_dev), os.minor(st.st_dev)
+        return st.st_mode, os.major(st.st_rdev), os.minor(st.st_rdev)
+
+    def has_same_content_as(self, other):
+        return self.get_device() == other.get_device()
 
     @contextmanager
     def get_content(self):
@@ -47,7 +50,6 @@ class Device(File):
 
     @needs_content
     def compare(self, other, source=None):
-        logger.debug('my_content %s', self.path)
         with open(self.path) as my_content, \
              open(other.path) as other_content:
             return Difference.from_file(my_content, other_content, self.name, other.name, source=source, comment="device")

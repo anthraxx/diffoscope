@@ -130,7 +130,7 @@ def format_device(mode, major, minor):
         kind = 'block'
     else:
         kind = 'weird'
-    return 'device:%s\nmajor: %d\n minor: %d\n' % (kind, major, minor)
+    return 'device:%s\nmajor: %d\nminor: %d\n' % (kind, major, minor)
 
 
 def get_compressed_content_name(path, expected_extension):

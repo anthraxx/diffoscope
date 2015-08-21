@@ -63,7 +63,7 @@ from diffoscope.comparators.zip import ZipFile
 def compare_root_paths(path1, path2):
     if os.path.isdir(path1) and os.path.isdir(path2):
         return compare_directories(path1, path2)
-    return compare_files(FilesystemFile(path1), FilesystemFile(path2))
+    return compare_files(specialize(FilesystemFile(path1)), specialize(FilesystemFile(path2)))
 
 
 def compare_files(file1, file2, source=None):

@@ -30,7 +30,7 @@ from threading import Thread
 import diffoscope.comparators
 from diffoscope.comparators.binary import File
 from diffoscope.difference import Difference
-from diffoscope import logger
+from diffoscope import logger, tool_required
 
 
 @contextmanager
@@ -42,6 +42,7 @@ def make_temp_directory():
         shutil.rmtree(temp_dir)
 
 
+@tool_required('ar')
 def get_ar_content(path):
     return subprocess.check_output(
         ['ar', 'tv', path], stderr=subprocess.STDOUT, shell=False).decode('utf-8')

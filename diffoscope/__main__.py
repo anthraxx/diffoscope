@@ -53,13 +53,16 @@ def create_parser():
     parser.add_argument('--max-report-size', metavar='BYTES',
                         dest='max_report_size', type=int,
                         help='maximum bytes written in report (default: %d)' %
-                        Config.general.max_report_size)
+                        Config.general.max_report_size,
+                        default=Config.general.max_report_size)
     parser.add_argument('--max-diff-block-lines', dest='max_diff_block_lines', type=int,
                         help='maximum number of lines per diff block (default: %d)' %
-                        Config.general.max_diff_block_lines)
+                        Config.general.max_diff_block_lines,
+                        default=Config.general.max_diff_input_lines)
     parser.add_argument('--max-diff-input-lines', dest='max_diff_input_lines', type=int,
                         help='maximum number of lines fed to diff (default: %d)' %
-                        Config.general.max_diff_input_lines)
+                        Config.general.max_diff_input_lines,
+                        default=Config.general.max_diff_input_lines)
     parser.add_argument('--css', metavar='url', dest='css_url',
                         help='link to an extra CSS for the HTML report')
     parser.add_argument('file1', help='first file to compare')

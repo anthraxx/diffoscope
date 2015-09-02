@@ -32,6 +32,18 @@ This will compare `build1.changes` and `build2.changes` and create
 External dependencies
 ---------------------
 
+Required Python modules:
+
+ * Available on PyPI: libarchive-c, python-debian.
+ * Magic-file-extension is built from file:
+   http://www.darwinsys.com/file/
+   Available on Debian and Fedora as python-magic.
+ * rpm-python is built from rpm:
+   http://rpm.org/
+   Available on Debian and Fedora as python-rpm.
+ * tlsh is available at:
+   https://github.com/trendmicro/tlsh
+
 The various comparators rely on external commands being available. To
 get a list of them, please run:
 

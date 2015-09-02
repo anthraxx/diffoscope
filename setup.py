@@ -33,7 +33,11 @@ setup(name='diffoscope',
       packages=find_packages(),
       tests_require=['pytest'],
       cmdclass = {'test': PyTest},
-      scripts=['diffoscope.py'],
+      entry_points={
+          'console_scripts': [
+              'diffoscope=diffoscope.__main__:main'
+              ],
+          },
       install_requires=[
           'python-debian',
           'magic',

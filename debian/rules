@@ -17,10 +17,6 @@ override_dh_gencontrol:
 		sed -e 's/\(^\| \)\(coreutils\|diffutils\|e2fsprogs\|findutils\|gzip\)\(,\|$$\)//g')" >> debian/diffoscope.substvars
 	dh_gencontrol -O--buildsystem=pybuild
 
-override_dh_install:
-	dh_install -O--buildsystem=pybuild
-	mv debian/diffoscope/usr/bin/diffoscope.py debian/diffoscope/usr/bin/diffoscope
-
 debian/diffoscope.1: debian/diffoscope.1.rst
 	rst2man $< $@
 

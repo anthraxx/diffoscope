@@ -91,7 +91,7 @@ class ListToolsAction(argparse.Action):
         sys.exit(0)
 
 
-def main():
+def run_diffoscope(parsed_args):
     Config.general.max_diff_block_lines = parsed_args.max_diff_block_lines
     Config.general.max_diff_input_lines = parsed_args.max_diff_input_lines
     Config.general.max_report_size = parsed_args.max_report_size
@@ -110,11 +110,14 @@ def main():
         return 1
     return 0
 
-if __name__ == '__main__':
+
+def main(args=None):
+    if args is None:
+        args = sys.argv[1:]
     try:
         parser = create_parser()
-        parsed_args = parser.parse_args(sys.argv[1:])
-        sys.exit(main())
+        parsed_args = parser.parse_args(args)
+        sys.exit(run_diffoscope(parsed_args))
     except KeyboardInterrupt:
         logger.info('Keyboard Interrupt')
         sys.exit(2)
@@ -124,3 +127,6 @@ if __name__ == '__main__':
             import pdb
             pdb.post_mortem()
         sys.exit(2)
+
+if __name__ == '__main__':
+    main()

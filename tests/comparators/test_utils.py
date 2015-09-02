@@ -23,6 +23,7 @@ import os.path
 import pytest
 from diffoscope.comparators import specialize
 from diffoscope.comparators.binary import FilesystemFile
+from diffoscope.config import Config
 
 @pytest.fixture
 def fuzzy_tar1():
@@ -48,3 +49,25 @@ def test_fuzzy_matching_only_once(fuzzy_tar1, fuzzy_tar3):
     differences = fuzzy_tar1.compare(fuzzy_tar3).details
     assert len(differences) == 2
     expected_diff = codecs.open(os.path.join(os.path.dirname(__file__), '../data/text_iso8859_expected_diff'), encoding='utf-8').read()
+
+@pytest.fixture
+def fuzzy_tar_in_tar1():
+    return specialize(FilesystemFile(os.path.join(os.path.dirname(__file__), '../data/fuzzy-tar-in-tar1.tar')))
+
+@pytest.fixture
+def fuzzy_tar_in_tar2():
+    return specialize(FilesystemFile(os.path.join(os.path.dirname(__file__), '../data/fuzzy-tar-in-tar2.tar')))
+
+def test_no_fuzzy_matching(monkeypatch, fuzzy_tar_in_tar1, fuzzy_tar_in_tar2):
+    monkeypatch.setattr(Config, 'fuzzy_threshold', 0)
+    difference = fuzzy_tar_in_tar1.compare(fuzzy_tar_in_tar2)
+    assert len(difference.details) == 1
+    assert difference.details[0].source1 == 'metadata'
+
+def test_no_fuzzy_matching_new_file(monkeypatch, fuzzy_tar_in_tar1, fuzzy_tar_in_tar2):
+    monkeypatch.setattr(Config, 'fuzzy_threshold', 0)
+    monkeypatch.setattr(Config, 'new_file', True)
+    difference = fuzzy_tar_in_tar1.compare(fuzzy_tar_in_tar2)
+    assert len(difference.details) == 3
+    assert difference.details[1].source2 == '/dev/null'
+    assert difference.details[2].source1 == '/dev/null'

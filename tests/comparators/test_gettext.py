@@ -22,8 +22,9 @@ import codecs
 import os.path
 import pytest
 from diffoscope.comparators import specialize
-from diffoscope.comparators.binary import FilesystemFile
+from diffoscope.comparators.binary import FilesystemFile, NonExistingFile
 from diffoscope.comparators.gettext import MoFile
+from diffoscope.config import Config
 
 TEST_FILE1_PATH = os.path.join(os.path.dirname(__file__), '../data/test1.mo')
 TEST_FILE2_PATH = os.path.join(os.path.dirname(__file__), '../data/test2.mo')
@@ -63,3 +64,8 @@ def test_charsets(mo_no_charset, mo_iso8859_1):
     difference = mo_no_charset.compare(mo_iso8859_1)
     expected_diff = codecs.open(os.path.join(os.path.dirname(__file__), '../data/mo_charsets_expected_diff'), encoding='utf-8').read()
     assert difference.details[0].unified_diff == expected_diff
+
+def test_compare_non_existing(monkeypatch, mo1):
+    monkeypatch.setattr(Config, 'new_file', True)
+    difference = mo1.compare(NonExistingFile('/nonexisting', mo1))
+    assert difference.source2 == '/nonexisting'

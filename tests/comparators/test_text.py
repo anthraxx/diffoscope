@@ -22,7 +22,8 @@ import codecs
 import os.path
 import pytest
 from diffoscope.comparators import specialize
-from diffoscope.comparators.binary import FilesystemFile
+from diffoscope.comparators.binary import FilesystemFile, NonExistingFile
+from diffoscope.config import Config
 
 @pytest.fixture
 def ascii1():
@@ -74,3 +75,8 @@ def test_difference_between_iso88591_and_unicode_only(iso8859, tmpdir):
     difference = iso8859.compare(utf8)
     assert difference.unified_diff is None
     assert difference.details[0].source1 == 'encoding'
+
+def test_compare_non_existing(monkeypatch, ascii1):
+    monkeypatch.setattr(Config.general, 'new_file', True)
+    difference = ascii1.compare(NonExistingFile('/nonexisting', ascii1))
+    assert difference.source2 == '/nonexisting'

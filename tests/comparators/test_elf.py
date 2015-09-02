@@ -21,8 +21,9 @@
 import os.path
 import pytest
 from diffoscope.comparators import specialize
-from diffoscope.comparators.binary import FilesystemFile
+from diffoscope.comparators.binary import FilesystemFile, NonExistingFile
 from diffoscope.comparators.elf import ElfFile, StaticLibFile
+from diffoscope.config import Config
 
 TEST_OBJ1_PATH = os.path.join(os.path.dirname(__file__), '../data/test1.o')
 TEST_OBJ2_PATH = os.path.join(os.path.dirname(__file__), '../data/test2.o')
@@ -45,6 +46,11 @@ def test_obj_no_differences(obj1):
 @pytest.fixture
 def obj_differences(obj1, obj2):
     return obj1.compare(obj2).details
+
+def test_obj_compare_non_existing(monkeypatch, obj1):
+    monkeypatch.setattr(Config, 'new_file', True)
+    difference = obj1.compare(NonExistingFile('/nonexisting', obj1))
+    assert difference.source2 == '/nonexisting'
 
 def test_diff(obj_differences):
     assert len(obj_differences) == 1
@@ -81,3 +87,8 @@ def test_lib_differences(lib_differences):
     assert 'objdump' in lib_differences[1].source1
     expected_objdump_diff = open(os.path.join(os.path.dirname(__file__), '../data/elf_lib_objdump_expected_diff')).read()
     assert lib_differences[1].unified_diff == expected_objdump_diff
+
+def test_lib_compare_non_existing(monkeypatch, lib1):
+    monkeypatch.setattr(Config, 'new_file', True)
+    difference = lib1.compare(NonExistingFile('/nonexisting', lib1))
+    assert difference.source2 == '/nonexisting'

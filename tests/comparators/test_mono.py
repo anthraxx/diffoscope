@@ -21,8 +21,9 @@
 import os.path
 import pytest
 from diffoscope.comparators import specialize
-from diffoscope.comparators.binary import FilesystemFile
+from diffoscope.comparators.binary import FilesystemFile, NonExistingFile
 from diffoscope.comparators.mono import MonoExeFile
+from diffoscope.config import Config
 from conftest import tool_missing
 
 # these were generated with:
@@ -56,3 +57,8 @@ def differences(exe1, exe2):
 def test_diff(differences):
     expected_diff = open(os.path.join(os.path.dirname(__file__), '../data/pe_expected_diff')).read()
     assert differences[0].unified_diff == expected_diff
+
+def test_compare_non_existing(monkeypatch, exe1):
+    monkeypatch.setattr(Config, 'new_file', True)
+    difference = exe1.compare(NonExistingFile('/nonexisting', exe1))
+    assert difference.source2 == '/nonexisting'

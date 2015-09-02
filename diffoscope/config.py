@@ -31,6 +31,7 @@ class Config(object):
         self._max_diff_input_lines = 100000 # GNU diff cannot process arbitrary large files :(
         self._max_report_size = 2000 * 2 ** 10 # 2000 kB
         self._fuzzy_threshold = 60
+        self._new_file = False
 
     @classproperty
     def general(cls):
@@ -69,3 +70,11 @@ class Config(object):
     @fuzzy_threshold.setter
     def fuzzy_threshold(self, value):
         self._fuzzy_threshold = value
+
+    @property
+    def new_file(self):
+        return self._new_file
+
+    @new_file.setter
+    def new_file(self, value):
+        self._new_file = value

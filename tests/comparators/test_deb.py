@@ -22,8 +22,9 @@ import os.path
 import pytest
 import diffoscope.comparators
 from diffoscope.comparators import specialize
-from diffoscope.comparators.binary import FilesystemFile
+from diffoscope.comparators.binary import FilesystemFile, NonExistingFile
 from diffoscope.comparators.deb import DebFile, Md5sumsFile, DebDataTarFile
+from diffoscope.config import Config
 
 TEST_FILE1_PATH = os.path.join(os.path.dirname(__file__), '../data/test1.deb')
 TEST_FILE2_PATH = os.path.join(os.path.dirname(__file__), '../data/test2.deb')
@@ -104,3 +105,9 @@ def test_skip_comparison_of_known_identical_files(deb1, deb2, monkeypatch):
     monkeypatch.setattr(diffoscope.comparators, 'compare_files', probe)
     deb1.compare(deb2)
     assert './usr/share/doc/test/README.Debian' not in compared
+
+def test_compare_non_existing(monkeypatch, deb1):
+    monkeypatch.setattr(Config.general, 'new_file', True)
+    difference = deb1.compare(NonExistingFile('/nonexisting', deb1))
+    assert difference.source2 == '/nonexisting'
+    assert difference.details[-1].source2 == '/dev/null'

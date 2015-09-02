@@ -21,8 +21,9 @@
 import os.path
 import pytest
 from diffoscope.comparators import specialize
-from diffoscope.comparators.binary import FilesystemFile
+from diffoscope.comparators.binary import FilesystemFile, NonExistingFile
 from diffoscope.comparators.java import ClassFile
+from diffoscope.config import Config
 
 TEST_FILE1_PATH = os.path.join(os.path.dirname(__file__), '../data/Test1.class')
 TEST_FILE2_PATH = os.path.join(os.path.dirname(__file__), '../data/Test2.class')
@@ -49,3 +50,8 @@ def differences(class1, class2):
 def test_diff(differences):
     expected_diff = open(os.path.join(os.path.dirname(__file__), '../data/class_expected_diff')).read()
     assert differences[0].unified_diff == expected_diff
+
+def test_compare_non_existing(monkeypatch, class1):
+    monkeypatch.setattr(Config, 'new_file', True)
+    difference = class1.compare(NonExistingFile('/nonexisting', class1))
+    assert difference.source2 == '/nonexisting'

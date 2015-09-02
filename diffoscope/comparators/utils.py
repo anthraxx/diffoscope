@@ -28,7 +28,8 @@ import subprocess
 import tempfile
 from threading import Thread
 import diffoscope.comparators
-from diffoscope.comparators.binary import File
+from diffoscope.comparators.binary import File, NonExistingFile
+from diffoscope.config import Config
 from diffoscope.difference import Difference
 from diffoscope import logger, tool_required
 
@@ -44,6 +45,8 @@ def make_temp_directory():
 
 @tool_required('ar')
 def get_ar_content(path):
+    if path == '/dev/null':
+        return ''
     return subprocess.check_output(
         ['ar', 'tv', path], stderr=subprocess.STDOUT, shell=False).decode('utf-8')
 
@@ -177,9 +180,16 @@ class Container(object):
         other_members = other.get_members()
         for name in sorted(set(my_members.iterkeys()).intersection(set(other_members.iterkeys()))):
             yield my_members.pop(name), other_members.pop(name), NO_COMMENT
-        for my_file, other_file, score in diffoscope.comparators.perform_fuzzy_matching(my_members.values(), other_members.values()):
+        for my_name, other_name, score in diffoscope.comparators.perform_fuzzy_matching(my_members, other_members):
             comment = 'Files similar despite different names (difference score: %d)' % score
-            yield my_file, other_file, comment
+            yield my_members.pop(my_name), other_members.pop(other_name), comment
+        if Config.general.new_file:
+            for my_name in set(my_members.iterkeys()) - set(other_members.iterkeys()):
+                my_file = my_members[my_name]
+                yield my_file, NonExistingFile('/dev/null', my_file), NO_COMMENT
+            for other_name in set(other_members.iterkeys()) - set(my_members.iterkeys()):
+                other_file = other_members[other_name]
+                yield NonExistingFile('/dev/null', other_file), other_file, NO_COMMENT
 
     def compare(self, other, source=None):
         differences = []
@@ -238,7 +248,9 @@ class Archive(Container):
 
     @contextmanager
     def open(self):
-        if self._archive is not None:
+        if isinstance(self.source, NonExistingFile):
+            yield NonExistingArchive(self.source)
+        elif self._archive is not None:
             yield self
         else:
             with self.source.get_content():
@@ -271,3 +283,43 @@ class Archive(Container):
 
     def get_member(self, member_name):
         return ArchiveMember(self, member_name)
+
+
+class NonExistingArchiveLikeObject(object):
+    def getnames(self):
+        return []
+
+    def list(self, *args, **kwargs):
+        return ''
+
+    def close(self):
+        pass
+
+
+class NonExistingArchive(Archive):
+    @property
+    def archive(self):
+        return NonExistingArchiveLikeObject()
+
+    def open_archive(self):
+        # should never be called
+        raise NotImplemented
+
+    def close_archive(self):
+        # should never be called
+        raise NotImplemented
+
+    def get_member_names(self):
+        return []
+
+    def extract(self, member_name, dest_dir):
+        # should never be called
+        raise NotImplemented
+
+    def get_member(self, member_name):
+        return NonExistingFile('/dev/null')
+
+    # Be nice to gzip and the likes
+    @property
+    def path(self):
+        return '/dev/null'

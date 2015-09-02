@@ -220,6 +220,12 @@ def make_feeder_from_unicode(content):
     return feeder
 
 
+def empty_file_feeder():
+    def feeder(f):
+        return False
+    return feeder
+
+
 def make_feeder_from_file(in_file, filter=lambda buf: buf.encode('utf-8')):
     def feeder(out_file):
         line_count = 0
@@ -235,6 +241,7 @@ def make_feeder_from_file(in_file, filter=lambda buf: buf.encode('utf-8')):
             end_nl = buf[-1] == '\n'
         return end_nl
     return feeder
+
 
 def make_feeder_from_command(command):
     def feeder(out_file):
@@ -264,7 +271,10 @@ class Difference(object):
     def __init__(self, unified_diff, path1, path2, source=None, comment=None):
         self._comments = []
         if comment:
-            self._comments.append(comment)
+            if type(comment) is list:
+                self._comments.extend(comment)
+            else:
+                self._comments.append(comment)
         self._unified_diff = unified_diff
         # allow to override declared file paths, useful when comparing
         # tempfiles
@@ -314,22 +324,30 @@ class Difference(object):
         if 'command_args' in kwargs:
             command_args = kwargs['command_args']
             del kwargs['command_args']
-        command1 = cls(path1, *command_args)
-        command2 = cls(path2, *command_args)
+        command1 = None
+        if path1 == '/dev/null':
+            feeder1 = empty_file_feeder()
+        else:
+            command1 = cls(path1, *command_args)
+            feeder1 = make_feeder_from_command(command1)
+        command2 = None
+        if path2 == '/dev/null':
+            feeder2 = empty_file_feeder()
+        else:
+            command2 = cls(path2, *command_args)
+            feeder2 = make_feeder_from_command(command2)
         if 'source' not in kwargs:
-            kwargs['source'] = ' '.join(map(lambda x: '{}' if x == command1.path else x, command1.cmdline()))
-        difference = Difference.from_feeder(make_feeder_from_command(command1),
-                                            make_feeder_from_command(command2),
-                                            path1, path2, *args, **kwargs)
+            source_cmd = command1 or command2
+            kwargs['source'] = ' '.join(map(lambda x: '{}' if x == source_cmd.path else x, source_cmd.cmdline()))
+        difference = Difference.from_feeder(feeder1, feeder2, path1, path2, *args, **kwargs)
         if not difference:
             return None
-        if command1.stderr_content or command2.stderr_content:
-            if command1.stderr_content:
-                difference.add_comment('stderr from `%s`:' % ' '.join(command1.cmdline()))
-                difference.add_comment(command1.stderr_content)
-            if command2.stderr_content:
-                difference.add_comment('stderr from `%s`:' % ' '.join(command2.cmdline()))
-                difference.add_comment(command2.stderr_content)
+        if command1 and command1.stderr_content:
+            difference.add_comment('stderr from `%s`:' % ' '.join(command1.cmdline()))
+            difference.add_comment(command1.stderr_content)
+        if command2 and command2.stderr_content:
+            difference.add_comment('stderr from `%s`:' % ' '.join(command2.cmdline()))
+            difference.add_comment(command2.stderr_content)
         return difference
 
     @property
@@ -364,8 +382,41 @@ class Difference(object):
             raise TypeError("'differences' must contains Difference objects'")
         self._details.extend(differences)
 
+    def get_reverse(self):
+        if self._unified_diff is None:
+            unified_diff = None
+        else:
+            unified_diff = reverse_unified_diff(self._unified_diff)
+        logger.debug('reverse orig %s %s', self._source1, self._source2)
+        difference = Difference(unified_diff, None, None, source=[self._source2, self._source1], comment=self._comments)
+        difference.add_details([d.get_reverse() for d in self._details])
+        return difference
+
 
 def get_source(path1, path2):
     if os.path.basename(path1) == os.path.basename(path2):
         return os.path.basename(path1)
     return None
+
+
+def reverse_unified_diff(diff):
+    res = []
+    for line in diff.splitlines(True): # keepends=True
+        found = DiffParser.RANGE_RE.match(line)
+        if found:
+            before = found.group('start2')
+            if found.group('len2') is not None:
+                before += ',' + found.group('len2')
+            after = found.group('start1')
+            if found.group('len1') is not None:
+                after += ',' + found.group('len1')
+            res.append('@@ -%s +%s @@\n' % (before, after))
+        elif line.startswith('-'):
+            res.append('+')
+            res.append(line[1:])
+        elif line.startswith('+'):
+            res.append('-')
+            res.append(line[1:])
+        else:
+            res.append(line)
+    return ''.join(res)

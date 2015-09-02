@@ -68,6 +68,8 @@ def create_parser():
                              '(0 to disable, %d is default, 400 is high fuzziness)' %
                              (Config.general.fuzzy_threshold),
                         default=Config.general.fuzzy_threshold)
+    parser.add_argument('--new-file', dest='new_file', action='store_true',
+                        help='treat absent files as empty')
     parser.add_argument('--css', metavar='url', dest='css_url',
                         help='link to an extra CSS for the HTML report')
     parser.add_argument('file1', help='first file to compare')
@@ -107,6 +109,7 @@ def run_diffoscope(parsed_args):
     Config.general.max_diff_input_lines = parsed_args.max_diff_input_lines
     Config.general.max_report_size = parsed_args.max_report_size
     Config.general.fuzzy_threshold = parsed_args.fuzzy_threshold
+    Config.general.new_file = parsed_args.new_file
     if parsed_args.debug:
         logger.setLevel(logging.DEBUG)
     set_locale()

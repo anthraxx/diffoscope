@@ -22,8 +22,9 @@ import os.path
 import pwd
 import pytest
 from diffoscope.comparators import specialize
-from diffoscope.comparators.binary import FilesystemFile
+from diffoscope.comparators.binary import FilesystemFile, NonExistingFile
 from diffoscope.comparators.squashfs import SquashfsFile
+from diffoscope.config import Config
 from conftest import tool_missing, try_except
 
 TEST_FILE1_PATH = os.path.join(os.path.dirname(__file__), '../data/test1.squashfs')
@@ -77,3 +78,9 @@ def test_compressed_files(differences):
     assert differences[3].source2 == '/text'
     expected_diff = open(os.path.join(os.path.dirname(__file__), '../data/text_ascii_expected_diff')).read()
     assert differences[3].unified_diff == expected_diff
+
+def test_compare_non_existing(monkeypatch, squashfs1):
+    monkeypatch.setattr(Config.general, 'new_file', True)
+    difference = squashfs1.compare(NonExistingFile('/nonexisting', squashfs1))
+    assert difference.source2 == '/nonexisting'
+    assert difference.details[-1].source2 == '/dev/null'

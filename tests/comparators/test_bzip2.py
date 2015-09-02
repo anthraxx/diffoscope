@@ -22,8 +22,9 @@ import os.path
 import shutil
 import pytest
 from diffoscope.comparators import specialize
-from diffoscope.comparators.binary import FilesystemFile
+from diffoscope.comparators.binary import FilesystemFile, NonExistingFile
 from diffoscope.comparators.bzip2 import Bzip2File
+from diffoscope.config import Config
 
 TEST_FILE1_PATH = os.path.join(os.path.dirname(__file__), '../data/test1.bz2')
 TEST_FILE2_PATH = os.path.join(os.path.dirname(__file__), '../data/test2.bz2')
@@ -67,3 +68,8 @@ def test_content_source_without_extension(tmpdir):
 def test_content_diff(differences):
     expected_diff = open(os.path.join(os.path.dirname(__file__), '../data/text_ascii_expected_diff')).read()
     assert differences[0].unified_diff == expected_diff
+
+def test_compare_non_existing(monkeypatch, bzip1):
+    monkeypatch.setattr(Config, 'new_file', True)
+    difference = bzip1.compare(NonExistingFile('/nonexisting', bzip1))
+    assert difference.source2 == '/nonexisting'

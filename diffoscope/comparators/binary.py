@@ -26,8 +26,10 @@ import os.path
 import re
 from stat import S_ISCHR, S_ISBLK
 import subprocess
+import tempfile
 import tlsh
 import magic
+from diffoscope.config import Config
 from diffoscope.difference import Difference
 from diffoscope import tool_required, RequiredToolNotFound, logger
 
@@ -197,6 +199,7 @@ class File(object):
             return difference
         return self.compare_bytes(other, source)
 
+
 class FilesystemFile(File):
     def __init__(self, path):
         self._path = None
@@ -220,3 +223,78 @@ class FilesystemFile(File):
     def is_device(self):
         mode = os.lstat(self._name).st_mode
         return S_ISCHR(mode) or S_ISBLK(mode)
+
+
+class NonExistingFile(File):
+    """Represents a missing file when comparing containers"""
+
+    @staticmethod
+    def recognizes(file):
+        if isinstance(file, FilesystemFile) and not os.path.lexists(file.name):
+            assert Config.general.new_file, '%s does not exist' % file.name
+            return True
+        return False
+
+    def __init__(self, path, other_file=None):
+        self._path = None
+        self._name = path
+        self._other_file = other_file
+
+    @property
+    def other_file(self):
+        return self._other_file
+
+    @other_file.setter
+    def other_file(self, value):
+        self._other_file = value
+
+    def has_same_content_as(self, other):
+        return False
+
+    @contextmanager
+    def get_content(self):
+        self._path = '/dev/null'
+        yield
+        self._path = None
+
+    def is_directory(self):
+        return False
+
+    def is_symlink(self):
+        return False
+
+    def is_device(self):
+        return False
+
+    def compare(self, other, source=None):
+        # So now that comparators are all object-oriented, we don't have any clue on how to
+        # perform a meaningful comparison right here. So we are good do the comparison backward
+        # (where knowledge of the file format lies) and and then reverse it.
+        if isinstance(other, NonExistingFile):
+            return Difference(None, self.name, other.name, comment='Trying to compare two non-existing files.')
+        logger.debug('Performing backward comparison')
+        backward_diff = other.compare(self, source)
+        if not backward_diff:
+            return None
+        return backward_diff.get_reverse()
+
+    # Be nice to text comparisons
+    @property
+    def encoding(self):
+        return self._other_file.encoding
+
+    # Be nice to device comparisons
+    def get_device(self):
+        return ''
+
+    # Be nice to metadata comparisons
+    @property
+    def magic_file_type(self):
+        return self._other_file.magic_file_type
+
+    # Be nice to .changes comparisons
+    @property
+    def changes(self):
+        class DummyChanges(dict):
+            get_as_string = lambda self, _: ''
+        return DummyChanges(Files=[], Version='')

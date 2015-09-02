@@ -21,8 +21,9 @@
 import os.path
 import pytest
 from diffoscope.comparators import specialize
-from diffoscope.comparators.binary import FilesystemFile
+from diffoscope.comparators.binary import FilesystemFile, NonExistingFile
 from diffoscope.comparators.ipk import IpkFile
+from diffoscope.config import Config
 
 TEST_FILE1_PATH = os.path.join(os.path.dirname(__file__), '../data/base-files_157-r45695_ar71xx.ipk')
 TEST_FILE2_PATH = os.path.join(os.path.dirname(__file__), '../data/base-files_157-r45918_ar71xx.ipk')
@@ -54,3 +55,9 @@ def test_metadata(differences):
 def test_compressed_files(differences):
     assert differences[1].details[1].source1 == './control.tar.gz'
     assert differences[1].details[2].source1 == './data.tar.gz'
+
+def test_compare_non_existing(monkeypatch, ipk1):
+    monkeypatch.setattr(Config.general, 'new_file', True)
+    difference = ipk1.compare(NonExistingFile('/nonexisting', ipk1))
+    assert difference.source2 == '/nonexisting'
+    assert difference.details[-1].source2 == '/dev/null'

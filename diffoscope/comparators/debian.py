@@ -22,8 +22,9 @@ import os.path
 import re
 from diffoscope.changes import Changes
 import diffoscope.comparators
-from diffoscope.comparators.binary import File, needs_content
+from diffoscope.comparators.binary import File, NonExistingFile, needs_content
 from diffoscope.comparators.utils import Container, NO_COMMENT
+from diffoscope.config import Config
 from diffoscope.difference import Difference
 
 
@@ -121,10 +122,17 @@ class DotChangesFile(File):
     def compare_details(self, other, source=None):
         differences = []
 
-        for field in DOT_CHANGES_FIELDS:
+        for field in sorted(set(self.changes.keys()).union(set(other.changes.keys()))):
+            if field.startswith('Checksums-') or field == 'Files':
+                continue
+            my_value = ''
+            if field in self.changes:
+                my_value = self.changes.get_as_string(field).lstrip()
+            other_value = ''
+            if field in other.changes:
+                other_value = other.changes.get_as_string(field).lstrip()
             differences.append(Difference.from_unicode(
-                                   self.changes[field].lstrip(),
-                                   other.changes[field].lstrip(),
+                                   my_value, other_value,
                                    self.path, other.path, source=field))
         # compare Files as string
         differences.append(Difference.from_unicode(self.changes.get_as_string('Files'),

@@ -29,3 +29,31 @@ def test_non_existing_files(capsys):
     out, err = capsys.readouterr()
     assert '/nonexisting1: No such file or directory' in err
     assert '/nonexisting2: No such file or directory' in err
+
+def test_non_existing_left_with_new_file(capsys):
+    args = ['--new-file', '/nonexisting1', __file__]
+    with pytest.raises(SystemExit) as excinfo:
+        main(args)
+    assert excinfo.value.code == 1
+    out, err = capsys.readouterr()
+    assert '--- /nonexisting1' in out
+    assert ('+++ %s' % __file__) in out
+
+def test_non_existing_right_with_new_file(capsys):
+    args = ['--new-file', __file__, '/nonexisting2']
+    with pytest.raises(SystemExit) as excinfo:
+        main(args)
+    assert excinfo.value.code == 1
+    out, err = capsys.readouterr()
+    assert ('--- %s' % __file__) in out
+    assert '+++ /nonexisting2' in out
+
+def test_non_existing_files_with_new_file(capsys):
+    args = ['--new-file', '/nonexisting1', '/nonexisting2']
+    with pytest.raises(SystemExit) as excinfo:
+        main(args)
+    assert excinfo.value.code == 1
+    out, err = capsys.readouterr()
+    assert '--- /nonexisting1' in out
+    assert '+++ /nonexisting2' in out
+    assert 'Trying to compare two non-existing files.' in out

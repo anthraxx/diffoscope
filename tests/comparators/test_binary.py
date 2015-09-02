@@ -23,7 +23,7 @@ import subprocess
 import pytest
 from diffoscope.comparators import specialize
 import diffoscope.comparators.binary
-from diffoscope.comparators.binary import File, FilesystemFile
+from diffoscope.comparators.binary import File, FilesystemFile, NonExistingFile
 from diffoscope.difference import Difference
 from diffoscope import RequiredToolNotFound, tool_required
 
@@ -70,6 +70,10 @@ def test_compare_with_xxd(binary1, binary2):
     difference = binary1.compare_bytes(binary2)
     expected_diff = open(os.path.join(os.path.dirname(__file__), '../data/binary_expected_diff')).read()
     assert difference.unified_diff == expected_diff
+
+def test_compare_non_existing_with_xxd(binary1):
+    difference = binary1.compare_bytes(NonExistingFile('/nonexisting', binary1))
+    assert difference.source2 == '/dev/null'
 
 @pytest.fixture
 def xxd_not_found(monkeypatch):
@@ -133,3 +137,9 @@ def test_with_compare_details_and_tool_not_found(monkeypatch):
     assert 'nonexistent' in difference.comment
     assert 'some-package' in difference.comment
     assert difference.unified_diff == expected_diff
+
+def test_compare_two_nonexisting_files():
+    file1 = NonExistingFile('/nonexisting1')
+    file2 = NonExistingFile('/nonexisting2')
+    difference = file1.compare(file2)
+    assert 'non-existing' in difference.comment

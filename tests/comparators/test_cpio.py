@@ -21,8 +21,9 @@
 import os.path
 import pytest
 from diffoscope.comparators import specialize
-from diffoscope.comparators.binary import FilesystemFile
+from diffoscope.comparators.binary import FilesystemFile, NonExistingFile
 from diffoscope.comparators.cpio import CpioFile
+from diffoscope.config import Config
 
 TEST_FILE1_PATH = os.path.join(os.path.dirname(__file__), '../data/test1.cpio')
 TEST_FILE2_PATH = os.path.join(os.path.dirname(__file__), '../data/test2.cpio')
@@ -61,3 +62,9 @@ def test_compressed_files(differences):
     assert differences[2].source2 == 'dir/text'
     expected_diff = open(os.path.join(os.path.dirname(__file__), '../data/text_ascii_expected_diff')).read()
     assert differences[2].unified_diff == expected_diff
+
+def test_compare_non_existing(monkeypatch, cpio1):
+    monkeypatch.setattr(Config.general, 'new_file', True)
+    difference = cpio1.compare(NonExistingFile('/nonexisting', cpio1))
+    assert difference.source2 == '/nonexisting'
+    assert difference.details[-1].source2 == '/dev/null'

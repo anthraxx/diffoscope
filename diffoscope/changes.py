@@ -127,6 +127,9 @@ class Changes(object):
         return [os.path.join(self._directory, z['name'])
                 for z in self._data['Files']]
 
+    def keys(self):
+        return self._data.keys()
+
     def __getitem__(self, key):
         """
         Returns the value of the rfc822 key specified.

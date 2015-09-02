@@ -21,8 +21,9 @@
 import os.path
 import pytest
 from diffoscope.comparators import specialize
-from diffoscope.comparators.binary import FilesystemFile
+from diffoscope.comparators.binary import FilesystemFile, NonExistingFile
 from diffoscope.comparators.rpm import RpmFile
+from diffoscope.config import Config
 from conftest import tool_missing
 
 TEST_FILE1_PATH = os.path.join(os.path.dirname(__file__), '../data/test1.rpm')
@@ -66,3 +67,9 @@ def test_content(differences):
     assert differences[1].details[1].source1 == './dir/text'
     expected_diff = open(os.path.join(os.path.dirname(__file__), '../data/text_ascii_expected_diff')).read()
     assert differences[1].details[1].unified_diff == expected_diff
+
+def test_compare_non_existing(monkeypatch, rpm1):
+    monkeypatch.setattr(Config.general, 'new_file', True)
+    difference = rpm1.compare(NonExistingFile('/nonexisting', rpm1))
+    assert difference.source2 == '/nonexisting'
+    assert difference.details[-1].source2 == '/dev/null'

@@ -21,8 +21,9 @@
 import os.path
 import pytest
 from diffoscope.comparators import specialize
-from diffoscope.comparators.binary import FilesystemFile
+from diffoscope.comparators.binary import FilesystemFile, NonExistingFile
 from diffoscope.comparators.pdf import PdfFile
+from diffoscope.config import Config
 from conftest import tool_missing
 
 TEST_FILE1_PATH = os.path.join(os.path.dirname(__file__), '../data/test1.pdf')
@@ -58,3 +59,8 @@ def test_text_diff(differences):
 def test_internal_diff(differences):
     expected_diff = open(os.path.join(os.path.dirname(__file__), '../data/pdf_internal_expected_diff')).read()
     assert differences[1].unified_diff == expected_diff
+
+def test_compare_non_existing(monkeypatch, pdf1):
+    monkeypatch.setattr(Config, 'new_file', True)
+    difference = pdf1.compare(NonExistingFile('/nonexisting', pdf1))
+    assert difference.source2 == '/nonexisting'

@@ -24,8 +24,9 @@ import os.path
 import shutil
 import pytest
 from diffoscope.comparators import specialize
-from diffoscope.comparators.binary import FilesystemFile
+from diffoscope.comparators.binary import FilesystemFile, NonExistingFile
 from diffoscope.comparators.debian import DotChangesFile
+from diffoscope.config import Config
 from diffoscope.presenters.text import output_text
 
 TEST_DOT_CHANGES_FILE1_PATH = os.path.join(os.path.dirname(__file__), '../data/test1.changes')
@@ -71,3 +72,10 @@ def test_description(differences):
 
 def test_internal_diff(differences):
     assert differences[2].source1 == 'test_1_all.deb'
+
+def test_compare_non_existing(monkeypatch, dot_changes1):
+    monkeypatch.setattr(Config.general, 'new_file', True)
+    difference = dot_changes1.compare(NonExistingFile('/nonexisting', dot_changes1))
+    output_text(difference, print_func=print)
+    assert difference.source2 == '/nonexisting'
+    assert difference.details[-1].source2 == '/dev/null'

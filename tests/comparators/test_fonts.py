@@ -21,8 +21,9 @@
 import os.path
 import pytest
 from diffoscope.comparators import specialize
-from diffoscope.comparators.binary import FilesystemFile
+from diffoscope.comparators.binary import FilesystemFile, NonExistingFile
 from diffoscope.comparators.fonts import TtfFile
+from diffoscope.config import Config
 from conftest import tool_missing
 
 TEST_FILE1_PATH = os.path.join(os.path.dirname(__file__), '../data/Samyak-Malayalam1.ttf')
@@ -51,3 +52,8 @@ def differences(ttf1, ttf2):
 def test_diff(differences):
     expected_diff = open(os.path.join(os.path.dirname(__file__), '../data/ttf_expected_diff')).read()
     assert differences[0].unified_diff == expected_diff
+
+def test_compare_non_existing(monkeypatch, ttf1):
+    monkeypatch.setattr(Config, 'new_file', True)
+    difference = ttf1.compare(NonExistingFile('/nonexisting', ttf1))
+    assert difference.source2 == '/nonexisting'

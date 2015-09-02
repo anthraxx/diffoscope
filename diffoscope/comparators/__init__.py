@@ -28,7 +28,7 @@ from diffoscope import logger, tool_required
 from diffoscope.config import Config
 from diffoscope.difference import Difference
 from diffoscope.comparators.binary import \
-    File, FilesystemFile, compare_binary_files
+    File, FilesystemFile, NonExistingFile, compare_binary_files
 from diffoscope.comparators.bzip2 import Bzip2File
 from diffoscope.comparators.java import ClassFile
 from diffoscope.comparators.cpio import CpioFile
@@ -61,15 +61,22 @@ from diffoscope.comparators.xz import XzFile
 from diffoscope.comparators.zip import ZipFile
 
 
-def compare_root_paths(path1, path2):
-    if not all(map(os.path.lexists, (path1, path2))):
-        for path in (path1, path2):
+def bail_if_non_existing(*paths):
+    if not all(map(os.path.lexists, paths)):
+        for path in paths:
             if not os.path.lexists(path):
                 sys.stderr.write('%s: %s: No such file or directory\n' % (sys.argv[0], path))
         sys.exit(2)
+
+
+def compare_root_paths(path1, path2):
+    if not Config.general.new_file:
+        bail_if_non_existing(path1, path2)
     if os.path.isdir(path1) and os.path.isdir(path2):
         return compare_directories(path1, path2)
-    return compare_files(specialize(FilesystemFile(path1)), specialize(FilesystemFile(path2)))
+    file1 = specialize(FilesystemFile(path1))
+    file2 = specialize(FilesystemFile(path2))
+    return compare_files(file1, file2)
 
 
 def compare_files(file1, file2, source=None):
@@ -80,7 +87,11 @@ def compare_files(file1, file2, source=None):
             return None
         specialize(file1)
         specialize(file2)
-        if file1.__class__.__name__ != file2.__class__.__name__:
+        if isinstance(file1, NonExistingFile):
+            file1.other_file = file2
+        elif isinstance(file2, NonExistingFile):
+            file2.other_file = file1
+        elif file1.__class__.__name__ != file2.__class__.__name__:
             return file1.compare_bytes(file2, source)
         return file1.compare(file2, source)
 
@@ -88,6 +99,7 @@ def compare_files(file1, file2, source=None):
 # The order matters! They will be tried in turns.
 FILE_CLASSES = (
     Directory,
+    NonExistingFile,
     Symlink,
     Device,
     DotChangesFile,
@@ -132,23 +144,25 @@ def specialize(file):
     return file
 
 
-def perform_fuzzy_matching(files1, files2):
+def perform_fuzzy_matching(members1, members2):
     if Config.general.fuzzy_threshold == 0:
         return
-    files2 = set(files2)
     already_compared = set()
-    for file1 in filter(lambda f: not f.is_directory(), files1):
-        if not file1.fuzzy_hash:
+    # Perform local copies because they will be modified by consumer
+    members1 = dict(members1)
+    members2 = dict(members2)
+    for name1, file1 in members1.iteritems():
+        if file1.is_directory() or not file1.fuzzy_hash:
             continue
         comparisons = []
-        for file2 in files2 - already_compared:
-            if file2.is_directory() or not file2.fuzzy_hash:
+        for name2, file2 in members2.iteritems():
+            if name2 in already_compared or file2.is_directory() or not file2.fuzzy_hash:
                 continue
-            comparisons.append((tlsh.diff(file1.fuzzy_hash, file2.fuzzy_hash), file2))
+            comparisons.append((tlsh.diff(file1.fuzzy_hash, file2.fuzzy_hash), name2))
         if comparisons:
             comparisons.sort(key=operator.itemgetter(0))
-            score, file2 = comparisons[0]
-            logger.debug('fuzzy top match %s %s: %d difference score', file1.name, file2.name, score)
+            score, name2 = comparisons[0]
+            logger.debug('fuzzy top match %s %s: %d difference score', name1, name2, score)
             if score < Config.general.fuzzy_threshold:
-                yield file1, file2, score
-                already_compared.add(file2)
+                yield name1, name2, score
+                already_compared.add(name2)

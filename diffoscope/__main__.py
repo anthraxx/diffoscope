@@ -58,11 +58,16 @@ def create_parser():
     parser.add_argument('--max-diff-block-lines', dest='max_diff_block_lines', type=int,
                         help='maximum number of lines per diff block (default: %d)' %
                         Config.general.max_diff_block_lines,
-                        default=Config.general.max_diff_input_lines)
+                        default=Config.general.max_diff_block_lines)
     parser.add_argument('--max-diff-input-lines', dest='max_diff_input_lines', type=int,
                         help='maximum number of lines fed to diff (default: %d)' %
                         Config.general.max_diff_input_lines,
                         default=Config.general.max_diff_input_lines)
+    parser.add_argument('--fuzzy-threshold', dest='fuzzy_threshold', type=int,
+                        help='threshold for fuzzy-matching '
+                             '(0 to disable, %d is default, 400 is high fuzziness)' %
+                             (Config.general.fuzzy_threshold),
+                        default=Config.general.fuzzy_threshold)
     parser.add_argument('--css', metavar='url', dest='css_url',
                         help='link to an extra CSS for the HTML report')
     parser.add_argument('file1', help='first file to compare')
@@ -101,6 +106,7 @@ def run_diffoscope(parsed_args):
     Config.general.max_diff_block_lines = parsed_args.max_diff_block_lines
     Config.general.max_diff_input_lines = parsed_args.max_diff_input_lines
     Config.general.max_report_size = parsed_args.max_report_size
+    Config.general.fuzzy_threshold = parsed_args.fuzzy_threshold
     if parsed_args.debug:
         logger.setLevel(logging.DEBUG)
     set_locale()

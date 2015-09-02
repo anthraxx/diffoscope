@@ -25,6 +25,7 @@ import re
 import sys
 import tlsh
 from diffoscope import logger, tool_required
+from diffoscope.config import Config
 from diffoscope.difference import Difference
 from diffoscope.comparators.binary import \
     File, FilesystemFile, compare_binary_files
@@ -126,10 +127,9 @@ def specialize(file):
     return file
 
 
-fuzzy_threshold = 60
-
-
 def perform_fuzzy_matching(files1, files2):
+    if Config.general.fuzzy_threshold == 0:
+        return
     files2 = set(files2)
     already_compared = set()
     for file1 in filter(lambda f: not f.is_directory(), files1):
@@ -144,6 +144,6 @@ def perform_fuzzy_matching(files1, files2):
             comparisons.sort(key=operator.itemgetter(0))
             score, file2 = comparisons[0]
             logger.debug('fuzzy top match %s %s: %d difference score', file1.name, file2.name, score)
-            if score < fuzzy_threshold:
+            if score < Config.general.fuzzy_threshold:
                 yield file1, file2, score
                 already_compared.add(file2)

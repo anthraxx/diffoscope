@@ -41,23 +41,23 @@ class Config(object):
     def max_diff_block_lines(self):
         return self._max_diff_block_lines
 
-    @property
-    def max_diff_input_lines(self):
-        return self._max_diff_input_lines
-
-    @property
-    def max_report_size(self):
-        return self._max_report_size
-
     @max_diff_block_lines.setter
     def max_diff_block_lines(self, value):
         if value:
             self._max_diff_block_lines = value
 
+    @property
+    def max_diff_input_lines(self):
+        return self._max_diff_input_lines
+
     @max_diff_input_lines.setter
     def max_diff_input_lines(self, value):
         if value:
             self._max_diff_input_lines = value
+
+    @property
+    def max_report_size(self):
+        return self._max_report_size
 
     @max_report_size.setter
     def max_report_size(self, value):

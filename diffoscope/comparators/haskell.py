@@ -18,6 +18,7 @@
 # along with diffoscope.  If not, see <http://www.gnu.org/licenses/>.
 
 import re
+import platform
 import struct
 import subprocess
 from diffoscope import tool_required
@@ -33,8 +34,12 @@ class ShowIface(Command):
         return ['ghc', '--show-iface', self.path]
 
 
-HI_MAGIC = 33214052
-
+HI_MAGIC_32 = struct.pack('!I', 0x1face)
+HI_MAGIC_64 = struct.pack('!I', 0x1face64)
+if platform.architecture()[0] == '32bit':
+    HI_MAGIC = HI_MAGIC_32
+else:
+    HI_MAGIC = HI_MAGIC_64
 
 class HiFile(File):
     RE_FILE_EXTENSION = re.compile(r'\.(p_|dyn_)?hi$')
@@ -43,29 +48,38 @@ class HiFile(File):
     def recognizes(file):
         if not HiFile.RE_FILE_EXTENSION.search(file.name):
             return False
-        if not hasattr(HiFile, 'ghc_version'):
+        if not hasattr(HiFile, 'hi_version'):
             try:
                 output = subprocess.check_output(['ghc', '--numeric-version'], shell=False)
-                HiFile.ghc_version = output.decode('utf-8').strip().split('.')
-                logger.debug('Found GHC version %s', HiFile.ghc_version)
+                major, minor, patch = map(int, output.decode('utf-8').strip().split('.'))
+                HiFile.hi_version = "%d%02d%d" % (major, minor, patch)
+                logger.debug('Found .hi version %s', HiFile.hi_version)
             except OSError:
-                HiFile.ghc_version = None
+                HiFile.hi_version = None
                 logger.debug('Unable to read GHC version')
-        if HiFile.ghc_version is None:
+        if HiFile.hi_version is None:
             return False
 
         with file.get_content():
             with open(file.path) as fp:
-                buf = fp.read(32)
-                magic = struct.unpack_from('!I', buf)[0]
-                if magic != HI_MAGIC:
-                    logger.debug('Haskell interface magic mismatch. Found %d instead of %d', magic, HI_MAGIC)
+                # read magic
+                buf = fp.read(4)
+                if buf != HI_MAGIC:
+                    logger.debug('Haskell interface magic mismatch. Found %r instead of %r or %r', buf, HI_MAGIC_32, HI_MAGIC_64)
                     return False
-                # XXX: what is second field for?
-                version_found = map(unichr, struct.unpack_from('<I4xIB', buf, 16))
-                if version_found != HiFile.ghc_version:
+                # skip some old descriptor thingy that has varying size
+                if buf == HI_MAGIC_32:
+                    fp.read(4)
+                elif buf == HI_MAGIC_64:
+                    fp.read(8)
+                # skip way_descr
+                fp.read(4)
+                # now read version
+                buf = fp.read(16)
+                version_found = ''.join(map(unichr, struct.unpack_from('=3IB', buf)))
+                if version_found != HiFile.hi_version:
                     logger.debug('Haskell version mismatch. Found %s instead of %s.',
-                                 version_found, HiFile.ghc_version)
+                                 version_found, HiFile.hi_version)
                     return False
                 return True
 

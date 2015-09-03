@@ -29,7 +29,7 @@ from diffoscope.difference import Difference
 class CpioContent(Command):
     @tool_required('cpio')
     def cmdline(self):
-        return ['cpio', '--quiet', '--numeric-uid-gid', '-tvF', self.path]
+        return ['cpio', '--quiet', '--numeric-uid-gid', '--force-local', '-tvF', self.path]
 
 
 class CpioFile(File):

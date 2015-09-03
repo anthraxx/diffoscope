@@ -1,3 +1,45 @@
+diffoscope (32) unstable; urgency=medium
+
+  [ Jérémy Bobbio ]
+  * Add `--fuzzy-threshold` option. This allows one to specify the TLSH score
+    used as cut-off for fuzzy matching. Specifying 0 will disable
+    fuzzy-matching entirely. Thanks Jakub Wilk for prompting me to implement
+    this. (Closes: #797557)
+  * Add `--new-file` to treat absent files as empty. Thanks Jakub Wilk for the
+    suggestion. (Closes: #797560)
+  * Enable comparisons of symlinks and devices given on the command line.
+    (Closes: #796262)
+  * Fix comparisons of device files. (Closes: #796288)
+  * Perform comparisons of file metadata in directories using original path.
+    (Closes: #796202)
+  * Display default values in `--help`.
+  * Stop unpacking Tar directories. Thanks h01ger for the report.
+    (Closes: #797164)
+  * Make directory comparison work again.
+  * Fix and document required Python modules. Thanks plntyk for the feedback on
+    IRC.
+  * Pass `--force-local`. to cpio. We don't want filenames with ':' to trigger
+    remote copies.
+  * Mark that get_ar_content() as requiring the 'ar' executable.
+  * Rework how diffoscope main() is run. Thanks Yaroslav Halchenko for the
+    report and suggestions. (Closes: #796196)
+  * Assume UTF-8 output if stdin does not advertise any encoding.
+  * Give proper error message when run on non-existing files.
+  * Output differences in directory test to ease debugging.
+  * Update manpage. Thanks Jakub Wilk for reporting the issue.
+    (Closes: #797561)
+  * Properly handle SIGTERM and do cleanup temp files. Thanks Mattia Rizzolo
+    for reporting this and how he did work around this deficiency.
+    (Closes: #788568)
+  * Fix handling of GHC .hi file (Closes: #796039)
+  * Add a test on how Ctrl+C is handled.
+  * Minor code improvements.
+
+  [ Chris Lamb ]
+  * Correct "comment" on Device comparator.
+
+ -- Jérémy Bobbio <lunar@debian.org>  Thu, 03 Sep 2015 20:00:45 +0200
+
 diffoscope (31) unstable; urgency=low
 
   [ Reiner Herrman ]

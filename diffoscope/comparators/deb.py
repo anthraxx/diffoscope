@@ -83,7 +83,7 @@ class DebFile(File):
                                my_content, other_content, self.path, other.path, source="metadata"))
         with DebContainer(self).open() as my_container, \
              DebContainer(other).open() as other_container:
-            differences.extend(my_container.compare(other_container, source))
+            differences.extend(my_container.compare(other_container))
         return differences
 
 
@@ -157,5 +157,5 @@ class DebDataTarFile(File):
             other_listing = get_tar_listing(other_container.archive)
             differences.append(Difference.from_unicode(
                                   my_listing, other_listing, self.name, other.name, source="metadata"))
-            differences.extend(my_container.compare(other_container, source))
+            differences.extend(my_container.compare(other_container))
         return differences

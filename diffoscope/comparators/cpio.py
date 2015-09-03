@@ -46,5 +46,5 @@ class CpioFile(File):
             CpioContent, self.path, other.path, source="file list"))
         with LibarchiveContainer(self).open() as my_container, \
              LibarchiveContainer(other).open() as other_container:
-            differences.extend(my_container.compare(other_container, source))
+            differences.extend(my_container.compare(other_container))
         return differences

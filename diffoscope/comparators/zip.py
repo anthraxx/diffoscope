@@ -101,5 +101,5 @@ class ZipFile(File):
         differences.append(zipinfo_difference)
         with ZipContainer(self).open() as my_container, \
              ZipContainer(other).open() as other_container:
-            differences.extend(my_container.compare(other_container, source))
+            differences.extend(my_container.compare(other_container))
         return differences

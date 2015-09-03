@@ -201,5 +201,5 @@ class SquashfsFile(File):
         differences.append(Difference.from_command(SquashfsListing, self.path, other.path))
         with SquashfsContainer(self).open() as my_container, \
              SquashfsContainer(other).open() as other_container:
-            differences.extend(my_container.compare(other_container, source))
+            differences.extend(my_container.compare(other_container))
         return differences

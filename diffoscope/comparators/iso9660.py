@@ -76,5 +76,5 @@ class Iso9660File(File):
             differences.append(Difference.from_command(ISO9660Listing, self.path, other.path, command_args=(extension,)))
         with LibarchiveContainer(self).open() as my_container, \
              LibarchiveContainer(other).open() as other_container:
-            differences.extend(my_container.compare(other_container, source))
+            differences.extend(my_container.compare(other_container))
         return differences

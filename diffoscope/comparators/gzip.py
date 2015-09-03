@@ -23,7 +23,7 @@ import os.path
 import diffoscope.comparators
 from diffoscope import logger, tool_required
 from diffoscope.comparators.binary import needs_content
-from diffoscope.comparators.utils import Archive, get_compressed_content_name
+from diffoscope.comparators.utils import Archive, get_compressed_content_name, NO_COMMENT
 from diffoscope.difference import Difference
 
 
@@ -39,6 +39,9 @@ class GzipContainer(Archive):
     def close_archive(self):
         self._path = None
 
+    def get_members(self):
+        return {'gzip-content': self.get_member(self.get_member_names()[0])}
+
     def get_member_names(self):
         return [get_compressed_content_name(self.path, '.gz')]
 
@@ -51,14 +54,6 @@ class GzipContainer(Archive):
                 ["gzip", "--decompress", "--stdout", self.path],
                 shell=False, stdout=fp, stderr=None)
         return dest_path
-
-    def compare(self, other, source=None):
-        my_file = self.get_member(self.get_member_names()[0])
-        other_file = other.get_member(other.get_member_names()[0])
-        source = None
-        if my_file.name == other_file.name:
-            source = my_file.name
-        return [diffoscope.comparators.compare_files(my_file, other_file, source)]
 
 
 class GzipFile(object):
@@ -75,5 +70,5 @@ class GzipFile(object):
                                self.magic_file_type, other.magic_file_type, self, other, source='metadata'))
         with GzipContainer(self).open() as my_container, \
              GzipContainer(other).open() as other_container:
-            differences.extend(my_container.compare(other_container, source))
+            differences.extend(my_container.compare(other_container))
         return differences

@@ -22,7 +22,7 @@ import re
 import subprocess
 import diffoscope.comparators
 from diffoscope.comparators.binary import File, needs_content
-from diffoscope.comparators.utils import Archive, get_compressed_content_name
+from diffoscope.comparators.utils import Archive, get_compressed_content_name, NO_COMMENT
 from diffoscope import logger, tool_required
 
 
@@ -38,6 +38,9 @@ class Bzip2Container(Archive):
     def close_archive(self):
         self._path = None
 
+    def get_members(self):
+        return {'bzip2-content': self.get_member(self.get_member_names()[0])}
+
     def get_member_names(self):
         return [get_compressed_content_name(self.path, '.bz2')]
 
@@ -51,14 +54,6 @@ class Bzip2Container(Archive):
                 shell=False, stdout=fp, stderr=None)
         return dest_path
 
-    def compare(self, other, source=None):
-        my_file = self.get_member(self.get_member_names()[0])
-        other_file = other.get_member(other.get_member_names()[0])
-        source = None
-        if my_file.name == other_file.name:
-            source = my_file.name
-        return [diffoscope.comparators.compare_files(my_file, other_file, source)]
-
 
 class Bzip2File(File):
     RE_FILE_TYPE = re.compile(r'^bzip2 compressed data\b')
@@ -71,4 +66,4 @@ class Bzip2File(File):
     def compare_details(self, other, source=None):
         with Bzip2Container(self).open() as my_container, \
              Bzip2Container(other).open() as other_container:
-            return my_container.compare(other_container, source)
+            return my_container.compare(other_container)

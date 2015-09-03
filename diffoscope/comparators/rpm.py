@@ -92,5 +92,5 @@ class RpmFile(AbstractRpmFile):
         differences.append(compare_rpm_headers(self.path, other.path))
         with RpmContainer(self).open() as my_container, \
              RpmContainer(other).open() as other_container:
-            differences.extend(my_container.compare(other_container, source))
+            differences.extend(my_container.compare(other_container))
         return differences

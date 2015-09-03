@@ -147,5 +147,5 @@ class TarFile(File):
             other_listing = get_tar_listing(other_container.archive)
             differences.append(Difference.from_unicode(
                                   my_listing, other_listing, self.name, other.name, source="metadata"))
-            differences.extend(my_container.compare(other_container, source))
+            differences.extend(my_container.compare(other_container))
         return differences

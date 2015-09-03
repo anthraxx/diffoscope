@@ -23,7 +23,7 @@ import re
 from diffoscope.changes import Changes
 import diffoscope.comparators
 from diffoscope.comparators.binary import File, needs_content
-from diffoscope.comparators.utils import Container
+from diffoscope.comparators.utils import Container, NO_COMMENT
 from diffoscope.difference import Difference
 
 
@@ -83,7 +83,12 @@ class DotChangesContainer(Container):
 
     @contextmanager
     def open(self):
+        self._version_re = DotChangesContainer.get_version_trimming_re(self)
         yield self
+        del self._version_re
+
+    def get_members(self):
+        return {self._trim_version_number(name): self.get_member(name) for name in self.get_member_names()}
 
     def get_member_names(self):
         return [d['name'] for d in self.source.changes.get('Files')]
@@ -93,24 +98,6 @@ class DotChangesContainer(Container):
 
     def _trim_version_number(self, name):
         return self._version_re.sub('', name)
-
-    def compare(self, other, source=None):
-        differences = []
-        my_names = set(self.get_member_names())
-        my_trim_re = DotChangesContainer.get_version_trimming_re(self)
-        my_canonical_names = dict([(my_trim_re.sub('', name), name) for name in my_names])
-        other_names = set(other.get_member_names())
-        other_trim_re = DotChangesContainer.get_version_trimming_re(other)
-        other_canonical_names = dict([(other_trim_re.sub('', name), name) for name in other_names])
-        for canonical_name in sorted(set(my_canonical_names.keys()).intersection(other_canonical_names.keys())):
-            my_file = self.get_member(my_canonical_names[canonical_name])
-            other_file = other.get_member(other_canonical_names[canonical_name])
-            source = None
-            if my_canonical_names[canonical_name] == other_canonical_names[canonical_name]:
-                source = my_canonical_names[canonical_name]
-            differences.append(
-                diffoscope.comparators.compare_files(my_file, other_file, source=source))
-        return differences
 
 
 class DotChangesFile(File):
@@ -145,6 +132,6 @@ class DotChangesFile(File):
                                                    self.path, other.path, source='Files'))
         with DotChangesContainer(self).open() as my_container, \
              DotChangesContainer(other).open() as other_container:
-            differences.extend(my_container.compare(other_container, source))
+            differences.extend(my_container.compare(other_container))
 
         return differences

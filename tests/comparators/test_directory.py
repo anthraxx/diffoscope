@@ -34,6 +34,10 @@ def test_no_differences():
     difference = compare_directories(os.path.dirname(__file__), os.path.dirname(__file__))
     assert difference is None
 
+def test_no_differences_with_extra_slash():
+    difference = compare_directories(os.path.dirname(__file__) + '/', os.path.dirname(__file__))
+    assert difference is None
+
 @pytest.fixture
 def differences(tmpdir):
     tmpdir.mkdir('a')

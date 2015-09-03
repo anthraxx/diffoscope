@@ -159,7 +159,7 @@ class DirectoryContainer(Container):
     @contextmanager
     def open(self):
         with self.source.get_content():
-            self._path = self.source.path
+            self._path = self.source.path.rstrip('/') or '/'
             yield self
             self._path = None
 
@@ -169,7 +169,7 @@ class DirectoryContainer(Container):
             if root == self._path:
                 root = ''
             else:
-                root = root[len(os.path.commonprefix((root, self._path))):]
+                root = root[len(self._path) + 1:]
             names.extend([os.path.join(root, f) for f in files])
         return names
 

@@ -5,3 +5,4 @@
 .coverage
 /htmlcov/
 favicon.png
+/debian/diffoscope.1

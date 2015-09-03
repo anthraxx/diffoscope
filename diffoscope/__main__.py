@@ -80,7 +80,7 @@ def make_printer(path):
     if path == '-':
         output = sys.stdout
         if not sys.stdout.isatty():
-            output = codecs.getwriter(sys.stdin.encoding)(sys.stdout)
+            output = codecs.getwriter(sys.stdin.encoding or 'utf-8')(sys.stdout)
     else:
         output = codecs.open(path, 'w', encoding='utf-8')
     def print_func(*args, **kwargs):

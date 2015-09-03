@@ -51,6 +51,7 @@ def differences(tmpdir):
     return compare_directories(str(tmpdir.join('a')), str(tmpdir.join('b'))).details
 
 def test_content(differences):
+    output_text(differences[0], print_func=print)
     assert differences[0].source1 == 'dir/text'
     expected_diff = open(os.path.join(os.path.dirname(__file__), '../data/text_ascii_expected_diff')).read()
     assert differences[0].unified_diff == expected_diff

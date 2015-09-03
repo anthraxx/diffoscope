@@ -69,3 +69,15 @@ def test_compare_non_existing(monkeypatch, tar1):
     difference = tar1.compare(NonExistingFile('/nonexisting', tar1))
     assert difference.source2 == '/nonexisting'
     assert difference.details[-1].source2 == '/dev/null'
+
+@pytest.fixture
+def no_permissions_tar():
+    return specialize(FilesystemFile(os.path.join(os.path.dirname(__file__), '../data/no-perms.tar')))
+
+# Reported as Debian #797164. This is a good way to notice if we unpack directories
+# as we won't be able to remove files in one if we don't have write permissions.
+def test_no_permissions_dir_in_tarball(monkeypatch, no_permissions_tar):
+    # We want to make sure OSError is not raised.
+    # Comparing with non-existing file makes it easy to make sure all files are unpacked
+    monkeypatch.setattr(Config, 'new_file', True)
+    no_permissions_tar.compare(NonExistingFile('/nonexistent', no_permissions_tar))

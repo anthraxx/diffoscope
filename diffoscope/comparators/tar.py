@@ -17,6 +17,7 @@
 # You should have received a copy of the GNU General Public License
 # along with diffoscope.  If not, see <http://www.gnu.org/licenses/>.
 
+from contextlib import contextmanager
 import os.path
 import re
 import stat
@@ -51,6 +52,10 @@ class TarDirectory(Directory, TarMember):
 
     def has_same_content_as(self, other):
         return False
+
+    @contextmanager
+    def get_content(self):
+        yield
 
     def is_directory(self):
         return True

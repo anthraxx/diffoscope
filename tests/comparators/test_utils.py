@@ -22,7 +22,7 @@ import codecs
 import os.path
 import pytest
 from diffoscope.comparators import specialize
-from diffoscope.comparators.binary import FilesystemFile
+from diffoscope.comparators.binary import FilesystemFile, NonExistingFile
 from diffoscope.config import Config
 
 @pytest.fixture

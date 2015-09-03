@@ -62,6 +62,11 @@ from diffoscope.comparators.zip import ZipFile
 
 
 def compare_root_paths(path1, path2):
+    if not all(map(os.path.lexists, (path1, path2))):
+        for path in (path1, path2):
+            if not os.path.lexists(path):
+                sys.stderr.write('%s: %s: No such file or directory\n' % (sys.argv[0], path))
+        sys.exit(2)
     if os.path.isdir(path1) and os.path.isdir(path2):
         return compare_directories(path1, path2)
     return compare_files(specialize(FilesystemFile(path1)), specialize(FilesystemFile(path2)))

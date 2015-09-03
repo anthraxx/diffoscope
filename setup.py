@@ -40,7 +40,7 @@ setup(name='diffoscope',
           },
       install_requires=[
           'python-debian',
-          'Magic-file-extension',
+          'Magic-file-extensions',
           'rpm-python',
           'libarchive-c',
           'tlsh',

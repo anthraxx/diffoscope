@@ -6,7 +6,7 @@
 in-depth comparison of files, archives, and directories
 -------------------------------------------------------
 
-:Author: lunar@debian.org
+:Author: Debian “Reproducible Builds” Team
 :Copyright: GPL-3+
 :Manual section: 1
 :Manual group: Debian
@@ -43,6 +43,16 @@ OPTIONS
                          (use - for standard output)
 --text output            write plain text report to given file
                          (use - for standard output)
+--max-report-size BYTES
+                         maximum bytes written in report (default: 2048000)
+--max-diff-block-lines MAX_DIFF_BLOCK_LINES
+                         maximum number of lines per diff block (default: 50)
+--max-diff-input-lines MAX_DIFF_INPUT_LINES
+                         maximum number of lines fed to diff (default: 100000)
+--fuzzy-threshold FUZZY_THRESHOLD
+                         threshold for fuzzy-matching (0 to disable, 60 is
+                         default, 400 is high fuzziness)
+--new-file               treat absent files as empty
 --max-report-size bytes  maximum bytes written in report
 --css url                link to an extra CSS for the HTML report
 

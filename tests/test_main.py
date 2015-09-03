@@ -18,6 +18,9 @@
 # You should have received a copy of the GNU General Public License
 # along with diffoscope.  If not, see <http://www.gnu.org/licenses/>.
 
+import os
+import signal
+import tempfile
 import pytest
 from diffoscope.__main__ import main
 
@@ -57,3 +60,22 @@ def test_non_existing_files_with_new_file(capsys):
     assert '--- /nonexisting1' in out
     assert '+++ /nonexisting2' in out
     assert 'Trying to compare two non-existing files.' in out
+
+TEST_TAR1_PATH = os.path.join(os.path.dirname(__file__), 'data/test1.tar')
+TEST_TAR2_PATH = os.path.join(os.path.dirname(__file__), 'data/test2.tar')
+
+def test_remove_temp_files_on_sigterm(tmpdir, monkeypatch):
+    args = [TEST_TAR1_PATH, TEST_TAR2_PATH]
+    pid = os.fork()
+    if pid == 0:
+        def suicide(*args):
+            os.kill(os.getpid(), signal.SIGTERM)
+        monkeypatch.setattr('diffoscope.comparators.text.TextFile.compare', suicide)
+        tempfile.tempdir = str(tmpdir)
+        with pytest.raises(SystemExit) as excinfo:
+            main(args)
+        os._exit(excinfo.value.code)
+    else:
+        _, ret = os.waitpid(pid, 0)
+        assert (ret >> 8) == 2 # having received SIGTERM is trouble
+        assert os.listdir(str(tmpdir)) == []

@@ -25,6 +25,7 @@ from contextlib import contextmanager
 import logging
 import codecs
 import os
+import signal
 import sys
 import traceback
 from diffoscope import logger, VERSION, set_locale
@@ -126,9 +127,14 @@ def run_diffoscope(parsed_args):
     return 0
 
 
+def sigterm_handler(signo, stack_frame):
+    sys.exit(2)
+
+
 def main(args=None):
     if args is None:
         args = sys.argv[1:]
+    signal.signal(signal.SIGTERM, sigterm_handler)
     try:
         parser = create_parser()
         parsed_args = parser.parse_args(args)

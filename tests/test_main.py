@@ -79,3 +79,16 @@ def test_remove_temp_files_on_sigterm(tmpdir, monkeypatch):
         _, ret = os.waitpid(pid, 0)
         assert (ret >> 8) == 2 # having received SIGTERM is trouble
         assert os.listdir(str(tmpdir)) == []
+
+def test_ctrl_c_handling(tmpdir, monkeypatch, capsys):
+    args = [TEST_TAR1_PATH, TEST_TAR2_PATH]
+    monkeypatch.setattr('tempfile.tempdir', str(tmpdir))
+    def interrupt(*args):
+        raise KeyboardInterrupt
+    monkeypatch.setattr('diffoscope.comparators.text.TextFile.compare', interrupt)
+    with pytest.raises(SystemExit) as excinfo:
+        main(args)
+    out, err = capsys.readouterr()
+    assert '' in err
+    assert excinfo.value.code == 2
+    assert os.listdir(str(tmpdir)) == []

@@ -24,7 +24,7 @@ debbindiff.
 Example
 -------
 
-    $ bin/diffoscope.py --html output.html build1.changes build2.changes
+    $ bin/diffoscope --html output.html build1.changes build2.changes
 
 This will compare `build1.changes` and `build2.changes` and create
 `output.html` if there are differences between the two files.
@@ -47,7 +47,7 @@ Required Python modules:
 The various comparators rely on external commands being available. To
 get a list of them, please run:
 
-    $ bin/diffoscope.py --list-tools
+    $ bin/diffoscope --list-tools
 
 Contributors
 ------------

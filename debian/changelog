@@ -1,3 +1,9 @@
+diffoscope (33) unstable; urgency=medium
+
+  * Fix path to diffoscope used to generate Recommends. (Closes: #797978)
+
+ -- Jérémy Bobbio <lunar@debian.org>  Fri, 04 Sep 2015 10:20:45 +0200
+
 diffoscope (32) unstable; urgency=medium
 
   [ Jérémy Bobbio ]

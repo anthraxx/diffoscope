@@ -19,6 +19,7 @@
 
 from abc import ABCMeta, abstractmethod
 from contextlib import contextmanager
+from itertools import starmap
 # The following would be shutil.which in Python 3.3
 import os
 import shutil
@@ -192,15 +193,7 @@ class Container(object):
                 yield NonExistingFile('/dev/null', other_file), other_file, NO_COMMENT
 
     def compare(self, other, source=None):
-        differences = []
-        for my_file, other_file, comment in self.comparisons(other):
-            difference = diffoscope.comparators.compare_files(my_file, other_file)
-            if comment:
-                if difference is None:
-                    difference = Difference(None, my_file.name, other_file.name)
-                difference.add_comment(comment)
-            differences.append(difference)
-        return differences
+        return list(starmap(diffoscope.comparators.compare_commented_files, self.comparisons(other)))
 
 
 class ArchiveMember(File):

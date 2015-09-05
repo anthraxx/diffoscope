@@ -95,6 +95,14 @@ def compare_files(file1, file2, source=None):
             return file1.compare_bytes(file2, source)
         return file1.compare(file2, source)
 
+def compare_commented_files(file1, file2, comment=None, source=None):
+    difference = compare_files(file1, file2, source=source)
+    if comment:
+        if difference is None:
+            difference = Difference(None, my_file.name, other_file.name)
+        difference.add_comment(comment)
+    return difference
+
 
 # The order matters! They will be tried in turns.
 FILE_CLASSES = (

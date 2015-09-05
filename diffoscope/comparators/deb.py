@@ -135,6 +135,7 @@ class DebTarContainer(TarContainer):
 
     def get_member_names(self):
         names = set(super(DebTarContainer, self).get_member_names())
+        logger.debug('Ignoring %d/%d files known identical in data.tar', len(self._ignore_files), len(names))
         return names - self._ignore_files
 
 

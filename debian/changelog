@@ -2,7 +2,7 @@ diffoscope (34) unstable; urgency=medium
 
   * Fix path to executable in README. Thanks Niko Tyni for the patch.
   * Encode file path when filtering it from readelf output. This fixes
-    diffoscope for gnome-clocks.
+    diffoscope for gnome-clocks.  (Closes: #798398)
   * Include ELF test files in the source tarball.
   * Fix required tool for zip tests.
   * Fix expected `unsquashfs -s` output for squashfs-tools 4.3.

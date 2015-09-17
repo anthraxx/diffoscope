@@ -1,3 +1,17 @@
+diffoscope (34) unstable; urgency=medium
+
+  * Fix path to executable in README. Thanks Niko Tyni for the patch.
+  * Encode file path when filtering it from readelf output. This fixes
+    diffoscope for gnome-clocks.
+  * Include ELF test files in the source tarball.
+  * Fix required tool for zip tests.
+  * Fix expected `unsquashfs -s` output for squashfs-tools 4.3.
+  * Parse md5sums in .deb even if they are identical.
+  * Log ignore files count when comparing data.tar in .deb.
+  * Minor code improvemnts.
+
+ -- Jérémy Bobbio <lunar@debian.org>  Thu, 17 Sep 2015 12:57:26 +0200
+
 diffoscope (33) unstable; urgency=medium
 
   * Fix path to diffoscope used to generate Recommends. (Closes: #797978)

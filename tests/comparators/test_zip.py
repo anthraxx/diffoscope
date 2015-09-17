@@ -48,12 +48,12 @@ def test_no_differences(zip1):
 def differences(zip1, zip2):
     return zip1.compare(zip2).details
 
-@pytest.mark.skipif(tool_missing('zip'), reason='missing zip')
+@pytest.mark.skipif(tool_missing('zipinfo'), reason='missing zip')
 def test_metadata(differences):
     expected_diff = open(os.path.join(os.path.dirname(__file__), '../data/zip_zipinfo_expected_diff')).read()
     assert differences[0].unified_diff == expected_diff
 
-@pytest.mark.skipif(tool_missing('zip'), reason='missing zip')
+@pytest.mark.skipif(tool_missing('zipinfo'), reason='missing zip')
 def test_compressed_files(differences):
     assert differences[1].source1 == 'dir/text'
     assert differences[1].source2 == 'dir/text'

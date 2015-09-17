@@ -10,4 +10,4 @@
  Inodes are compressed
  Data is compressed
  Fragments are compressed
- Always_use_fragments option is not specified
+ Always-use-fragments option is not specified

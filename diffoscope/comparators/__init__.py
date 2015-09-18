@@ -161,11 +161,11 @@ def perform_fuzzy_matching(members1, members2):
     # Perform local copies because they will be modified by consumer
     members1 = dict(members1)
     members2 = dict(members2)
-    for name1, file1 in members1.iteritems():
+    for name1, file1 in members1.viewitems():
         if file1.is_directory() or not file1.fuzzy_hash:
             continue
         comparisons = []
-        for name2, file2 in members2.iteritems():
+        for name2, file2 in members2.viewitems():
             if name2 in already_compared or file2.is_directory() or not file2.fuzzy_hash:
                 continue
             comparisons.append((tlsh.diff(file1.fuzzy_hash, file2.fuzzy_hash), name2))

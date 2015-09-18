@@ -51,7 +51,7 @@ def hexdump_fallback(path):
     hexdump = ''
     with open(path, 'rb') as f:
         for buf in iter(lambda: f.read(32), b''):
-            hexdump += u'%s\n' % hexlify(buf)
+            hexdump += u'%s\n' % hexlify(buf).decode('us-ascii')
     return hexdump
 
 

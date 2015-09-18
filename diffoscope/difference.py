@@ -185,7 +185,7 @@ class ExThread(Thread):
             logger.debug('Traceback:')
             for line in traceback.format_list(tb):
                 logger.debug(line[:-1])
-            raise except_type, except_class, None
+            raise except_type(except_class)
 
 
 def feed(feeder, f, end_nl_q):

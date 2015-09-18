@@ -18,13 +18,13 @@
 # along with diffoscope.  If not, see <http://www.gnu.org/licenses/>.
 
 from contextlib import contextmanager
+from io import StringIO
 import os
 import os.path
 import re
 import subprocess
 import sys
 import traceback
-from StringIO import StringIO
 from threading import Thread
 from multiprocessing import Queue
 from diffoscope.config import Config

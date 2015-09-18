@@ -18,10 +18,10 @@
 # along with diffoscope.  If not, see <http://www.gnu.org/licenses/>.
 
 from contextlib import contextmanager
+from io import BytesIO
 import os.path
 import re
 import stat
-from StringIO import StringIO
 import sys
 import tarfile
 from diffoscope import logger
@@ -127,7 +127,7 @@ class TarContainer(Archive):
 
 def get_tar_listing(tar):
     orig_stdout = sys.stdout
-    output = StringIO()
+    output = BytesIO()
     try:
         sys.stdout = output
         tar.list(verbose=True)

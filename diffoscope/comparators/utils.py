@@ -19,12 +19,12 @@
 
 from abc import ABCMeta, abstractmethod
 from contextlib import contextmanager
+from io import StringIO
 from itertools import starmap
 # The following would be shutil.which in Python 3.3
 import os
 import shutil
 from stat import S_ISCHR, S_ISBLK
-from StringIO import StringIO
 import subprocess
 import tempfile
 from threading import Thread

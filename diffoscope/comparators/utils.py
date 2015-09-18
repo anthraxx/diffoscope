@@ -179,16 +179,16 @@ class Container(object):
     def comparisons(self, other):
         my_members = self.get_members()
         other_members = other.get_members()
-        for name in sorted(set(my_members.iterkeys()).intersection(set(other_members.iterkeys()))):
+        for name in sorted(my_members.viewkeys() & other_members.viewkeys()):
             yield my_members.pop(name), other_members.pop(name), NO_COMMENT
         for my_name, other_name, score in diffoscope.comparators.perform_fuzzy_matching(my_members, other_members):
             comment = 'Files similar despite different names (difference score: %d)' % score
             yield my_members.pop(my_name), other_members.pop(other_name), comment
         if Config.general.new_file:
-            for my_name in set(my_members.iterkeys()) - set(other_members.iterkeys()):
+            for my_name in my_members.viewkeys() - other_members.viewkeys():
                 my_file = my_members[my_name]
                 yield my_file, NonExistingFile('/dev/null', my_file), NO_COMMENT
-            for other_name in set(other_members.iterkeys()) - set(my_members.iterkeys()):
+            for other_name in other_members.viewkeys() - my_members.viewkeys():
                 other_file = other_members[other_name]
                 yield NonExistingFile('/dev/null', other_file), other_file, NO_COMMENT
 

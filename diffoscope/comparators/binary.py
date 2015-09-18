@@ -162,7 +162,7 @@ class File(object):
         my_size = os.path.getsize(self.path)
         other_size = os.path.getsize(other.path)
         if my_size == other_size and my_size <= SMALL_FILE_THRESHOLD:
-            if file(self.path).read() == file(other.path).read():
+            if open(self.path).read() == open(other.path).read():
                 return True
 
         return 0 == subprocess.call(['cmp', '--silent', self.path, other.path],

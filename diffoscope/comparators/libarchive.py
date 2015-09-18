@@ -127,7 +127,7 @@ class LibarchiveContainer(Archive):
             for entry in archive:
                 if entry.pathname == member_name:
                     logger.debug('entry found, writing %s', dest_path)
-                    with open(dest_path, 'w') as f:
+                    with open(dest_path, 'wb') as f:
                         for buf in entry.get_blocks():
                             f.write(buf)
                     return dest_path

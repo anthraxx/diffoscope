@@ -32,7 +32,7 @@ class Sng(Command):
 
     def feed_stdin(self, stdin):
         try:
-            with open(self.path) as f:
+            with open(self.path, 'rb') as f:
                 for buf in iter(partial(f.read, 32768), b''):
                     stdin.write(buf)
         finally:

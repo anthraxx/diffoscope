@@ -69,7 +69,7 @@ def test_difference_between_iso88591_and_unicode(iso8859, unicode1):
 
 def test_difference_between_iso88591_and_unicode_only(iso8859, tmpdir):
     utf8_path = str(tmpdir.join('utf8'))
-    with open(utf8_path, 'w') as f:
+    with open(utf8_path, 'wb') as f:
         f.write(codecs.open(os.path.join(os.path.dirname(__file__), '../data/text_iso8859'), encoding='iso8859-1').read().encode('utf-8'))
     utf8 = specialize(FilesystemFile(utf8_path))
     difference = iso8859.compare(utf8)

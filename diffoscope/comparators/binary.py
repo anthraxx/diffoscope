@@ -49,7 +49,7 @@ def xxd(path):
 
 def hexdump_fallback(path):
     hexdump = ''
-    with open(path) as f:
+    with open(path, 'rb') as f:
         for buf in iter(lambda: f.read(32), b''):
             hexdump += u'%s\n' % hexlify(buf)
     return hexdump
@@ -120,7 +120,7 @@ class File(object):
             with self.get_content():
                 # tlsh is not meaningful with files smaller than 512 bytes
                 if os.stat(self.path).st_size >= 512:
-                    self._fuzzy_hash = tlsh.hash(open(self.path).read())
+                    self._fuzzy_hash = tlsh.hash(open(self.path, 'rb').read())
                 else:
                     self._fuzzy_hash = None
         return self._fuzzy_hash
@@ -162,7 +162,7 @@ class File(object):
         my_size = os.path.getsize(self.path)
         other_size = os.path.getsize(other.path)
         if my_size == other_size and my_size <= SMALL_FILE_THRESHOLD:
-            if open(self.path).read() == open(other.path).read():
+            if open(self.path, 'rb').read() == open(other.path, 'rb').read():
                 return True
 
         return 0 == subprocess.call(['cmp', '--silent', self.path, other.path],

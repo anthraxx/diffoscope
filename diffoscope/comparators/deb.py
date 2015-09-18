@@ -47,7 +47,7 @@ class ArContainer(Archive):
         member = self.archive.getmember(member_name)
         dest_path = os.path.join(dest_dir, os.path.basename(member_name))
         member.seek(0)
-        with open(dest_path, 'w') as fp:
+        with open(dest_path, 'wb') as fp:
             for buf in iter(lambda: member.read(AR_EXTRACTION_BUFFER_SIZE), b''):
                 fp.write(buf)
         return dest_path

@@ -205,7 +205,7 @@ def feed(feeder, f, end_nl_q):
 @contextmanager
 def fd_from_feeder(feeder, end_nl_q):
     pipe_r, pipe_w = os.pipe()
-    outf = os.fdopen(pipe_w, 'w')
+    outf = os.fdopen(pipe_w, 'wb')
     t = ExThread(target=feed, args=(feeder, outf, end_nl_q))
     t.daemon = True
     t.start()

@@ -180,11 +180,11 @@ class ExThread(Thread):
             return
         else:
             except_type, except_class, tb = ex_info
-            logger.debug('Exception: %s',
+            logger.error('Exception: %s',
                          traceback.format_exception_only(except_type, except_class)[0].strip())
-            logger.debug('Traceback:')
+            logger.error('Traceback:')
             for line in traceback.format_list(tb):
-                logger.debug(line[:-1])
+                logger.error(line[:-1])
             raise except_type(except_class)
 
 

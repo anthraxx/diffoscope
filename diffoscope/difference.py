@@ -136,11 +136,15 @@ def run_diff(fd1, fd2, end_nl_q1, end_nl_q2):
                 os.close(fd)
             except OSError:
                 pass
+    if hasattr(os, 'set_inheritable'): # new in Python 3.4
+        os.set_inheritable(fd1, True)
+        os.set_inheritable(fd2, True)
     p = subprocess.Popen(cmd, shell=False, bufsize=1,
                          stdin=subprocess.PIPE,
                          stdout=subprocess.PIPE,
                          stderr=subprocess.STDOUT,
-                         preexec_fn=close_fds)
+                         preexec_fn=close_fds,
+                         close_fds=False)
     p.stdin.close()
     os.close(fd1)
     os.close(fd2)

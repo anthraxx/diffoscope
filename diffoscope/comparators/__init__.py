@@ -49,7 +49,9 @@ from diffoscope.comparators.png import PngFile
 try:
     from diffoscope.comparators.rpm import RpmFile
 except ImportError as ex:
-    if ex.message != 'No module named rpm':
+    if hasattr(ex, 'message') and ex.message != 'No module named rpm': # Python 2
+        raise
+    if hasattr(ex, 'msg') and ex.msg != "No module named 'rpm'": # Python 3
         raise
     from diffoscope.comparators.rpm_fallback import RpmFile
 from diffoscope.comparators.sqlite import Sqlite3Database

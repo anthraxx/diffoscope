@@ -21,6 +21,7 @@ from abc import ABCMeta, abstractmethod
 from binascii import hexlify
 from contextlib import contextmanager
 from functools import wraps
+from io import StringIO
 import os
 import os.path
 import re
@@ -48,11 +49,11 @@ def xxd(path):
 
 
 def hexdump_fallback(path):
-    hexdump = ''
+    hexdump = StringIO()
     with open(path, 'rb') as f:
         for buf in iter(lambda: f.read(32), b''):
-            hexdump += u'%s\n' % hexlify(buf).decode('us-ascii')
-    return hexdump
+            hexdump.write('%s\n' % hexlify(buf).decode('us-ascii'))
+    return hexdump.getvalue()
 
 
 def compare_binary_files(path1, path2, source=None):

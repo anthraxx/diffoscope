@@ -37,6 +37,8 @@ code is copyright (c) Jonny Lamb, and is used by dput, rather then created as
 a result of it. Thank you Jonny.
 """
 
+from __future__ import print_function
+
 __author__ = 'Jonny Lamb'
 __copyright__ = 'Copyright © 2008 Jonny Lamb, Copyright © 2010 Jan Dittberner'
 __license__ = 'MIT'
@@ -257,7 +259,7 @@ class Changes(object):
              self.get_changes_file()],
             shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         gpg_output, gpg_output_stderr = pipe.communicate()
-        print gpg_output
+        print(gpg_output)
 
         if pipe.returncode != 0:
             raise ChangesFileException(

@@ -33,7 +33,7 @@ def get_rpm_header(path, ts):
     with open(path, 'r') as f:
         try:
             hdr = ts.hdrFromFdno(f)
-        except rpm.error, e:
+        except rpm.error as e:
             logger.error("reading rpm header failed: %s", str(e))
             return str(e)
         for rpmtag in sorted(rpm.tagnames):

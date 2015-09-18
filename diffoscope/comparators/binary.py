@@ -184,7 +184,7 @@ class File(object):
                     difference.add_comment("No differences found inside, yet data differs")
             except subprocess.CalledProcessError as e:
                 difference = self.compare_bytes(other, source=source)
-                output = re.sub(r'^', '    ', e.output, flags=re.MULTILINE)
+                output = re.sub(r'^', '    ', e.output.decode('utf-8', errors='replace'), flags=re.MULTILINE)
                 cmd = ' '.join(e.cmd)
                 difference.add_comment("Command `%s` exited with %d. Output:\n%s"
                                        % (cmd, e.returncode, output))

@@ -127,8 +127,8 @@ DIFF_CHUNK = 4096
 
 @tool_required('diff')
 def run_diff(fd1, fd2, end_nl_q1, end_nl_q2):
-    logger.debug('running diff')
     cmd = ['diff', '-au7', '/dev/fd/%d' % fd1, '/dev/fd/%d' % fd2]
+    logger.debug('running %s', cmd)
     def close_fds():
         fds = [int(fd) for fd in os.listdir('/dev/fd')
                        if int(fd) not in (1, 2, fd1, fd2)]
@@ -155,6 +155,7 @@ def run_diff(fd1, fd2, end_nl_q1, end_nl_q2):
     t_read.start()
     t_read.join()
     p.wait()
+    logger.debug('done with diff, returncode %d, parsed %s', p.returncode, parser.success)
     if not parser.success and p.returncode not in (0, 1):
         raise subprocess.CalledProcessError(p.returncode, cmd, output=diff)
     if p.returncode == 0:

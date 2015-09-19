@@ -57,6 +57,7 @@ class Command(object):
 
     def __init__(self, path):
         self._path = path
+        logger.debug('running %s', self.cmdline())
         self._process = subprocess.Popen(self.cmdline(),
                                          shell=False, close_fds=True,
                                          stdin=subprocess.PIPE,
@@ -100,7 +101,9 @@ class Command(object):
         if self._stdin_feeder:
             self._stdin_feeder.join()
         self._stderr_reader.join()
-        return self._process.wait()
+        returncode = self._process.wait()
+        logger.debug('done with %s. exit code %d', self.cmdline()[0], returncode)
+        return returncode
 
     MAX_STDERR_LINES = 50
 

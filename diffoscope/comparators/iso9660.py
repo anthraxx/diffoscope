@@ -49,7 +49,7 @@ class ISO9660Listing(Command):
     def cmdline(self):
         cmd = ['isoinfo', '-l', '-i', self.path]
         if self._extension == 'joliet':
-            cmd.extend(['-J', 'iso-8859-15'])
+            cmd.extend(['-J', '-j', 'iso8859-15'])
         elif self._extension == 'rockridge':
             cmd.extend(['-R'])
         return cmd

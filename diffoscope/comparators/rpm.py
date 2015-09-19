@@ -57,7 +57,7 @@ def compare_rpm_headers(path1, path2):
         ts.setVSFlags(-1)
         header1 = get_rpm_header(path1, ts)
         header2 = get_rpm_header(path2, ts)
-    return Difference.from_unicode(header1, header2, path1, path2, source="header")
+    return Difference.from_text(header1, header2, path1, path2, source="header")
 
 
 class RpmContainer(Archive):

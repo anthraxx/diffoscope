@@ -36,8 +36,8 @@ class Javap(Command):
         return ['javap', '-verbose', '-constants', '-s', '-l', '-private', self.path]
 
     def filter(self, line):
-        if re.match(r'^(Classfile %s$|  Last modified |  MD5 checksum )' % re.escape(self.real_path), line):
-            return ''
+        if re.match(r'^(Classfile %s$|  Last modified |  MD5 checksum )' % re.escape(self.real_path), line.decode('utf-8')):
+            return b''
         return line
 
 

@@ -33,8 +33,8 @@ class Zipinfo(Command):
 
     def filter(self, line):
         # we don't care about the archive file path
-        if re.match('^Archive:.*', line):
-            return ''
+        if line.startswith(b'Archive:'):
+            return b''
         return line
 
 

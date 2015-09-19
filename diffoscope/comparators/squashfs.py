@@ -38,7 +38,7 @@ class SquashfsSuperblock(Command):
 
     def filter(self, line):
         # strip filename
-        return re.sub(r'^(Found a valid .*) on .*', '\\1', line)
+        return re.sub(r'^(Found a valid .*) on .*', '\\1', line.decode('utf-8')).encode('utf-8')
 
 
 class SquashfsListing(Command):
@@ -153,7 +153,7 @@ class SquashfsContainer(Archive):
         # We pass `-d ''` in order to get a listing with the names we actually
         # need to use when extracting files
         cmd = ['unsquashfs', '-d', '', '-lls', path]
-        output = subprocess.check_output(cmd, shell=False)
+        output = subprocess.check_output(cmd, shell=False).decode('utf-8')
         header = True
         for line in output.rstrip('\n').split('\n'):
             if header:

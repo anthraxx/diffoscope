@@ -131,13 +131,13 @@ class DotChangesFile(File):
             other_value = ''
             if field in other.changes:
                 other_value = other.changes.get_as_string(field).lstrip()
-            differences.append(Difference.from_unicode(
+            differences.append(Difference.from_text(
                                    my_value, other_value,
                                    self.path, other.path, source=field))
         # compare Files as string
-        differences.append(Difference.from_unicode(self.changes.get_as_string('Files'),
-                                                   other.changes.get_as_string('Files'),
-                                                   self.path, other.path, source='Files'))
+        differences.append(Difference.from_text(self.changes.get_as_string('Files'),
+                                                other.changes.get_as_string('Files'),
+                                                self.path, other.path, source='Files'))
         with DotChangesContainer(self).open() as my_container, \
              DotChangesContainer(other).open() as other_container:
             differences.extend(my_container.compare(other_container))

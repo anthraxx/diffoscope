@@ -211,7 +211,7 @@ def fd_from_feeder(feeder, end_nl_q):
         outf.close()
 
 
-def make_feeder_from_unicode(content):
+def make_feeder_from_text(content):
     def feeder(f):
         for offset in range(0, len(content), DIFF_CHUNK):
             f.write(content[offset:offset + DIFF_CHUNK].encode('utf-8'))
@@ -225,7 +225,7 @@ def empty_file_feeder():
     return feeder
 
 
-def make_feeder_from_file(in_file, filter=lambda buf: buf.encode('utf-8')):
+def make_feeder_from_raw_reader(in_file, filter=lambda buf: buf):
     def feeder(out_file):
         line_count = 0
         end_nl = False
@@ -242,9 +242,15 @@ def make_feeder_from_file(in_file, filter=lambda buf: buf.encode('utf-8')):
     return feeder
 
 
+def make_feeder_from_text_reader(in_file, filter=lambda text_buf: text_buf):
+    def encoding_filter(text_buf):
+        return filter(text_buf).encode('utf-8')
+    return make_feeder_from_raw_reader(in_file, encoding_filter)
+
+
 def make_feeder_from_command(command):
     def feeder(out_file):
-        end_nl = make_feeder_from_file(command.stdout, command.filter)(out_file)
+        end_nl = make_feeder_from_raw_reader(command.stdout, command.filter)(out_file)
         if command.poll() is None:
             command.terminate()
         returncode = command.wait()
@@ -302,15 +308,21 @@ class Difference(object):
             return difference
 
     @staticmethod
-    def from_unicode(content1, content2, *args, **kwargs):
-        return Difference.from_feeder(make_feeder_from_unicode(content1),
-                                      make_feeder_from_unicode(content2),
+    def from_text(content1, content2, *args, **kwargs):
+        return Difference.from_feeder(make_feeder_from_text(content1),
+                                      make_feeder_from_text(content2),
                                       *args, **kwargs)
 
     @staticmethod
-    def from_file(file1, file2, *args, **kwargs):
-        return Difference.from_feeder(make_feeder_from_file(file1),
-                                      make_feeder_from_file(file2),
+    def from_raw_readers(file1, file2, *args, **kwargs):
+        return Difference.from_feeder(make_feeder_from_raw_reader(file1),
+                                      make_feeder_from_raw_reader(file2),
+                                      *args, **kwargs)
+
+    @staticmethod
+    def from_text_readers(file1, file2, *args, **kwargs):
+        return Difference.from_feeder(make_feeder_from_text_reader(file1),
+                                      make_feeder_from_text_reader(file2),
                                       *args, **kwargs)
 
     @staticmethod

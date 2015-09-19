@@ -45,11 +45,12 @@ class Stat(Command):
     ACCESS_TIME_RE = re.compile(r'^Access: [0-9]{4}-[0-9]{2}-[0-9]{2}.*$')
 
     def filter(self, line):
+        line = line.decode('utf-8')
         line = Stat.FILE_RE.sub('', line)
         line = Stat.DEVICE_RE.sub('', line)
         line = Stat.INODE_RE.sub('', line)
         line = Stat.ACCESS_TIME_RE.sub('', line)
-        return line
+        return line.encode('utf-8')
 
 
 @tool_required('lsattr')
@@ -79,7 +80,7 @@ def compare_meta(path1, path2):
     try:
         lsattr1 = lsattr(path1)
         lsattr2 = lsattr(path2)
-        differences.append(Difference.from_unicode(
+        differences.append(Difference.from_text(
                                lsattr1, lsattr2, path1, path2, source="lattr"))
     except RequiredToolNotFound:
         logger.info("Unable to find 'lsattr'.")

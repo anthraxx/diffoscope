@@ -79,7 +79,7 @@ class DebFile(File):
         differences = []
         my_content = get_ar_content(self.path)
         other_content = get_ar_content(other.path)
-        differences.append(Difference.from_unicode(
+        differences.append(Difference.from_text(
                                my_content, other_content, self.path, other.path, source="metadata"))
         with DebContainer(self).open() as my_container, \
              DebContainer(other).open() as other_container:

@@ -44,11 +44,11 @@ class TextFile(File):
         try:
             with codecs.open(self.path, 'r', encoding=my_encoding) as my_content, \
                  codecs.open(other.path, 'r', encoding=other_encoding) as other_content:
-                difference = Difference.from_file(my_content, other_content, self.name, other.name, source)
+                difference = Difference.from_text_readers(my_content, other_content, self.name, other.name, source)
                 if my_encoding != other_encoding:
                     if difference is None:
                         difference = Difference(None, self.path, other.path, source)
-                    difference.add_details([Difference.from_unicode(my_encoding, other_encoding, None, None, source='encoding')])
+                    difference.add_details([Difference.from_text(my_encoding, other_encoding, None, None, source='encoding')])
                 return difference
         except (LookupError, UnicodeDecodeError):
             # unknown or misdetected encoding

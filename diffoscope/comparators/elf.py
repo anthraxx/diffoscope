@@ -30,8 +30,7 @@ class Readelf(Command):
         super(Readelf, self).__init__(*args, **kwargs)
         # we don't care about the name of the archive
         self._archive_re = re.compile(r'^File: %s\(' % re.escape(self.path))
-        self._encoded_path = self.path.encode('utf-8')
-        self._basename = os.path.basename(self._encoded_path)
+        self._basename = os.path.basename(self.path)
 
     @tool_required('readelf')
     def cmdline(self):
@@ -42,9 +41,9 @@ class Readelf(Command):
 
     def filter(self, line):
         # we don't care about the name of the archive
-        line = self._archive_re.sub('File: lib.a(', line)
+        line = self._archive_re.sub('File: lib.a(', line.decode('utf-8'))
         # the full path can appear in the output, we need to remove it
-        return line.replace(self._encoded_path, self._basename)
+        return line.replace(self.path, self._basename).encode('utf-8')
 
 class ReadelfAll(Readelf):
     def readelf_options(self):
@@ -59,8 +58,7 @@ class ObjdumpDisassemble(Command):
         super(ObjdumpDisassemble, self).__init__(*args, **kwargs)
         # we don't care about the name of the archive
         self._archive_re = re.compile(r'^In archive %s:' % re.escape(self.path))
-        self._encoded_path = self.path.encode('utf-8')
-        self._basename = os.path.basename(self._encoded_path)
+        self._basename = os.path.basename(self.path)
 
     @tool_required('objdump')
     def cmdline(self):
@@ -68,9 +66,9 @@ class ObjdumpDisassemble(Command):
 
     def filter(self, line):
         # we don't care about the name of the archive
-        line = self._archive_re.sub('In archive:', line)
+        line = self._archive_re.sub('In archive:', line.decode('utf-8'))
         # the full path can appear in the output, we need to remove it
-        return line.replace(self._encoded_path, self._basename)
+        return line.replace(self.path, self._basename).encode('utf-8')
 
 def _compare_elf_data(path1, path2):
     differences = []
@@ -104,7 +102,7 @@ class StaticLibFile(File):
         # look up differences in metadata
         content1 = get_ar_content(self.path)
         content2 = get_ar_content(other.path)
-        differences.append(Difference.from_unicode(
+        differences.append(Difference.from_text(
                                content1, content2, self.path, other.path, source="metadata"))
         differences.extend(_compare_elf_data(self.path, other.path))
         return differences

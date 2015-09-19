@@ -186,6 +186,8 @@ class File(object):
                 difference = self.compare_bytes(other, source=source)
                 output = re.sub(r'^', '    ', e.output.decode('utf-8', errors='replace'), flags=re.MULTILINE)
                 cmd = ' '.join(e.cmd)
+                if difference is None:
+                    return None
                 difference.add_comment("Command `%s` exited with %d. Output:\n%s"
                                        % (cmd, e.returncode, output))
             except RequiredToolNotFound as e:

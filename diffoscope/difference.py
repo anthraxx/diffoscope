@@ -155,7 +155,7 @@ def run_diff(fd1, fd2, end_nl_q1, end_nl_q2):
     t_read.join()
     p.wait()
     if not parser.success and p.returncode not in (0, 1):
-        raise subprocess.CalledProcessError(cmd, p.returncode, output=diff)
+        raise subprocess.CalledProcessError(p.returncode, cmd, output=diff)
     if p.returncode == 0:
         return None
     return parser.diff

@@ -27,7 +27,7 @@ from diffoscope.difference import Difference
 from diffoscope.comparators.binary import File, needs_content
 from diffoscope.comparators.utils import \
     Archive, ArchiveMember, get_ar_content
-from diffoscope.comparators.tar import TarContainer, get_tar_listing
+from diffoscope.comparators.tar import TarContainer, TarListing
 
 AR_EXTRACTION_BUFFER_SIZE = 32768
 
@@ -153,10 +153,6 @@ class DebDataTarFile(File):
         ignore_files = self.container.source.container.source.files_with_same_content_in_data
         with DebTarContainer(self, ignore_files).open() as my_container, \
              DebTarContainer(other, ignore_files).open() as other_container:
-            # look up differences in file list and file metadata
-            my_listing = get_tar_listing(my_container.archive)
-            other_listing = get_tar_listing(other_container.archive)
-            differences.append(Difference.from_unicode(
-                                  my_listing, other_listing, self.name, other.name, source="metadata"))
+            differences.append(Difference.from_command(TarListing, self.path, other.path))
             differences.extend(my_container.compare(other_container))
         return differences

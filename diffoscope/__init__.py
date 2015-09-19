@@ -60,6 +60,7 @@ class RequiredToolNotFound(Exception):
                 , 'sng':        { 'debian': 'sng' }
                 , 'stat':       { 'debian': 'coreutils' }
                 , 'sqlite3':    { 'debian': 'sqlite3'}
+                , 'tar':        { 'debian': 'tar'}
                 , 'unsquashfs': { 'debian': 'squashfs-tools' }
                 , 'xxd':        { 'debian': 'vim-common' }
                 , 'xz':         { 'debian': 'xz-utils' }

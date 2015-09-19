@@ -18,7 +18,6 @@
 # along with diffoscope.  If not, see <http://www.gnu.org/licenses/>.
 
 from contextlib import contextmanager
-from io import BytesIO
 import os.path
 import re
 import stat
@@ -30,7 +29,7 @@ from diffoscope.comparators.binary import File, needs_content
 from diffoscope.comparators.device import Device
 from diffoscope.comparators.directory import Directory
 from diffoscope.comparators.symlink import Symlink
-from diffoscope.comparators.utils import Archive, ArchiveMember
+from diffoscope.comparators.utils import Archive, ArchiveMember, Command, tool_required
 
 class TarMember(ArchiveMember):
     def is_directory(self):
@@ -125,15 +124,11 @@ class TarContainer(Archive):
             return TarMember(self, member_name)
 
 
-def get_tar_listing(tar):
-    orig_stdout = sys.stdout
-    output = BytesIO()
-    try:
-        sys.stdout = output
-        tar.list(verbose=True)
-        return output.getvalue().decode('utf-8')
-    finally:
-        sys.stdout = orig_stdout
+class TarListing(Command):
+    @tool_required('tar')
+    def cmdline(self):
+        return ['tar', '--full-time', '-tvf', self.path]
+
 
 class TarFile(File):
     RE_FILE_TYPE = re.compile(r'\btar archive\b')
@@ -147,10 +142,6 @@ class TarFile(File):
         differences = []
         with TarContainer(self).open() as my_container, \
              TarContainer(other).open() as other_container:
-            # look up differences in file list and file metadata
-            my_listing = get_tar_listing(my_container.archive)
-            other_listing = get_tar_listing(other_container.archive)
-            differences.append(Difference.from_unicode(
-                                  my_listing, other_listing, self.name, other.name, source="metadata"))
+            differences.append(Difference.from_command(TarListing, self.path, other.path))
             differences.extend(my_container.compare(other_container))
         return differences

@@ -62,7 +62,7 @@ def test_no_fuzzy_matching(monkeypatch, fuzzy_tar_in_tar1, fuzzy_tar_in_tar2):
     monkeypatch.setattr(Config, 'fuzzy_threshold', 0)
     difference = fuzzy_tar_in_tar1.compare(fuzzy_tar_in_tar2)
     assert len(difference.details) == 1
-    assert difference.details[0].source1 == 'metadata'
+    assert difference.details[0].source1 == 'tar --full-time -tvf {}'
 
 def test_no_fuzzy_matching_new_file(monkeypatch, fuzzy_tar_in_tar1, fuzzy_tar_in_tar2):
     monkeypatch.setattr(Config, 'fuzzy_threshold', 0)

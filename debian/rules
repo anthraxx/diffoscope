@@ -14,7 +14,7 @@ override_dh_auto_build:
 
 override_dh_gencontrol:
 	TOOLS="$$(bin/diffoscope --list-tools | tail -n 1 | \
-		sed -e 's/\(^\| \)\(coreutils\|diffutils\|e2fsprogs\|findutils\|gzip\)\(,\|$$\)//g')"; \
+		sed -e 's/\(^\| \)\(coreutils\|diffutils\|e2fsprogs\|findutils\|gzip\|tar\)\(,\|$$\)//g')"; \
 		[ -n "$$TOOLS" ] || { echo '--list-tools failed' >&2; exit 1; }; \
 		echo "diffoscope:Recommends=$$TOOLS" >> debian/diffoscope.substvars
 	dh_gencontrol -O--buildsystem=pybuild

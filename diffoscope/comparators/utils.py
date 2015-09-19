@@ -19,7 +19,7 @@
 
 from abc import ABCMeta, abstractmethod
 from contextlib import contextmanager
-from io import StringIO
+from io import BytesIO
 from itertools import starmap
 # The following would be shutil.which in Python 3.3
 import os
@@ -69,7 +69,7 @@ class Command(object):
         else:
             self._stdin_feeder = None
             self._process.stdin.close()
-        self._stderr = StringIO()
+        self._stderr = BytesIO()
         self._stderr_line_count = 0
         self._stderr_reader = Thread(target=self._read_stderr)
         self._stderr_reader.daemon = True
@@ -100,7 +100,7 @@ class Command(object):
         if self._stdin_feeder:
             self._stdin_feeder.join()
         self._stderr_reader.join()
-        self._process.wait()
+        return self._process.wait()
 
     MAX_STDERR_LINES = 50
 
@@ -115,7 +115,11 @@ class Command(object):
 
     @property
     def stderr_content(self):
-        return self._stderr.getvalue()
+        return self._stderr.getvalue().decode('utf-8', errors='replace')
+
+    @property
+    def stderr(self):
+        return self._stderr
 
     @property
     def stdout(self):

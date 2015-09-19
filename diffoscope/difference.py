@@ -22,6 +22,7 @@ from io import StringIO
 import os
 import os.path
 import re
+import signal
 import subprocess
 import sys
 import traceback
@@ -246,7 +247,9 @@ def make_feeder_from_command(command):
         end_nl = make_feeder_from_file(command.stdout, command.filter)(out_file)
         if command.poll() is None:
             command.terminate()
-        command.wait()
+        returncode = command.wait()
+        if returncode not in (0, -signal.SIGTERM):
+            raise subprocess.CalledProcessError(returncode, command.cmdline(), output=command.stderr.getvalue())
         return end_nl
     return feeder
 

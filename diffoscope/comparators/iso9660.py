@@ -72,8 +72,12 @@ class Iso9660File(File):
     def compare_details(self, other, source=None):
         differences = []
         differences.append(Difference.from_command(ISO9660PVD, self.path, other.path))
-        for extension in (None, 'joliet', 'rockridge'):
-            differences.append(Difference.from_command(ISO9660Listing, self.path, other.path, command_args=(extension,)))
+        differences.append(Difference.from_command(ISO9660Listing, self.path, other.path))
+        for extension in ('joliet', 'rockridge'):
+            try:
+                differences.append(Difference.from_command(ISO9660Listing, self.path, other.path, command_args=(extension,)))
+            except subprocess.CalledProcessError:
+                pass # probably no joliet or rockridge data
         with LibarchiveContainer(self).open() as my_container, \
              LibarchiveContainer(other).open() as other_container:
             differences.extend(my_container.compare(other_container))

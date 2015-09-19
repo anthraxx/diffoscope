@@ -26,7 +26,7 @@ import subprocess
 import sys
 import traceback
 from threading import Thread
-from multiprocessing import Queue
+from multiprocessing.dummy import Queue
 from diffoscope.config import Config
 from diffoscope import logger, tool_required, RequiredToolNotFound
 
@@ -170,26 +170,20 @@ class ExThread(Thread):
     def run(self, *args, **kwargs):
         try:
             super(ExThread, self).run(*args, **kwargs)
-        except Exception:
-            except_type, except_class, tb = sys.exc_info()
-            self.__status_queue.put((except_type, except_class, traceback.extract_tb(tb)))
+        except Exception as ex:
+            #except_type, except_class, tb = sys.exc_info()
+            self.__status_queue.put(ex)
         self.__status_queue.put(None)
 
     def wait_for_exc_info(self):
         return self.__status_queue.get()
 
     def join(self):
-        ex_info = self.wait_for_exc_info()
-        if ex_info is None:
+        ex = self.wait_for_exc_info()
+        if ex is None:
             return
         else:
-            except_type, except_class, tb = ex_info
-            logger.error('Exception: %s',
-                         traceback.format_exception_only(except_type, except_class)[0].strip())
-            logger.error('Traceback:')
-            for line in traceback.format_list(tb):
-                logger.error(line[:-1])
-            raise except_type(except_class)
+            raise ex
 
 
 def feed(feeder, f, end_nl_q):
@@ -258,14 +252,8 @@ def make_feeder_from_command(command):
 
 
 def diff(feeder1, feeder2):
-    try:
-        end_nl_q1 = Queue()
-        end_nl_q2 = Queue()
-    except OSError as e:
-        if e.errno not in (13, 38):
-            raise
-        logger.critical('/dev/shm is not available or not on a tmpfs. Unable to create semaphore.')
-        sys.exit(2)
+    end_nl_q1 = Queue()
+    end_nl_q2 = Queue()
     with fd_from_feeder(feeder1, end_nl_q1) as fd1:
         with fd_from_feeder(feeder2, end_nl_q2) as fd2:
             return run_diff(fd1, fd2, end_nl_q1, end_nl_q2)

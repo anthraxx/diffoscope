@@ -41,7 +41,7 @@ class Device(File):
 
     @contextmanager
     def get_content(self):
-        with tempfile.NamedTemporaryFile(suffix='diffoscope') as f:
+        with tempfile.NamedTemporaryFile(mode='w+', suffix='diffoscope') as f:
             f.write(format_device(*self.get_device()))
             f.flush()
             self._path = f.name

@@ -37,7 +37,7 @@ class Symlink(File):
 
     @contextmanager
     def get_content(self):
-        with tempfile.NamedTemporaryFile(suffix='diffoscope') as f:
+        with tempfile.NamedTemporaryFile('w+', suffix='diffoscope') as f:
             f.write(format_symlink(self.symlink_destination))
             f.flush()
             self._path = f.name

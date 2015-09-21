@@ -91,3 +91,63 @@ def test_ctrl_c_handling(tmpdir, monkeypatch, capsys):
     assert '' in err
     assert excinfo.value.code == 2
     assert os.listdir(str(tmpdir)) == []
+
+def test_text_option_with_file(tmpdir, capsys):
+    report_path = str(tmpdir.join('report.txt'))
+    args = ['--text', report_path, TEST_TAR1_PATH, TEST_TAR2_PATH]
+    with pytest.raises(SystemExit) as excinfo:
+        main(args)
+    assert excinfo.value.code == 1
+    out, err = capsys.readouterr()
+    assert err == ''
+    assert out == ''
+    with open(report_path, 'r') as f:
+        assert f.read().startswith('--- ')
+
+def test_text_option_with_stdiout(capsys):
+    args = ['--text', '-', TEST_TAR1_PATH, TEST_TAR2_PATH]
+    with pytest.raises(SystemExit) as excinfo:
+        main(args)
+    assert excinfo.value.code == 1
+    out, err = capsys.readouterr()
+    assert err == ''
+    assert out.startswith('--- ')
+
+def test_no_report_option(capsys):
+    args = [TEST_TAR1_PATH, TEST_TAR2_PATH]
+    with pytest.raises(SystemExit) as excinfo:
+        main(args)
+    assert excinfo.value.code == 1
+    out, err = capsys.readouterr()
+    assert err == ''
+    assert out.startswith('--- ')
+
+def test_html_option_with_file(tmpdir, capsys):
+    report_path = str(tmpdir.join('report.html'))
+    args = ['--html', report_path, TEST_TAR1_PATH, TEST_TAR2_PATH]
+    with pytest.raises(SystemExit) as excinfo:
+        main(args)
+    assert excinfo.value.code == 1
+    out, err = capsys.readouterr()
+    assert err == ''
+    assert out == ''
+    with open(report_path, 'r') as f:
+        assert 'meta name="generator" content="diffoscope"' in f.read()
+
+def test_html_option_with_stdout(capsys):
+    args = ['--html', '-', TEST_TAR1_PATH, TEST_TAR2_PATH]
+    with pytest.raises(SystemExit) as excinfo:
+        main(args)
+    assert excinfo.value.code == 1
+    out, err = capsys.readouterr()
+    assert err == ''
+    assert 'meta name="generator" content="diffoscope"' in out
+
+def test_no_differences(capsys):
+    args = [TEST_TAR1_PATH, TEST_TAR1_PATH]
+    with pytest.raises(SystemExit) as excinfo:
+        main(args)
+    assert excinfo.value.code == 0
+    out, err = capsys.readouterr()
+    assert err == ''
+    assert out == ''

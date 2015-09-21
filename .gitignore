@@ -1,5 +1,6 @@
 *.sw[p-z]
 *.pyc
+/.pybuild
 /diffoscope.egg-info/
 /dist/
 .coverage

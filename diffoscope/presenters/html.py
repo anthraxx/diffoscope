@@ -31,7 +31,6 @@
 # Dave Burt <dave (at) burt.id.au> (mainly for html theme)
 #
 
-from __future__ import print_function
 import cgi
 import re
 import sys
@@ -39,6 +38,7 @@ from xml.sax.saxutils import escape
 from diffoscope import logger, VERSION
 from diffoscope.config import Config
 from diffoscope.presenters.icon import FAVICON_BASE64
+from functools import reduce
 
 # minimum line size, we add a zero-sized breakable space every
 # LINESIZE characters
@@ -188,9 +188,9 @@ def linediff(s, t):
     Original line diff algorithm of diff2html. It's character based.
     '''
     if len(s):
-        s = unicode(reduce(lambda x, y:x+y, [ sane(c) for c in s ]))
+        s = str(reduce(lambda x, y:x+y, [ sane(c) for c in s ]))
     if len(t):
-        t = unicode(reduce(lambda x, y:x+y, [ sane(c) for c in t ]))
+        t = str(reduce(lambda x, y:x+y, [ sane(c) for c in t ]))
 
     m, n = len(s), len(t)
     d = [[(0, 0) for i in range(n+1)] for i in range(m+1)]

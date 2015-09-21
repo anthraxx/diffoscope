@@ -18,7 +18,7 @@
 # You should have received a copy of the GNU General Public License
 # along with diffoscope.  If not, see <http://www.gnu.org/licenses/>.
 
-from __future__ import absolute_import
+from binascii import hexlify
 from io import StringIO
 import os.path
 import subprocess
@@ -39,12 +39,14 @@ def convert_header_field(io, header):
                 io.write(u" - ")
                 convert_header_field(io, item)
     elif isinstance(header, str):
+        io.write(header)
+    elif isinstance(header, bytes):
         try:
             io.write(header.decode('utf-8'))
         except UnicodeDecodeError:
-            io.write(header.encode('hex_codec').decode('us-ascii'))
+            io.write(hexlify(header).decode('us-ascii'))
     else:
-        io.write(repr(header).decode('us-ascii'))
+        io.write(repr(header))
 
 
 def get_rpm_header(path, ts):

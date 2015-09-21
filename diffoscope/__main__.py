@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
 # diffoscope: in-depth comparison of files, archives, and directories
@@ -17,8 +17,6 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with diffoscope.  If not, see <http://www.gnu.org/licenses/>.
-
-from __future__ import print_function
 
 import argparse
 from contextlib import contextmanager
@@ -82,8 +80,6 @@ def create_parser():
 def make_printer(path):
     if path == '-':
         output = sys.stdout
-        if not sys.stdout.isatty():
-            output = codecs.getwriter(sys.stdin.encoding or 'utf-8')(sys.stdout)
     else:
         output = codecs.open(path, 'w', encoding='utf-8')
     def print_func(*args, **kwargs):

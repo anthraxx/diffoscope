@@ -7,18 +7,18 @@ Uploaders: Jérémy Bobbio <lunar@debian.org>,
  Holger Levsen <holger@debian.org>
 Build-Depends: debhelper (>= 9),
                dh-python,
-               python-all,
-               python-debian,
-               python-docutils,
-               python-libarchive-c,
-               python-magic,
-               python-pytest,
-               python-rpm,
-               python-setuptools,
-               python-tlsh,
+               python3-all,
+               python3-debian,
+               python3-docutils,
+               python3-libarchive-c,
+               python3-magic,
+               python3-pytest,
+               python3-rpm,
+               python3-setuptools,
+               python3-tlsh,
                rpm-common
 Standards-Version: 3.9.6
-X-Python-Version: >= 2.7
+X-Python-Version: >= 3
 Homepage: http://diffoscope.org/
 Vcs-Git: git://anonscm.debian.org/reproducible/diffoscope.git
 Vcs-Browser: https://anonscm.debian.org/cgit/reproducible/diffoscope.git
@@ -27,7 +27,7 @@ XS-Testsuite: autopkgtest
 Package: diffoscope
 Architecture: all
 Depends: ${misc:Depends},
-         ${python:Depends},
+         ${python3:Depends},
 Recommends: ${diffoscope:Recommends}
 Breaks: debbindiff (<< 29)
 Replaces: debbindiff (<< 29)

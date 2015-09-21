@@ -78,9 +78,7 @@ def needs_content(original_method):
             return original_method(self, other, *args, **kwargs)
     return wrapper
 
-class File(object):
-    __metaclass__ = ABCMeta
-
+class File(object, metaclass=ABCMeta):
     @classmethod
     def guess_file_type(self, path):
         if not hasattr(self, '_mimedb'):

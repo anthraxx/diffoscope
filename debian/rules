@@ -3,7 +3,7 @@
 VERSION = $(shell dpkg-parsechangelog --show-field Version)
 
 %:
-	dh $@ --with python2 --buildsystem=pybuild
+	dh $@ --with python3 --buildsystem=pybuild
 
 override_dh_auto_build:
 	@if ! grep -q 'VERSION = "$(VERSION)"' diffoscope/__init__.py; then \

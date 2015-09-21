@@ -105,7 +105,7 @@ class TarContainer(Archive):
     def extract(self, member_name, dest_dir):
         logger.debug('tar extracting %s to %s', member_name, dest_dir)
         self.archive.extract(member_name, dest_dir)
-        return os.path.join(dest_dir, member_name).decode('utf-8')
+        return os.path.join(dest_dir, member_name)
 
     def get_member(self, member_name):
         tarinfo = self.archive.getmember(member_name)

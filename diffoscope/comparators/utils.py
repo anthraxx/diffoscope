@@ -52,9 +52,7 @@ def get_ar_content(path):
         ['ar', 'tv', path], stderr=subprocess.STDOUT, shell=False).decode('utf-8')
 
 
-class Command(object):
-    __metaclass__ = ABCMeta
-
+class Command(object, metaclass=ABCMeta):
     def __init__(self, path):
         self._path = path
         logger.debug('running %s', self.cmdline())
@@ -157,9 +155,7 @@ def get_compressed_content_name(path, expected_extension):
 NO_COMMENT = None
 
 
-class Container(object):
-    __metaclass__ = ABCMeta
-
+class Container(object, metaclass=ABCMeta):
     def __init__(self, source):
         self._source = source
 
@@ -186,16 +182,16 @@ class Container(object):
     def comparisons(self, other):
         my_members = self.get_members()
         other_members = other.get_members()
-        for name in sorted(my_members.viewkeys() & other_members.viewkeys()):
+        for name in sorted(my_members.keys() & other_members.keys()):
             yield my_members.pop(name), other_members.pop(name), NO_COMMENT
         for my_name, other_name, score in diffoscope.comparators.perform_fuzzy_matching(my_members, other_members):
             comment = 'Files similar despite different names (difference score: %d)' % score
             yield my_members.pop(my_name), other_members.pop(other_name), comment
         if Config.general.new_file:
-            for my_name in my_members.viewkeys() - other_members.viewkeys():
+            for my_name in my_members.keys() - other_members.keys():
                 my_file = my_members[my_name]
                 yield my_file, NonExistingFile('/dev/null', my_file), NO_COMMENT
-            for other_name in other_members.viewkeys() - my_members.viewkeys():
+            for other_name in other_members.keys() - my_members.keys():
                 other_file = other_members[other_name]
                 yield NonExistingFile('/dev/null', other_file), other_file, NO_COMMENT
 
@@ -239,9 +235,7 @@ class ArchiveMember(File):
         return False
 
 
-class Archive(Container):
-    __metaclass__ = ABCMeta
-
+class Archive(Container, metaclass=ABCMeta):
     def __init__(self, *args, **kwargs):
         super(Archive, self).__init__(*args, **kwargs)
         self._archive = None

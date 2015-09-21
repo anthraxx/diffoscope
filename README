@@ -32,7 +32,7 @@ This will compare `build1.changes` and `build2.changes` and create
 External dependencies
 ---------------------
 
-Required Python modules:
+diffoscope requires Python 3 and the following modules:
 
  * Available on PyPI: libarchive-c, python-debian.
  * Magic-file-extension is built from file:

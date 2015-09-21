@@ -8,4 +8,4 @@ if ! [ -d "$ADTTMP" ]; then
 fi
 
 cp -r tests $ADTTMP
-(cd $ADTTMP; py.test)
+(cd $ADTTMP; py.test-3)

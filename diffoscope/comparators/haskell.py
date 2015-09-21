@@ -76,7 +76,7 @@ class HiFile(File):
                 fp.read(4)
                 # now read version
                 buf = fp.read(16)
-                version_found = ''.join(map(unichr, struct.unpack_from('=3IB', buf)))
+                version_found = ''.join(map(chr, struct.unpack_from('=3IB', buf)))
                 if version_found != HiFile.hi_version:
                     logger.debug('Haskell version mismatch. Found %s instead of %s.',
                                  version_found, HiFile.hi_version)

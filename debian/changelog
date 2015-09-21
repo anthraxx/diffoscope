@@ -1,3 +1,34 @@
+diffoscope (35) unstable; urgency=low
+
+  [ Jérémy Bobbio ]
+  * Switch to Python 3. This means code has been changed slightly
+    here and there. Issues related to text encoding should now be
+    far less frequent. According to some preliminary benchmark,
+    diffoscope should run faster as well.
+  * The system tar is now used instead of the Python module to display Tar
+    archive metadata. The output should be slightly more accurate.
+  * Log exceptions raised while computing diffs as errors
+  * Avoid concatenating many strings in hexdump_fallback. This matters when
+    looking at big binary files with xxd unavailable.
+  * Let's ignore command errors when the file content is identical.
+  * Fix isoinfo arguments to read Joliet data on ISO9660 images.
+  * Ignore errors when reading Joliet and Rockridge data in ISO9660 images.
+  * Use threads instead of processes for multiprocessing when running diff.
+    There is no measurable performance impact and it helps to simplify the
+    code.
+  * Use the right argument order when creating CalledProcessError.
+  * Propagate failure of external commands feeding diff.
+  * Improve debugging log for command lines and exit codes.
+  * Remove she-bang from files not meant to be executed directly.
+  * Add more tests for main() behavior.
+  * Improve RPM header conversion.
+  * Fix a refactoring error in compare_commented_files().
+
+  [ Mattia Rizzolo ]
+  * Drop X-Python-Version field, not needed anymore for python3.
+
+ -- Jérémy Bobbio <lunar@debian.org>  Mon, 21 Sep 2015 21:23:56 +0000
+
 diffoscope (34) unstable; urgency=medium
 
   * Fix path to executable in README. Thanks Niko Tyni for the patch.

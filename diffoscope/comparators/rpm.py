@@ -19,6 +19,7 @@
 # along with diffoscope.  If not, see <http://www.gnu.org/licenses/>.
 
 from __future__ import absolute_import
+from io import StringIO
 import os.path
 import subprocess
 import rpm
@@ -28,8 +29,26 @@ from diffoscope.comparators.binary import needs_content
 from diffoscope.comparators.utils import Archive, make_temp_directory
 from diffoscope.difference import Difference
 
+def convert_header_field(io, header):
+    if isinstance(header, list):
+        if len(header) == 0:
+            io.write(u"[]")
+        else:
+            io.write(u"\n")
+            for item in header:
+                io.write(u" - ")
+                convert_header_field(io, item)
+    elif isinstance(header, str):
+        try:
+            io.write(header.decode('utf-8'))
+        except UnicodeDecodeError:
+            io.write(header.encode('hex_codec').decode('us-ascii'))
+    else:
+        io.write(repr(header).decode('us-ascii'))
+
+
 def get_rpm_header(path, ts):
-    header = ''
+    s = StringIO()
     with open(path, 'r') as f:
         try:
             hdr = ts.hdrFromFdno(f)
@@ -39,14 +58,10 @@ def get_rpm_header(path, ts):
         for rpmtag in sorted(rpm.tagnames):
             if rpmtag not in hdr:
                 continue
-            # header fields can contain binary data
-            try:
-                value = str(hdr[rpmtag]).decode('utf-8')
-            except UnicodeDecodeError:
-                value = str(hdr[rpmtag]).encode('hex_codec')
-            header += "%s: %s\n" % (rpm.tagnames[rpmtag], value)
-
-    return header
+            s.write(u"%s: " % rpm.tagnames[rpmtag])
+            convert_header_field(s, hdr[rpmtag])
+            s.write(u"\n")
+    return s.getvalue()
 
 
 def compare_rpm_headers(path1, path2):

@@ -235,7 +235,7 @@ def make_feeder_from_raw_reader(in_file, filter=lambda buf: buf):
             out_file.write(filter(buf))
             max_lines = Config.general.max_diff_input_lines
             if max_lines > 0 and line_count >= max_lines:
-                out_file.write('[ Too much input for diff ]%s\n' % (' ' * out_file.fileno()))
+                out_file.write('[ Too much input for diff ]{}\n'.format(' ' * out_file.fileno()).encode('utf-8'))
                 end_nl = True
                 break
             end_nl = buf[-1] == '\n'

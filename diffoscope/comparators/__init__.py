@@ -51,9 +51,7 @@ from diffoscope.comparators.ppu import DotPpuFile
 try:
     from diffoscope.comparators.rpm import RpmFile
 except ImportError as ex:
-    if hasattr(ex, 'message') and ex.message != 'No module named rpm': # Python 2
-        raise
-    if hasattr(ex, 'msg') and ex.msg != "No module named 'rpm'": # Python 3
+    if hasattr(ex, 'msg') and ex.msg != "No module named 'rpm'":
         raise
     from diffoscope.comparators.rpm_fallback import RpmFile
 from diffoscope.comparators.sqlite import Sqlite3Database

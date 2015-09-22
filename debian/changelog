@@ -1,3 +1,10 @@
+diffoscope (36) unstable; urgency=low
+
+  * Read Debian .changes file as utf-8 encoded.
+  * Add missing encode() for the 'too much input for diff' message.
+
+ -- Jérémy Bobbio <lunar@debian.org>  Tue, 22 Sep 2015 11:24:37 +0200
+
 diffoscope (35) unstable; urgency=low
 
   [ Jérémy Bobbio ]

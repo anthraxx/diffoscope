@@ -98,7 +98,7 @@ class Md5sumsFile(File):
     @staticmethod
     def parse_md5sums(path):
         d = {}
-        with open(path) as f:
+        with open(path, 'r', encoding='utf-8') as f:
             for line in f.readlines():
                 md5sum, path = re.split(r'\s+', line.strip(), maxsplit=1)
                 d[path] = md5sum

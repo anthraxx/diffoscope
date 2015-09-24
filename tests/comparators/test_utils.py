@@ -22,7 +22,10 @@ import os.path
 import pytest
 from diffoscope.comparators import specialize
 from diffoscope.comparators.binary import FilesystemFile, NonExistingFile
+from diffoscope.comparators.utils import Command
 from diffoscope.config import Config
+from diffoscope.difference import Difference
+from conftest import tool_missing
 
 @pytest.fixture
 def fuzzy_tar1():
@@ -70,3 +73,15 @@ def test_no_fuzzy_matching_new_file(monkeypatch, fuzzy_tar_in_tar1, fuzzy_tar_in
     assert len(difference.details) == 3
     assert difference.details[1].source2 == '/dev/null'
     assert difference.details[2].source1 == '/dev/null'
+
+@pytest.mark.skipif(tool_missing('tee'), reason='missing tee')
+def test_trim_stderr_in_command():
+    class FillStderr(Command):
+        def cmdline(self):
+            return ['tee', '/dev/stderr']
+
+        def feed_stdin(self, stdin):
+            for dummy in range(0, Command.MAX_STDERR_LINES + 1):
+                stdin.write('error {}\n'.format(self.path).encode('utf-8'))
+    difference = Difference.from_command(FillStderr, 'dummy1', 'dummy2')
+    assert '[ 1 lines ignored ]' in difference.comment

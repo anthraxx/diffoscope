@@ -121,8 +121,8 @@ class Md5sumsFile(File):
                               comment="Files in package differs")
         except ValueError as e:
             difference = self.compare_bytes(other)
-            difference.add_comment('Malformed md5sums file')
-            return Difference
+            difference.add_comment('Malformed md5sums file: %s' % e)
+            return difference
 
 
 class DebTarContainer(TarContainer):

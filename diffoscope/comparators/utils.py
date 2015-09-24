@@ -62,7 +62,7 @@ class Command(object, metaclass=ABCMeta):
                                          stdout=subprocess.PIPE,
                                          stderr=subprocess.PIPE)
         if hasattr(self, 'feed_stdin'):
-            self._stdin_feeder = Thread(target=self.feed_stdin, args=(self._process.stdin,))
+            self._stdin_feeder = Thread(target=self._feed_stdin, args=(self._process.stdin,))
             self._stdin_feeder.daemon = True
             self._stdin_feeder.start()
         else:
@@ -82,8 +82,14 @@ class Command(object, metaclass=ABCMeta):
     def cmdline(self):
         raise NotImplemented
 
-    # Define only if needed
-    #def feed_stdin(self, f)
+    # Define only if needed. We take care of closing stdin.
+    #def feed_stdin(self, stdin)
+
+    def _feed_stdin(self, stdin):
+        try:
+            self.feed_stdin(stdin)
+        finally:
+            stdin.close()
 
     def filter(self, line):
         # Assume command output is utf-8 by default

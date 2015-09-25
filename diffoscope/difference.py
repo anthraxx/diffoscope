@@ -166,12 +166,12 @@ def run_diff(fd1, fd2, end_nl_q1, end_nl_q2):
 # inspired by https://stackoverflow.com/a/6874161
 class ExThread(Thread):
     def __init__(self, *args, **kwargs):
-        super(ExThread, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.__status_queue = Queue()
 
     def run(self, *args, **kwargs):
         try:
-            super(ExThread, self).run(*args, **kwargs)
+            super().run(*args, **kwargs)
         except Exception as ex:
             #except_type, except_class, tb = sys.exc_info()
             self.__status_queue.put(ex)

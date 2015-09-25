@@ -27,7 +27,7 @@ from diffoscope.difference import Difference
 
 class Readelf(Command):
     def __init__(self, *args, **kwargs):
-        super(Readelf, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         # we don't care about the name of the archive
         self._archive_re = re.compile(r'^File: %s\(' % re.escape(self.path))
         self._basename = os.path.basename(self.path)
@@ -55,7 +55,7 @@ class ReadelfDebugDump(Readelf):
 
 class ObjdumpDisassemble(Command):
     def __init__(self, *args, **kwargs):
-        super(ObjdumpDisassemble, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         # we don't care about the name of the archive
         self._archive_re = re.compile(r'^In archive %s:' % re.escape(self.path))
         self._basename = os.path.basename(self.path)

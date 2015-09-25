@@ -127,12 +127,12 @@ class Md5sumsFile(File):
 
 class DebTarContainer(TarContainer):
     def __init__(self, archive, ignore_files):
-        super(DebTarContainer, self).__init__(archive)
+        super().__init__(archive)
         assert type(ignore_files) is set
         self._ignore_files = ignore_files
 
     def get_member_names(self):
-        names = set(super(DebTarContainer, self).get_member_names())
+        names = set(super().get_member_names())
         logger.debug('Ignoring %d/%d files known identical in data.tar', len(self._ignore_files), len(names))
         return names - self._ignore_files
 

@@ -40,7 +40,7 @@ if not hasattr(libarchive.ffi, 'entry_rdevminor'):
 
 class LibarchiveMember(ArchiveMember):
     def __init__(self, archive, entry):
-        super(LibarchiveMember, self).__init__(archive, entry.pathname)
+        super().__init__(archive, entry.pathname)
 
     def is_directory(self):
         return False

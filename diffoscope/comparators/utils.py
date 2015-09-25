@@ -243,7 +243,7 @@ class ArchiveMember(File):
 
 class Archive(Container, metaclass=ABCMeta):
     def __init__(self, *args, **kwargs):
-        super(Archive, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self._archive = None
 
     @contextmanager

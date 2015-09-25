@@ -43,7 +43,7 @@ class ISO9660PVD(Command):
 class ISO9660Listing(Command):
     def __init__(self, path, extension=None, *args, **kwargs):
         self._extension = extension
-        super(ISO9660Listing, self).__init__(path, *args, **kwargs)
+        super().__init__(path, *args, **kwargs)
 
     @tool_required('isoinfo')
     def cmdline(self):

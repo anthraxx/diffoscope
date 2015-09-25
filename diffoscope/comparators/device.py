@@ -20,10 +20,10 @@
 from contextlib import contextmanager
 import os
 import tempfile
-from diffoscope.comparators.binary import File, FilesystemFile, needs_content
+from diffoscope.comparators.binary import File, FilesystemFile
 from diffoscope.comparators.utils import format_device
 from diffoscope.difference import Difference
-from diffoscope import logger
+from diffoscope import logger, get_named_temporary_file
 
 
 class Device(File):
@@ -39,16 +39,24 @@ class Device(File):
     def has_same_content_as(self, other):
         return self.get_device() == other.get_device()
 
-    @contextmanager
-    def get_content(self):
-        with tempfile.NamedTemporaryFile(mode='w+', suffix='diffoscope') as f:
+    def create_placeholder(self):
+        with get_named_temporary_file(mode='w+', suffix='diffoscope', delete=False) as f:
             f.write(format_device(*self.get_device()))
             f.flush()
-            self._path = f.name
-            yield
-            self._path = None
+            return f.name
 
-    @needs_content
+    @property
+    def path(self):
+        if not hasattr(self, '_placeholder'):
+            self._placeholder = self.create_placeholder()
+        return self._placeholder
+
+    def cleanup(self):
+        if hasattr(self, '_placeholder'):
+            os.remove(self._placeholder)
+            del self._placeholder
+        super().cleanup()
+
     def compare(self, other, source=None):
         with open(self.path) as my_content, \
              open(other.path) as other_content:

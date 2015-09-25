@@ -18,7 +18,7 @@
 # along with diffoscope.  If not, see <http://www.gnu.org/licenses/>.
 
 from diffoscope import tool_required
-from diffoscope.comparators.binary import File, needs_content
+from diffoscope.comparators.binary import File
 from diffoscope.comparators.utils import Command
 from diffoscope.difference import Difference
 
@@ -34,7 +34,6 @@ class Sqlite3Database(File):
     def recognizes(file):
         return file.magic_file_type == 'SQLite 3.x database'
 
-    @needs_content
     def compare_details(self, other, source=None):
         return [Difference.from_command(Sqlite3Dump, self.path, other.path)]
 

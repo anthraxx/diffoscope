@@ -21,7 +21,7 @@ import os.path
 import re
 import subprocess
 import diffoscope.comparators
-from diffoscope.comparators.binary import File, needs_content
+from diffoscope.comparators.binary import File
 from diffoscope.comparators.utils import Archive, get_compressed_content_name, NO_COMMENT
 from diffoscope import logger, tool_required
 
@@ -62,7 +62,6 @@ class Bzip2File(File):
     def recognizes(file):
         return Bzip2File.RE_FILE_TYPE.match(file.magic_file_type)
 
-    @needs_content
     def compare_details(self, other, source=None):
         with Bzip2Container(self).open() as my_container, \
              Bzip2Container(other).open() as other_container:

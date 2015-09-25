@@ -23,7 +23,7 @@ import re
 import subprocess
 import stat
 from diffoscope import logger, tool_required
-from diffoscope.comparators.binary import File, needs_content
+from diffoscope.comparators.binary import File
 from diffoscope.comparators.device import Device
 from diffoscope.comparators.directory import Directory
 from diffoscope.comparators.symlink import Symlink
@@ -83,9 +83,9 @@ class SquashfsDirectory(Directory, SquashfsMember):
     def has_same_content_as(self, other):
         return False
 
-    @contextmanager
-    def get_content(self):
-        yield
+    @property
+    def path(self):
+        raise NotImplementedError('SquashfsDirectory is not meant to be extracted.')
 
     def is_directory(self):
         return True
@@ -194,7 +194,6 @@ class SquashfsFile(File):
     def recognizes(file):
         return SquashfsFile.RE_FILE_TYPE.match(file.magic_file_type)
 
-    @needs_content
     def compare_details(self, other, source=None):
         differences = []
         differences.append(Difference.from_command(SquashfsSuperblock, self.path, other.path))

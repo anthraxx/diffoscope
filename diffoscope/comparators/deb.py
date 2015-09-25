@@ -21,7 +21,7 @@ import re
 import os.path
 from diffoscope import logger
 from diffoscope.difference import Difference
-from diffoscope.comparators.binary import File, needs_content
+from diffoscope.comparators.binary import File
 from diffoscope.comparators.libarchive import LibarchiveContainer
 from diffoscope.comparators.utils import \
     Archive, ArchiveMember, get_ar_content
@@ -49,7 +49,6 @@ class DebFile(File):
     def set_files_with_same_content_in_data(self, files):
         self._files_with_same_content_in_data = files
 
-    @needs_content
     def compare_details(self, other, source=None):
         differences = []
         my_content = get_ar_content(self.path)
@@ -81,7 +80,6 @@ class Md5sumsFile(File):
                 d[path] = md5sum
         return d
 
-    @needs_content
     def compare(self, other, source=None):
         if other.path is None:
             return None
@@ -122,7 +120,6 @@ class DebDataTarFile(File):
                file.container.source.name.startswith('data.tar.') and \
                isinstance(file.container.source.container.source, DebFile)
 
-    @needs_content
     def compare_details(self, other, source=None):
         differences = []
         ignore_files = self.container.source.container.source.files_with_same_content_in_data

@@ -20,7 +20,7 @@
 import os.path
 import re
 from diffoscope import tool_required
-from diffoscope.comparators.binary import File, needs_content
+from diffoscope.comparators.binary import File
 from diffoscope.comparators.utils import get_ar_content, Command
 from diffoscope.difference import Difference
 
@@ -90,7 +90,6 @@ class ElfFile(File):
     def recognizes(file):
         return ElfFile.RE_FILE_TYE.match(file.magic_file_type)
 
-    @needs_content
     def compare_details(self, other, source=None):
         return _compare_elf_data(self.path, other.path)
 
@@ -102,7 +101,6 @@ class StaticLibFile(File):
     def recognizes(file):
         return StaticLibFile.RE_FILE_TYPE.search(file.magic_file_type) and StaticLibFile.RE_FILE_EXTENSION.search(file.name)
 
-    @needs_content
     def compare_details(self, other, source=None):
         differences = []
         # look up differences in metadata

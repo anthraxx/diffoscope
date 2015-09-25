@@ -19,13 +19,12 @@
 
 import re
 from diffoscope.difference import Difference
-from diffoscope.comparators.binary import File, needs_content
+from diffoscope.comparators.binary import File
 from diffoscope.comparators.libarchive import LibarchiveContainer
 from diffoscope.comparators.utils import Command, tool_required
 
 class TarContainer(LibarchiveContainer):
     pass
-
 
 class TarListing(Command):
     @tool_required('tar')
@@ -40,7 +39,6 @@ class TarFile(File):
     def recognizes(file):
         return TarFile.RE_FILE_TYPE.search(file.magic_file_type)
 
-    @needs_content
     def compare_details(self, other, source=None):
         differences = []
         with TarContainer(self).open() as my_container, \

@@ -25,7 +25,7 @@ import subprocess
 import stat
 import struct
 from diffoscope import logger, tool_required
-from diffoscope.comparators.binary import File, needs_content
+from diffoscope.comparators.binary import File
 from diffoscope.comparators.utils import Archive, Command
 from diffoscope.difference import Difference
 
@@ -94,40 +94,38 @@ def is_header_valid(buf, size, offset=0):
 class CbfsFile(File):
     @staticmethod
     def recognizes(file):
-        with file.get_content():
-            size = os.stat(file.path).st_size
-            if size < CBFS_HEADER_SIZE:
-                return False
-            with open(file.path, 'rb') as f:
-                # pick at the latest byte as it should contain the relative offset of the header
-                f.seek(-4, io.SEEK_END)
-                # <pgeorgi> given the hardware we support so far, it looks like
-                #           that field is now bound to be little endian
-                #   -- #coreboot, 2015-10-14
-                rel_offset = struct.unpack('<i', f.read(4))[0]
-                if rel_offset < 0 and -rel_offset > CBFS_HEADER_SIZE and -rel_offset < size:
-                    f.seek(rel_offset, io.SEEK_END)
-                    logger.debug('looking for header at offset: %x', f.tell())
-                    if is_header_valid(f.read(CBFS_HEADER_SIZE), size):
-                        return True
-                    elif not file.name.endswith('.rom'):
-                        return False
-                    else:
-                        logger.debug('CBFS relative offset seems wrong, scanning whole image')
-                f.seek(0, io.SEEK_SET)
-                offset = 0
-                buf = f.read(CBFS_HEADER_SIZE)
-                while len(buf) >= CBFS_HEADER_SIZE:
-                    if is_header_valid(buf, size, offset):
-                        return True
-                    if len(buf) - offset <= CBFS_HEADER_SIZE:
-                        buf = f.read(32768)
-                        offset = 0
-                    else:
-                        offset += 1
-                return False
+        size = os.stat(file.path).st_size
+        if size < CBFS_HEADER_SIZE:
+            return False
+        with open(file.path, 'rb') as f:
+            # pick at the latest byte as it should contain the relative offset of the header
+            f.seek(-4, io.SEEK_END)
+            # <pgeorgi> given the hardware we support so far, it looks like
+            #           that field is now bound to be little endian
+            #   -- #coreboot, 2015-10-14
+            rel_offset = struct.unpack('<i', f.read(4))[0]
+            if rel_offset < 0 and -rel_offset > CBFS_HEADER_SIZE and -rel_offset < size:
+                f.seek(rel_offset, io.SEEK_END)
+                logger.debug('looking for header at offset: %x', f.tell())
+                if is_header_valid(f.read(CBFS_HEADER_SIZE), size):
+                    return True
+                elif not file.name.endswith('.rom'):
+                    return False
+                else:
+                    logger.debug('CBFS relative offset seems wrong, scanning whole image')
+            f.seek(0, io.SEEK_SET)
+            offset = 0
+            buf = f.read(CBFS_HEADER_SIZE)
+            while len(buf) >= CBFS_HEADER_SIZE:
+                if is_header_valid(buf, size, offset):
+                    return True
+                if len(buf) - offset <= CBFS_HEADER_SIZE:
+                    buf = f.read(32768)
+                    offset = 0
+                else:
+                    offset += 1
+            return False
 
-    @needs_content
     def compare_details(self, other, source=None):
         differences = []
         differences.append(Difference.from_command(CbfsListing, self.path, other.path))

@@ -94,19 +94,18 @@ def compare_root_paths(path1, path2):
 
 def compare_files(file1, file2, source=None):
     logger.debug('compare files %s and %s', file1, file2)
-    with file1.get_content(), file2.get_content():
-        if file1.has_same_content_as(file2):
-            logger.debug('same content, skipping')
-            return None
-        specialize(file1)
-        specialize(file2)
-        if isinstance(file1, NonExistingFile):
-            file1.other_file = file2
-        elif isinstance(file2, NonExistingFile):
-            file2.other_file = file1
-        elif file1.__class__.__name__ != file2.__class__.__name__:
-            return file1.compare_bytes(file2, source)
-        return file1.compare(file2, source)
+    if file1.has_same_content_as(file2):
+        logger.debug('same content, skipping')
+        return None
+    specialize(file1)
+    specialize(file2)
+    if isinstance(file1, NonExistingFile):
+        file1.other_file = file2
+    elif isinstance(file2, NonExistingFile):
+        file2.other_file = file1
+    elif file1.__class__.__name__ != file2.__class__.__name__:
+        return file1.compare_bytes(file2, source)
+    return file1.compare(file2, source)
 
 def compare_commented_files(file1, file2, comment=None, source=None):
     difference = compare_files(file1, file2, source=source)

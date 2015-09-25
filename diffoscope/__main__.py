@@ -30,7 +30,7 @@ try:
     import tlsh
 except ImportError:
     tlsh = None
-from diffoscope import logger, VERSION, set_locale
+from diffoscope import logger, VERSION, set_locale, clean_all_temp_files
 import diffoscope.comparators
 from diffoscope.config import Config
 from diffoscope.presenters.html import output_html
@@ -153,6 +153,8 @@ def main(args=None):
             import pdb
             pdb.post_mortem()
         sys.exit(2)
+    finally:
+        clean_all_temp_files()
 
 if __name__ == '__main__':
     main()

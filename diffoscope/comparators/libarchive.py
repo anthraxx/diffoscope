@@ -63,9 +63,9 @@ class LibarchiveDirectory(Directory, LibarchiveMember):
     def has_same_content_as(self, other):
         return False
 
-    @contextmanager
-    def get_content(self):
-        yield
+    @property
+    def path(self):
+        raise NotImplementedError('LibarchiveDirectory is not meant to be extracted.')
 
     def is_directory(self):
         return True

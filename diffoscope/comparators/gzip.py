@@ -22,7 +22,6 @@ import subprocess
 import os.path
 import diffoscope.comparators
 from diffoscope import logger, tool_required
-from diffoscope.comparators.binary import needs_content
 from diffoscope.comparators.utils import Archive, get_compressed_content_name, NO_COMMENT
 from diffoscope.difference import Difference
 
@@ -63,7 +62,6 @@ class GzipFile(object):
     def recognizes(file):
         return GzipFile.RE_FILE_TYPE.match(file.magic_file_type)
 
-    @needs_content
     def compare_details(self, other, source=None):
         differences = []
         differences.append(Difference.from_text(

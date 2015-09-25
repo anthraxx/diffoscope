@@ -23,10 +23,9 @@ from io import StringIO
 import os.path
 import subprocess
 import rpm
-from diffoscope import logger, tool_required
+from diffoscope import logger, tool_required, get_temporary_directory
 from diffoscope.comparators.rpm_fallback import AbstractRpmFile
-from diffoscope.comparators.binary import needs_content
-from diffoscope.comparators.utils import Archive, make_temp_directory
+from diffoscope.comparators.utils import Archive
 from diffoscope.difference import Difference
 
 def convert_header_field(io, header):
@@ -68,7 +67,7 @@ def get_rpm_header(path, ts):
 
 def compare_rpm_headers(path1, path2):
     # compare headers
-    with make_temp_directory() as rpmdb_dir:
+    with get_temporary_directory(suffix='diffoscope') as rpmdb_dir:
         rpm.addMacro("_dbpath", rpmdb_dir)
         ts = rpm.TransactionSet()
         ts.setVSFlags(-1)
@@ -103,7 +102,6 @@ class RpmContainer(Archive):
 
 
 class RpmFile(AbstractRpmFile):
-    @needs_content
     def compare_details(self, other, source=None):
         differences = []
         differences.append(compare_rpm_headers(self.path, other.path))

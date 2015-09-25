@@ -22,7 +22,7 @@ import platform
 import struct
 import subprocess
 from diffoscope import tool_required
-from diffoscope.comparators.binary import File, needs_content
+from diffoscope.comparators.binary import File
 from diffoscope.comparators.utils import Command
 from diffoscope.difference import Difference
 from diffoscope import logger
@@ -60,29 +60,27 @@ class HiFile(File):
         if HiFile.hi_version is None:
             return False
 
-        with file.get_content():
-            with open(file.path, 'rb') as fp:
-                # read magic
-                buf = fp.read(4)
-                if buf != HI_MAGIC:
-                    logger.debug('Haskell interface magic mismatch. Found %r instead of %r or %r', buf, HI_MAGIC_32, HI_MAGIC_64)
-                    return False
-                # skip some old descriptor thingy that has varying size
-                if buf == HI_MAGIC_32:
-                    fp.read(4)
-                elif buf == HI_MAGIC_64:
-                    fp.read(8)
-                # skip way_descr
+        with open(file.path, 'rb') as fp:
+            # read magic
+            buf = fp.read(4)
+            if buf != HI_MAGIC:
+                logger.debug('Haskell interface magic mismatch. Found %r instead of %r or %r', buf, HI_MAGIC_32, HI_MAGIC_64)
+                return False
+            # skip some old descriptor thingy that has varying size
+            if buf == HI_MAGIC_32:
                 fp.read(4)
-                # now read version
-                buf = fp.read(16)
-                version_found = ''.join(map(chr, struct.unpack_from('=3IB', buf)))
-                if version_found != HiFile.hi_version:
-                    logger.debug('Haskell version mismatch. Found %s instead of %s.',
-                                 version_found, HiFile.hi_version)
-                    return False
-                return True
+            elif buf == HI_MAGIC_64:
+                fp.read(8)
+            # skip way_descr
+            fp.read(4)
+            # now read version
+            buf = fp.read(16)
+            version_found = ''.join(map(chr, struct.unpack_from('=3IB', buf)))
+            if version_found != HiFile.hi_version:
+                logger.debug('Haskell version mismatch. Found %s instead of %s.',
+                             version_found, HiFile.hi_version)
+                return False
+            return True
 
-    @needs_content
     def compare_details(self, other, source=None):
         return [Difference.from_command(ShowIface, self.path, other.path)]

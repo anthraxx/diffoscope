@@ -25,7 +25,7 @@ import re
 from debian.deb822 import Dsc
 from diffoscope.changes import Changes
 import diffoscope.comparators
-from diffoscope.comparators.binary import File, NonExistingFile, needs_content
+from diffoscope.comparators.binary import File, NonExistingFile
 from diffoscope.comparators.utils import Container, NO_COMMENT
 from diffoscope.config import Config
 from diffoscope.difference import Difference
@@ -53,15 +53,9 @@ class DebControlMember(File):
     def name(self):
         return self._name
 
-    @contextmanager
-    def get_content(self):
-        if self._path is not None:
-            yield
-        else:
-            with self.container.source.get_content():
-                self._path = os.path.join(os.path.dirname(self.container.source.path), self.name)
-                yield
-                self._path = None
+    @property
+    def path(self):
+        return os.path.join(os.path.dirname(self.container.source.path), self.name)
 
     def is_directory(self):
         return False
@@ -109,7 +103,6 @@ class DebControlFile(File):
     def deb822(self):
         return self._deb822
 
-    @needs_content
     def compare_details(self, other, source=None):
         differences = []
 
@@ -142,14 +135,13 @@ class DotChangesFile(DebControlFile):
     def recognizes(file):
         if not DotChangesFile.RE_FILE_EXTENSION.search(file.name):
             return False
-        with file.get_content():
-            changes = Changes(filename=file.path)
-            try:
-                changes.validate(check_signature=False)
-            except FileNotFoundError:
-                return False
-            file._deb822 = changes
-            return True
+        changes = Changes(filename=file.path)
+        try:
+            changes.validate(check_signature=False)
+        except FileNotFoundError:
+            return False
+        file._deb822 = changes
+        return True
 
 class DotDscFile(DebControlFile):
     RE_FILE_EXTENSION = re.compile(r'\.dsc$')
@@ -158,19 +150,18 @@ class DotDscFile(DebControlFile):
     def recognizes(file):
         if not DotDscFile.RE_FILE_EXTENSION.search(file.name):
             return False
-        with file.get_content():
-            with open(file.path, 'rb') as f:
-                dsc = Dsc(f)
-                for d in dsc.get('Files'):
-                    md5 = hashlib.md5()
-                    # XXX: this will not work for containers
-                    in_dsc_path = os.path.join(os.path.dirname(file.path), d['Name'])
-                    if not os.path.exists(in_dsc_path):
-                        return False
-                    with open(in_dsc_path, 'rb') as f:
-                        for buf in iter(partial(f.read, 32768), b''):
-                            md5.update(buf)
-                    if md5.hexdigest() != d['md5sum']:
-                        return False
-                file._deb822 = dsc
-            return True
+        with open(file.path, 'rb') as f:
+            dsc = Dsc(f)
+            for d in dsc.get('Files'):
+                md5 = hashlib.md5()
+                # XXX: this will not work for containers
+                in_dsc_path = os.path.join(os.path.dirname(file.path), d['Name'])
+                if not os.path.exists(in_dsc_path):
+                    return False
+                with open(in_dsc_path, 'rb') as f:
+                    for buf in iter(partial(f.read, 32768), b''):
+                        md5.update(buf)
+                if md5.hexdigest() != d['md5sum']:
+                    return False
+            file._deb822 = dsc
+        return True

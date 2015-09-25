@@ -25,7 +25,7 @@ import sys
 import zipfile
 from diffoscope.difference import Difference
 from diffoscope import tool_required
-from diffoscope.comparators.binary import File, needs_content
+from diffoscope.comparators.binary import File
 from diffoscope.comparators.directory import Directory
 from diffoscope.comparators.utils import Archive, ArchiveMember, Command
 
@@ -106,7 +106,6 @@ class ZipFile(File):
     def recognizes(file):
         return ZipFile.RE_FILE_TYPE.match(file.magic_file_type)
 
-    @needs_content
     def compare_details(self, other, source=None):
         differences = []
         # look up differences in metadata

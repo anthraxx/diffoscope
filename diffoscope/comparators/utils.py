@@ -32,16 +32,7 @@ import diffoscope.comparators
 from diffoscope.comparators.binary import File, NonExistingFile
 from diffoscope.config import Config
 from diffoscope.difference import Difference
-from diffoscope import logger, tool_required
-
-
-@contextmanager
-def make_temp_directory():
-    temp_dir = tempfile.mkdtemp(suffix='diffoscope')
-    try:
-        yield temp_dir
-    finally:
-        shutil.rmtree(temp_dir)
+from diffoscope import logger, tool_required, get_temporary_directory
 
 
 @tool_required('ar')
@@ -213,6 +204,7 @@ class ArchiveMember(File):
     def __init__(self, container, member_name):
         self._container = container
         self._name = member_name
+        self._temp_dir = None
         self._path = None
 
     @property
@@ -223,17 +215,23 @@ class ArchiveMember(File):
     def name(self):
         return self._name
 
-    @contextmanager
-    def get_content(self):
-        logger.debug('%s get_content; path %s', self, self._path)
+    @property
+    def path(self):
+        if self._path is None:
+            logger.debug('unpacking %s', self._name)
+            assert self._temp_dir is None
+            self._temp_dir = get_temporary_directory(suffix='diffoscope')
+            with self._container.open() as container:
+                self._path = container.extract(self._name, self._temp_dir.name)
+        return self._path
+
+    def cleanup(self):
         if self._path is not None:
-            yield
-        else:
-            with make_temp_directory() as temp_dir, \
-                 self._container.open() as container:
-                self._path = container.extract(self._name, temp_dir)
-                yield
-                self._path = None
+            self._path = None
+        if self._temp_dir is not None:
+            self._temp_dir.cleanup()
+            self._temp_dir = None
+        super().cleanup()
 
     def is_directory(self):
         return False
@@ -257,13 +255,12 @@ class Archive(Container, metaclass=ABCMeta):
         elif self._archive is not None:
             yield self
         else:
-            with self.source.get_content():
-                self._archive = self.open_archive(self.source.path)
-                try:
-                    yield self
-                finally:
-                    self.close_archive()
-                    self._archive = None
+            self._archive = self.open_archive(self.source.path)
+            try:
+                yield self
+            finally:
+                self.close_archive()
+                self._archive = None
 
     @property
     def archive(self):

@@ -20,7 +20,7 @@
 import re
 import subprocess
 from diffoscope import tool_required
-from diffoscope.comparators.binary import File, needs_content
+from diffoscope.comparators.binary import File
 from diffoscope.comparators.libarchive import LibarchiveContainer
 from diffoscope.comparators.utils import Command
 from diffoscope.difference import Difference
@@ -68,7 +68,6 @@ class Iso9660File(File):
     def recognizes(file):
         return Iso9660File.RE_FILE_TYPE.search(file.magic_file_type)
 
-    @needs_content
     def compare_details(self, other, source=None):
         differences = []
         differences.append(Difference.from_command(ISO9660PVD, self.path, other.path))

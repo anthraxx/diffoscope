@@ -19,7 +19,7 @@
 
 import re
 from diffoscope import tool_required
-from diffoscope.comparators.binary import File, needs_content
+from diffoscope.comparators.binary import File
 from diffoscope.comparators.utils import Command
 from diffoscope.difference import Difference
 
@@ -40,6 +40,5 @@ class TtfFile(File):
     def recognizes(file):
         return TtfFile.RE_FILE_TYPE.match(file.magic_file_type)
 
-    @needs_content
     def compare_details(self, other, source=None):
         return [Difference.from_command(Showttf, self.path, other.path)]

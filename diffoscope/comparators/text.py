@@ -19,7 +19,7 @@
 
 import codecs
 import re
-from diffoscope.comparators.binary import File, needs_content
+from diffoscope.comparators.binary import File
 from diffoscope.difference import Difference
 
 
@@ -33,11 +33,9 @@ class TextFile(File):
     @property
     def encoding(self):
         if not hasattr(self, '_encoding'):
-            with self.get_content():
-                self._encoding = File.guess_encoding(self.path)
+            self._encoding = File.guess_encoding(self.path)
         return self._encoding
 
-    @needs_content
     def compare(self, other, source=None):
         my_encoding = self.encoding or 'utf-8'
         other_encoding = other.encoding or 'utf-8'

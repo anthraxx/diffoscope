@@ -21,7 +21,7 @@ import re
 import os.path
 import subprocess
 from diffoscope import logger, tool_required
-from diffoscope.comparators.binary import File, needs_content
+from diffoscope.comparators.binary import File
 from diffoscope.comparators.utils import Archive, get_compressed_content_name
 from diffoscope.difference import Difference
 
@@ -59,7 +59,6 @@ class DexFile(File):
     def recognizes(file):
         return DexFile.RE_FILE_TYPE.match(file.magic_file_type)
 
-    @needs_content
     def compare_details(self, other, source=None):
         with DexContainer(self).open() as my_container, \
              DexContainer(other).open() as other_container:

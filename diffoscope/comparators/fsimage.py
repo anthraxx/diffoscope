@@ -24,7 +24,7 @@ try:
 except ImportError:
     guestfs = None
 from diffoscope import logger
-from diffoscope.comparators.binary import File, needs_content
+from diffoscope.comparators.binary import File
 from diffoscope.comparators.utils import Archive, get_compressed_content_name
 from diffoscope.difference import Difference
 
@@ -77,7 +77,6 @@ class FsImageFile(File):
     def recognizes(file):
         return FsImageFile.RE_FILE_TYPE.match(file.magic_file_type)
 
-    @needs_content
     def compare_details(self, other, source=None):
         differences = []
         with FsImageContainer(self).open() as my_container, \

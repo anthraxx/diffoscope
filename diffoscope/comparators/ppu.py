@@ -23,7 +23,7 @@ import os
 import re
 import subprocess
 from diffoscope import tool_required, logger
-from diffoscope.comparators.binary import File, needs_content
+from diffoscope.comparators.binary import File
 from diffoscope.comparators.utils import Command
 from diffoscope.difference import Difference
 
@@ -58,28 +58,26 @@ class PpuFile(File):
     def recognizes(file):
         if not PpuFile.RE_FILE_EXTENSION.search(file.name):
             return False
-        with file.get_content():
-            with open(file.path, 'rb') as f:
-                magic = f.read(3)
-                if magic != b"PPU":
-                    return False
-                ppu_version = f.read(3).decode('ascii', errors='ignore')
-                if not hasattr(PpuFile, 'ppu_version'):
-                    try:
-                        subprocess.check_output(['ppudump', file.path], shell=False, stderr=subprocess.STDOUT)
-                        PpuFile.ppu_version = ppu_version
-                    except subprocess.CalledProcessError as e:
-                        error = e.output.decode('utf-8')
-                        m = re.search('Expecting PPU version ([0-9]+)', error)
-                        if not m:
-                            PpuFile.ppu_version = None
-                            logger.debug('Unable to read PPU version')
-                        PpuFile.ppu_version = m.group(1)
-                    except OSError:
+        with open(file.path, 'rb') as f:
+            magic = f.read(3)
+            if magic != b"PPU":
+                return False
+            ppu_version = f.read(3).decode('ascii', errors='ignore')
+            if not hasattr(PpuFile, 'ppu_version'):
+                try:
+                    subprocess.check_output(['ppudump', file.path], shell=False, stderr=subprocess.STDOUT)
+                    PpuFile.ppu_version = ppu_version
+                except subprocess.CalledProcessError as e:
+                    error = e.output.decode('utf-8')
+                    m = re.search('Expecting PPU version ([0-9]+)', error)
+                    if not m:
                         PpuFile.ppu_version = None
                         logger.debug('Unable to read PPU version')
-                return PpuFile.ppu_version == ppu_version
+                    PpuFile.ppu_version = m.group(1)
+                except OSError:
+                    PpuFile.ppu_version = None
+                    logger.debug('Unable to read PPU version')
+            return PpuFile.ppu_version == ppu_version
 
-    @needs_content
     def compare_details(self, other, source=None):
         return [Difference.from_command(Ppudump, self.path, other.path)]

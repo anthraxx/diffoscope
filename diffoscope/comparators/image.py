@@ -22,7 +22,7 @@ import re
 from diffoscope import tool_required
 from diffoscope.difference import Difference
 from diffoscope.comparators.utils import Command
-from diffoscope.comparators.binary import File, needs_content
+from diffoscope.comparators.binary import File
 
 re_ansi_escapes = re.compile(r'\x1b[^m]*m')
 
@@ -47,6 +47,5 @@ class ImageFile(File):
     def recognizes(file):
         return ImageFile.RE_FILE_TYPE.search(file.magic_file_type)
 
-    @needs_content
     def compare_details(self, other, source=None):
         return [Difference.from_command(Img2Txt, self.path, other.path)]

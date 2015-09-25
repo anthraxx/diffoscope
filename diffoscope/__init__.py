@@ -21,6 +21,8 @@ from functools import wraps
 import logging
 from distutils.spawn import find_executable
 import os
+import shutil
+import tempfile
 
 VERSION = "42"
 
@@ -115,4 +117,32 @@ def set_locale():
     os.environ['TZ'] = 'UTC'
 
 
+temp_files = []
+temp_dirs = []
 
+
+def get_named_temporary_file(*args, **kwargs):
+    f = tempfile.NamedTemporaryFile(*args, **kwargs)
+    temp_files.append(f.name)
+    return f
+
+
+def get_temporary_directory(*args, **kwargs):
+    d = tempfile.TemporaryDirectory(*args, **kwargs)
+    temp_dirs.append(d)
+    return d
+
+
+def clean_all_temp_files():
+    for temp_file in temp_files:
+        try:
+            os.unlink(temp_file)
+        except FileNotFoundError:
+            pass
+        except:
+            logger.exception('Unable to delete %s', temp_file)
+    for temp_dir in temp_dirs:
+        try:
+            temp_dir.cleanup()
+        except:
+            logger.exception('Unable to delete %s', temp_dir)

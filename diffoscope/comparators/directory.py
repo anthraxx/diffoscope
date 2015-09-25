@@ -113,10 +113,6 @@ class FilesystemDirectory(object):
     def name(self):
         return self._path
 
-    @contextmanager
-    def get_content(self):
-        yield
-
     def is_directory(self):
         return True
 
@@ -140,15 +136,14 @@ class FilesystemDirectory(object):
             for name in sorted(set(my_names).intersection(other_names)):
                 my_file = my_container.get_member(name)
                 other_file = other_container.get_member(name)
-                with my_file.get_content(), other_file.get_content():
-                    inner_difference = diffoscope.comparators.compare_files(
-                                           my_file, other_file, source=name)
-                    meta_differences = compare_meta(my_file.name, other_file.name)
-                    if meta_differences and not inner_difference:
-                        inner_difference = Difference(None, my_file.path, other_file.path)
-                    if inner_difference:
-                        inner_difference.add_details(meta_differences)
-                        differences.append(inner_difference)
+                inner_difference = diffoscope.comparators.compare_files(
+                                       my_file, other_file, source=name)
+                meta_differences = compare_meta(my_file.name, other_file.name)
+                if meta_differences and not inner_difference:
+                    inner_difference = Difference(None, my_file.path, other_file.path)
+                if inner_difference:
+                    inner_difference.add_details(meta_differences)
+                    differences.append(inner_difference)
         if not differences:
             return None
         difference = Difference(None, self.path, other.path, source)
@@ -159,10 +154,9 @@ class FilesystemDirectory(object):
 class DirectoryContainer(Container):
     @contextmanager
     def open(self):
-        with self.source.get_content():
-            self._path = self.source.path.rstrip('/') or '/'
-            yield self
-            self._path = None
+        self._path = self.source.path.rstrip('/') or '/'
+        yield self
+        self._path = None
 
     def get_member_names(self):
         names = []

@@ -71,14 +71,6 @@ def compare_binary_files(file1, file2, source=None):
 
 SMALL_FILE_THRESHOLD = 65536 # 64 kiB
 
-# decorator for functions which needs to access the file content
-# (and so requires a path to be set)
-def needs_content(original_method):
-    @wraps(original_method)
-    def wrapper(self, other, *args, **kwargs):
-        with self.get_content(), other.get_content():
-            return original_method(self, other, *args, **kwargs)
-    return wrapper
 
 class File(object, metaclass=ABCMeta):
     if hasattr(magic, 'open'): # use Magic-file-extensions from file
@@ -109,12 +101,22 @@ class File(object, metaclass=ABCMeta):
             return self._mimedb_encoding.from_file(path).decode('utf-8')
 
     def __repr__(self):
-        return '<%s %s %s>' % (self.__class__, self.name, self.path)
+        return '<%s %s>' % (self.__class__, self.name)
 
-    # Path should only be used when accessing the file content (through get_content())
+    # This should return a path that allows to access the file content
     @property
+    @abstractmethod
     def path(self):
-        return self._path
+        raise NotImplemented
+
+    # Remove any temporary data associated with the file. The function
+    # should be idempotent and work during the destructor. It does nothing by
+    # default.
+    def cleanup(self):
+        pass
+
+    def __del__(self):
+        self.cleanup()
 
     # This might be different from path and is used to do file extension matching
     @property
@@ -124,31 +126,24 @@ class File(object, metaclass=ABCMeta):
     @property
     def magic_file_type(self):
         if not hasattr(self, '_magic_file_type'):
-            with self.get_content():
-                self._magic_file_type = File.guess_file_type(self.path)
+            self._magic_file_type = File.guess_file_type(self.path)
         return self._magic_file_type
 
     if tlsh:
         @property
         def fuzzy_hash(self):
             if not hasattr(self, '_fuzzy_hash'):
-                with self.get_content():
-                    # tlsh is not meaningful with files smaller than 512 bytes
-                    if os.stat(self.path).st_size >= 512:
-                        h = tlsh.Tlsh()
-                        with open(self.path, 'rb') as f:
-                            for buf in iter(lambda: f.read(32768), b''):
-                                h.update(buf)
-                        h.final()
-                        self._fuzzy_hash = h.hexdigest()
-                    else:
-                        self._fuzzy_hash = None
+                # tlsh is not meaningful with files smaller than 512 bytes
+                if os.stat(self.path).st_size >= 512:
+                    h = tlsh.Tlsh()
+                    with open(self.path, 'rb') as f:
+                        for buf in iter(lambda: f.read(32768), b''):
+                            h.update(buf)
+                    h.final()
+                    self._fuzzy_hash = h.hexdigest()
+                else:
+                    self._fuzzy_hash = None
             return self._fuzzy_hash
-
-    @abstractmethod
-    @contextmanager
-    def get_content(self):
-        raise NotImplemented
 
     @abstractmethod
     def is_directory():
@@ -162,7 +157,6 @@ class File(object, metaclass=ABCMeta):
     def is_device():
         raise NotImplemented
 
-    @needs_content
     def compare_bytes(self, other, source=None):
         return compare_binary_files(self, other, source)
 
@@ -175,7 +169,6 @@ class File(object, metaclass=ABCMeta):
         return difference
 
     @tool_required('cmp')
-    @needs_content
     def has_same_content_as(self, other):
         logger.debug('%s has_same_content %s', self, other)
         # try comparing small files directly first
@@ -190,7 +183,6 @@ class File(object, metaclass=ABCMeta):
 
 
     # To be specialized directly, or by implementing compare_details
-    @needs_content
     def compare(self, other, source=None):
         if hasattr(self, 'compare_details'):
             try:
@@ -227,17 +219,11 @@ class File(object, metaclass=ABCMeta):
 
 class FilesystemFile(File):
     def __init__(self, path):
-        self._path = None
         self._name = path
 
-    @contextmanager
-    def get_content(self):
-        if self._path is not None:
-            yield
-        else:
-            self._path = self._name
-            yield
-            self._path = None
+    @property
+    def path(self):
+        return self._name
 
     def is_directory(self):
         return not os.path.islink(self._name) and os.path.isdir(self._name)
@@ -261,9 +247,12 @@ class NonExistingFile(File):
         return False
 
     def __init__(self, path, other_file=None):
-        self._path = None
         self._name = path
         self._other_file = other_file
+
+    @property
+    def path(self):
+        return '/dev/null'
 
     @property
     def other_file(self):
@@ -275,12 +264,6 @@ class NonExistingFile(File):
 
     def has_same_content_as(self, other):
         return False
-
-    @contextmanager
-    def get_content(self):
-        self._path = '/dev/null'
-        yield
-        self._path = None
 
     def is_directory(self):
         return False

@@ -72,7 +72,7 @@ def test_compare_with_xxd(binary1, binary2):
 
 def test_compare_non_existing_with_xxd(binary1):
     difference = binary1.compare_bytes(NonExistingFile('/nonexisting', binary1))
-    assert difference.source2 == '/dev/null'
+    assert difference.source2 == '/nonexisting'
 
 @pytest.fixture
 def xxd_not_found(monkeypatch):

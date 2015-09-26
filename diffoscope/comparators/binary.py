@@ -56,16 +56,15 @@ def hexdump_fallback(path):
     return hexdump.getvalue()
 
 
-def compare_binary_files(path1, path2, source=None):
+def compare_binary_files(file1, file2, source=None):
     try:
-        with xxd(path1) as xxd1:
-            with xxd(path2) as xxd2:
-                return Difference.from_raw_readers(xxd1, xxd2, path1, path2, source)
+        with xxd(file1.path) as xxd1, xxd(file2.path) as xxd2:
+            return Difference.from_raw_readers(xxd1, xxd2, file1.name, file2.name, source)
     except RequiredToolNotFound:
-        hexdump1 = hexdump_fallback(path1)
-        hexdump2 = hexdump_fallback(path2)
+        hexdump1 = hexdump_fallback(file1.path)
+        hexdump2 = hexdump_fallback(file2.path)
         comment = 'xxd not available in path. Falling back to Python hexlify.\n'
-        return Difference.from_text(hexdump1, hexdump2, path1, path2, source, comment)
+        return Difference.from_text(hexdump1, hexdump2, file1.name, file2.name, source, comment)
 
 SMALL_FILE_THRESHOLD = 65536 # 64 kiB
 
@@ -143,7 +142,7 @@ class File(object, metaclass=ABCMeta):
 
     @needs_content
     def compare_bytes(self, other, source=None):
-        return compare_binary_files(self.path, other.path, source)
+        return compare_binary_files(self, other, source)
 
     def _compare_using_details(self, other, source):
         details = [d for d in self.compare_details(other, source) if d is not None]

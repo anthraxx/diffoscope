@@ -182,7 +182,10 @@ class File(object, metaclass=ABCMeta):
                     difference.add_comment("No differences found inside, yet data differs")
             except subprocess.CalledProcessError as e:
                 difference = self.compare_bytes(other, source=source)
-                output = re.sub(r'^', '    ', e.output.decode('utf-8', errors='replace'), flags=re.MULTILINE)
+                if e.output:
+                    output = re.sub(r'^', '    ', e.output.decode('utf-8', errors='replace'), flags=re.MULTILINE)
+                else:
+                    output = '<none>'
                 cmd = ' '.join(e.cmd)
                 if difference is None:
                     return None

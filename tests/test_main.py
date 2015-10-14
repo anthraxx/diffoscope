@@ -101,7 +101,7 @@ def test_text_option_with_file(tmpdir, capsys):
     out, err = capsys.readouterr()
     assert err == ''
     assert out == ''
-    with open(report_path, 'r') as f:
+    with open(report_path, 'r', encoding='utf-8') as f:
         assert f.read().startswith('--- ')
 
 def test_text_option_with_stdiout(capsys):

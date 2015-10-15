@@ -151,3 +151,13 @@ def test_no_differences(capsys):
     out, err = capsys.readouterr()
     assert err == ''
     assert out == ''
+
+def test_list_tools(capsys):
+    args = ['--list-tools']
+    with pytest.raises(SystemExit) as excinfo:
+        main(args)
+    assert excinfo.value.code == 0
+    out, err = capsys.readouterr()
+    assert err == ''
+    assert 'External tools required:' in out
+    assert 'xxd,' in out

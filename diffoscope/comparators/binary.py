@@ -118,7 +118,12 @@ class File(object, metaclass=ABCMeta):
             with self.get_content():
                 # tlsh is not meaningful with files smaller than 512 bytes
                 if os.stat(self.path).st_size >= 512:
-                    self._fuzzy_hash = tlsh.hash(open(self.path, 'rb').read())
+                    h = tlsh.Tlsh()
+                    with open(self.path, 'rb') as f:
+                        for buf in iter(lambda: f.read(32768), b''):
+                            h.update(buf)
+                    h.final()
+                    self._fuzzy_hash = h.hexdigest()
                 else:
                     self._fuzzy_hash = None
         return self._fuzzy_hash

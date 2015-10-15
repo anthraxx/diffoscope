@@ -1,3 +1,29 @@
+diffoscope (37) unstable; urgency=low
+
+  * Switch to incremental interface for TLSH. That means we won't load
+    800 MiB or more in memory to compute the fuzzy hash.
+  * Add support for CBFS images (Closes: #788364)
+  * Add support for .dsc files (Closes: #800359)
+  * Fix handling of malformed md5sums file. (Closes: #799901)
+  * Fix placeholder encoding issue when trimming stderr.
+    (Closes: #799863)
+  * Read text report as UTF-8 encoded in test_text_option_with_file.
+    (Closes: #801766)
+  * Read Haskell interfaces in binary mode (Closes: #801333)
+  * Read md5sums file using UTF-8.
+  * Add a test for --max-diff-block-lines.
+  * Handle closing stdin for Command implementing feed_stdin.
+  * Handle subprocess errors with no output when comparing with a command.
+  * Use name and not path when doing binary comparisons.
+  * Add a test for --list-tools.
+  * Fix main exception handling.
+  * Use text file comparison for .dsc and .changes when the referenced files
+    are missing.
+  * Do skip squashfs test if there's no user with uid 1000.
+  * Use super() instead of the old cumbersome form.
+
+ -- Jérémy Bobbio <lunar@debian.org>  Thu, 15 Oct 2015 16:45:55 +0200
+
 diffoscope (36) unstable; urgency=low
 
   * Read Debian .changes file as utf-8 encoded.

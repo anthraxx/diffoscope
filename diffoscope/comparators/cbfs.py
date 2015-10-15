@@ -105,7 +105,7 @@ class CbfsFile(File):
                 #           that field is now bound to be little endian
                 #   -- #coreboot, 2015-10-14
                 rel_offset = struct.unpack('<i', f.read(4))[0]
-                if rel_offset < 0 and -rel_offset > CBFS_HEADER_SIZE:
+                if rel_offset < 0 and -rel_offset > CBFS_HEADER_SIZE and -rel_offset < size:
                     f.seek(rel_offset, io.SEEK_END)
                     logger.debug('looking for header at offset: %x', f.tell())
                     if is_header_valid(f.read(CBFS_HEADER_SIZE), size):

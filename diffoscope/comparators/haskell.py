@@ -61,7 +61,7 @@ class HiFile(File):
             return False
 
         with file.get_content():
-            with open(file.path) as fp:
+            with open(file.path, 'rb') as fp:
                 # read magic
                 buf = fp.read(4)
                 if buf != HI_MAGIC:

@@ -1,0 +1,9 @@
+@@ -1,6 +1,3 @@
+-32 kB, bootblocksize 0, romsize 32768, offset 0x0
+-alignment: 64 bytes, architecture: x86
+-
+ Name                           Offset     Type         Size
+-text                           0x0        raw          446
+-(empty)                        0x200      null         32152
++text                           0x0        raw          671
++(empty)                        0x300      null         31896

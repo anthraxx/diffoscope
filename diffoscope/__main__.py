@@ -97,7 +97,7 @@ class ListToolsAction(argparse.Action):
         print(', '.join(tool_required.all))
         print()
         print("Available in packages:")
-        print(', '.join(sorted(set([RequiredToolNotFound.PROVIDERS[k]["debian"] for k in tool_required.all]))))
+        print(', '.join(sorted(filter(None, { RequiredToolNotFound.PROVIDERS[k].get('debian', None) for k in tool_required.all }))))
         sys.exit(0)
 
 

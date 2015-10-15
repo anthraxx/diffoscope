@@ -31,6 +31,7 @@ from diffoscope.comparators.binary import \
     File, FilesystemFile, NonExistingFile, compare_binary_files
 from diffoscope.comparators.bzip2 import Bzip2File
 from diffoscope.comparators.java import ClassFile
+from diffoscope.comparators.cbfs import CbfsFile
 from diffoscope.comparators.cpio import CpioFile
 from diffoscope.comparators.deb import DebFile, Md5sumsFile, DebDataTarFile
 from diffoscope.comparators.debian import DotChangesFile
@@ -117,6 +118,7 @@ FILE_CLASSES = (
     DebDataTarFile,
     TextFile,
     Bzip2File,
+    CbfsFile,
     CpioFile,
     DebFile,
     ElfFile,

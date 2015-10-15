@@ -18,6 +18,8 @@
 # along with diffoscope.  If not, see <http://www.gnu.org/licenses/>.
 
 from contextlib import contextmanager
+from functools import partial
+import hashlib
 import os.path
 import re
 from debian.deb822 import Dsc
@@ -142,7 +144,10 @@ class DotChangesFile(DebControlFile):
             return False
         with file.get_content():
             changes = Changes(filename=file.path)
-            changes.validate(check_signature=False)
+            try:
+                changes.validate(check_signature=False)
+            except FileNotFoundError:
+                return False
             file._deb822 = changes
             return True
 
@@ -155,5 +160,17 @@ class DotDscFile(DebControlFile):
             return False
         with file.get_content():
             with open(file.path, 'rb') as f:
-                file._deb822 = Dsc(f)
+                dsc = Dsc(f)
+                for d in dsc.get('Files'):
+                    md5 = hashlib.md5()
+                    # XXX: this will not work for containers
+                    in_dsc_path = os.path.join(os.path.dirname(file.path), d['Name'])
+                    if not os.path.exists(in_dsc_path):
+                        return False
+                    with open(in_dsc_path, 'rb') as f:
+                        for buf in iter(partial(f.read, 32768), b''):
+                            md5.update(buf)
+                    if md5.hexdigest() != d['md5sum']:
+                        return False
+                file._deb822 = dsc
             return True

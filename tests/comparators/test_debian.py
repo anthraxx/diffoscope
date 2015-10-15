@@ -31,8 +31,6 @@ TEST_DOT_CHANGES_FILE2_PATH = os.path.join(os.path.dirname(__file__), '../data/t
 TEST_DEB_FILE1_PATH = os.path.join(os.path.dirname(__file__), '../data/test1.deb')
 TEST_DEB_FILE2_PATH = os.path.join(os.path.dirname(__file__), '../data/test2.deb')
 
-# XXX: test validate failure
-
 @pytest.fixture
 def dot_changes1(tmpdir):
     tmpdir.mkdir('a')
@@ -51,6 +49,14 @@ def dot_changes2(tmpdir):
 
 def test_dot_changes_identification(dot_changes1):
     assert isinstance(dot_changes1, DotChangesFile)
+
+def test_dot_changes_invalid(tmpdir):
+    tmpdir.mkdir('a')
+    dot_changes_path = str(tmpdir.join('a/test_1.changes'))
+    shutil.copy(TEST_DOT_CHANGES_FILE1_PATH, dot_changes_path)
+    # we don't copy the referenced .deb
+    identified = specialize(FilesystemFile(dot_changes_path))
+    assert not isinstance(identified, DotChangesFile)
 
 def test_dot_changes_no_differences(dot_changes1):
     difference = dot_changes1.compare(dot_changes1)
@@ -100,6 +106,14 @@ def dot_dsc2(tmpdir):
 
 def test_dot_dsc_identification(dot_dsc1):
     assert isinstance(dot_dsc1, DotDscFile)
+
+def test_dot_dsc_invalid(tmpdir, dot_dsc2):
+    tmpdir.mkdir('a')
+    dot_dsc_path = str(tmpdir.join('a/test_1.dsc'))
+    shutil.copy(TEST_DOT_CHANGES_FILE1_PATH, dot_dsc_path)
+    # we don't copy the referenced .tar.gz
+    identified = specialize(FilesystemFile(dot_dsc_path))
+    assert not isinstance(identified, DotDscFile)
 
 def test_dot_dsc_no_differences(dot_dsc1):
     difference = dot_dsc1.compare(dot_dsc1)

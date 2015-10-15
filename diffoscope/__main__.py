@@ -131,6 +131,7 @@ def main(args=None):
     if args is None:
         args = sys.argv[1:]
     signal.signal(signal.SIGTERM, sigterm_handler)
+    parsed_args = None
     try:
         parser = create_parser()
         parsed_args = parser.parse_args(args)
@@ -140,7 +141,7 @@ def main(args=None):
         sys.exit(2)
     except Exception:
         traceback.print_exc()
-        if parsed_args.debugger:
+        if parsed_args and parsed_args.debugger:
             import pdb
             pdb.post_mortem()
         sys.exit(2)

@@ -295,9 +295,9 @@ class NonExistingFile(File):
     def magic_file_type(self):
         return self._other_file.magic_file_type
 
-    # Be nice to .changes comparisons
+    # Be nice to .changes and .dsc comparisons
     @property
-    def changes(self):
+    def deb822(self):
         class DummyChanges(dict):
             get_as_string = lambda self, _: ''
         return DummyChanges(Files=[], Version='')

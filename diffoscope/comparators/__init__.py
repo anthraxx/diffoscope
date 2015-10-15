@@ -34,7 +34,7 @@ from diffoscope.comparators.java import ClassFile
 from diffoscope.comparators.cbfs import CbfsFile
 from diffoscope.comparators.cpio import CpioFile
 from diffoscope.comparators.deb import DebFile, Md5sumsFile, DebDataTarFile
-from diffoscope.comparators.debian import DotChangesFile
+from diffoscope.comparators.debian import DotChangesFile, DotDscFile
 from diffoscope.comparators.device import Device
 from diffoscope.comparators.directory import Directory, compare_directories
 from diffoscope.comparators.elf import ElfFile, StaticLibFile
@@ -114,6 +114,7 @@ FILE_CLASSES = (
     Symlink,
     Device,
     DotChangesFile,
+    DotDscFile,
     Md5sumsFile,
     DebDataTarFile,
     TextFile,

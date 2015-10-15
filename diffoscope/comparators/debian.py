@@ -20,6 +20,7 @@
 from contextlib import contextmanager
 import os.path
 import re
+from debian.deb822 import Dsc
 from diffoscope.changes import Changes
 import diffoscope.comparators
 from diffoscope.comparators.binary import File, NonExistingFile, needs_content
@@ -36,7 +37,7 @@ DOT_CHANGES_FIELDS = [
     ]
 
 
-class DotChangesMember(File):
+class DebControlMember(File):
     def __init__(self, container, member_name):
         self._container = container
         self._name = member_name
@@ -70,10 +71,10 @@ class DotChangesMember(File):
         return False
 
 
-class DotChangesContainer(Container):
+class DebControlContainer(Container):
     @staticmethod
     def get_version_trimming_re(dcc):
-        version = dcc.source.changes.get('Version')
+        version = dcc.source.deb822.get('Version')
         # remove the epoch as it's not in the filename
         version = re.sub(r'^\d+:', '', version)
         if '-' in version:
@@ -84,7 +85,7 @@ class DotChangesContainer(Container):
 
     @contextmanager
     def open(self):
-        self._version_re = DotChangesContainer.get_version_trimming_re(self)
+        self._version_re = DebControlContainer.get_version_trimming_re(self)
         yield self
         del self._version_re
 
@@ -92,16 +93,47 @@ class DotChangesContainer(Container):
         return {self._trim_version_number(name): self.get_member(name) for name in self.get_member_names()}
 
     def get_member_names(self):
-        return [d['name'] for d in self.source.changes.get('Files')]
+        return [d['name'] for d in self.source.deb822.get('Files')]
 
     def get_member(self, member_name):
-        return DotChangesMember(self, member_name)
+        return DebControlMember(self, member_name)
 
     def _trim_version_number(self, name):
         return self._version_re.sub('', name)
 
 
-class DotChangesFile(File):
+class DebControlFile(File):
+    @property
+    def deb822(self):
+        return self._deb822
+
+    @needs_content
+    def compare_details(self, other, source=None):
+        differences = []
+
+        for field in sorted(set(self.deb822.keys()).union(set(other.deb822.keys()))):
+            if field.startswith('Checksums-') or field == 'Files':
+                continue
+            my_value = ''
+            if field in self.deb822:
+                my_value = self.deb822.get_as_string(field).lstrip()
+            other_value = ''
+            if field in other.deb822:
+                other_value = other.deb822.get_as_string(field).lstrip()
+            differences.append(Difference.from_text(
+                                   my_value, other_value,
+                                   self.path, other.path, source=field))
+        # compare Files as string
+        differences.append(Difference.from_text(self.deb822.get_as_string('Files'),
+                                                other.deb822.get_as_string('Files'),
+                                                self.path, other.path, source='Files'))
+        with DebControlContainer(self).open() as my_container, \
+             DebControlContainer(other).open() as other_container:
+            differences.extend(my_container.compare(other_container))
+
+        return differences
+
+class DotChangesFile(DebControlFile):
     RE_FILE_EXTENSION = re.compile(r'\.changes$')
 
     @staticmethod
@@ -111,35 +143,17 @@ class DotChangesFile(File):
         with file.get_content():
             changes = Changes(filename=file.path)
             changes.validate(check_signature=False)
-            file._changes = changes
+            file._deb822 = changes
             return True
 
-    @property
-    def changes(self):
-        return self._changes
+class DotDscFile(DebControlFile):
+    RE_FILE_EXTENSION = re.compile(r'\.dsc$')
 
-    @needs_content
-    def compare_details(self, other, source=None):
-        differences = []
-
-        for field in sorted(set(self.changes.keys()).union(set(other.changes.keys()))):
-            if field.startswith('Checksums-') or field == 'Files':
-                continue
-            my_value = ''
-            if field in self.changes:
-                my_value = self.changes.get_as_string(field).lstrip()
-            other_value = ''
-            if field in other.changes:
-                other_value = other.changes.get_as_string(field).lstrip()
-            differences.append(Difference.from_text(
-                                   my_value, other_value,
-                                   self.path, other.path, source=field))
-        # compare Files as string
-        differences.append(Difference.from_text(self.changes.get_as_string('Files'),
-                                                other.changes.get_as_string('Files'),
-                                                self.path, other.path, source='Files'))
-        with DotChangesContainer(self).open() as my_container, \
-             DotChangesContainer(other).open() as other_container:
-            differences.extend(my_container.compare(other_container))
-
-        return differences
+    @staticmethod
+    def recognizes(file):
+        if not DotDscFile.RE_FILE_EXTENSION.search(file.name):
+            return False
+        with file.get_content():
+            with open(file.path, 'rb') as f:
+                file._deb822 = Dsc(f)
+            return True

@@ -22,7 +22,7 @@ import shutil
 import pytest
 from diffoscope.comparators import specialize
 from diffoscope.comparators.binary import FilesystemFile, NonExistingFile
-from diffoscope.comparators.debian import DotChangesFile
+from diffoscope.comparators.debian import DotChangesFile, DotDscFile
 from diffoscope.config import Config
 from diffoscope.presenters.text import output_text
 
@@ -49,30 +49,74 @@ def dot_changes2(tmpdir):
     shutil.copy(TEST_DEB_FILE2_PATH, str(tmpdir.join('b/test_1_all.deb')))
     return specialize(FilesystemFile(dot_changes_path))
 
-def test_identification(dot_changes1):
+def test_dot_changes_identification(dot_changes1):
     assert isinstance(dot_changes1, DotChangesFile)
 
-def test_no_differences(dot_changes1):
+def test_dot_changes_no_differences(dot_changes1):
     difference = dot_changes1.compare(dot_changes1)
     assert difference is None
 
 @pytest.fixture
-def differences(dot_changes1, dot_changes2):
+def dot_changes_differences(dot_changes1, dot_changes2):
     difference = dot_changes1.compare(dot_changes2)
     output_text(difference, print_func=print)
     return difference.details
 
-def test_description(differences):
-    assert differences[0]
+def test_dot_changes_description(dot_changes_differences):
+    assert dot_changes_differences[0]
     expected_diff = open(os.path.join(os.path.dirname(__file__), '../data/dot_changes_description_expected_diff')).read()
-    assert differences[0].unified_diff == expected_diff
+    assert dot_changes_differences[0].unified_diff == expected_diff
 
-def test_internal_diff(differences):
-    assert differences[2].source1 == 'test_1_all.deb'
+def test_dot_changes_internal_diff(dot_changes_differences):
+    assert dot_changes_differences[2].source1 == 'test_1_all.deb'
 
-def test_compare_non_existing(monkeypatch, dot_changes1):
+def test_dot_changes_compare_non_existing(monkeypatch, dot_changes1):
     monkeypatch.setattr(Config.general, 'new_file', True)
     difference = dot_changes1.compare(NonExistingFile('/nonexisting', dot_changes1))
+    output_text(difference, print_func=print)
+    assert difference.source2 == '/nonexisting'
+    assert difference.details[-1].source2 == '/dev/null'
+
+TEST_DOT_DSC_FILE1_PATH = os.path.join(os.path.dirname(__file__), '../data/test1.dsc')
+TEST_DOT_DSC_FILE2_PATH = os.path.join(os.path.dirname(__file__), '../data/test2.dsc')
+TEST_DEB_SRC1_PATH = os.path.join(os.path.dirname(__file__), '../data/test1.debsrc.tar.gz')
+TEST_DEB_SRC2_PATH = os.path.join(os.path.dirname(__file__), '../data/test2.debsrc.tar.gz')
+
+@pytest.fixture
+def dot_dsc1(tmpdir):
+    tmpdir.mkdir('a')
+    dot_dsc_path = str(tmpdir.join('a/test_1.dsc'))
+    shutil.copy(TEST_DOT_DSC_FILE1_PATH, dot_dsc_path)
+    shutil.copy(TEST_DEB_SRC1_PATH, str(tmpdir.join('a/test_1.tar.gz')))
+    return specialize(FilesystemFile(dot_dsc_path))
+
+@pytest.fixture
+def dot_dsc2(tmpdir):
+    tmpdir.mkdir('b')
+    dot_dsc_path = str(tmpdir.join('b/test_1.dsc'))
+    shutil.copy(TEST_DOT_DSC_FILE2_PATH, dot_dsc_path)
+    shutil.copy(TEST_DEB_SRC2_PATH, str(tmpdir.join('b/test_1.tar.gz')))
+    return specialize(FilesystemFile(dot_dsc_path))
+
+def test_dot_dsc_identification(dot_dsc1):
+    assert isinstance(dot_dsc1, DotDscFile)
+
+def test_dot_dsc_no_differences(dot_dsc1):
+    difference = dot_dsc1.compare(dot_dsc1)
+    assert difference is None
+
+@pytest.fixture
+def dot_dsc_differences(dot_dsc1, dot_dsc2):
+    difference = dot_dsc1.compare(dot_dsc2)
+    output_text(difference, print_func=print)
+    return difference.details
+
+def test_dot_dsc_internal_diff(dot_dsc_differences):
+    assert dot_dsc_differences[1].source1 == 'test_1.tar.gz'
+
+def test_dot_dsc_compare_non_existing(monkeypatch, dot_dsc1):
+    monkeypatch.setattr(Config.general, 'new_file', True)
+    difference = dot_dsc1.compare(NonExistingFile('/nonexisting', dot_dsc1))
     output_text(difference, print_func=print)
     assert difference.source2 == '/nonexisting'
     assert difference.details[-1].source2 == '/dev/null'

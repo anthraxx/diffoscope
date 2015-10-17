@@ -367,7 +367,8 @@ class Difference(object):
         return self._comments
 
     def add_comment(self, comment):
-        self._comments.append(comment)
+        for line in comment.splitlines():
+            self._comments.append(line)
 
     @property
     def source1(self):

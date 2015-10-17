@@ -25,8 +25,7 @@ from diffoscope import logger
 def print_difference(difference, print_func):
     if difference.comments:
         for comment in difference.comments:
-            for line in comment.split('\n'):
-                print_func(u"│┄ %s" % line)
+            print_func(u"│┄ %s" % comment)
     if difference.unified_diff:
         for line in difference.unified_diff.splitlines():
             print_func(u"│ %s" % line)

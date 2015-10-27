@@ -44,6 +44,7 @@ except ImportError as ex:
         raise
     from diffoscope.comparators.debian_fallback import DotChangesFile, DotDscFile
 from diffoscope.comparators.device import Device
+from diffoscope.comparators.dex import DexFile
 from diffoscope.comparators.directory import Directory, compare_directories
 from diffoscope.comparators.elf import ElfFile, StaticLibFile
 from diffoscope.comparators.fonts import TtfFile
@@ -129,6 +130,7 @@ FILE_CLASSES = (
     CbfsFile,
     CpioFile,
     DebFile,
+    DexFile,
     ElfFile,
     StaticLibFile,
     Sqlite3Database,

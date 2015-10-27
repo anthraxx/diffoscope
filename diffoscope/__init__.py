@@ -40,6 +40,7 @@ class RequiredToolNotFound(Exception):
                 , 'cmp':        { 'debian': 'diffutils' }
                 , 'cpio':       { 'debian': 'cpio' }
                 , 'diff':       { 'debian': 'diffutils' }
+                , 'enjarify':   { 'debian': 'enjarify' }
                 , 'file':       { 'debian': 'file' }
                 , 'find':       { 'debian': 'findutils' }
                 , 'getfacl':    { 'debian': 'acl' }

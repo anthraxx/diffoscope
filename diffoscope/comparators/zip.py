@@ -86,7 +86,7 @@ class ZipContainer(Archive):
 
 
 class ZipFile(File):
-    RE_FILE_TYPE = re.compile(r'^(Zip archive|Java archive|EPUB ebook) data\b')
+    RE_FILE_TYPE = re.compile(r'^(Zip archive|Java archive|EPUB document)\b')
 
     @staticmethod
     def recognizes(file):

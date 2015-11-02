@@ -47,6 +47,7 @@ from diffoscope.comparators.iso9660 import Iso9660File
 from diffoscope.comparators.mono import MonoExeFile
 from diffoscope.comparators.pdf import PdfFile
 from diffoscope.comparators.png import PngFile
+from diffoscope.comparators.ppu import DotPpuFile
 try:
     from diffoscope.comparators.rpm import RpmFile
 except ImportError as ex:
@@ -135,6 +136,7 @@ FILE_CLASSES = (
     MonoExeFile,
     PdfFile,
     PngFile,
+    DotPpuFile,
     RpmFile,
     SquashfsFile,
     TarFile,

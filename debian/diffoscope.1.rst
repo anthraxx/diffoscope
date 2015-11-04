@@ -64,5 +64,5 @@ Exit status is 0 if inputs are the same, 1 if different, 2 if trouble.
 SEE ALSO
 ========
 
-* `<http://diffoscope.org/>`
+* `<https://diffoscope.org/>`
 * `<https://wiki.debian.org/ReproducibleBuilds>`

@@ -18,7 +18,7 @@ Build-Depends: debhelper (>= 9),
                python3-tlsh (>= 3.4.1),
                rpm-common
 Standards-Version: 3.9.6
-Homepage: http://diffoscope.org/
+Homepage: https://diffoscope.org/
 Vcs-Git: git://anonscm.debian.org/reproducible/diffoscope.git
 Vcs-Browser: https://anonscm.debian.org/cgit/reproducible/diffoscope.git
 XS-Testsuite: autopkgtest

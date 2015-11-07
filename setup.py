@@ -23,7 +23,7 @@ class PyTest(TestCommand):
 
 setup(name='diffoscope',
       version=diffoscope.VERSION,
-      description='display differences between files',
+      description='in-depth comparison of files, archives, and directories',
       long_description=open('README.rst', encoding='utf-8').read(),
       author='Lunar',
       author_email='lunar@debian.org',

@@ -39,10 +39,9 @@ setup(name='diffoscope',
           },
       install_requires=[
           'python-debian',
-          'Magic-file-extensions',
-          'rpm-python',
+          'chardet', # hidden dependency of python-debian
+          'python-magic',
           'libarchive-c',
-          'tlsh',
           ],
       classifiers=[
           'Development Status :: 3 - Alpha',

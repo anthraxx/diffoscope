@@ -81,19 +81,32 @@ def needs_content(original_method):
     return wrapper
 
 class File(object, metaclass=ABCMeta):
-    @classmethod
-    def guess_file_type(self, path):
-        if not hasattr(self, '_mimedb'):
-            self._mimedb = magic.open(magic.NONE)
-            self._mimedb.load()
-        return self._mimedb.file(path)
+    if hasattr(magic, 'open'): # use Magic-file-extensions from file
+        @classmethod
+        def guess_file_type(self, path):
+            if not hasattr(self, '_mimedb'):
+                self._mimedb = magic.open(magic.NONE)
+                self._mimedb.load()
+            return self._mimedb.file(path)
 
-    @classmethod
-    def guess_encoding(self, path):
-        if not hasattr(self, '_mimedb_encoding'):
-            self._mimedb_encoding = magic.open(magic.MAGIC_MIME_ENCODING)
-            self._mimedb_encoding.load()
-        return self._mimedb_encoding.file(path)
+        @classmethod
+        def guess_encoding(self, path):
+            if not hasattr(self, '_mimedb_encoding'):
+                self._mimedb_encoding = magic.open(magic.MAGIC_MIME_ENCODING)
+                self._mimedb_encoding.load()
+            return self._mimedb_encoding.file(path)
+    else: # use python-magic
+        @classmethod
+        def guess_file_type(self, path):
+            if not hasattr(self, '_mimedb'):
+                self._mimedb = magic.Magic()
+            return self._mimedb.from_file(path).decode('utf-8')
+
+        @classmethod
+        def guess_encoding(self, path):
+            if not hasattr(self, '_mimedb_encoding'):
+                self._mimedb_encoding = magic.Magic(mime_encoding=True)
+            return self._mimedb_encoding.from_file(path).decode('utf-8')
 
     def __repr__(self):
         return '<%s %s %s>' % (self.__class__, self.name, self.path)

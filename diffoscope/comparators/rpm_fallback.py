@@ -27,7 +27,7 @@ class AbstractRpmFile(File):
     def recognizes(file):
         return AbstractRpmFile.RE_FILE_TYPE.search(file.magic_file_type)
 
-class RpmFile(File):
+class RpmFile(AbstractRpmFile):
     def compare(self, other, source=None):
         difference = self.compare_bytes(other)
         if not difference:

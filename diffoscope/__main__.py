@@ -26,6 +26,10 @@ import os
 import signal
 import sys
 import traceback
+try:
+    import tlsh
+except ImportError:
+    tlsh = None
 from diffoscope import logger, VERSION, set_locale
 import diffoscope.comparators
 from diffoscope.config import Config
@@ -73,6 +77,8 @@ def create_parser():
                         help='link to an extra CSS for the HTML report')
     parser.add_argument('file1', help='first file to compare')
     parser.add_argument('file2', help='second file to compare')
+    if not tlsh:
+        parser.epilog = 'File renaming detection based on fuzzy-matching is currently disabled. It can be enabled by installing the “tlsh” module available at https://github.com/trendmicro/tlsh'
     return parser
 
 
@@ -102,6 +108,8 @@ class ListToolsAction(argparse.Action):
 
 
 def run_diffoscope(parsed_args):
+    if not tlsh and Config.general.fuzzy_threshold != parsed_args.fuzzy_threshold:
+        logger.warning('Fuzzy-matching is currently disabled as the “tlsh” module is unavailable.')
     Config.general.max_diff_block_lines = parsed_args.max_diff_block_lines
     Config.general.max_diff_input_lines = parsed_args.max_diff_input_lines
     Config.general.max_report_size = parsed_args.max_report_size

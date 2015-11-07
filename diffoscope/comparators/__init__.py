@@ -23,7 +23,10 @@ import operator
 import os.path
 import re
 import sys
-import tlsh
+try:
+    import tlsh
+except ImportError:
+    tlsh = None
 from diffoscope import logger, tool_required
 from diffoscope.config import Config
 from diffoscope.difference import Difference
@@ -158,7 +161,7 @@ def specialize(file):
 
 
 def perform_fuzzy_matching(members1, members2):
-    if Config.general.fuzzy_threshold == 0:
+    if tlsh == None or Config.general.fuzzy_threshold == 0:
         return
     already_compared = set()
     # Perform local copies because they will be modified by consumer

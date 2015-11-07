@@ -28,7 +28,10 @@ import re
 from stat import S_ISCHR, S_ISBLK
 import subprocess
 import tempfile
-import tlsh
+try:
+    import tlsh
+except ImportError:
+    tlsh = None
 import magic
 from diffoscope.config import Config
 from diffoscope.difference import Difference
@@ -112,21 +115,22 @@ class File(object, metaclass=ABCMeta):
                 self._magic_file_type = File.guess_file_type(self.path)
         return self._magic_file_type
 
-    @property
-    def fuzzy_hash(self):
-        if not hasattr(self, '_fuzzy_hash'):
-            with self.get_content():
-                # tlsh is not meaningful with files smaller than 512 bytes
-                if os.stat(self.path).st_size >= 512:
-                    h = tlsh.Tlsh()
-                    with open(self.path, 'rb') as f:
-                        for buf in iter(lambda: f.read(32768), b''):
-                            h.update(buf)
-                    h.final()
-                    self._fuzzy_hash = h.hexdigest()
-                else:
-                    self._fuzzy_hash = None
-        return self._fuzzy_hash
+    if tlsh:
+        @property
+        def fuzzy_hash(self):
+            if not hasattr(self, '_fuzzy_hash'):
+                with self.get_content():
+                    # tlsh is not meaningful with files smaller than 512 bytes
+                    if os.stat(self.path).st_size >= 512:
+                        h = tlsh.Tlsh()
+                        with open(self.path, 'rb') as f:
+                            for buf in iter(lambda: f.read(32768), b''):
+                                h.update(buf)
+                        h.final()
+                        self._fuzzy_hash = h.hexdigest()
+                    else:
+                        self._fuzzy_hash = None
+            return self._fuzzy_hash
 
     @abstractmethod
     @contextmanager

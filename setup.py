@@ -24,7 +24,7 @@ class PyTest(TestCommand):
 setup(name='diffoscope',
       version=diffoscope.VERSION,
       description='display differences between files',
-      long_description=open('README', encoding='utf-8').read(),
+      long_description=open('README.rst', encoding='utf-8').read(),
       author='Lunar',
       author_email='lunar@debian.org',
       url='https://wiki.debian.org/ReproducibleBuilds',

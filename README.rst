@@ -15,8 +15,8 @@ to write a text report on the standard output.
 diffoscope will exit with 0 if there's no differences and 1 if there
 are. An HTML report can be produced with the detected differences.
 
-diffoscope is developed as part of the “reproducible builds” Debian
-project: <https://wiki.debian.org/ReproducibleBuilds>
+diffoscope is developed as part of the `“reproducible builds” Debian
+project <https://wiki.debian.org/ReproducibleBuilds>`_.
 It is meant to be able to quickly understand why two builds of the same
 package produce different outputs. diffoscope was previously named
 debbindiff.
@@ -24,28 +24,43 @@ debbindiff.
 Example
 -------
 
+To compare two files in-depth and produce an HTML report, run something like::
+
     $ bin/diffoscope --html output.html build1.changes build2.changes
 
-This will compare `build1.changes` and `build2.changes` and create
-`output.html` if there are differences between the two files.
+*diffoscope* can also compare non-existent files::
+
+    $ bin/diffoscope /nonexistent archive.zip
+
+To get all possible options, run::
+
+    $ bin/diffoscope --help
 
 External dependencies
 ---------------------
 
-diffoscope requires Python 3 and the following modules:
+diffoscope requires Python 3 and the following modules available on PyPI:
+`libarchive-c <https://pypi.python.org/pypi/libarchive-c>`_,
+`python-debian <https://pypi.python.org/pypi/python-debian>`_,
+`python-magic <https://pypi.python.org/pypi/python-debian>`_.
 
- * Available on PyPI: libarchive-c, python-debian.
- * Magic-file-extension is built from file:
-   http://www.darwinsys.com/file/
-   Available on Debian and Fedora as python-magic.
- * rpm-python is built from rpm:
-   http://rpm.org/
-   Available on Debian and Fedora as python-rpm.
- * tlsh is available at:
-   https://github.com/trendmicro/tlsh
+Optionally, the following modules will enhance it:
+
+* ``tlsh`` is used to recognize file renames.
+  It is build from `tlsh source
+  <https://github.com/trendmicro/tlsh>`_.
+  Available on Debian as ``python3-tlsh``.
+* ``rpm-python`` is used to inspect RPM files.
+  It is built from `rpm
+  <http://rpm.org/>`_.
+  Available on Debian and Fedora as ``python3-rpm``.
+* ``Magic-file-extension`` can be used instead of
+  ``python-magic``. It is built from `file
+  <http://www.darwinsys.com/file/>`_.
+  Available on Debian and Fedora as ``python3-magic``.
 
 The various comparators rely on external commands being available. To
-get a list of them, please run:
+get a list of them, please run::
 
     $ bin/diffoscope --list-tools
 
@@ -53,7 +68,8 @@ Contributors
 ------------
 
 Lunar, Reiner Herrmann, Chris Lamb, Helmut Grohne, Holger Levsen,
-Yasushi SHOJI, Daniel Kahn Gillmor, Peter De Wachter.
+Mattia Rizzolo, Daniel Kahn Gillmor, Paul Gevers, Peter De Wachter,
+Yasushi SHOJI.
 
 License
 -------

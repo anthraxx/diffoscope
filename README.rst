@@ -12,9 +12,6 @@ with the detected differences. The report can be text or HTML.
 When no type of report has been selected, diffoscope defaults
 to write a text report on the standard output.
 
-diffoscope will exit with 0 if there's no differences and 1 if there
-are. An HTML report can be produced with the detected differences.
-
 diffoscope is developed as part of the `“reproducible builds” Debian
 project <https://wiki.debian.org/ReproducibleBuilds>`_.
 It is meant to be able to quickly understand why two builds of the same
@@ -27,6 +24,9 @@ Example
 To compare two files in-depth and produce an HTML report, run something like::
 
     $ bin/diffoscope --html output.html build1.changes build2.changes
+
+diffoscope will exit with 0 if there's no differences and 1 if there
+are.
 
 *diffoscope* can also compare non-existent files::
 

@@ -1,3 +1,7 @@
 Tests: pytest
 Depends: diffoscope, python3-pytest
 Restrictions: needs-recommends
+
+Test-Command: debian/tests/pytest
+Depends: diffoscope, python3-pytest
+# but without Recommends

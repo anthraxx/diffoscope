@@ -44,12 +44,8 @@ class DotPpuFile(File):
     def recognizes(file):
         if not DotPpuFile.RE_FILE_EXTENSION.search(file.name):
             return False
-        if file.path != None:
+        with file.get_content():
             with open(file.path, 'rb') as f:
-                if re.match(rb'^PPU[0-9]+', f.read(32)):
-                    return True
-        else:
-            with open(file.name, 'rb') as f:
                 if re.match(rb'^PPU[0-9]+', f.read(32)):
                     return True
         return False

@@ -12,6 +12,9 @@ override_dh_auto_build:
 	fi
 	dh_auto_build -O--buildsystem=pybuild
 
+override_dh_python3:
+	dh_python3 --recommends=rpm-python --recommends=tlsh
+
 override_dh_gencontrol:
 	TOOLS="$$(bin/diffoscope --list-tools | tail -n 1 | \
 		sed -e 's/\(^\| \)\(coreutils\|diffutils\|e2fsprogs\|findutils\|gzip\|tar\)\(,\|$$\)//g')"; \

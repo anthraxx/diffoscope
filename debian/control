@@ -16,7 +16,7 @@ Build-Depends: debhelper (>= 9),
                python3-rpm,
                python3-setuptools,
                python3-tlsh (>= 3.4.1),
-               rpm-common
+               vim-common
 Standards-Version: 3.9.6
 Homepage: https://diffoscope.org/
 Vcs-Git: git://anonscm.debian.org/reproducible/diffoscope.git
@@ -27,7 +27,8 @@ Package: diffoscope
 Architecture: all
 Depends: ${misc:Depends},
          ${python3:Depends},
-Recommends: ${diffoscope:Recommends}
+Recommends: ${diffoscope:Recommends},
+            ${python3:Recommends}
 Breaks: debbindiff (<< 29)
 Replaces: debbindiff (<< 29)
 Description: in-depth comparison of files, archives, and directories

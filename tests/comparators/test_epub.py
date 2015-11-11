@@ -60,6 +60,7 @@ def test_differences(differences):
     expected_diff = open(os.path.join(os.path.dirname(__file__), '../data/epub_expected_diffs')).read()
     assert expected_diff == "".join(map(lambda x: x.unified_diff, differences))
 
+@pytest.mark.skipif(tool_missing('zipinfo'), reason='missing zip')
 def test_compare_non_existing(monkeypatch, epub1):
     monkeypatch.setattr(Config.general, 'new_file', True)
     difference = epub1.compare(NonExistingFile('/nonexisting', epub1))

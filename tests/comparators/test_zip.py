@@ -59,6 +59,7 @@ def test_compressed_files(differences):
     expected_diff = open(os.path.join(os.path.dirname(__file__), '../data/text_ascii_expected_diff')).read()
     assert differences[1].unified_diff == expected_diff
 
+@pytest.mark.skipif(tool_missing('zipinfo'), reason='missing zip')
 def test_compare_non_existing(monkeypatch, zip1):
     monkeypatch.setattr(Config.general, 'new_file', True)
     difference = zip1.compare(NonExistingFile('/nonexisting', zip1))

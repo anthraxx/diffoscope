@@ -70,6 +70,7 @@ def test_compressed_files(differences):
     expected_diff = open(os.path.join(os.path.dirname(__file__), '../data/text_ascii_expected_diff')).read()
     assert differences[3].unified_diff == expected_diff
 
+@pytest.mark.skipif(tool_missing('isoinfo'), reason='missing isoinfo')
 def test_compare_non_existing(monkeypatch, iso1):
     monkeypatch.setattr(Config.general, 'new_file', True)
     difference = iso1.compare(NonExistingFile('/nonexisting', iso1))

@@ -78,6 +78,7 @@ def test_compressed_files(differences):
     expected_diff = open(os.path.join(os.path.dirname(__file__), '../data/text_ascii_expected_diff')).read()
     assert differences[3].unified_diff == expected_diff
 
+@pytest.mark.skipif(tool_missing('unsquashfs'), reason='missing unsquashfs')
 def test_compare_non_existing(monkeypatch, squashfs1):
     monkeypatch.setattr(Config.general, 'new_file', True)
     difference = squashfs1.compare(NonExistingFile('/nonexisting', squashfs1))

@@ -25,6 +25,7 @@ import diffoscope.comparators.binary
 from diffoscope.comparators.binary import File, FilesystemFile, NonExistingFile
 from diffoscope.difference import Difference
 from diffoscope import RequiredToolNotFound, tool_required
+from conftest import tool_missing
 
 TEST_FILE1_PATH = os.path.join(os.path.dirname(__file__), '../data/binary1')
 TEST_FILE2_PATH = os.path.join(os.path.dirname(__file__), '../data/binary2')
@@ -65,6 +66,7 @@ def test_no_differences_with_xxd(binary1):
     difference = binary1.compare_bytes(binary1)
     assert difference is None
 
+@pytest.mark.skipif(tool_missing('xxd'), reason='missing xxd')
 def test_compare_with_xxd(binary1, binary2):
     difference = binary1.compare_bytes(binary2)
     expected_diff = open(os.path.join(os.path.dirname(__file__), '../data/binary_expected_diff')).read()
@@ -97,6 +99,7 @@ def test_with_compare_details():
     difference = MockFile(TEST_FILE1_PATH).compare(MockFile(TEST_FILE2_PATH), source='source')
     assert difference.details[0] == d
 
+@pytest.mark.skipif(tool_missing('xxd'), reason='missing xxd')
 def test_with_compare_details_and_fallback():
     class MockFile(FilesystemFile):
         def compare_details(self, other, source=None):
@@ -113,6 +116,7 @@ def test_with_compare_details_and_no_actual_differences():
     difference = MockFile(TEST_FILE1_PATH).compare(MockFile(TEST_FILE1_PATH))
     assert difference is None
 
+@pytest.mark.skipif(tool_missing('xxd'), reason='missing xxd')
 def test_with_compare_details_and_failed_process():
     output = 'Free Jeremy Hammond'
     class MockFile(FilesystemFile):
@@ -125,6 +129,7 @@ def test_with_compare_details_and_failed_process():
     assert '42' in difference.comment
     assert difference.unified_diff == expected_diff
 
+@pytest.mark.skipif(tool_missing('xxd'), reason='missing xxd')
 def test_with_compare_details_and_tool_not_found(monkeypatch):
     monkeypatch.setattr('diffoscope.RequiredToolNotFound.get_package', lambda _: 'some-package')
     class MockFile(FilesystemFile):

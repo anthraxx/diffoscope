@@ -77,6 +77,7 @@ def test_content(differences):
     assert differences[1].details[1].unified_diff == expected_diff
 
 @pytest.mark.skipif(miss_rpm_module, reason='rpm module is not installed')
+@pytest.mark.skipif(tool_missing('rpm2cpio'), reason='missing rpm2cpio')
 def test_compare_non_existing(monkeypatch, rpm1):
     monkeypatch.setattr(Config.general, 'new_file', True)
     difference = rpm1.compare(NonExistingFile('/nonexisting', rpm1))

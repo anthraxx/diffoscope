@@ -37,12 +37,12 @@ class Ppudump(Command):
         return line
 
 
-class DotPpuFile(File):
+class PpuFile(File):
     RE_FILE_EXTENSION = re.compile(r'\.ppu$')
 
     @staticmethod
     def recognizes(file):
-        if not DotPpuFile.RE_FILE_EXTENSION.search(file.name):
+        if not PpuFile.RE_FILE_EXTENSION.search(file.name):
             return False
         with file.get_content():
             with open(file.path, 'rb') as f:

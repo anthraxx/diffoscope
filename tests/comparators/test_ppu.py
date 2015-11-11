@@ -22,7 +22,7 @@ import os.path
 import pytest
 from diffoscope.comparators import specialize
 from diffoscope.comparators.binary import FilesystemFile, NonExistingFile
-from diffoscope.comparators.ppu import DotPpuFile
+from diffoscope.comparators.ppu import PpuFile
 from diffoscope.config import Config
 from conftest import tool_missing
 
@@ -44,7 +44,7 @@ def file2():
     return specialize(FilesystemFile(TEST_FILE2_PATH))
 
 def test_identification(file1):
-    assert isinstance(file1, DotPpuFile)
+    assert isinstance(file1, PpuFile)
 
 def test_no_differences(file1):
     difference = file1.compare(file1)

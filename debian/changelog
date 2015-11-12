@@ -1,3 +1,37 @@
+diffoscope (39) unstable; urgency=low
+
+  [ Reiner Herrmann ]
+  * Fix EPUB detection.
+
+  [ Paul Gevers ]
+  * Add diffoscope support for PPU files.
+
+  [ Jérémy Bobbio ]
+  * Split lines when they are recorded comments instead of waiting for the
+    presenters to do it. This helps when there are multiple lines on stderr
+    output.
+  * Switch homepage URL to HTTPS. Thanks to Let's Encrypt!
+  * Remove some Python 2 specific code in diffoscope.changes and
+    diffoscope.comparators.__init__.
+  * Make the tlsh module optional. python3-tlsh is now listed in Recommends.
+  * Make file detection compatible with the pyhon-magic module available on
+    PyPI.
+  * Fix fallback code used when rpm module is unavailable. python3-rpm is now
+    listed in Recommends.
+  * Convert README to reStructuredText and update it.
+  * Improve setup.py:
+    - Fix the non-working PyTest class.
+    - Update homepage URL.
+    - Improve short description.
+    - Add license field.
+    - Update install_requires.
+  * Update Build-Depends and Depends.
+  * Also run the test suite without Recommends installed in autopkgtest.
+  * Properly skip tests that requires external tools when they are not
+    available.
+
+ -- Jérémy Bobbio <lunar@debian.org>  Thu, 12 Nov 2015 12:28:05 +0100
+
 diffoscope (38) unstable; urgency=medium
 
   * Fix dh_python3 package overrides so we get a correct versioned

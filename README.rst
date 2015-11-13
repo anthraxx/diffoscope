@@ -41,7 +41,7 @@ External dependencies
 
 diffoscope requires Python 3 and the following modules available on PyPI:
 `libarchive-c <https://pypi.python.org/pypi/libarchive-c>`_,
-`python-magic <https://pypi.python.org/pypi/python-debian>`_.
+`python-magic <https://pypi.python.org/pypi/python-magic>`_.
 
 Optionally, the following modules will enhance it:
 

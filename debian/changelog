@@ -1,3 +1,13 @@
+diffoscope (40) unstable; urgency=low
+
+  * Add missing files in PyPI package.
+  * Use libarchive instead of debian.arfile to extract .deb.
+  * Make python-debian optional. This will help packaging diffoscope in other
+    distributions.
+  * Add 'Programming Language' to PyPI classifiers.
+
+ -- Jérémy Bobbio <lunar@debian.org>  Fri, 13 Nov 2015 12:03:16 +0100
+
 diffoscope (39) unstable; urgency=low
 
   [ Reiner Herrmann ]

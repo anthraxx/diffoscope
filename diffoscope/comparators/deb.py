@@ -19,39 +19,16 @@
 
 import re
 import os.path
-from debian.arfile import ArFile
 from diffoscope import logger
 from diffoscope.difference import Difference
 from diffoscope.comparators.binary import File, needs_content
+from diffoscope.comparators.libarchive import LibarchiveContainer
 from diffoscope.comparators.utils import \
     Archive, ArchiveMember, get_ar_content
 from diffoscope.comparators.tar import TarContainer, TarListing
 
-AR_EXTRACTION_BUFFER_SIZE = 32768
 
-class ArContainer(Archive):
-    def open_archive(self, path):
-        return ArFile(filename=path)
-
-    def close_archive(self):
-        # ArFile don't have to be closed
-        pass
-
-    def get_member_names(self):
-        return self.archive.getnames()
-
-    def extract(self, member_name, dest_dir):
-        logger.debug('ar extracting %s to %s', member_name, dest_dir)
-        member = self.archive.getmember(member_name)
-        dest_path = os.path.join(dest_dir, os.path.basename(member_name))
-        member.seek(0)
-        with open(dest_path, 'wb') as fp:
-            for buf in iter(lambda: member.read(AR_EXTRACTION_BUFFER_SIZE), b''):
-                fp.write(buf)
-        return dest_path
-
-
-class DebContainer(ArContainer):
+class DebContainer(LibarchiveContainer):
     pass
 
 

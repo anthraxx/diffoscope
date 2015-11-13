@@ -38,8 +38,6 @@ setup(name='diffoscope',
               ],
           },
       install_requires=[
-          'python-debian',
-          'chardet', # hidden dependency of python-debian
           'python-magic',
           'libarchive-c',
           ],

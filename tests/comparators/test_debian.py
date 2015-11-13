@@ -22,7 +22,12 @@ import shutil
 import pytest
 from diffoscope.comparators import specialize
 from diffoscope.comparators.binary import FilesystemFile, NonExistingFile
-from diffoscope.comparators.debian import DotChangesFile, DotDscFile
+try:
+    from diffoscope.comparators.debian import DotChangesFile, DotDscFile
+    miss_debian_module = False
+except ImportError:
+    from diffoscope.comparators.debian_fallback import DotChangesFile, DotDscFile
+    miss_debian_module = True
 from diffoscope.config import Config
 from diffoscope.presenters.text import output_text
 
@@ -50,6 +55,7 @@ def dot_changes2(tmpdir):
 def test_dot_changes_identification(dot_changes1):
     assert isinstance(dot_changes1, DotChangesFile)
 
+@pytest.mark.skipif(miss_debian_module, reason='debian module is not installed')
 def test_dot_changes_invalid(tmpdir):
     tmpdir.mkdir('a')
     dot_changes_path = str(tmpdir.join('a/test_1.changes'))
@@ -68,14 +74,17 @@ def dot_changes_differences(dot_changes1, dot_changes2):
     output_text(difference, print_func=print)
     return difference.details
 
+@pytest.mark.skipif(miss_debian_module, reason='debian module is not installed')
 def test_dot_changes_description(dot_changes_differences):
     assert dot_changes_differences[0]
     expected_diff = open(os.path.join(os.path.dirname(__file__), '../data/dot_changes_description_expected_diff')).read()
     assert dot_changes_differences[0].unified_diff == expected_diff
 
+@pytest.mark.skipif(miss_debian_module, reason='debian module is not installed')
 def test_dot_changes_internal_diff(dot_changes_differences):
     assert dot_changes_differences[2].source1 == 'test_1_all.deb'
 
+@pytest.mark.skipif(miss_debian_module, reason='debian module is not installed')
 def test_dot_changes_compare_non_existing(monkeypatch, dot_changes1):
     monkeypatch.setattr(Config.general, 'new_file', True)
     difference = dot_changes1.compare(NonExistingFile('/nonexisting', dot_changes1))
@@ -107,6 +116,7 @@ def dot_dsc2(tmpdir):
 def test_dot_dsc_identification(dot_dsc1):
     assert isinstance(dot_dsc1, DotDscFile)
 
+@pytest.mark.skipif(miss_debian_module, reason='debian module is not installed')
 def test_dot_dsc_invalid(tmpdir, dot_dsc2):
     tmpdir.mkdir('a')
     dot_dsc_path = str(tmpdir.join('a/test_1.dsc'))
@@ -125,9 +135,11 @@ def dot_dsc_differences(dot_dsc1, dot_dsc2):
     output_text(difference, print_func=print)
     return difference.details
 
+@pytest.mark.skipif(miss_debian_module, reason='debian module is not installed')
 def test_dot_dsc_internal_diff(dot_dsc_differences):
     assert dot_dsc_differences[1].source1 == 'test_1.tar.gz'
 
+@pytest.mark.skipif(miss_debian_module, reason='debian module is not installed')
 def test_dot_dsc_compare_non_existing(monkeypatch, dot_dsc1):
     monkeypatch.setattr(Config.general, 'new_file', True)
     difference = dot_dsc1.compare(NonExistingFile('/nonexisting', dot_dsc1))

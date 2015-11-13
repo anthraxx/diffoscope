@@ -24,6 +24,7 @@ from diffoscope.comparators import specialize
 from diffoscope.comparators.binary import FilesystemFile, NonExistingFile
 from diffoscope.comparators.deb import DebFile, Md5sumsFile, DebDataTarFile
 from diffoscope.config import Config
+from conftest import tool_missing
 
 TEST_FILE1_PATH = os.path.join(os.path.dirname(__file__), '../data/test1.deb')
 TEST_FILE2_PATH = os.path.join(os.path.dirname(__file__), '../data/test2.deb')
@@ -47,10 +48,12 @@ def test_no_differences(deb1):
 def differences(deb1, deb2):
     return deb1.compare(deb2).details
 
+@pytest.mark.skipif(tool_missing('ar'), reason='missing ar')
 def test_metadata(differences):
     expected_diff = open(os.path.join(os.path.dirname(__file__), '../data/deb_metadata_expected_diff')).read()
     assert differences[0].unified_diff == expected_diff
 
+@pytest.mark.skipif(tool_missing('ar'), reason='missing ar')
 def test_compressed_files(differences):
     assert differences[1].source1 == 'control.tar.gz'
     assert differences[2].source1 == 'data.tar.gz'
@@ -61,6 +64,7 @@ def test_identification_of_md5sums_outside_deb(tmpdir):
     f = specialize(FilesystemFile(path))
     assert type(f) is FilesystemFile
 
+@pytest.mark.skipif(tool_missing('ar'), reason='missing ar')
 def test_identification_of_md5sums_in_deb(deb1, deb2, monkeypatch):
     orig_func = Md5sumsFile.recognizes
     @staticmethod
@@ -74,14 +78,17 @@ def test_identification_of_md5sums_in_deb(deb1, deb2, monkeypatch):
     deb1.compare(deb2)
     assert test_identification_of_md5sums_in_deb.found
 
+@pytest.mark.skipif(tool_missing('ar'), reason='missing ar')
 def test_md5sums(differences):
     assert differences[1].details[0].details[1].comment == 'Files in package differs'
 
+@pytest.mark.skipif(tool_missing('ar'), reason='missing ar')
 def test_identical_files_in_md5sums(deb1, deb2):
     deb1.compare(deb2)
     assert deb1.files_with_same_content_in_data == set(['./usr/share/doc/test/README.Debian',
                                                         './usr/share/doc/test/copyright'])
 
+@pytest.mark.skipif(tool_missing('ar'), reason='missing ar')
 def test_identification_of_data_tar(deb1, deb2, monkeypatch):
     orig_func = DebDataTarFile.recognizes
     @staticmethod
@@ -95,6 +102,7 @@ def test_identification_of_data_tar(deb1, deb2, monkeypatch):
     deb1.compare(deb2)
     assert test_identification_of_data_tar.found
 
+@pytest.mark.skipif(tool_missing('ar'), reason='missing ar')
 def test_skip_comparison_of_known_identical_files(deb1, deb2, monkeypatch):
     compared = set()
     orig_func = diffoscope.comparators.compare_files
@@ -105,6 +113,7 @@ def test_skip_comparison_of_known_identical_files(deb1, deb2, monkeypatch):
     deb1.compare(deb2)
     assert './usr/share/doc/test/README.Debian' not in compared
 
+@pytest.mark.skipif(tool_missing('ar'), reason='missing ar')
 def test_compare_non_existing(monkeypatch, deb1):
     monkeypatch.setattr(Config.general, 'new_file', True)
     difference = deb1.compare(NonExistingFile('/nonexisting', deb1))

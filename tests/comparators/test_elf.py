@@ -23,6 +23,7 @@ from diffoscope.comparators import specialize
 from diffoscope.comparators.binary import FilesystemFile, NonExistingFile
 from diffoscope.comparators.elf import ElfFile, StaticLibFile
 from diffoscope.config import Config
+from conftest import tool_missing
 
 TEST_OBJ1_PATH = os.path.join(os.path.dirname(__file__), '../data/test1.o')
 TEST_OBJ2_PATH = os.path.join(os.path.dirname(__file__), '../data/test2.o')
@@ -46,11 +47,13 @@ def test_obj_no_differences(obj1):
 def obj_differences(obj1, obj2):
     return obj1.compare(obj2).details
 
+@pytest.mark.skipif(tool_missing('readelf'), reason='missing readelf')
 def test_obj_compare_non_existing(monkeypatch, obj1):
     monkeypatch.setattr(Config, 'new_file', True)
     difference = obj1.compare(NonExistingFile('/nonexisting', obj1))
     assert difference.source2 == '/nonexisting'
 
+@pytest.mark.skipif(tool_missing('readelf'), reason='missing readelf')
 def test_diff(obj_differences):
     assert len(obj_differences) == 1
     expected_diff = open(os.path.join(os.path.dirname(__file__), '../data/elf_obj_expected_diff')).read()
@@ -78,6 +81,7 @@ def test_lib_no_differences(lib1):
 def lib_differences(lib1, lib2):
     return lib1.compare(lib2).details
 
+@pytest.mark.skipif(tool_missing('readelf'), reason='missing readelf')
 def test_lib_differences(lib_differences):
     assert len(lib_differences) == 2
     assert lib_differences[0].source1 == 'metadata'
@@ -87,6 +91,7 @@ def test_lib_differences(lib_differences):
     expected_objdump_diff = open(os.path.join(os.path.dirname(__file__), '../data/elf_lib_objdump_expected_diff')).read()
     assert lib_differences[1].unified_diff == expected_objdump_diff
 
+@pytest.mark.skipif(tool_missing('readelf'), reason='missing readelf')
 def test_lib_compare_non_existing(monkeypatch, lib1):
     monkeypatch.setattr(Config, 'new_file', True)
     difference = lib1.compare(NonExistingFile('/nonexisting', lib1))

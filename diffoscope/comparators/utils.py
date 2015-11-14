@@ -58,6 +58,7 @@ class Command(object, metaclass=ABCMeta):
         logger.debug('running %s', self.cmdline())
         self._process = subprocess.Popen(self.cmdline(),
                                          shell=False, close_fds=True,
+                                         env=self.env(),
                                          stdin=subprocess.PIPE,
                                          stdout=subprocess.PIPE,
                                          stderr=subprocess.PIPE)
@@ -81,6 +82,9 @@ class Command(object, metaclass=ABCMeta):
     @abstractmethod
     def cmdline(self):
         raise NotImplemented
+
+    def env(self):
+        return None # inherit parent environment by default
 
     # Define only if needed. We take care of closing stdin.
     #def feed_stdin(self, stdin)

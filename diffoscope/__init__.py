@@ -22,7 +22,7 @@ import logging
 from distutils.spawn import find_executable
 import os
 
-VERSION = "40"
+VERSION = "41"
 
 logger = logging.getLogger("diffoscope")
 logger.setLevel(logging.WARNING)

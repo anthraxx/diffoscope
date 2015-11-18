@@ -17,7 +17,11 @@
 # You should have received a copy of the GNU General Public License
 # along with diffoscope.  If not, see <http://www.gnu.org/licenses/>.
 
+from contextlib import contextmanager
+import os.path
 import re
+import shutil
+import sys
 import zipfile
 from diffoscope.difference import Difference
 from diffoscope import tool_required
@@ -54,6 +58,10 @@ class ZipDirectory(Directory, ArchiveMember):
     def has_same_content_as(self, other):
         return False
 
+    @contextmanager
+    def get_content(self):
+        yield
+
     def is_directory(self):
         return True
 
@@ -75,7 +83,13 @@ class ZipContainer(Archive):
         return self.archive.namelist()
 
     def extract(self, member_name, dest_dir):
-        return self.archive.extract(member_name, dest_dir)
+        # We don't really want to crash if the filename in the zip archive
+        # can't be encoded using the filesystem encoding. So let's replace
+        # any weird character so we can get to the bytes.
+        targetpath = os.path.join(dest_dir, os.path.basename(member_name)).encode(sys.getfilesystemencoding(), errors='replace')
+        with self.archive.open(member_name) as source, open(targetpath, 'wb') as target:
+            shutil.copyfileobj(source, target)
+        return targetpath
 
     def get_member(self, member_name):
         zipinfo = self.archive.getinfo(member_name)

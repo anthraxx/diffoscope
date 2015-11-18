@@ -38,19 +38,6 @@ from diffoscope.difference import Difference
 from diffoscope import tool_required, RequiredToolNotFound, logger
 
 
-@contextmanager
-@tool_required('xxd')
-def xxd(path):
-    p = subprocess.Popen(['xxd', path], shell=False, stdout=subprocess.PIPE,
-                         stderr=subprocess.PIPE, close_fds=True)
-    yield p.stdout
-    p.stdout.close()
-    p.stderr.close()
-    if p.poll() is None:
-        p.terminate()
-    p.wait()
-
-
 def hexdump_fallback(path):
     hexdump = StringIO()
     with open(path, 'rb') as f:
@@ -60,9 +47,9 @@ def hexdump_fallback(path):
 
 
 def compare_binary_files(file1, file2, source=None):
+    import diffoscope.comparators.utils
     try:
-        with xxd(file1.path) as xxd1, xxd(file2.path) as xxd2:
-            return Difference.from_raw_readers(xxd1, xxd2, file1.name, file2.name, source)
+        return Difference.from_command(diffoscope.comparators.utils.Xxd, file1.path, file2.path, source=[file1.name, file2.name])
     except RequiredToolNotFound:
         hexdump1 = hexdump_fallback(file1.path)
         hexdump2 = hexdump_fallback(file2.path)

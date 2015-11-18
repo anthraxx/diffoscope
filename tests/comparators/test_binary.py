@@ -78,9 +78,9 @@ def test_compare_non_existing_with_xxd(binary1):
 
 @pytest.fixture
 def xxd_not_found(monkeypatch):
-    def mock_xxd(path):
+    def mock_cmdline(self):
         raise RequiredToolNotFound('xxd')
-    monkeypatch.setattr(diffoscope.comparators.binary, 'xxd', mock_xxd)
+    monkeypatch.setattr(diffoscope.comparators.utils.Xxd, 'cmdline', mock_cmdline)
 
 def test_no_differences_without_xxd(xxd_not_found, binary1):
     difference = binary1.compare_bytes(binary1)

@@ -312,3 +312,9 @@ class NonExistingArchive(Archive):
     @property
     def path(self):
         return '/dev/null'
+
+
+class Xxd(Command):
+    @tool_required('xxd')
+    def cmdline(self):
+        return ['xxd', self.path]

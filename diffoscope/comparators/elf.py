@@ -40,10 +40,13 @@ class Readelf(Command):
         return []
 
     def filter(self, line):
-        # we don't care about the name of the archive
-        line = self._archive_re.sub('File: lib.a(', line.decode('utf-8'))
-        # the full path can appear in the output, we need to remove it
-        return line.replace(self.path, self._basename).encode('utf-8')
+        try:
+            # we don't care about the name of the archive
+            line = self._archive_re.sub('File: lib.a(', line.decode('utf-8'))
+            # the full path can appear in the output, we need to remove it
+            return line.replace(self.path, self._basename).encode('utf-8')
+        except UnicodeDecodeError:
+            return line
 
 class ReadelfAll(Readelf):
     def readelf_options(self):
@@ -65,10 +68,13 @@ class ObjdumpDisassemble(Command):
         return ['objdump', '--disassemble', '--full-contents', self.path]
 
     def filter(self, line):
-        # we don't care about the name of the archive
-        line = self._archive_re.sub('In archive:', line.decode('utf-8'))
-        # the full path can appear in the output, we need to remove it
-        return line.replace(self.path, self._basename).encode('utf-8')
+        try:
+            # we don't care about the name of the archive
+            line = self._archive_re.sub('In archive:', line.decode('utf-8'))
+            # the full path can appear in the output, we need to remove it
+            return line.replace(self.path, self._basename).encode('utf-8')
+        except UnicodeDecodeError:
+            return line
 
 def _compare_elf_data(path1, path2):
     differences = []

@@ -5,7 +5,8 @@ Maintainer: Reproducible builds folks <reproducible-builds@lists.alioth.debian.o
 Uploaders: Jérémy Bobbio <lunar@debian.org>,
  Reiner Herrmann <reiner@reiner-h.de>,
  Holger Levsen <holger@debian.org>
-Build-Depends: debhelper (>= 9),
+Build-Depends: binutils-multiarch,
+               debhelper (>= 9),
                dh-python,
                python3-all,
                python3-debian,

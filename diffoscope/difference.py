@@ -57,7 +57,7 @@ class DiffParser(object):
 
     def parse(self):
         for line in self._output.readlines():
-            self._action = self._action(line.decode('utf-8'))
+            self._action = self._action(line.decode('utf-8', errors='replace'))
         self._success = True
         self._output.close()
 

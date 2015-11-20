@@ -1,3 +1,16 @@
+diffoscope (42) unstable; urgency=medium
+
+  * Add missing Depends on python3-pkg-resources.
+  * Add another autopkgtest to test command line without recommends.
+  * Make comparison of zip archives with utf-8 file names more robust.
+    (Closes: #805418)
+  * Stop crashing on misencoded readelf output. (Closes: #804061)
+  * Ignore encoding errors in diff output.
+  * Add binutils-multiarch to Build-Depends so the test suite can pass
+    on architectures other than amd64.
+
+ -- Jérémy Bobbio <lunar@debian.org>  Fri, 20 Nov 2015 18:57:54 +0000
+
 diffoscope (41) unstable; urgency=low
 
   * Minor rewordings in README.

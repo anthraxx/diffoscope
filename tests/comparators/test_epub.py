@@ -50,7 +50,7 @@ def differences(epub1, epub2):
 @pytest.mark.skipif(tool_missing('zipinfo'), reason='missing zip')
 def test_differences(differences):
     assert differences[0].source1 == 'zipinfo {}'
-    assert differences[0].source1 == 'zipinfo {}'
+    assert differences[0].source2 == 'zipinfo {}'
     assert differences[1].source1 == 'ch001.xhtml'
     assert differences[1].source2 == 'ch001.xhtml'
     assert differences[2].source1 == 'content.opf'

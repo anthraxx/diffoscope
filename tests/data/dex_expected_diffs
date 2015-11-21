@@ -1,0 +1,36 @@
+@@ -54,15 +54,15 @@
+   version of encoding software:                   2.0
+   minimum file system compatibility required:     MS-DOS, OS/2 or NT FAT
+   minimum software version required to extract:   2.0
+   compression method:                             none (stored)
+   file security status:                           not encrypted
+   extended local header:                          no
+   file last modified on (DOS date/time):          1980 Jan 1 00:00:00
+-  32-bit CRC value (hex):                         fc227a58
++  32-bit CRC value (hex):                         19c9f64e
+   compressed size:                                305 bytes
+   uncompressed size:                              305 bytes
+   length of filename:                             30 characters
+   length of extra field:                          0 bytes
+   length of file comment:                         0 characters
+   disk number on which file begins:               disk 1
+   apparent file type:                             binary
+@@ -17,16 +17,16 @@
+   #12 = Methodref          #4.#11         //  android/app/Activity.onCreate:(Landroid/os/Bundle;)V
+   #13 = Integer            2130903040
+   #14 = Float              1.7412887E38f
+   #15 = Utf8               setContentView
+   #16 = Utf8               (I)V
+   #17 = NameAndType        #15:#16        //  setContentView:(I)V
+   #18 = Methodref          #2.#17         //  com/example/MainActivity.setContentView:(I)V
+-  #19 = Utf8               Sat Nov 21 14:20:33 CET 2015
+-  #20 = String             #19            //  Sat Nov 21 14:20:33 CET 2015
++  #19 = Utf8               Thu Mar 17 11:54:42 CET 2016
++  #20 = String             #19            //  Thu Mar 17 11:54:42 CET 2016
+   #21 = Utf8               Code
+ {
+   public com.example.MainActivity();
+     Signature: ()V
+     flags: ACC_PUBLIC
+     Code:
+       stack=300, locals=1, args_size=1

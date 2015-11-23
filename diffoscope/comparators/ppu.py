@@ -34,11 +34,13 @@ class Ppudump(Command):
 
     def env(self):
         # ppudump will return times using the local timezone which is not ideal
-        # to investigate files. Sadly, it doesn't support the TZ environment
-        # variable… but it looks for timezone definitions in the directory
+        # to investigate files. TZ environment variable can be used to enforce UTC.
+        # Currently there is no fpc release yet that includes the TC environment
+        # variable, but it looks for timezone definitions in the directory
         # specified by TZDIR. So let's set it to a non-existent directory
         # so we get UTC output even when the system timezone is set otherwise.
         env = dict(os.environ)
+        env['TZ'] = ':UTC'
         env['TZDIR'] = '/nonexistent'
         return env
 

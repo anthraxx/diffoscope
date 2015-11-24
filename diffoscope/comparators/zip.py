@@ -89,7 +89,7 @@ class ZipContainer(Archive):
         targetpath = os.path.join(dest_dir, os.path.basename(member_name)).encode(sys.getfilesystemencoding(), errors='replace')
         with self.archive.open(member_name) as source, open(targetpath, 'wb') as target:
             shutil.copyfileobj(source, target)
-        return targetpath
+        return targetpath.decode(sys.getfilesystemencoding())
 
     def get_member(self, member_name):
         zipinfo = self.archive.getinfo(member_name)

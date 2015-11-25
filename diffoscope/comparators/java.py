@@ -29,10 +29,7 @@ from diffoscope.difference import Difference
 class Javap(Command):
     def __init__(self, path, *args, **kwargs):
         super().__init__(path, *args, **kwargs)
-        if type(path) is bytes:
-            self.real_path = os.path.realpath(path.decode('utf-8'))
-        else:
-            self.real_path = os.path.realpath(path)
+        self.real_path = os.path.realpath(path)
 
     @tool_required('javap')
     def cmdline(self):

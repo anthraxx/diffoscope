@@ -129,14 +129,6 @@ DIFF_CHUNK = 4096
 def run_diff(fd1, fd2, end_nl_q1, end_nl_q2):
     cmd = ['diff', '-au7', '/dev/fd/%d' % fd1, '/dev/fd/%d' % fd2]
     logger.debug('running %s', cmd)
-    def close_fds():
-        fds = [int(fd) for fd in os.listdir('/dev/fd')
-                       if int(fd) not in (1, 2, fd1, fd2)]
-        for fd in fds:
-            try:
-                os.close(fd)
-            except OSError:
-                pass
     if hasattr(os, 'set_inheritable'): # new in Python 3.4
         os.set_inheritable(fd1, True)
         os.set_inheritable(fd2, True)
@@ -144,8 +136,7 @@ def run_diff(fd1, fd2, end_nl_q1, end_nl_q2):
                          stdin=subprocess.PIPE,
                          stdout=subprocess.PIPE,
                          stderr=subprocess.STDOUT,
-                         preexec_fn=close_fds,
-                         close_fds=False)
+                         pass_fds=(fd1, fd2))
     p.stdin.close()
     os.close(fd1)
     os.close(fd2)

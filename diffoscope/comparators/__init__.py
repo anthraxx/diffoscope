@@ -47,6 +47,7 @@ from diffoscope.comparators.device import Device
 from diffoscope.comparators.dex import DexFile
 from diffoscope.comparators.directory import Directory, compare_directories
 from diffoscope.comparators.elf import ElfFile, StaticLibFile
+from diffoscope.comparators.fsimage import FsImageFile
 from diffoscope.comparators.fonts import TtfFile
 from diffoscope.comparators.gettext import MoFile
 from diffoscope.comparators.gzip import GzipFile
@@ -132,6 +133,7 @@ FILE_CLASSES = (
     DebFile,
     DexFile,
     ElfFile,
+    FsImageFile,
     StaticLibFile,
     Sqlite3Database,
     TtfFile,

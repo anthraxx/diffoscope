@@ -179,7 +179,7 @@ class SquashfsContainer(Archive):
         if '..' in member_name.split('/'):
             raise ValueError('relative path in squashfs')
         cmd = ['unsquashfs', '-n', '-f', '-d', dest_dir, self.source.path, member_name]
-        logger.debug("unquashfs %s into %s", member_name, dest_dir)
+        logger.debug("unsquashfs %s into %s", member_name, dest_dir)
         subprocess.check_call(cmd, shell=False, stdout=subprocess.PIPE)
         return '%s%s' % (dest_dir, member_name)
 

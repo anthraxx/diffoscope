@@ -127,7 +127,7 @@ DIFF_CHUNK = 4096
 
 @tool_required('diff')
 def run_diff(fd1, fd2, end_nl_q1, end_nl_q2):
-    cmd = ['diff', '-au7', '/dev/fd/%d' % fd1, '/dev/fd/%d' % fd2]
+    cmd = ['diff', '-aU7', '/dev/fd/%d' % fd1, '/dev/fd/%d' % fd2]
     logger.debug('running %s', cmd)
     if hasattr(os, 'set_inheritable'): # new in Python 3.4
         os.set_inheritable(fd1, True)

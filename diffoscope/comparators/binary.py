@@ -185,7 +185,7 @@ class File(object, metaclass=ABCMeta):
             if open(self.path, 'rb').read() == open(other.path, 'rb').read():
                 return True
 
-        return 0 == subprocess.call(['cmp', '--silent', self.path, other.path],
+        return 0 == subprocess.call(['cmp', '-s', self.path, other.path],
                                     shell=False, close_fds=True)
 
 

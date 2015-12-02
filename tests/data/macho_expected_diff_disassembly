@@ -1,0 +1,33 @@
+@@ -1,18 +1,15 @@
+ (__TEXT,__text) section
+ _main:
+-0000000100000f20	pushq	%rbp
+-0000000100000f21	movq	%rsp, %rbp
+-0000000100000f24	subq	$0x10, %rsp
+-0000000100000f28	leaq	0x43(%rip), %rdi        ## literal pool for: "%s %s\n"
+-0000000100000f2f	leaq	0x43(%rip), %rsi        ## literal pool for: "17:31:50"
+-0000000100000f36	leaq	0x45(%rip), %rdx        ## literal pool for: "Wed Dec  2 17:31:49 2015"
+-0000000100000f3d	movb	$0x0, %al
+-0000000100000f3f	callq	0x100000f52             ## symbol stub for: _printf
+-0000000100000f44	xorl	%ecx, %ecx
+-0000000100000f46	movl	%eax, -0x4(%rbp)
+-0000000100000f49	movl	%ecx, %eax
+-0000000100000f4b	addq	$0x10, %rsp
+-0000000100000f4f	popq	%rbp
+-0000000100000f50	retq
+-(__DATA,__data) section
+-0000000100001018	04 00 00 00 
++0000000100000f40	pushq	%rbp
++0000000100000f41	movq	%rsp, %rbp
++0000000100000f44	subq	$0x10, %rsp
++0000000100000f48	leaq	0x3b(%rip), %rdi        ## literal pool for: "%s\n"
++0000000100000f4f	leaq	0x38(%rip), %rsi        ## literal pool for: "15:52:34"
++0000000100000f56	movb	$0x0, %al
++0000000100000f58	callq	0x100000f6a             ## symbol stub for: _printf
++0000000100000f5d	xorl	%ecx, %ecx
++0000000100000f5f	movl	%eax, -0x4(%rbp)
++0000000100000f62	movl	%ecx, %eax
++0000000100000f64	addq	$0x10, %rsp
++0000000100000f68	popq	%rbp
++0000000100000f69	retq
+

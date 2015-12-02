@@ -55,6 +55,7 @@ from diffoscope.comparators.haskell import HiFile
 from diffoscope.comparators.image import ImageFile
 from diffoscope.comparators.ipk import IpkFile
 from diffoscope.comparators.iso9660 import Iso9660File
+from diffoscope.comparators.macho import MachoFile
 from diffoscope.comparators.mono import MonoExeFile
 from diffoscope.comparators.pdf import PdfFile
 from diffoscope.comparators.png import PngFile
@@ -133,6 +134,7 @@ FILE_CLASSES = (
     DebFile,
     DexFile,
     ElfFile,
+    MachoFile,
     FsImageFile,
     StaticLibFile,
     Sqlite3Database,

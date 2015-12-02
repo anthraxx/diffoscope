@@ -89,7 +89,7 @@ class Md5sumsFile(File):
             my_md5sums = Md5sumsFile.parse_md5sums(self.path)
             other_md5sums = Md5sumsFile.parse_md5sums(other.path)
             same = set()
-            for path in set(my_md5sums.keys()).intersection(set(other_md5sums.keys())):
+            for path in my_md5sums.keys() & other_md5sums.keys():
                 if my_md5sums[path] == other_md5sums[path]:
                     same.add('./%s' % path)
             self.container.source.container.source.container.source.set_files_with_same_content_in_data(same)

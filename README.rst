@@ -72,6 +72,18 @@ Lunar, Reiner Herrmann, Chris Lamb, Helmut Grohne, Holger Levsen,
 Mattia Rizzolo, Daniel Kahn Gillmor, Paul Gevers, Peter De Wachter,
 Yasushi SHOJI.
 
+Contact
+-------
+
+Please report bugs and send patches through the Debian bug tracking
+system against the diffoscope package:
+<https://bugs.debian.org/src:diffoscope>
+
+Join the users and developers mailing-list:
+<https://lists.reproducible-builds.org/listinfo/diffoscope>
+
+diffoscope website is at <https://diffosocope.org/>
+
 License
 -------
 

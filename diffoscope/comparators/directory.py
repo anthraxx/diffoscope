@@ -81,7 +81,11 @@ def lsattr(path):
 class Getfacl(Command):
     @tool_required('getfacl')
     def cmdline(self):
-        return ['getfacl', '-p', '-c', self.path]
+        osname = os.uname()[0]
+        if osname == 'FreeBSD':
+            return ['getfacl', '-q', '-h', self.path]
+        else:
+            return ['getfacl', '-p', '-c', self.path]
 
 
 def compare_meta(path1, path2):

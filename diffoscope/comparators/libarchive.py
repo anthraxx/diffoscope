@@ -120,7 +120,10 @@ class LibarchiveContainer(Archive):
         return member_names
 
     def extract(self, member_name, dest_dir):
-        dest_path = os.path.join(dest_dir, os.path.basename(member_name))
+        dest_name = os.path.basename(member_name)
+        if not dest_name:
+            raise ValueError('member_name should not be a directory')
+        dest_path = os.path.join(dest_dir, dest_name)
         logger.debug('libarchive extracting %s to %s', member_name, dest_path)
         with libarchive.file_reader(self.source.path) as archive:
             for entry in archive:

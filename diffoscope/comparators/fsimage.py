@@ -42,7 +42,11 @@ class FsImageContainer(Archive):
 
         self.g = guestfs.GuestFS (python_return_dict=True)
         self.g.add_drive_opts (self.path, format="raw", readonly=1)
-        self.g.launch()
+        try:
+            self.g.launch()
+        except RuntimeError:
+            logger.debug("guestfs can't be launched")
+            return None
         devices = self.g.list_devices()
         self.g.mount(devices[0], "/")
         self.fs = self.g.list_filesystems()[devices[0]]

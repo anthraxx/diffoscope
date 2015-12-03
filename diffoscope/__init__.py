@@ -47,6 +47,7 @@ class RequiredToolNotFound(Exception):
                 , 'ghc':        { 'debian': 'ghc' }
                 , 'gpg':        { 'debian': 'gnupg' }
                 , 'gzip':       { 'debian': 'gzip' }
+                , 'img2txt':    { 'debian': 'caca-utils' }
                 , 'isoinfo':    { 'debian': 'genisoimage' }
                 , 'javap':      { 'debian': 'default-jdk | java-sdk' }
                 , 'ls':         { 'debian': 'coreutils' }

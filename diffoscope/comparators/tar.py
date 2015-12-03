@@ -17,111 +17,14 @@
 # You should have received a copy of the GNU General Public License
 # along with diffoscope.  If not, see <http://www.gnu.org/licenses/>.
 
-from contextlib import contextmanager
-import os.path
 import re
-import stat
-import sys
-import tarfile
-from diffoscope import logger
 from diffoscope.difference import Difference
 from diffoscope.comparators.binary import File, needs_content
-from diffoscope.comparators.device import Device
-from diffoscope.comparators.directory import Directory
-from diffoscope.comparators.symlink import Symlink
-from diffoscope.comparators.utils import Archive, ArchiveMember, Command, tool_required
+from diffoscope.comparators.libarchive import LibarchiveContainer
+from diffoscope.comparators.utils import Command, tool_required
 
-class TarMember(ArchiveMember):
-    def is_directory(self):
-        return False
-
-    def is_symlink(self):
-        return False
-
-    def is_device(self):
-        return False
-
-
-class TarDirectory(Directory, TarMember):
-    def __init__(self, archive, member_name):
-        ArchiveMember.__init__(self, archive, member_name)
-
-    def compare(self, other, source=None):
-        return None
-
-    def has_same_content_as(self, other):
-        return False
-
-    @contextmanager
-    def get_content(self):
-        yield
-
-    def is_directory(self):
-        return True
-
-    def get_member_names(self):
-        raise ValueError("Tar archives are compared as a whole.")
-
-    def get_member(self, member_name):
-        raise ValueError("Tar archives are compared as a whole.")
-
-class TarSymlink(Symlink, TarMember):
-    def __init__(self, archive, member_name, destination):
-        TarMember.__init__(self, archive, member_name)
-        self._destination = destination
-
-    def is_symlink(self):
-        return True
-
-    @property
-    def symlink_destination(self):
-        return self._destination
-
-
-class TarDevice(Device, TarMember):
-    def __init__(self, archive, member_name, mode, major, minor):
-        TarMember.__init__(self, archive, member_name)
-        self._mode = mode
-        self._major = major
-        self._minor = minor
-
-    def get_device(self):
-        return (self._mode, self._major, self._minor)
-
-    def is_device(self):
-        return True
-
-
-class TarContainer(Archive):
-    def open_archive(self, path):
-        return tarfile.open(path, 'r')
-
-    def close_archive(self):
-        self.archive.close()
-
-    def get_member_names(self):
-        return self.archive.getnames()
-
-    def extract(self, member_name, dest_dir):
-        logger.debug('tar extracting %s to %s', member_name, dest_dir)
-        self.archive.extract(member_name, dest_dir)
-        return os.path.join(dest_dir, member_name)
-
-    def get_member(self, member_name):
-        tarinfo = self.archive.getmember(member_name)
-        if tarinfo.isdir():
-            return TarDirectory(self, member_name)
-        elif tarinfo.issym():
-            return TarSymlink(self, member_name, tarinfo.linkname)
-        elif tarinfo.ischr() or tarinfo.isblk():
-            mode = tarinfo.mode
-            if tarinfo.isblk():
-                mode |= stat.S_IFBLK
-            else:
-                mode |= stat.S_IFCHR
-            return TarDevice(self, member_name, mode, tarinfo.devmajor, tarinfo.devminor)
-        else:
-            return TarMember(self, member_name)
+class TarContainer(LibarchiveContainer):
+    pass
 
 
 class TarListing(Command):

@@ -21,6 +21,7 @@
 
 import os
 import re
+import subprocess
 from diffoscope import tool_required
 from diffoscope.comparators.binary import File, needs_content
 from diffoscope.comparators.utils import Command
@@ -59,9 +60,25 @@ class PpuFile(File):
             return False
         with file.get_content():
             with open(file.path, 'rb') as f:
-                if re.match(rb'^PPU[0-9]+', f.read(32)):
-                    return True
-        return False
+                magic = f.read(3)
+                if magic != b"PPU":
+                    return False
+                ppu_version = f.read(3).decode('ascii', errors='ignore')
+                if not hasattr(PpuFile, 'ppu_version'):
+                    try:
+                        subprocess.check_output(['ppudump', file.path], shell=False, stderr=subprocess.STDOUT)
+                        PpuFile.ppu_version = ppu_version
+                    except subprocess.CalledProcessError as e:
+                        error = e.output.decode('utf-8')
+                        m = re.search('Expecting PPU version ([0-9]+)', error)
+                        if not m:
+                            PpuFile.ppu_version = None
+                            logger.debug('Unable to read PPU version')
+                        PpuFile.ppu_version = m.group(1)
+                    except OSError:
+                        PpuFile.ppu_version = None
+                        logger.debug('Unable to read PPU version')
+                return PpuFile.ppu_version == ppu_version
 
     @needs_content
     def compare_details(self, other, source=None):

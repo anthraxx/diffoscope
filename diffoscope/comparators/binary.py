@@ -115,7 +115,7 @@ class File(object, metaclass=ABCMeta):
         if not hasattr(self.__class__, 'CONTAINER_CLASS'):
             if hasattr(self, '_other_file'):
                 return self._other_file.__class__.CONTAINER_CLASS(self)
-            raise NotImplemented('Not a container.')
+            return None
         if not hasattr(self, '_as_container'):
             logger.debug('instanciating %s for %s', self.__class__.CONTAINER_CLASS, self)
             self._as_container = self.__class__.CONTAINER_CLASS(self)
@@ -160,8 +160,12 @@ class File(object, metaclass=ABCMeta):
         return compare_binary_files(self, other, source)
 
     def _compare_using_details(self, other, source):
-        details = [d for d in self.compare_details(other, source) if d is not None]
-        if len(details) == 0:
+        details = []
+        if hasattr(self, 'compare_details'):
+            details.extend(filter(None, self.compare_details(other, source)))
+        if self.as_container:
+            details.extend(filter(None, self.as_container.compare(other.as_container)))
+        if not details:
             return None
         difference = Difference(None, self.name, other.name, source=source)
         difference.add_details(details)
@@ -183,7 +187,7 @@ class File(object, metaclass=ABCMeta):
 
     # To be specialized directly, or by implementing compare_details
     def compare(self, other, source=None):
-        if hasattr(self, 'compare_details'):
+        if hasattr(self, 'compare_details') or self.as_container:
             try:
                 difference = self._compare_using_details(other, source)
                 # no differences detected inside? let's at least do a binary diff

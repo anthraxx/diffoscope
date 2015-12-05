@@ -59,8 +59,4 @@ class GzipFile(object):
         return GzipFile.RE_FILE_TYPE.match(file.magic_file_type)
 
     def compare_details(self, other, source=None):
-        differences = []
-        differences.append(Difference.from_text(
-                               self.magic_file_type, other.magic_file_type, self, other, source='metadata'))
-        differences.extend(self.as_container.compare(other.as_container))
-        return differences
+        return [Difference.from_text(self.magic_file_type, other.magic_file_type, self, other, source='metadata')]

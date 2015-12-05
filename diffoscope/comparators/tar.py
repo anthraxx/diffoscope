@@ -41,7 +41,4 @@ class TarFile(File):
         return TarFile.RE_FILE_TYPE.search(file.magic_file_type)
 
     def compare_details(self, other, source=None):
-        differences = []
-        differences.append(Difference.from_command(TarListing, self.path, other.path))
-        differences.extend(self.as_container.compare(other.as_container))
-        return differences
+        return [Difference.from_command(TarListing, self.path, other.path)]

@@ -51,13 +51,9 @@ class DebFile(File):
         self._files_with_same_content_in_data = files
 
     def compare_details(self, other, source=None):
-        differences = []
         my_content = get_ar_content(self.path)
         other_content = get_ar_content(other.path)
-        differences.append(Difference.from_text(
-                               my_content, other_content, self.path, other.path, source="metadata"))
-        differences.extend(self.as_container.compare(other.as_container))
-        return differences
+        return [Difference.from_text(my_content, other_content, self.path, other.path, source="metadata")]
 
 
 class Md5sumsFile(File):
@@ -123,7 +119,4 @@ class DebDataTarFile(File):
                isinstance(file.container.source.container.source, DebFile)
 
     def compare_details(self, other, source=None):
-        differences = []
-        differences.append(Difference.from_command(TarListing, self.path, other.path))
-        differences.extend(self.as_container.compare(other.as_container))
-        return differences
+        return [Difference.from_command(TarListing, self.path, other.path)]

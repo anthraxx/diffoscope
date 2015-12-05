@@ -100,7 +100,4 @@ class RpmFile(AbstractRpmFile):
     CONTAINER_CLASS = RpmContainer
 
     def compare_details(self, other, source=None):
-        differences = []
-        differences.append(compare_rpm_headers(self.path, other.path))
-        differences.extend(self.as_container.compare(other.as_container))
-        return differences
+        return [compare_rpm_headers(self.path, other.path)]

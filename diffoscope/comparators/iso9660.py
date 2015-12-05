@@ -78,5 +78,4 @@ class Iso9660File(File):
                 differences.append(Difference.from_command(ISO9660Listing, self.path, other.path, command_args=(extension,)))
             except subprocess.CalledProcessError:
                 pass # probably no joliet or rockridge data
-        differences.extend(self.as_container.compare(other.as_container))
         return differences

@@ -77,11 +77,9 @@ class ObjdumpDisassemble(Command):
             return line
 
 def _compare_elf_data(path1, path2):
-    differences = []
-    differences.append(Difference.from_command(ReadelfAll, path1, path2))
-    differences.append(Difference.from_command(ReadelfDebugDump, path1, path2))
-    differences.append(Difference.from_command(ObjdumpDisassemble, path1, path2))
-    return differences
+    return [Difference.from_command(ReadelfAll, path1, path2),
+            Difference.from_command(ReadelfDebugDump, path1, path2),
+            Difference.from_command(ObjdumpDisassemble, path1, path2)]
 
 class ElfFile(File):
     RE_FILE_TYE = re.compile(r'^ELF ')

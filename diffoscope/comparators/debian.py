@@ -122,8 +122,6 @@ class DebControlFile(File):
         differences.append(Difference.from_text(self.deb822.get_as_string('Files'),
                                                 other.deb822.get_as_string('Files'),
                                                 self.path, other.path, source='Files'))
-        differences.extend(self.as_container.compare(other.as_container))
-
         return differences
 
 class DotChangesFile(DebControlFile):

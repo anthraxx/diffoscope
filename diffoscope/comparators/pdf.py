@@ -47,7 +47,5 @@ class PdfFile(File):
         return PdfFile.RE_FILE_TYPE.match(file.magic_file_type)
 
     def compare_details(self, other, source=None):
-        differences = []
-        differences.append(Difference.from_command(Pdftotext, self.path, other.path))
-        differences.append(Difference.from_command(Pdftk, self.path, other.path))
-        return differences
+        return [Difference.from_command(Pdftotext, self.path, other.path),
+                Difference.from_command(Pdftk, self.path, other.path)]

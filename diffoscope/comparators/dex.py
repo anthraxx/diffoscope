@@ -58,6 +58,3 @@ class DexFile(File):
     @staticmethod
     def recognizes(file):
         return DexFile.RE_FILE_TYPE.match(file.magic_file_type)
-
-    def compare_details(self, other, source=None):
-        return self.as_container.compare(other.as_container)

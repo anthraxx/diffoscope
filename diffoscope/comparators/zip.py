@@ -108,10 +108,6 @@ class ZipFile(File):
         return ZipFile.RE_FILE_TYPE.match(file.magic_file_type)
 
     def compare_details(self, other, source=None):
-        differences = []
-        # look up differences in metadata
         zipinfo_difference = Difference.from_command(Zipinfo, self.path, other.path) or \
                              Difference.from_command(ZipinfoVerbose, self.path, other.path)
-        differences.append(zipinfo_difference)
-        differences.extend(self.as_container.compare(other.as_container))
-        return differences
+        return [zipinfo_difference]

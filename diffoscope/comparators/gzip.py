@@ -27,22 +27,17 @@ from diffoscope.difference import Difference
 
 
 class GzipContainer(Archive):
-    @property
-    def path(self):
-        return self._path
-
-    def open_archive(self, path):
-        self._path = path
+    def open_archive(self):
         return self
 
     def close_archive(self):
-        self._path = None
+        pass
 
     def get_members(self):
         return {'gzip-content': self.get_member(self.get_member_names()[0])}
 
     def get_member_names(self):
-        return [get_compressed_content_name(self.path, '.gz')]
+        return [get_compressed_content_name(self.source.path, '.gz')]
 
     @tool_required('gzip')
     def extract(self, member_name, dest_dir):
@@ -50,12 +45,13 @@ class GzipContainer(Archive):
         logger.debug('gzip extracting to %s', dest_path)
         with open(dest_path, 'wb') as fp:
             subprocess.check_call(
-                ["gzip", "--decompress", "--stdout", self.path],
+                ["gzip", "--decompress", "--stdout", self.source.path],
                 shell=False, stdout=fp, stderr=None)
         return dest_path
 
 
 class GzipFile(object):
+    CONTAINER_CLASS = GzipContainer
     RE_FILE_TYPE = re.compile(r'^gzip compressed data\b')
 
     @staticmethod
@@ -66,7 +62,5 @@ class GzipFile(object):
         differences = []
         differences.append(Difference.from_text(
                                self.magic_file_type, other.magic_file_type, self, other, source='metadata'))
-        with GzipContainer(self).open() as my_container, \
-             GzipContainer(other).open() as other_container:
-            differences.extend(my_container.compare(other_container))
+        differences.extend(self.as_container.compare(other.as_container))
         return differences

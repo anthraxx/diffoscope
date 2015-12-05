@@ -33,6 +33,7 @@ class CpioContent(Command):
 
 
 class CpioFile(File):
+    CONTAINER_CLASS = LibarchiveContainer
     RE_FILE_TYPE = re.compile(r'\bcpio archive\b')
 
     @staticmethod
@@ -43,7 +44,5 @@ class CpioFile(File):
         differences = []
         differences.append(Difference.from_command(
             CpioContent, self.path, other.path, source="file list"))
-        with LibarchiveContainer(self).open() as my_container, \
-             LibarchiveContainer(other).open() as other_container:
-            differences.extend(my_container.compare(other_container))
+        differences.extend(self.as_container.compare(other.as_container))
         return differences

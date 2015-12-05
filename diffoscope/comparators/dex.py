@@ -31,35 +31,33 @@ class DexContainer(Archive):
     def path(self):
         return self._path
 
-    def open_archive(self, path):
-        self._path = path
+    def open_archive(self):
         return self
 
     def close_archive(self):
-        self._path = None
+        pass
 
     def get_members(self):
         return {'dex-content': self.get_member(self.get_member_names()[0])}
 
     def get_member_names(self):
-        return [get_compressed_content_name(self.path, '.dex') + '.jar']
+        return [get_compressed_content_name(self.source.path, '.dex') + '.jar']
 
     @tool_required('enjarify')
     def extract(self, member_name, dest_dir):
         dest_path = os.path.join(dest_dir, member_name)
         logger.debug('dex extracting to %s', dest_path)
-        subprocess.check_call(['enjarify', '-o', dest_path, self.path],
+        subprocess.check_call(['enjarify', '-o', dest_path, self.source.path],
             shell=False, stderr=None, stdout=subprocess.PIPE)
         return dest_path
 
 class DexFile(File):
     RE_FILE_TYPE = re.compile(r'^Dalvik dex file .*\b')
+    CONTAINER_CLASS = DexContainer
 
     @staticmethod
     def recognizes(file):
         return DexFile.RE_FILE_TYPE.match(file.magic_file_type)
 
     def compare_details(self, other, source=None):
-        with DexContainer(self).open() as my_container, \
-             DexContainer(other).open() as other_container:
-            return my_container.compare(other_container)
+        return self.as_container.compare(other.as_container)

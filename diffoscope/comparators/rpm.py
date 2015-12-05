@@ -77,16 +77,11 @@ def compare_rpm_headers(path1, path2):
 
 
 class RpmContainer(Archive):
-    @property
-    def path(self):
-        return self._path
-
-    def open_archive(self, path):
-        self._path = path
+    def open_archive(self):
         return self
 
     def close_archive(self):
-        self._path = None
+        pass
 
     def get_member_names(self):
         return ['content']
@@ -95,17 +90,17 @@ class RpmContainer(Archive):
     def extract(self, member_name, dest_dir):
         assert member_name == 'content'
         dest_path = os.path.join(dest_dir, 'content')
-        cmd = ['rpm2cpio', self._path]
+        cmd = ['rpm2cpio', self.source.path]
         with open(dest_path, 'wb') as dest:
             subprocess.check_call(cmd, shell=False, stdout=dest, stderr=subprocess.PIPE)
         return dest_path
 
 
 class RpmFile(AbstractRpmFile):
+    CONTAINER_CLASS = RpmContainer
+
     def compare_details(self, other, source=None):
         differences = []
         differences.append(compare_rpm_headers(self.path, other.path))
-        with RpmContainer(self).open() as my_container, \
-             RpmContainer(other).open() as other_container:
-            differences.extend(my_container.compare(other_container))
+        differences.extend(self.as_container.compare(other.as_container))
         return differences

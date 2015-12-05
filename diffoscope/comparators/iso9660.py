@@ -62,6 +62,7 @@ class ISO9660Listing(Command):
 
 
 class Iso9660File(File):
+    CONTAINER_CLASS = LibarchiveContainer
     RE_FILE_TYPE = re.compile(r'\bISO 9660\b')
 
     @staticmethod
@@ -77,7 +78,5 @@ class Iso9660File(File):
                 differences.append(Difference.from_command(ISO9660Listing, self.path, other.path, command_args=(extension,)))
             except subprocess.CalledProcessError:
                 pass # probably no joliet or rockridge data
-        with LibarchiveContainer(self).open() as my_container, \
-             LibarchiveContainer(other).open() as other_container:
-            differences.extend(my_container.compare(other_container))
+        differences.extend(self.as_container.compare(other.as_container))
         return differences

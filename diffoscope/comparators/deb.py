@@ -33,6 +33,7 @@ class DebContainer(LibarchiveContainer):
 
 
 class DebFile(File):
+    CONTAINER_CLASS = DebContainer
     RE_FILE_TYPE = re.compile(r'^Debian binary package')
 
     @staticmethod
@@ -55,9 +56,7 @@ class DebFile(File):
         other_content = get_ar_content(other.path)
         differences.append(Difference.from_text(
                                my_content, other_content, self.path, other.path, source="metadata"))
-        with DebContainer(self).open() as my_container, \
-             DebContainer(other).open() as other_container:
-            differences.extend(my_container.compare(other_container))
+        differences.extend(self.as_container.compare(other.as_container))
         return differences
 
 
@@ -101,8 +100,9 @@ class Md5sumsFile(File):
 
 
 class DebTarContainer(TarContainer):
-    def __init__(self, archive, ignore_files):
+    def __init__(self, archive):
         super().__init__(archive)
+        ignore_files = archive.container.source.container.source.files_with_same_content_in_data
         assert type(ignore_files) is set
         self._ignore_files = ignore_files
 
@@ -113,6 +113,8 @@ class DebTarContainer(TarContainer):
 
 
 class DebDataTarFile(File):
+    CONTAINER_CLASS = DebTarContainer
+
     @staticmethod
     def recognizes(file):
         return isinstance(file, ArchiveMember) and \
@@ -122,9 +124,6 @@ class DebDataTarFile(File):
 
     def compare_details(self, other, source=None):
         differences = []
-        ignore_files = self.container.source.container.source.files_with_same_content_in_data
-        with DebTarContainer(self, ignore_files).open() as my_container, \
-             DebTarContainer(other, ignore_files).open() as other_container:
-            differences.append(Difference.from_command(TarListing, self.path, other.path))
-            differences.extend(my_container.compare(other_container))
+        differences.append(Difference.from_command(TarListing, self.path, other.path))
+        differences.extend(self.as_container.compare(other.as_container))
         return differences

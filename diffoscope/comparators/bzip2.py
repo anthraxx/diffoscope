@@ -27,22 +27,17 @@ from diffoscope import logger, tool_required
 
 
 class Bzip2Container(Archive):
-    @property
-    def path(self):
-        return self._path
-
-    def open_archive(self, path):
-        self._path = path
+    def open_archive(self):
         return self
 
     def close_archive(self):
-        self._path = None
+        pass
 
     def get_members(self):
         return {'bzip2-content': self.get_member(self.get_member_names()[0])}
 
     def get_member_names(self):
-        return [get_compressed_content_name(self.path, '.bz2')]
+        return [get_compressed_content_name(self.source.path, '.bz2')]
 
     @tool_required('bzip2')
     def extract(self, member_name, dest_dir):
@@ -50,12 +45,13 @@ class Bzip2Container(Archive):
         logger.debug('bzip2 extracting to %s', dest_path)
         with open(dest_path, 'wb') as fp:
             subprocess.check_call(
-                ["bzip2", "--decompress", "--stdout", self.path],
+                ["bzip2", "--decompress", "--stdout", self.source.path],
                 shell=False, stdout=fp, stderr=None)
         return dest_path
 
 
 class Bzip2File(File):
+    CONTAINER_CLASS = Bzip2Container
     RE_FILE_TYPE = re.compile(r'^bzip2 compressed data\b')
 
     @staticmethod
@@ -63,6 +59,4 @@ class Bzip2File(File):
         return Bzip2File.RE_FILE_TYPE.match(file.magic_file_type)
 
     def compare_details(self, other, source=None):
-        with Bzip2Container(self).open() as my_container, \
-             Bzip2Container(other).open() as other_container:
-            return my_container.compare(other_container)
+        return self.as_container.compare(other.as_container)

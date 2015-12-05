@@ -68,6 +68,10 @@ class DebControlMember(File):
 
 
 class DebControlContainer(Container):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._version_re = DebControlContainer.get_version_trimming_re(self)
+
     @staticmethod
     def get_version_trimming_re(dcc):
         version = dcc.source.deb822.get('Version')
@@ -78,12 +82,6 @@ class DebControlContainer(Container):
             return re.compile(r'_%s(?:-%s)?' % (re.escape(upstream), re.escape(revision)))
         else:
             return re.compile(re.escape(version))
-
-    @contextmanager
-    def open(self):
-        self._version_re = DebControlContainer.get_version_trimming_re(self)
-        yield self
-        del self._version_re
 
     def get_members(self):
         return {self._trim_version_number(name): self.get_member(name) for name in self.get_member_names()}
@@ -99,6 +97,8 @@ class DebControlContainer(Container):
 
 
 class DebControlFile(File):
+    CONTAINER_CLASS = DebControlContainer
+
     @property
     def deb822(self):
         return self._deb822
@@ -122,9 +122,7 @@ class DebControlFile(File):
         differences.append(Difference.from_text(self.deb822.get_as_string('Files'),
                                                 other.deb822.get_as_string('Files'),
                                                 self.path, other.path, source='Files'))
-        with DebControlContainer(self).open() as my_container, \
-             DebControlContainer(other).open() as other_container:
-            differences.extend(my_container.compare(other_container))
+        differences.extend(self.as_container.compare(other.as_container))
 
         return differences
 

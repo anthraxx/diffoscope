@@ -110,10 +110,10 @@ class File(object, metaclass=ABCMeta):
         raise NotImplemented
 
     # Remove any temporary data associated with the file. The function
-    # should be idempotent and work during the destructor. It does nothing by
-    # default.
+    # should be idempotent and work during the destructor.
     def cleanup(self):
-        pass
+        if hasattr(self, '_as_container'):
+            del self._as_container
 
     def __del__(self):
         self.cleanup()
@@ -122,6 +122,18 @@ class File(object, metaclass=ABCMeta):
     @property
     def name(self):
         return self._name
+
+    @property
+    def as_container(self):
+        if not hasattr(self.__class__, 'CONTAINER_CLASS'):
+            if hasattr(self, '_other_file'):
+                return self._other_file.__class__.CONTAINER_CLASS(self)
+            raise NotImplemented('Not a container.')
+        if not hasattr(self, '_as_container'):
+            logger.debug('instanciating %s for %s', self.__class__.CONTAINER_CLASS, self)
+            self._as_container = self.__class__.CONTAINER_CLASS(self)
+        logger.debug('returning a %s for %s', self._as_container.__class__, self)
+        return self._as_container
 
     @property
     def magic_file_type(self):

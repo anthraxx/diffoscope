@@ -164,10 +164,6 @@ class Container(object, metaclass=ABCMeta):
     def source(self):
         return self._source
 
-    @contextmanager
-    def open(self):
-        raise NotImplemented
-
     def get_members(self):
         """Returns a directory. The key is what is used to match when comparing containers."""
         return {name: self.get_member(name) for name in self.get_member_names()}
@@ -197,7 +193,7 @@ class Container(object, metaclass=ABCMeta):
                 yield NonExistingFile('/dev/null', other_file), other_file, NO_COMMENT
 
     def compare(self, other, source=None):
-        return list(starmap(diffoscope.comparators.compare_commented_files, self.comparisons(other)))
+        return starmap(diffoscope.comparators.compare_commented_files, self.comparisons(other))
 
 
 class ArchiveMember(File):
@@ -221,8 +217,7 @@ class ArchiveMember(File):
             logger.debug('unpacking %s', self._name)
             assert self._temp_dir is None
             self._temp_dir = get_temporary_directory(suffix='diffoscope')
-            with self._container.open() as container:
-                self._path = container.extract(self._name, self._temp_dir.name)
+            self._path = self.container.extract(self._name, self._temp_dir.name)
         return self._path
 
     def cleanup(self):
@@ -244,30 +239,25 @@ class ArchiveMember(File):
 
 
 class Archive(Container, metaclass=ABCMeta):
+    def __new__(cls, source, *args, **kwargs):
+        if isinstance(source, NonExistingFile):
+            return super(Container, NonExistingArchive).__new__(NonExistingArchive)
+        else:
+            return super(Container, cls).__new__(cls)
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self._archive = None
+        self._archive = self.open_archive()
 
-    @contextmanager
-    def open(self):
-        if isinstance(self.source, NonExistingFile):
-            yield NonExistingArchive(self.source)
-        elif self._archive is not None:
-            yield self
-        else:
-            self._archive = self.open_archive(self.source.path)
-            try:
-                yield self
-            finally:
-                self.close_archive()
-                self._archive = None
+    def __del__(self):
+        self.close_archive()
 
     @property
     def archive(self):
         return self._archive
 
     @abstractmethod
-    def open_archive(self, path):
+    def open_archive(self):
         raise NotImplemented
 
     @abstractmethod
@@ -299,16 +289,14 @@ class NonExistingArchiveLikeObject(object):
 
 class NonExistingArchive(Archive):
     @property
-    def archive(self):
-        return NonExistingArchiveLikeObject()
+    def source(self):
+        return None
 
     def open_archive(self):
-        # should never be called
-        raise NotImplemented
+        return NonExistingArchiveLikeObject()
 
     def close_archive(self):
-        # should never be called
-        raise NotImplemented
+        pass
 
     def get_member_names(self):
         return []

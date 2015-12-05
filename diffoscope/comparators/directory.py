@@ -129,21 +129,21 @@ class FilesystemDirectory(object):
         except RequiredToolNotFound:
             logger.info("Unable to find 'getfacl'.")
         differences.extend(compare_meta(self.name, other.name))
-        with DirectoryContainer(self).open() as my_container, \
-             DirectoryContainer(other).open() as other_container:
-            my_names = my_container.get_member_names()
-            other_names = other_container.get_member_names()
-            for name in sorted(set(my_names).intersection(other_names)):
-                my_file = my_container.get_member(name)
-                other_file = other_container.get_member(name)
-                inner_difference = diffoscope.comparators.compare_files(
-                                       my_file, other_file, source=name)
-                meta_differences = compare_meta(my_file.name, other_file.name)
-                if meta_differences and not inner_difference:
-                    inner_difference = Difference(None, my_file.path, other_file.path)
-                if inner_difference:
-                    inner_difference.add_details(meta_differences)
-                    differences.append(inner_difference)
+        my_container = DirectoryContainer(self)
+        other_container = DirectoryContainer(other)
+        my_names = my_container.get_member_names()
+        other_names = other_container.get_member_names()
+        for name in sorted(set(my_names).intersection(other_names)):
+            my_file = my_container.get_member(name)
+            other_file = other_container.get_member(name)
+            inner_difference = diffoscope.comparators.compare_files(
+                                   my_file, other_file, source=name)
+            meta_differences = compare_meta(my_file.name, other_file.name)
+            if meta_differences and not inner_difference:
+                inner_difference = Difference(None, my_file.path, other_file.path)
+            if inner_difference:
+                inner_difference.add_details(meta_differences)
+                differences.append(inner_difference)
         if not differences:
             return None
         difference = Difference(None, self.path, other.path, source)
@@ -152,21 +152,16 @@ class FilesystemDirectory(object):
 
 
 class DirectoryContainer(Container):
-    @contextmanager
-    def open(self):
-        self._path = self.source.path.rstrip('/') or '/'
-        yield self
-        self._path = None
-
     def get_member_names(self):
+        path = self.source.path
         names = []
-        for root, _, files in os.walk(self._path):
-            if root == self._path:
+        for root, _, files in os.walk(path):
+            if root == path:
                 root = ''
             else:
-                root = root[len(self._path) + 1:]
+                root = root[len(path) + 1:]
             names.extend([os.path.join(root, f) for f in files])
         return names
 
     def get_member(self, member_name):
-        return FilesystemFile(os.path.join(self._path, member_name))
+        return FilesystemFile(os.path.join(self.source.path, member_name))

@@ -105,7 +105,7 @@ class LibarchiveDevice(Device, LibarchiveMember):
 
 
 class LibarchiveContainer(Archive):
-    def open_archive(self, path):
+    def open_archive(self):
         # libarchive is very very stream oriented an not for random access
         # so we are going to reopen the archive everytime
         # not nice, but it'll work

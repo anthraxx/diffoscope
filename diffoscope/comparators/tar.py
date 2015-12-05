@@ -33,6 +33,7 @@ class TarListing(Command):
 
 
 class TarFile(File):
+    CONTAINER_CLASS = TarContainer
     RE_FILE_TYPE = re.compile(r'\btar archive\b')
 
     @staticmethod
@@ -41,8 +42,6 @@ class TarFile(File):
 
     def compare_details(self, other, source=None):
         differences = []
-        with TarContainer(self).open() as my_container, \
-             TarContainer(other).open() as other_container:
-            differences.append(Difference.from_command(TarListing, self.path, other.path))
-            differences.extend(my_container.compare(other_container))
+        differences.append(Difference.from_command(TarListing, self.path, other.path))
+        differences.extend(self.as_container.compare(other.as_container))
         return differences

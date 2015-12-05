@@ -27,22 +27,17 @@ from diffoscope import logger, tool_required
 
 
 class XzContainer(Archive):
-    @property
-    def path(self):
-        return self._path
-
-    def open_archive(self, path):
-        self._path = path
+    def open_archive(self):
         return self
 
     def close_archive(self):
-        self._path = None
+        pass
 
     def get_members(self):
         return {'xz-content': self.get_member(self.get_member_names()[0])}
 
     def get_member_names(self):
-        return [get_compressed_content_name(self.path, '.xz')]
+        return [get_compressed_content_name(self.source.path, '.xz')]
 
     @tool_required('xz')
     def extract(self, member_name, dest_dir):
@@ -50,12 +45,13 @@ class XzContainer(Archive):
         logger.debug('xz extracting to %s', dest_path)
         with open(dest_path, 'wb') as fp:
             subprocess.check_call(
-                ["xz", "--decompress", "--stdout", self.path],
+                ["xz", "--decompress", "--stdout", self.source.path],
                 shell=False, stdout=fp, stderr=None)
         return dest_path
 
 
 class XzFile(File):
+    CONTAINER_CLASS = XzContainer
     RE_FILE_TYPE = re.compile(r'^XZ compressed data$')
 
     @staticmethod
@@ -63,6 +59,4 @@ class XzFile(File):
         return XzFile.RE_FILE_TYPE.match(file.magic_file_type)
 
     def compare_details(self, other, source=None):
-        with XzContainer(self).open() as my_container, \
-             XzContainer(other).open() as other_container:
-            return my_container.compare(other_container)
+        return self.as_container.compare(other.as_container)

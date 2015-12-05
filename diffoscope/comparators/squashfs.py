@@ -165,8 +165,8 @@ class SquashfsContainer(Archive):
             else:
                 logger.warning('Unknown squashfs entry: %s', line)
 
-    def open_archive(self, path):
-        return dict([(m.name, m) for m in self.entries(path)])
+    def open_archive(self):
+        return dict([(m.name, m) for m in self.entries(self.source.path)])
 
     def close_archive(self):
         pass
@@ -188,6 +188,7 @@ class SquashfsContainer(Archive):
 
 
 class SquashfsFile(File):
+    CONTAINER_CLASS = SquashfsContainer
     RE_FILE_TYPE = re.compile(r'^Squashfs filesystem\b')
 
     @staticmethod
@@ -198,7 +199,5 @@ class SquashfsFile(File):
         differences = []
         differences.append(Difference.from_command(SquashfsSuperblock, self.path, other.path))
         differences.append(Difference.from_command(SquashfsListing, self.path, other.path))
-        with SquashfsContainer(self).open() as my_container, \
-             SquashfsContainer(other).open() as other_container:
-            differences.extend(my_container.compare(other_container))
+        differences.extend(self.as_container.compare(other.as_container))
         return differences

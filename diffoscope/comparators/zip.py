@@ -73,8 +73,8 @@ class ZipDirectory(Directory, ArchiveMember):
 
 
 class ZipContainer(Archive):
-    def open_archive(self, path):
-        return zipfile.ZipFile(path, 'r')
+    def open_archive(self):
+        return zipfile.ZipFile(self.source.path, 'r')
 
     def close_archive(self):
         self.archive.close()
@@ -100,6 +100,7 @@ class ZipContainer(Archive):
 
 
 class ZipFile(File):
+    CONTAINER_CLASS = ZipContainer
     RE_FILE_TYPE = re.compile(r'^(Zip archive|Java archive|EPUB document)\b')
 
     @staticmethod
@@ -112,7 +113,5 @@ class ZipFile(File):
         zipinfo_difference = Difference.from_command(Zipinfo, self.path, other.path) or \
                              Difference.from_command(ZipinfoVerbose, self.path, other.path)
         differences.append(zipinfo_difference)
-        with ZipContainer(self).open() as my_container, \
-             ZipContainer(other).open() as other_container:
-            differences.extend(my_container.compare(other_container))
+        differences.extend(self.as_container.compare(other.as_container))
         return differences

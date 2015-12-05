@@ -59,7 +59,7 @@ class CbfsContainer(Archive):
                 continue
             yield name
 
-    def open_archive(self, path):
+    def open_archive(self):
         return self
 
     def close_archive(self):
@@ -92,6 +92,8 @@ def is_header_valid(buf, size, offset=0):
 
 
 class CbfsFile(File):
+    CONTAINER_CLASS = CbfsContainer
+
     @staticmethod
     def recognizes(file):
         size = os.stat(file.path).st_size
@@ -129,7 +131,5 @@ class CbfsFile(File):
     def compare_details(self, other, source=None):
         differences = []
         differences.append(Difference.from_command(CbfsListing, self.path, other.path))
-        with CbfsContainer(self).open() as my_container, \
-             CbfsContainer(other).open() as other_container:
-            differences.extend(my_container.compare(other_container))
+        differences.extend(self.as_container.compare(other.as_container))
         return differences

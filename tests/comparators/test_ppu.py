@@ -43,6 +43,7 @@ def file1():
 def file2():
     return specialize(FilesystemFile(TEST_FILE2_PATH))
 
+@pytest.mark.skipif(tool_missing('ppudump'), reason='missing ppudump')
 def test_identification(file1):
     assert isinstance(file1, PpuFile)
 

@@ -168,6 +168,21 @@ class Container(object, metaclass=ABCMeta):
         """Returns a directory. The key is what is used to match when comparing containers."""
         return {name: self.get_member(name) for name in self.get_member_names()}
 
+    def lookup_file(self, *names):
+        """Try to fetch a specific file by digging in containers."""
+        name, remainings = names[0], names[1:]
+        file = self.get_member(name)
+        logger.debug('lookup_file(%s) -> %s', names, file)
+        if not file:
+            return None
+        diffoscope.comparators.specialize(file)
+        if not remainings:
+            return file
+        container = file.as_container
+        if not container:
+            return None
+        return container.lookup_file(*remainings)
+
     @abstractmethod
     def get_member_names(self):
         raise NotImplemented

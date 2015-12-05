@@ -84,9 +84,8 @@ def test_md5sums(differences):
 
 @pytest.mark.skipif(tool_missing('ar'), reason='missing ar')
 def test_identical_files_in_md5sums(deb1, deb2):
-    deb1.compare(deb2)
-    assert deb1.files_with_same_content_in_data == set(['./usr/share/doc/test/README.Debian',
-                                                        './usr/share/doc/test/copyright'])
+    for name in ['./usr/share/doc/test/README.Debian', './usr/share/doc/test/copyright']:
+        assert deb1.md5sums[name] == deb2.md5sums[name]
 
 @pytest.mark.skipif(tool_missing('ar'), reason='missing ar')
 def test_identification_of_data_tar(deb1, deb2, monkeypatch):

@@ -41,14 +41,15 @@ class DebFile(File):
         return DebFile.RE_FILE_TYPE.match(file.magic_file_type)
 
     @property
-    def files_with_same_content_in_data(self):
-        if hasattr(self, '_files_with_same_content_in_data'):
-            return self._files_with_same_content_in_data
-        else:
-            return set()
-
-    def set_files_with_same_content_in_data(self, files):
-        self._files_with_same_content_in_data = files
+    def md5sums(self):
+        if not hasattr(self, '_md5sums'):
+            md5sums_file = self.as_container.lookup_file('control.tar.gz', 'control.tar', './md5sums')
+            if md5sums_file:
+                self._md5sums = md5sums_file.parse()
+            else:
+                logger.debug('Unable to find a md5sums file')
+                self._md5sums = set()
+        return self._md5sums
 
     def compare_details(self, other, source=None):
         my_content = get_ar_content(self.path)
@@ -66,46 +67,39 @@ class Md5sumsFile(File):
                file.container.source.container.source.name.startswith('control.tar.') and \
                isinstance(file.container.source.container.source.container.source, DebFile)
 
-    @staticmethod
-    def parse_md5sums(path):
-        d = {}
-        with open(path, 'r', encoding='utf-8') as f:
-            for line in f.readlines():
-                md5sum, path = re.split(r'\s+', line.strip(), maxsplit=1)
-                d[path] = md5sum
-        return d
+    def parse(self):
+        try:
+            md5sums = {}
+            with open(self.path, 'r', encoding='utf-8') as f:
+                for line in f.readlines():
+                    md5sum, path = re.split(r'\s+', line.strip(), maxsplit=1)
+                    md5sums['./%s' % path] = md5sum
+            return md5sums
+        except (UnicodeDecodeError, ValueError):
+            logger.debug('Malformed md5sums, ignoring.')
+            return set()
 
     def compare(self, other, source=None):
-        if other.path is None:
-            return None
-        try:
-            my_md5sums = Md5sumsFile.parse_md5sums(self.path)
-            other_md5sums = Md5sumsFile.parse_md5sums(other.path)
-            same = set()
-            for path in my_md5sums.keys() & other_md5sums.keys():
-                if my_md5sums[path] == other_md5sums[path]:
-                    same.add('./%s' % path)
-            self.container.source.container.source.container.source.set_files_with_same_content_in_data(same)
-            logger.debug('Identifed %d files as identical in data archive', len(same))
-            return Difference(None, self.path, other.path, source='md5sums',
-                              comment="Files in package differs")
-        except ValueError as e:
-            difference = self.compare_bytes(other)
-            difference.add_comment('Malformed md5sums file: %s' % e)
-            return difference
+        return Difference(None, self.path, other.path, source='md5sums',
+                          comment="Files in package differs")
 
 
 class DebTarContainer(TarContainer):
-    def __init__(self, archive):
-        super().__init__(archive)
-        ignore_files = archive.container.source.container.source.files_with_same_content_in_data
-        assert type(ignore_files) is set
-        self._ignore_files = ignore_files
-
-    def get_member_names(self):
-        names = set(super().get_member_names())
-        logger.debug('Ignoring %d/%d files known identical in data.tar', len(self._ignore_files), len(names))
-        return names - self._ignore_files
+    def comparisons(self, other):
+        if self.source:
+            my_md5sums = self.source.container.source.container.source.md5sums
+        else:
+            my_md5sums = set()
+        if other.source:
+            other_md5sums = other.source.container.source.container.source.md5sums
+        else:
+            other_md5sums = set()
+        for my_member, other_member, comment in super().comparisons(other):
+            if my_member.name == other_member.name and \
+               my_md5sums.get(my_member.name, 'my') == other_md5sums.get(other_member.name, 'other'):
+                logger.debug('Skip %s: identical md5sum', my_member.name)
+                continue
+            yield my_member, other_member, comment
 
 
 class DebDataTarFile(File):

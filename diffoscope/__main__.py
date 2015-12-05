@@ -43,7 +43,7 @@ def create_parser():
                     'of Debian packages')
     parser.add_argument('--version', action='version',
                         version='diffoscope %s' % VERSION)
-    parser.add_argument('--list-tools', nargs=0, action=ListToolsAction,
+    parser.add_argument('--list-tools', nargs='?', type=str, action=ListToolsAction,
                         help='show external tools required and exit')
     parser.add_argument('--debug', dest='debug', action='store_true',
                         default=False, help='display debug messages')
@@ -97,13 +97,19 @@ def make_printer(path):
 
 
 class ListToolsAction(argparse.Action):
-    def __call__(self, parser, namespace, values, option_string=None):
-        from diffoscope import tool_required, RequiredToolNotFound
+    def __call__(self, parser, namespace, os_override, option_string=None):
+        from functools import reduce
+        from diffoscope import tool_required, RequiredToolNotFound, get_current_os
         print("External tools required:")
-        print(', '.join(tool_required.all))
+        print(', '.join(sorted(tool_required.all)))
         print()
-        print("Available in packages:")
-        print(', '.join(sorted(filter(None, { RequiredToolNotFound.PROVIDERS[k].get('debian', None) for k in tool_required.all }))))
+        os = get_current_os() if not os_override else os_override
+        all_os = set(reduce(lambda x, y : x+y, [list(os_entries.keys()) for os_entries in RequiredToolNotFound.PROVIDERS.values()]))
+        if os_override and not os in all_os:
+            print("No package mapping found for: {} (possible values: {})".format(os_override, ", ".join(sorted(all_os))))
+            sys.exit(1)
+        print("Available in {} packages:".format(RequiredToolNotFound.OS_ALIAS[os] if os in RequiredToolNotFound.OS_ALIAS else os))
+        print(', '.join(sorted(filter(None, { RequiredToolNotFound.PROVIDERS[k].get(os, None) for k in tool_required.all }))))
         sys.exit(0)
 
 

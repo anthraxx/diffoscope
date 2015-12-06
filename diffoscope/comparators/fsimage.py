@@ -47,6 +47,8 @@ class FsImageContainer(Archive):
         return self
 
     def close_archive(self):
+        if not guestfs:
+            return None
         self.g.umount_all()
         self.g.close()
 

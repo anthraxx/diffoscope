@@ -82,5 +82,4 @@ class FsImageFile(File):
         if my_fs != other_fs:
             differences.append(Difference.from_text(my_fs, other_fs, None, None, source="filesystem"))
 
-        differences.extend(self.as_container.compare(other.as_container))
         return differences

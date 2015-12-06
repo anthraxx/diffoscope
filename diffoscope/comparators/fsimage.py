@@ -30,18 +30,12 @@ from diffoscope.difference import Difference
 
 
 class FsImageContainer(Archive):
-    @property
-    def path(self):
-        return self._path
-
-    def open_archive(self, path):
-        self._path = path
-
+    def open_archive(self):
         if not guestfs:
             return None
 
         self.g = guestfs.GuestFS (python_return_dict=True)
-        self.g.add_drive_opts (self.path, format="raw", readonly=1)
+        self.g.add_drive_opts (self.source.path, format="raw", readonly=1)
         try:
             self.g.launch()
         except RuntimeError:
@@ -55,13 +49,12 @@ class FsImageContainer(Archive):
     def close_archive(self):
         self.g.umount_all()
         self.g.close()
-        self._path = None
 
     def get_members(self):
         return {'fsimage-content': self.get_member(self.get_member_names()[0])}
 
     def get_member_names(self):
-        return [os.path.basename(self.path) + '.tar']
+        return [os.path.basename(self.source.path) + '.tar']
 
     def extract(self, member_name, dest_dir):
         dest_path = os.path.join(dest_dir, member_name)
@@ -71,6 +64,7 @@ class FsImageContainer(Archive):
         return dest_path
 
 class FsImageFile(File):
+    CONTAINER_CLASS = FsImageContainer
     RE_FILE_TYPE = re.compile(r'^(Linux.*filesystem data|BTRFS Filesystem).*')
 
     @staticmethod
@@ -79,16 +73,14 @@ class FsImageFile(File):
 
     def compare_details(self, other, source=None):
         differences = []
-        with FsImageContainer(self).open() as my_container, \
-             FsImageContainer(other).open() as other_container:
-            my_fs = ''
-            other_fs = ''
-            if hasattr(my_container, 'fs'):
-                my_fs = my_container.fs
-            if hasattr(other_container, 'fs'):
-                other_fs = other_container.fs
-            if my_fs != other_fs:
-                differences.append(Difference.from_text(my_fs, other_fs,
-                    None, None, source="filesystem"))
-            differences.extend(my_container.compare(other_container))
+        my_fs = ''
+        other_fs = ''
+        if hasattr(self.as_container, 'fs'):
+            my_fs = self.as_container.fs
+        if hasattr(other.as_container, 'fs'):
+            other_fs = other.as_container.fs
+        if my_fs != other_fs:
+            differences.append(Difference.from_text(my_fs, other_fs, None, None, source="filesystem"))
+
+        differences.extend(self.as_container.compare(other.as_container))
         return differences

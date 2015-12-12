@@ -43,7 +43,7 @@ def create_parser():
                     'of Debian packages')
     parser.add_argument('--version', action='version',
                         version='diffoscope %s' % VERSION)
-    parser.add_argument('--list-tools', nargs=0, action=ListToolsAction,
+    parser.add_argument('--list-tools', nargs='?', type=str, action=ListToolsAction,
                         help='show external tools required and exit')
     parser.add_argument('--debug', dest='debug', action='store_true',
                         default=False, help='display debug messages')
@@ -97,13 +97,28 @@ def make_printer(path):
 
 
 class ListToolsAction(argparse.Action):
-    def __call__(self, parser, namespace, values, option_string=None):
-        from diffoscope import tool_required, RequiredToolNotFound
+    def __call__(self, parser, namespace, os_override, option_string=None):
+        from functools import reduce
+        from diffoscope import tool_required, RequiredToolNotFound, OS_NAMES, get_current_os
         print("External tools required:")
-        print(', '.join(tool_required.all))
-        print()
-        print("Available in packages:")
-        print(', '.join(sorted(filter(None, { RequiredToolNotFound.PROVIDERS[k].get('debian', None) for k in tool_required.all }))))
+        print(', '.join(sorted(tool_required.all)))
+        if os_override:
+            if os_override in OS_NAMES.keys():
+                os_list = [os_override]
+            else:
+                print()
+                print("No package mapping found for: {} (possible values: {})".format(os_override, ", ".join(sorted(OS_NAMES.keys()))))
+                sys.exit(1)
+        else:
+            current_os = get_current_os()
+            if current_os in OS_NAMES.keys():
+                os_list = [current_os]
+            else:
+                os_list = OS_NAMES.keys()
+        for os in os_list:
+            print()
+            print("Available in {} packages:".format(OS_NAMES[os] if os in OS_NAMES else os))
+            print(', '.join(sorted(filter(None, { RequiredToolNotFound.PROVIDERS.get(k, {}).get(os, None) for k in tool_required.all }))))
         sys.exit(0)
 
 

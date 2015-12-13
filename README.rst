@@ -70,7 +70,8 @@ Contributors
 
 Lunar, Reiner Herrmann, Chris Lamb, Helmut Grohne, Holger Levsen,
 Mattia Rizzolo, Daniel Kahn Gillmor, Paul Gevers, Peter De Wachter,
-Yasushi SHOJI.
+Yasushi SHOJI, Clemens Lang, Ed Maste, Joachim Breitner, Mike McQuaid.
+Baptiste Daroussin, Levente Polyak.
 
 Contact
 -------

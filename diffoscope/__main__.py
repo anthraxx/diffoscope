@@ -34,7 +34,7 @@ from diffoscope import logger, VERSION, set_locale, clean_all_temp_files
 import diffoscope.comparators
 from diffoscope.config import Config
 from diffoscope.presenters.html import output_html
-from diffoscope.presenters.html import output_html_directory
+from diffoscope.presenters.html import output_html_directory, JQUERY_SYSTEM_LOCATIONS
 from diffoscope.presenters.text import output_text
 
 
@@ -84,7 +84,7 @@ def create_parser():
     parser.add_argument('--css', metavar='url', dest='css_url',
                         help='link to an extra CSS for the HTML report')
     parser.add_argument('--jquery', metavar='url', dest='jquery_url',
-                        help='link to the jquery url, with --html-dir. By default, a symlink to /usr/share/javascript/jquery/jquery.js is created')
+                        help='link to the jquery url, with --html-dir. Specify “disable” to disable JavaScript. When omitted diffoscope will try to create a symlink to a system installation. Known locations: %s' % ', '.join(JQUERY_SYSTEM_LOCATIONS))
     parser.add_argument('file1', help='first file to compare')
     parser.add_argument('file2', help='second file to compare')
     if not tlsh:

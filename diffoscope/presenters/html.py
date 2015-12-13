@@ -575,6 +575,8 @@ def file_printer(directory, filename):
         print_func = create_limited_print_func(print_func, Config.general.max_report_size)
         yield print_func
 
+JQUERY_SYSTEM_LOCATIONS = ['/usr/share/javascript/jquery/jquery.js']
+
 def output_html_directory(directory, difference, css_url=None, jquery_url=None):
     """
     Multi-file presenter. Writes to a directory, and puts large diff tables
@@ -589,9 +591,21 @@ def output_html_directory(directory, difference, css_url=None, jquery_url=None):
 
     if not jquery_url:
         jquery_symlink = os.path.join(directory, "jquery.js")
-        if not os.path.exists(jquery_symlink):
-            os.symlink("/usr/share/javascript/jquery/jquery.js", jquery_symlink)
-        jquery_url = "./jquery.js"
+        if os.path.exists(jquery_symlink):
+            jquery_url = "./jquery.js"
+        else:
+            if os.path.lexists(jquery_symlink):
+                os.unlink(jquery_symlink)
+            for path in JQUERY_SYSTEM_LOCATIONS:
+                if os.path.exists(path):
+                    os.symlink("/usr/share/javascript/jquery/jquery.js", jquery_symlink)
+                    jquery_url = "./jquery.js"
+                    break
+            if not jquery_url:
+                logger.warning('--jquery was not specified and jQuery was not found in any known location. Disabling on-demand inline loading.')
+                logger.debug('Locations searched: %s', ', '.join(JQUERY_SYSTEM_LOCATIONS))
+    if jquery_url == 'disable':
+        jquery_url = None
 
     with file_printer(directory, "index.html") as print_func:
         print_func = create_limited_print_func(print_func, Config.general.max_report_size)
@@ -602,5 +616,6 @@ def output_html_directory(directory, difference, css_url=None, jquery_url=None):
             logger.debug('print limit reached')
             print_func(u"<div class='error'>Max output size reached.</div>",
                        force=True)
-        print_func(SCRIPTS % {'jquery_url': escape(jquery_url)}, force=True)
+        if jquery_url:
+            print_func(SCRIPTS % {'jquery_url': escape(jquery_url)}, force=True)
         output_footer(print_func)

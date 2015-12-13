@@ -34,6 +34,7 @@ from diffoscope import logger, VERSION, set_locale, clean_all_temp_files
 import diffoscope.comparators
 from diffoscope.config import Config
 from diffoscope.presenters.html import output_html
+from diffoscope.presenters.html import output_html_directory
 from diffoscope.presenters.text import output_text
 
 
@@ -51,6 +52,8 @@ def create_parser():
                         help='Open the python debugger in case of crashes.')
     parser.add_argument('--html', metavar='output', dest='html_output',
                         help='write HTML report to given file (use - for stdout)')
+    parser.add_argument('--html-dir', metavar='output', dest='html_output_directory',
+                        help='write multi-file HTML report to given directory')
     parser.add_argument('--text', metavar='output', dest='text_output',
                         help='write plain text output to given file (use - for stdout)')
     parser.add_argument('--max-report-size', metavar='BYTES',
@@ -58,6 +61,11 @@ def create_parser():
                         help='maximum bytes written in report (default: %d)' %
                         Config.general.max_report_size,
                         default=Config.general.max_report_size)
+    parser.add_argument('--separate-file-diff-size', metavar='BYTES',
+                        dest='separate_file_diff_size', type=int,
+                        help='diff size to load diff on demand, with --html-dir (default: %d)' %
+                        Config.general.separate_file_diff_size,
+                        default=Config.general.separate_file_diff_size)
     parser.add_argument('--max-diff-block-lines', dest='max_diff_block_lines', type=int,
                         help='maximum number of lines per diff block (default: %d)' %
                         Config.general.max_diff_block_lines,
@@ -75,6 +83,8 @@ def create_parser():
                         help='treat absent files as empty')
     parser.add_argument('--css', metavar='url', dest='css_url',
                         help='link to an extra CSS for the HTML report')
+    parser.add_argument('--jquery', metavar='url', dest='jquery_url',
+                        help='link to the jquery url, with --html-dir. By default, a symlink to /usr/share/javascript/jquery/jquery.js is created')
     parser.add_argument('file1', help='first file to compare')
     parser.add_argument('file2', help='second file to compare')
     if not tlsh:
@@ -128,6 +138,7 @@ def run_diffoscope(parsed_args):
     Config.general.max_diff_block_lines = parsed_args.max_diff_block_lines
     Config.general.max_diff_input_lines = parsed_args.max_diff_input_lines
     Config.general.max_report_size = parsed_args.max_report_size
+    Config.general.separate_file_diff_size = parsed_args.separate_file_diff_size
     Config.general.fuzzy_threshold = parsed_args.fuzzy_threshold
     Config.general.new_file = parsed_args.new_file
     if parsed_args.debug:
@@ -136,10 +147,15 @@ def run_diffoscope(parsed_args):
     difference = diffoscope.comparators.compare_root_paths(
         parsed_args.file1, parsed_args.file2)
     if difference:
+        # no output desired? print text
+        if not any((parsed_args.text_output, parsed_args.html_output, parsed_args.html_output_directory)):
+            parsed_args.text_output = "-"
         if parsed_args.html_output:
             with make_printer(parsed_args.html_output) as print_func:
                 output_html(difference, css_url=parsed_args.css_url, print_func=print_func)
-        if (parsed_args.text_output and parsed_args.text_output != parsed_args.html_output) or not parsed_args.html_output:
+        if parsed_args.html_output_directory:
+                output_html_directory(parsed_args.html_output_directory, difference, css_url=parsed_args.css_url, jquery_url=parsed_args.jquery_url)
+        if parsed_args.text_output:
             with make_printer(parsed_args.text_output or '-') as print_func:
                 output_text(difference, print_func=print_func)
         return 1

@@ -34,6 +34,11 @@
 import cgi
 import re
 import sys
+import os
+import os.path
+import codecs
+import hashlib
+from contextlib import contextmanager
 from xml.sax.saxutils import escape
 from diffoscope import logger, VERSION
 from diffoscope.config import Config
@@ -55,8 +60,8 @@ DIFFOFF = "\x02"
 HEADER = """<!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
-  <meta name="generator" content="diffoscope">
+  <meta charset="utf-8" />
+  <meta name="generator" content="diffoscope" />
   <link rel="icon" type="image/png" href="data:image/png;base64,%(favicon)s" />
   <title>%(title)s</title>
   <style>
@@ -138,6 +143,9 @@ HEADER = """<!DOCTYPE html>
     .diffheader:hover .anchor {
       display: inline;
     }
+    .ondemand {
+      text-align: center;
+    }
   </style>
   %(css_link)s
 </head>
@@ -150,6 +158,23 @@ FOOTER = """
 </html>
 """
 
+SCRIPTS = """
+<script src="%(jquery_url)s"></script>
+<script type="text/javascript">
+$(function() {
+  $("div.ondemand a").on('click', function (){
+    var filename = $(this).attr('href');
+    var div = $(this).parent();
+    div.text('... loading ...');
+    div.load(filename + " table", function() {
+        // http://stackoverflow.com/a/8452751/946226
+        $(this).children(':first').unwrap();
+    });
+    return false;
+  });
+});
+</script>
+"""
 
 class PrintLimitReached(Exception):
     pass
@@ -381,7 +406,7 @@ def empty_buffer(print_func):
     buf = []
 
 
-def output_unified_diff(print_func, unified_diff):
+def output_unified_diff_table(print_func, unified_diff):
     global add_cpt, del_cpt
     global line1, line2
     global hunk_off1, hunk_size1, hunk_off2, hunk_size2
@@ -464,8 +489,24 @@ def output_unified_diff(print_func, unified_diff):
     finally:
         print_func(u"</table>", force=True)
 
+def output_unified_diff(print_func, css_url, directory, unified_diff):
+    if directory and len(unified_diff) > Config.general.separate_file_diff_size:
+        # open a new file for this table
+        filename="%s.html" % hashlib.md5(unified_diff.encode('utf-8')).hexdigest()
+        logger.debug('separate html output for diff of size %d', len(unified_diff))
+        with file_printer(directory, filename) as new_print_func:
+            output_header(css_url, new_print_func)
+            output_unified_diff_table(new_print_func, unified_diff)
+            output_footer(new_print_func)
 
-def output_difference(difference, print_func, parents):
+        print_func("<div class='ondemand'>\n")
+        print_func("... <a href='%s'>load diff</a> ...\n" % escape(filename))
+        print_func("</div>\n")
+
+    else:
+        output_unified_diff_table(print_func, unified_diff)
+
+def output_difference(difference, print_func, css_url, directory, parents):
     logger.debug('html output for %s', difference.source1)
     sources = parents + [difference.source1]
     print_func(u"<div class='difference'>")
@@ -487,9 +528,9 @@ def output_difference(difference, print_func, parents):
                        % u'<br />'.join(map(escape, difference.comments)))
         print_func(u"</div>")
         if difference.unified_diff:
-            output_unified_diff(print_func, difference.unified_diff)
+            output_unified_diff(print_func, css_url, directory, difference.unified_diff)
         for detail in difference.details:
-            output_difference(detail, print_func, sources)
+            output_difference(detail, print_func, css_url, directory, sources)
     except PrintLimitReached:
         logger.debug('print limit reached')
         raise
@@ -507,16 +548,59 @@ def output_header(css_url, print_func):
                          'css_link': css_link,
                         })
 
+def output_footer(print_func):
+    print_func(FOOTER % {'version': VERSION}, force=True)
+
 
 def output_html(difference, css_url=None, print_func=None):
+    """
+    Default presenter, all in one HTML file
+    """
     if print_func is None:
         print_func = print
     print_func = create_limited_print_func(print_func, Config.general.max_report_size)
     try:
         output_header(css_url, print_func)
-        output_difference(difference, print_func, [])
+        output_difference(difference, print_func, css_url, None, [])
     except PrintLimitReached:
         logger.debug('print limit reached')
         print_func(u"<div class='error'>Max output size reached.</div>",
                    force=True)
-    print_func(FOOTER % {'version': VERSION}, force=True)
+    output_footer(print_func)
+
+@contextmanager
+def file_printer(directory, filename):
+    with codecs.open(os.path.join(directory,filename), 'w', encoding='utf-8') as f:
+        print_func = f.write
+        print_func = create_limited_print_func(print_func, Config.general.max_report_size)
+        yield print_func
+
+def output_html_directory(directory, difference, css_url=None, jquery_url=None):
+    """
+    Multi-file presenter. Writes to a directory, and puts large diff tables
+    into files of their own.
+
+    This uses jQuery. By default it uses /usr/share/javascript/jquery/jquery.js
+    (symlinked, so that you can still share the result over HTTP).
+    You can also pass --jquery URL to diffoscope to use a central jQuery copy.
+    """
+    if not os.path.exists(directory):
+        os.makedirs(directory)
+
+    if not jquery_url:
+        jquery_symlink = os.path.join(directory, "jquery.js")
+        if not os.path.exists(jquery_symlink):
+            os.symlink("/usr/share/javascript/jquery/jquery.js", jquery_symlink)
+        jquery_url = "./jquery.js"
+
+    with file_printer(directory, "index.html") as print_func:
+        print_func = create_limited_print_func(print_func, Config.general.max_report_size)
+        try:
+            output_header(css_url, print_func)
+            output_difference(difference, print_func, css_url, directory, [])
+        except PrintLimitReached:
+            logger.debug('print limit reached')
+            print_func(u"<div class='error'>Max output size reached.</div>",
+                       force=True)
+        print_func(SCRIPTS % {'jquery_url': escape(jquery_url)}, force=True)
+        output_footer(print_func)

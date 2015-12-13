@@ -31,7 +31,8 @@ Depends: python3-pkg-resources,
          ${misc:Depends},
          ${python3:Depends},
 Recommends: ${diffoscope:Recommends},
-            ${python3:Recommends}
+            ${python3:Recommends},
+Suggests: libjs-jquery
 Breaks: debbindiff (<< 29)
 Replaces: debbindiff (<< 29)
 Description: in-depth comparison of files, archives, and directories

@@ -30,6 +30,7 @@ class Config(object):
         self._max_diff_block_lines = 50
         self._max_diff_input_lines = 100000 # GNU diff cannot process arbitrary large files :(
         self._max_report_size = 2000 * 2 ** 10 # 2000 kB
+        self._separate_file_diff_size = 200 * 2 ** 10 # 200kB
         self._fuzzy_threshold = 60
         self._new_file = False
 
@@ -62,6 +63,14 @@ class Config(object):
     @max_report_size.setter
     def max_report_size(self, value):
         self._max_report_size = value
+
+    @property
+    def separate_file_diff_size(self):
+        return self._separate_file_diff_size
+
+    @separate_file_diff_size.setter
+    def separate_file_diff_size(self, value):
+        self._separate_file_diff_size = value
 
     @property
     def fuzzy_threshold(self):

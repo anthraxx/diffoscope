@@ -1,2 +1,3 @@
 tlsh python3-tlsh (>= 3.4.1)
 python-magic python3-magic
+guestfs python3-guestfs

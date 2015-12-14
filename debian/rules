@@ -13,7 +13,7 @@ override_dh_auto_build:
 	dh_auto_build -O--buildsystem=pybuild
 
 override_dh_python3:
-	dh_python3 --recommends=python-debian --recommends=rpm-python --recommends=tlsh
+	dh_python3 --recommends=python-debian --recommends=rpm-python --recommends=tlsh --recommends=guestfs
 
 override_dh_gencontrol:
 	TOOLS="$$(bin/diffoscope --list-tools=debian | tail -n 1 | \

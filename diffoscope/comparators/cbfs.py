@@ -82,6 +82,8 @@ CBFS_HEADER_VERSION1 = 0x31313131
 CBFS_HEADER_VERSION2 = 0x31313132
 CBFS_HEADER_SIZE = 8 * 4 # 8 * uint32_t
 
+# On 2015-12-15, the largest image produced by coreboot is 16 MiB
+CBFS_MAXIMUM_FILE_SIZE = 24 * 2 ** 20 # 24 MiB
 
 def is_header_valid(buf, size, offset=0):
     magic, version, romsize, bootblocksize, align, cbfs_offset, architecture, pad = struct.unpack_from('!IIIIIIII', buf, offset)
@@ -97,7 +99,7 @@ class CbfsFile(File):
     @staticmethod
     def recognizes(file):
         size = os.stat(file.path).st_size
-        if size < CBFS_HEADER_SIZE:
+        if size < CBFS_HEADER_SIZE or size > CBFS_MAXIMUM_FILE_SIZE:
             return False
         with open(file.path, 'rb') as f:
             # pick at the latest byte as it should contain the relative offset of the header

@@ -129,7 +129,6 @@ FILE_CLASSES = (
     DebDataTarFile,
     TextFile,
     Bzip2File,
-    CbfsFile,
     CpioFile,
     DebFile,
     DexFile,
@@ -155,6 +154,7 @@ FILE_CLASSES = (
     XzFile,
     ZipFile,
     ImageFile,
+    CbfsFile,
     )
 
 

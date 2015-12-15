@@ -39,7 +39,8 @@ class FsImageContainer(Archive):
         try:
             self.g.launch()
         except RuntimeError:
-            logger.debug("guestfs can't be launched")
+            logger.exception("guestfs can't be launched")
+            logger.error("If memory is too tight for 512 MiB, try running with LIBGUESTFS_MEMSIZE=256 or lower.")
             return None
         devices = self.g.list_devices()
         self.g.mount(devices[0], "/")

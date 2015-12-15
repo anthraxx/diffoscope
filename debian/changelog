@@ -1,3 +1,82 @@
+diffoscope (43) unstable; urgency=low
+
+  [ Reiner Herrmann ]
+  * Add comparator for Android dex files.
+  * Add comparator for filesystem images using libguestfs.
+
+  [ Chris Lamb ]
+  * Add comparator for icons and JPEG images using libcaca.
+
+  [ Clemens Lang ]
+  * Add comparator for OS X binary files (also known as Mach-O). Requires the
+    otool(1) and lipo(1) which are mostly likely found on OS X.
+
+  [ Baptiste Daroussin ]
+  * Use libarchive for tar instead of Python included library. We already
+    have libarchive as a mandatory dependency, and libarchive is faster
+    and more reliable.
+
+  [ Mike McQuaid ]
+  * Support older versions of GNU diff. OS X 10.11 ships with an older GPLv2
+    version (`2.8.1`) which does not support the `diff -u7` flag but instead
+    wants to use `diff -U7` which appears to be forward compatible.
+
+  [ Ed Maste ]
+  * Use more portable LC_CTYPE suggestion. The C.UTF-8 locale is a Debian
+    thing.
+
+  [ Levente Polyak ]
+  * Force ppudump to output time in UTC using the TZ variable. Support for the
+    TZ environment variable has been implemented in fpc r32369.
+  * Make PPU comparator version aware by checking the magic version expected by
+    ppudump itself.
+
+  [ Joachim Breitner ]
+  * Add support for multi-file HTML output with on-demand loading of long
+    diffs. This is available through the --html-dir option. Location of the
+    jQuery JavaScript library can be specified through the --jquery option.
+    (Closes: #806891)
+
+  [ Jérémy Bobbio ]
+  * Return the target path as string when extracting from a Zip. Regression
+    introduced in diffoscope 41. (Closes: #805774)
+  * Use pass_fds from Popen instead of reimplementing it. Thanks Baptiste
+    Daroussin for the tip.
+  * Fix typo in debug message. Thanks Clemens Lang!
+  * Benefit from dictionary keys() behaving as set when comparing md5sums.
+  * Prevent overwriting the destination when extracting with libarchive.
+    Thanks Baptiste Daroussin noticing and initial implementation.
+  * Fix PPU detection and associated tests.
+  * Use lazy extraction instead of explicit bracketing. We now rely on
+    Python garbage collector to delete file once we are done comparing.
+    This will make parallel processing easier to implement.
+  * Make container class available on demand instead of bracketing.
+    This cleanups boilerplate code, and should make parallel processing
+    easier to implement.
+  * Always compare container content if applicable. This removes more
+    boilerplate code.
+  * Call xxd like other commands.
+  * Analyze md5sums file in .deb before working on data.tar. This makes
+    the code more robust and is required to properly skip files listed as
+    identical in md5sums while doing parallel processing.
+  * Add support for package names for OS other than Debian. The --list-tools
+    command-line option now supports an optional argument to display a given
+    operating system. When --list-tools is called without
+    an optional argument and the current operating system is unknown,
+    the list of packages for all known operating systems will be displayed.
+    Initial implementation by Mattia Rizzolo, then greatly enhanced by
+    Levente Polyak.
+  * Update list of contributors.
+  * Add contact info to README.
+  * Add python3-guestfs to the list of Recommends.
+  * Display a better error message when guestfs can't be started.
+  * Set libguestfs memory allocation to 128 MiB in autopkgtest as more is
+    likely to fail with adt-virt-qemu default settings.
+  * Prevent CBFS comparator from scanning big files needlessly. Thanks Mike
+    Hommey for the detailed bug report and suggestions. (Closes: #807997)
+
+ -- Jérémy Bobbio <lunar@debian.org>  Tue, 15 Dec 2015 15:54:55 +0000
+
 diffoscope (42) unstable; urgency=medium
 
   * Add missing Depends on python3-pkg-resources.

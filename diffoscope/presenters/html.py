@@ -116,8 +116,9 @@ HEADER = """<!DOCTYPE html>
     tr.diffchanged td {
       background: #FFFFA0
     }
-    span.diffchanged2 {
-      background: #E0C880
+    ins, del {
+      background: #E0C880;
+      text-decoration: none
     }
     span.diffponct {
       color: #B08080
@@ -274,15 +275,15 @@ def linediff(s, t):
     return ''.join(l1).replace(DIFFOFF + DIFFON, ''), ''.join(l2).replace(DIFFOFF + DIFFON, '')
 
 
-def convert(s, ponct=0):
+def convert(s, ponct=0, tag=''):
     i = 0
     t = StringIO()
     for c in s:
         # used by diffs
         if c == DIFFON:
-            t.write('<span class="diffchanged2">')
+            t.write('<%s>' % tag)
         elif c == DIFFOFF:
-            t.write('</span>')
+            t.write('</%s>' % tag)
 
         # special highlighted chars
         elif c == "\t" and ponct == 1:
@@ -348,7 +349,7 @@ def output_line(print_func, s1, s2):
         if s1 is not None:
             print_func(u'<td class="diffline">%d </td>' % line1)
             print_func(u'<td class="diffpresent">')
-            print_func(convert(s1, ponct=1))
+            print_func(convert(s1, ponct=1, tag='del'))
             print_func(u'</td>')
         else:
             s1 = ""
@@ -357,7 +358,7 @@ def output_line(print_func, s1, s2):
         if s2 is not None:
             print_func(u'<td class="diffline">%d </td>' % line2)
             print_func(u'<td class="diffpresent">')
-            print_func(convert(s2, ponct=1))
+            print_func(convert(s2, ponct=1, tag='ins'))
             print_func(u'</td>')
         else:
             s2 = ""

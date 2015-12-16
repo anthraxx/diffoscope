@@ -32,6 +32,7 @@
 #
 
 import cgi
+from io import StringIO
 import re
 import sys
 import os
@@ -213,9 +214,9 @@ def linediff(s, t):
     Original line diff algorithm of diff2html. It's character based.
     '''
     if len(s):
-        s = str(reduce(lambda x, y:x+y, [ sane(c) for c in s ]))
+        s = ''.join([ sane(c) for c in s ])
     if len(t):
-        t = str(reduce(lambda x, y:x+y, [ sane(c) for c in t ]))
+        t = ''.join([ sane(c) for c in t ])
 
     m, n = len(s), len(t)
     d = [[(0, 0) for i in range(n+1)] for i in range(m+1)]
@@ -270,46 +271,45 @@ def linediff(s, t):
             l1.append(s[fx])
             l2.append(t[fy])
 
-    r1, r2 = (reduce(lambda x, y:x+y, l1), reduce(lambda x, y:x+y, l2))
-    return r1, r2
+    return ''.join(l1), ''.join(l2)
 
 
 def convert(s, ponct=0):
     i = 0
-    t = u""
+    t = StringIO()
     for c in s:
         # used by diffs
         if c == DIFFON:
-            t += u'<span class="diffchanged2">'
+            t.write('<span class="diffchanged2">')
         elif c == DIFFOFF:
-            t += u"</span>"
+            t.write('</span>')
 
         # special highlighted chars
         elif c == "\t" and ponct == 1:
             n = TABSIZE-(i%TABSIZE)
             if n == 0:
                 n = TABSIZE
-            t += (u'<span class="diffponct">&raquo;</span>'+'&nbsp;'*(n-1))
+            t.write('<span class="diffponct">&raquo;</span>'+'&nbsp;'*(n-1))
         elif c == " " and ponct == 1:
-            t += u'<span class="diffponct">&middot;</span>'
+            t.write('<span class="diffponct">&middot;</span>')
         elif c == "\n" and ponct == 1:
-            t += u'<br/><span class="diffponct">\</span>'
+            t.write('<br/><span class="diffponct">\</span>')
         elif ord(c) < 32:
             conv = u"\\x%x" % ord(c)
-            t += u"<em>%s</em>" % conv
+            t.write('<em>%s</em>' % conv)
             i += len(conv)
         else:
-            t += cgi.escape(c)
+            t.write(cgi.escape(c))
             i += 1
 
         if WORDBREAK.count(c) == 1:
-            t += u'&#8203;'
+            t.write('&#8203;')
             i = 0
         if i > LINESIZE:
             i = 0
-            t += u"&#8203;"
+            t.write("&#8203;")
 
-    return t
+    return t.getvalue()
 
 
 def output_hunk(print_func):

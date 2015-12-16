@@ -171,10 +171,11 @@ class Container(object, metaclass=ABCMeta):
     def lookup_file(self, *names):
         """Try to fetch a specific file by digging in containers."""
         name, remainings = names[0], names[1:]
-        file = self.get_member(name)
-        logger.debug('lookup_file(%s) -> %s', names, file)
-        if not file:
+        try:
+            file = self.get_member(name)
+        except KeyError:
             return None
+        logger.debug('lookup_file(%s) -> %s', names, file)
         diffoscope.comparators.specialize(file)
         if not remainings:
             return file

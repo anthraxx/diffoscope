@@ -48,7 +48,7 @@ class DebFile(File):
                 self._md5sums = md5sums_file.parse()
             else:
                 logger.debug('Unable to find a md5sums file')
-                self._md5sums = set()
+                self._md5sums = {}
         return self._md5sums
 
     def compare_details(self, other, source=None):
@@ -77,7 +77,7 @@ class Md5sumsFile(File):
             return md5sums
         except (UnicodeDecodeError, ValueError):
             logger.debug('Malformed md5sums, ignoring.')
-            return set()
+            return {}
 
     def compare(self, other, source=None):
         return Difference(None, self.path, other.path, source='md5sums',
@@ -89,11 +89,11 @@ class DebTarContainer(TarContainer):
         if self.source:
             my_md5sums = self.source.container.source.container.source.md5sums
         else:
-            my_md5sums = set()
+            my_md5sums = {}
         if other.source:
             other_md5sums = other.source.container.source.container.source.md5sums
         else:
-            other_md5sums = set()
+            other_md5sums = {}
         for my_member, other_member, comment in super().comparisons(other):
             if my_member.name == other_member.name and \
                my_md5sums.get(my_member.name, 'my') == other_md5sums.get(other_member.name, 'other'):

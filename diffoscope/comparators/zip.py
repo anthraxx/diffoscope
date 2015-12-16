@@ -111,3 +111,54 @@ class ZipFile(File):
         zipinfo_difference = Difference.from_command(Zipinfo, self.path, other.path) or \
                              Difference.from_command(ZipinfoVerbose, self.path, other.path)
         return [zipinfo_difference]
+
+
+class MozillaZipCommandMixin(object):
+    def wait(self):
+        # zipinfo emits an error when reading Mozilla-optimized ZIPs,
+        # which is fine to ignore.
+        super(Zipinfo, self).wait()
+        return 0
+
+
+class MozillaZipinfo(MozillaZipCommandMixin, Zipinfo): pass
+
+
+class MozillaZipinfoVerbose(MozillaZipCommandMixin, ZipinfoVerbose): pass
+
+
+class MozillaZipContainer(ZipContainer):
+    def open_archive(self):
+        # This is gross: Monkeypatch zipfile._EndRecData to work with
+        # Mozilla-optimized ZIPs
+        _orig_EndRecData = zipfile._EndRecData
+        def _EndRecData(fh):
+            endrec = _orig_EndRecData(fh)
+            if endrec:
+                endrec[zipfile._ECD_LOCATION] = (endrec[zipfile._ECD_OFFSET] +
+                                                 endrec[zipfile._ECD_SIZE])
+            return endrec
+        zipfile._EndRecData = _EndRecData
+        result = super(MozillaZipContainer, self).open_archive()
+        zipfile._EndRecData = _orig_EndRecData
+        return result
+
+
+class MozillaZipFile(File):
+    CONTAINER_CLASS = MozillaZipContainer
+
+    @staticmethod
+    def recognizes(file):
+        # Mozilla-optimized ZIPs start with a 32-bit little endian integer
+        # indicating the amount of data to preload, followed by the ZIP
+        # central directory (with a PK\x01\x02 signature)
+        with open(file.path, 'rb') as f:
+            preload = f.read(4)
+            if len(preload) == 4:
+                signature = f.read(4)
+                return signature == b'PK\x01\x02'
+
+    def compare_details(self, other, source=None):
+        zipinfo_difference = Difference.from_command(MozillaZipinfo, self.path, other.path) or \
+                             Difference.from_command(MozillaZipinfoVerbose, self.path, other.path)
+        return [zipinfo_difference]

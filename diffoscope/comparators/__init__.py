@@ -72,7 +72,7 @@ from diffoscope.comparators.symlink import Symlink
 from diffoscope.comparators.text import TextFile
 from diffoscope.comparators.tar import TarFile
 from diffoscope.comparators.xz import XzFile
-from diffoscope.comparators.zip import ZipFile
+from diffoscope.comparators.zip import ZipFile, MozillaZipFile
 
 
 def bail_if_non_existing(*paths):
@@ -153,6 +153,7 @@ FILE_CLASSES = (
     TarFile,
     XzFile,
     ZipFile,
+    MozillaZipFile,
     ImageFile,
     CbfsFile,
     )

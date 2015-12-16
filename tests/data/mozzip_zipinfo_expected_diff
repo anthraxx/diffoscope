@@ -1,0 +1,15 @@
+@@ -1,8 +1,8 @@
+-Zip file size: 409 bytes, number of entries: 1
+-warning [test1.mozzip]:  329 extra bytes at beginning or within zipfile
++Zip file size: 552 bytes, number of entries: 1
++warning [test2.mozzip]:  472 extra bytes at beginning or within zipfile
+   (attempting to process anyway)
+-error [test1.mozzip]:  reported length of central directory is
+-  -329 bytes too long (Atari STZip zipfile?  J.H.Holm ZIPSPLIT 1.1
++error [test2.mozzip]:  reported length of central directory is
++  -472 bytes too long (Atari STZip zipfile?  J.H.Holm ZIPSPLIT 1.1
+   zipfile?).  Compensating...
+--rw-r--r--  2.0 unx      446 b- defX 10-Jan-01 00:00 dir/text
+-1 file, 446 bytes uncompressed, 269 bytes compressed:  39.7%
++-rw-r--r--  2.0 unx      671 b- defX 10-Jan-01 00:00 dir/text
++1 file, 671 bytes uncompressed, 412 bytes compressed:  38.6%

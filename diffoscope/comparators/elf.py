@@ -34,7 +34,7 @@ class Readelf(Command):
 
     @tool_required('readelf')
     def cmdline(self):
-        return ['readelf'] + self.readelf_options() + [self.path]
+        return ['readelf', '-W'] + self.readelf_options() + [self.path]
 
     def readelf_options(self):
         return []

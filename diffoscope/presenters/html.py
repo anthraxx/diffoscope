@@ -271,7 +271,7 @@ def linediff(s, t):
             l1.append(s[fx])
             l2.append(t[fy])
 
-    return ''.join(l1), ''.join(l2)
+    return ''.join(l1).replace(DIFFOFF + DIFFON, ''), ''.join(l2).replace(DIFFOFF + DIFFON, '')
 
 
 def convert(s, ponct=0):

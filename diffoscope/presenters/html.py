@@ -290,9 +290,9 @@ def convert(s, ponct=0, tag=''):
             n = TABSIZE-(i%TABSIZE)
             if n == 0:
                 n = TABSIZE
-            t.write('<span class="diffponct">&raquo;</span>'+'&nbsp;'*(n-1))
+            t.write('<span class="diffponct">\xbb</span>'+'\xa0'*(n-1))
         elif c == " " and ponct == 1:
-            t.write('<span class="diffponct">&middot;</span>')
+            t.write('<span class="diffponct">\xb7</span>')
         elif c == "\n" and ponct == 1:
             t.write('<br/><span class="diffponct">\</span>')
         elif ord(c) < 32:
@@ -304,11 +304,11 @@ def convert(s, ponct=0, tag=''):
             i += 1
 
         if WORDBREAK.count(c) == 1:
-            t.write('&#8203;')
+            t.write('\u200b')
             i = 0
         if i > LINESIZE:
             i = 0
-            t.write("&#8203;")
+            t.write('\u200b')
 
     return t.getvalue()
 
@@ -353,7 +353,7 @@ def output_line(print_func, s1, s2):
             print_func(u'</td>')
         else:
             s1 = ""
-            print_func(u'<td colspan="2">&nbsp;</td>')
+            print_func(u'<td colspan="2">\xa0</td>')
 
         if s2 is not None:
             print_func(u'<td class="diffline">%d </td>' % line2)
@@ -362,7 +362,7 @@ def output_line(print_func, s1, s2):
             print_func(u'</td>')
         else:
             s2 = ""
-            print_func(u'<td colspan="2">&nbsp;</td>')
+            print_func(u'<td colspan="2">\xa0</td>')
     finally:
         print_func(u"</tr>\n", force=True)
 
@@ -522,7 +522,7 @@ def output_difference(difference, print_func, css_url, directory, parents):
             print_func(u"<div><span class='source'>%s</span>"
                        % escape(difference.source2))
         anchor = '/'.join(sources[1:])
-        print_func(u" <a class='anchor' href='#%s' name='%s'>&para;</a>" % (anchor, anchor))
+        print_func(u" <a class='anchor' href='#%s' name='%s'>\xb6</a>" % (anchor, anchor))
         print_func(u"</div>")
         if difference.comments:
             print_func(u"<div class='comment'>%s</div>"

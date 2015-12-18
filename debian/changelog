@@ -1,3 +1,26 @@
+diffoscope (44) unstable; urgency=medium
+
+  [ Mike Hommey ]
+  * Tell readelf to use wide output. (Closes: #808103)
+  * Add support for Mozilla optimized Zip files. (Closes: #808002)
+  * Use <ins/> and <del/> in HTML output.
+  * Fix line numbering in HTML diff output (Closes: #808199)
+
+  [ Jérémy Bobbio ]
+  * Fix .deb comparisons when md5sums is wrong or missing. (Closes: #808104)
+  * Remove some quadratic string concatenations in HTML presenter.
+  * Remove useless <span>s in HTML output. (Closes: #808121)
+  * Replace calling find by using os.walk in directory comparator.
+  * Sort the file list in directory comparator. (Closes: #808003)
+  * Ensure the 'lines skipped' message gets written when lines are skipped
+    at the end of a diff.
+  * Make sure to read HTML reports as utf-8 in tests.
+
+  [ Esa Peuha ]
+  * Convert HTML character entity references to UTF-8 characters to save space.
+
+ -- Jérémy Bobbio <lunar@debian.org>  Fri, 18 Dec 2015 15:42:20 +0000
+
 diffoscope (43) unstable; urgency=low
 
   [ Reiner Herrmann ]

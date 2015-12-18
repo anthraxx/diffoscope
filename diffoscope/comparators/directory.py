@@ -35,6 +35,7 @@ def list_files(path):
     for root, dirs, names in os.walk(path):
         all_files.extend([os.path.join(root[len(path) + 1:], dir) for dir in dirs])
         all_files.extend([os.path.join(root[len(path) + 1:], name) for name in names])
+    all_files.sort()
     return all_files
 
 

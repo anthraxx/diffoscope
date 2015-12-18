@@ -18,6 +18,7 @@
 # along with diffoscope.  If not, see <http://www.gnu.org/licenses/>.
 
 from contextlib import contextmanager
+import os
 import os.path
 import re
 import subprocess
@@ -28,10 +29,13 @@ from diffoscope.comparators.binary import FilesystemFile
 from diffoscope.comparators.utils import Container, Command
 
 
-class FindAll(Command):
-    @tool_required('find')
-    def cmdline(self):
-        return ['find', self.path, '-printf', '%P\n']
+def list_files(path):
+    path = os.path.realpath(path)
+    all_files = []
+    for root, dirs, names in os.walk(path):
+        all_files.extend([os.path.join(root[len(path) + 1:], dir) for dir in dirs])
+        all_files.extend([os.path.join(root[len(path) + 1:], name) for name in names])
+    return all_files
 
 
 class Stat(Command):
@@ -123,9 +127,11 @@ class FilesystemDirectory(object):
     def compare(self, other, source=None):
         differences = []
         try:
-            find_diff = Difference.from_command(FindAll, self.path, other.path)
-            if find_diff:
-                differences.append(find_diff)
+            listing_diff = Difference.from_text('\n'.join(list_files(self.path)),
+                                                '\n'.join(list_files(other.path)),
+                                                self.path, other.path, source='file list')
+            if listing_diff:
+                differences.append(listing_diff)
         except RequiredToolNotFound:
             logger.info("Unable to find 'getfacl'.")
         differences.extend(compare_meta(self.name, other.name))

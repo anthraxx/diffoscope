@@ -58,6 +58,7 @@ class DiffParser(object):
     def parse(self):
         for line in self._output.readlines():
             self._action = self._action(line.decode('utf-8', errors='replace'))
+        self._action('')
         self._success = True
         self._output.close()
 
@@ -82,7 +83,9 @@ class DiffParser(object):
         return self.read_hunk
 
     def read_hunk(self, line):
-        if line[0] == ' ':
+        if not line:
+            return None
+        elif line[0] == ' ':
             self._remaining_hunk_lines -= 2
         elif line[0] == '+':
             self._remaining_hunk_lines -= 1

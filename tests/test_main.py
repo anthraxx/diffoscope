@@ -131,7 +131,7 @@ def test_html_option_with_file(tmpdir, capsys):
     out, err = capsys.readouterr()
     assert err == ''
     assert out == ''
-    with open(report_path, 'r') as f:
+    with open(report_path, 'r', encoding='utf-8') as f:
         assert 'meta name="generator" content="diffoscope"' in f.read()
 
 def test_html_option_with_stdout(capsys):

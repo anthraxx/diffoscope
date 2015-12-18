@@ -346,22 +346,20 @@ def output_line(print_func, s1, s2):
 
     print_func(u'<tr class="diff%s">' % type_name)
     try:
-        if s1 is not None:
+        if s1:
             print_func(u'<td class="diffline">%d </td>' % line1)
             print_func(u'<td class="diffpresent">')
             print_func(convert(s1, ponct=1, tag='del'))
             print_func(u'</td>')
         else:
-            s1 = ""
             print_func(u'<td colspan="2">\xa0</td>')
 
-        if s2 is not None:
+        if s2:
             print_func(u'<td class="diffline">%d </td>' % line2)
             print_func(u'<td class="diffpresent">')
             print_func(convert(s2, ponct=1, tag='ins'))
             print_func(u'</td>')
         else:
-            s2 = ""
             print_func(u'<td colspan="2">\xa0</td>')
     finally:
         print_func(u"</tr>\n", force=True)
@@ -369,12 +367,12 @@ def output_line(print_func, s1, s2):
     m = orig1 and re.match(r"^\[ (\d+) lines removed \]$", orig1)
     if m:
         line1 += int(m.group(1))
-    elif orig1 is not None:
+    elif orig1:
         line1 += 1
     m = orig2 and re.match(r"^\[ (\d+) lines removed \]$", orig2)
     if m:
         line2 += int(m.group(1))
-    elif orig2 is not None:
+    elif orig2:
         line2 += 1
 
 

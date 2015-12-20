@@ -80,7 +80,7 @@ def test_differences(differences):
     assert tardiff.source2 == './date.txt'
     assert encodingdiff.source1 == 'encoding'
     assert encodingdiff.source2 == 'encoding'
-    expected_diff = open(os.path.join(os.path.dirname(__file__), '../data/ext4_expected_diffs')).read()
+    expected_diff = open(os.path.join(os.path.dirname(__file__), '../data/ext4_expected_diffs'), encoding='utf-8').read()
     found_diff = tarinfo.unified_diff + tardiff.unified_diff + encodingdiff.unified_diff
     assert expected_diff == found_diff
 

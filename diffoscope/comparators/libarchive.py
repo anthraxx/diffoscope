@@ -37,6 +37,10 @@ if not hasattr(libarchive.ffi, 'entry_rdevminor'):
     libarchive.ffi.ffi('entry_rdevminor', [libarchive.ffi.c_archive_entry_p], ctypes.c_uint)
     libarchive.ArchiveEntry.rdevminor = property(lambda self: libarchive.ffi.entry_rdevminor(self._entry_p))
 
+# Monkeypatch libarchive-c so we always get pathname as (Unicode) str
+# Otherwise, we'll get sometimes str and sometimes bytes and always pain.
+libarchive.ArchiveEntry.pathname = property(lambda self: libarchive.ffi.entry_pathname(self._entry_p).decode('utf-8', errors='surrogateescape'))
+
 
 class LibarchiveMember(ArchiveMember):
     def __init__(self, archive, entry):

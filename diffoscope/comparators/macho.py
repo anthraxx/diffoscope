@@ -95,7 +95,7 @@ class MachoFile(File):
         # Compare common architectures for differences
         for common_arch in set(my_archs) & set(other_archs):
             differences.append(Difference.from_command(OtoolHeaders, self.path, other.path, command_args=[common_arch],
-                                                       comment="Mach-O headers for architecture %s" % comon_arch))
+                                                       comment="Mach-O headers for architecture %s" % common_arch))
             differences.append(Difference.from_command(OtoolLibraries, self.path, other.path, command_args=[common_arch],
                                                        comment="Mach-O load commands for architecture %s" % common_arch))
             differences.append(Difference.from_command(OtoolDisassemble, self.path, other.path, command_args=[common_arch],

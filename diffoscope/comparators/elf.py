@@ -30,7 +30,6 @@ class Readelf(Command):
         super().__init__(*args, **kwargs)
         # we don't care about the name of the archive
         self._archive_re = re.compile(r'^File: %s\(' % re.escape(self.path))
-        self._basename = os.path.basename(self.path)
 
     @tool_required('readelf')
     def cmdline(self):
@@ -44,7 +43,7 @@ class Readelf(Command):
             # we don't care about the name of the archive
             line = self._archive_re.sub('File: lib.a(', line.decode('utf-8'))
             # the full path can appear in the output, we need to remove it
-            return line.replace(self.path, self._basename).encode('utf-8')
+            return line.replace(self.path, '<elf>').encode('utf-8')
         except UnicodeDecodeError:
             return line
 
@@ -61,7 +60,6 @@ class ObjdumpDisassemble(Command):
         super().__init__(*args, **kwargs)
         # we don't care about the name of the archive
         self._archive_re = re.compile(r'^In archive %s:' % re.escape(self.path))
-        self._basename = os.path.basename(self.path)
 
     @tool_required('objdump')
     def cmdline(self):
@@ -72,7 +70,7 @@ class ObjdumpDisassemble(Command):
             # we don't care about the name of the archive
             line = self._archive_re.sub('In archive:', line.decode('utf-8'))
             # the full path can appear in the output, we need to remove it
-            return line.replace(self.path, self._basename).encode('utf-8')
+            return line.replace(self.path, '<elf>').encode('utf-8')
         except UnicodeDecodeError:
             return line
 

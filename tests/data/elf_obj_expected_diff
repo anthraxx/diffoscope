@@ -1,7 +1,6 @@
 @@ -1,22 +1,22 @@
  
--test1.o:     file format elf64-x86-64
-+test2.o:     file format elf64-x86-64
+ <elf>:     file format elf64-x86-64
  
  Contents of section .text:
 - 0000 554889e5 b82a0000 005dc3             UH...*...].     

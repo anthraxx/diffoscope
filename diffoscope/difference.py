@@ -56,7 +56,7 @@ class DiffParser(object):
         return self._success
 
     def parse(self):
-        for line in self._output.readlines():
+        for line in self._output:
             self._action = self._action(line.decode('utf-8', errors='replace'))
         self._action('')
         self._success = True
@@ -226,7 +226,7 @@ def make_feeder_from_raw_reader(in_file, filter=lambda buf: buf):
     def feeder(out_file):
         line_count = 0
         end_nl = False
-        for buf in in_file.readlines():
+        for buf in in_file:
             line_count += 1
             out_file.write(filter(buf))
             max_lines = Config.general.max_diff_input_lines

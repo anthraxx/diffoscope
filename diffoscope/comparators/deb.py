@@ -71,7 +71,7 @@ class Md5sumsFile(File):
         try:
             md5sums = {}
             with open(self.path, 'r', encoding='utf-8') as f:
-                for line in f.readlines():
+                for line in f:
                     md5sum, path = re.split(r'\s+', line.strip(), maxsplit=1)
                     md5sums['./%s' % path] = md5sum
             return md5sums

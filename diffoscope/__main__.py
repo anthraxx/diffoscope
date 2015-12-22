@@ -20,12 +20,14 @@
 
 import argparse
 from contextlib import contextmanager
+import linecache
 import logging
 import codecs
 import os
 import signal
 import sys
 import traceback
+import tracemalloc
 try:
     import tlsh
 except ImportError:
@@ -162,18 +164,53 @@ def run_diffoscope(parsed_args):
     return 0
 
 
+def display_top(snapshot, group_by='lineno', limit=10):
+    snapshot = snapshot.filter_traces((
+        tracemalloc.Filter(False, "<frozen importlib._bootstrap>"),
+        tracemalloc.Filter(False, "<unknown>"),
+    ))
+    top_stats = snapshot.statistics(group_by)
+
+    logger.debug("Top %s lines", limit)
+    for index, stat in enumerate(top_stats[:limit], 1):
+        frame = stat.traceback[0]
+        # replace "/path/to/module/file.py" with "module/file.py"
+        filename = os.sep.join(frame.filename.split(os.sep)[-2:])
+        logger.debug("#%s: %s:%s: %.1f KiB",
+                     index, filename, frame.lineno, stat.size / 1024)
+        line = linecache.getline(frame.filename, frame.lineno).strip()
+        if line:
+            logger.debug('    %s', line)
+
+    other = top_stats[limit:]
+    if other:
+        size = sum(stat.size for stat in other)
+        logger.debug("%s other: %.1f KiB", len(other), size / 1024)
+    total = sum(stat.size for stat in top_stats)
+    logger.debug("Total allocated size: %.1f KiB", total / 1024)
+
+
 def sigterm_handler(signo, stack_frame):
     sys.exit(2)
+
+
+def sigusr1_handler(signo, stack_frame):
+    logger.debug('got SIGUSR1')
+    snapshot = tracemalloc.take_snapshot()
+    logger.debug('display_top')
+    display_top(snapshot)
 
 
 def main(args=None):
     if args is None:
         args = sys.argv[1:]
     signal.signal(signal.SIGTERM, sigterm_handler)
+    signal.signal(signal.SIGUSR1, sigusr1_handler)
     parsed_args = None
     try:
         parser = create_parser()
         parsed_args = parser.parse_args(args)
+        tracemalloc.start()
         sys.exit(run_diffoscope(parsed_args))
     except KeyboardInterrupt:
         logger.info('Keyboard Interrupt')

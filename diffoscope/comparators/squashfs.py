@@ -126,7 +126,7 @@ class SquashfsSymlink(Symlink, SquashfsMember):
 class SquashfsDevice(Device, SquashfsMember):
     # Example line:
     # crw-r--r-- root/root  1,  3 2015-06-24 14:47 squashfs-root/null
-    LINE_RE = re.compile(r'^(?P<kind>c|b)\S+\s+\S+\s+(?P<major>\d+),\s+(?P<minor>\d+)\s+\S+\s+\S+\s+(?P<member_name>.*)$')
+    LINE_RE = re.compile(r'^(?P<kind>c|b)\S+\s+\S+\s+(?P<major>\d+),\s*(?P<minor>\d+)\s+\S+\s+\S+\s+(?P<member_name>.*)$')
 
     KIND_MAP = { 'c': stat.S_IFCHR,
                  'b': stat.S_IFBLK,

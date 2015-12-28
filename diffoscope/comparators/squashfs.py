@@ -47,6 +47,10 @@ class SquashfsListing(Command):
         return ['unsquashfs', '-d', '', '-lls', self.path]
 
 
+class SquashfsInvalidLineFormat(Exception):
+    pass
+
+
 class SquashfsMember(ArchiveMember):
     def is_directory(self):
         return False
@@ -75,6 +79,8 @@ class SquashfsDirectory(Directory, SquashfsMember):
 
     def __init__(self, archive, line):
         m = SquashfsDirectory.LINE_RE.match(line)
+        if not m:
+            raise SquashfsInvalidLineFormat('invalid line format')
         SquashfsMember.__init__(self, archive, m.group('member_name') or '/')
 
     def compare(self, other, source=None):
@@ -104,6 +110,8 @@ class SquashfsSymlink(Symlink, SquashfsMember):
 
     def __init__(self, archive, line):
         m = SquashfsSymlink.LINE_RE.match(line)
+        if not m:
+            raise SquashfsInvalidLineFormat('invalid line format')
         SquashfsMember.__init__(self, archive, m.group('member_name'))
         self._destination = m.group('destination')
 
@@ -126,6 +134,8 @@ class SquashfsDevice(Device, SquashfsMember):
 
     def __init__(self, archive, line):
         m = SquashfsDevice.LINE_RE.match(line)
+        if not m:
+            raise SquashfsInvalidLineFormat('invalid line format')
         SquashfsMember.__init__(self, archive, m.group('member_name'))
         self._mode = SquashfsDevice.KIND_MAP[m.group('kind')]
         self._major = int(m.group('major'))
@@ -161,7 +171,10 @@ class SquashfsContainer(Archive):
                     header = False
                 continue
             if len(line) > 0 and line[0] in SQUASHFS_LS_MAPPING:
-                yield SQUASHFS_LS_MAPPING[line[0]](self, line)
+                try:
+                    yield SQUASHFS_LS_MAPPING[line[0]](self, line)
+                except SquashfsInvalidLineFormat:
+                    logger.warning('Invalid squashfs entry: %s', line)
             else:
                 logger.warning('Unknown squashfs entry: %s', line)
 

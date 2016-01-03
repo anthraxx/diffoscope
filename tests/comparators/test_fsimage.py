@@ -74,8 +74,8 @@ def test_differences(differences):
     tarinfo = differences[0].details[0]
     tardiff = differences[0].details[1]
     encodingdiff = tardiff.details[0]
-    assert tarinfo.source1 == 'tar --full-time -tvf {}'
-    assert tarinfo.source2 == 'tar --full-time -tvf {}'
+    assert tarinfo.source1 == 'file list'
+    assert tarinfo.source2 == 'file list'
     assert tardiff.source1 == './date.txt'
     assert tardiff.source2 == './date.txt'
     assert encodingdiff.source1 == 'encoding'

@@ -22,10 +22,10 @@ import os.path
 from diffoscope import logger
 from diffoscope.difference import Difference
 from diffoscope.comparators.binary import File
-from diffoscope.comparators.libarchive import LibarchiveContainer
+from diffoscope.comparators.libarchive import LibarchiveContainer, list_libarchive
 from diffoscope.comparators.utils import \
     Archive, ArchiveMember, get_ar_content
-from diffoscope.comparators.tar import TarContainer, TarListing
+from diffoscope.comparators.tar import TarContainer
 
 
 class DebContainer(LibarchiveContainer):
@@ -113,4 +113,6 @@ class DebDataTarFile(File):
                isinstance(file.container.source.container.source, DebFile)
 
     def compare_details(self, other, source=None):
-        return [Difference.from_command(TarListing, self.path, other.path)]
+        return [Difference.from_text_readers(list_libarchive(self.path),
+                                        list_libarchive(other.path),
+                                        self.path, other.path, source="file list")]

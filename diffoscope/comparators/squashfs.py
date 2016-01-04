@@ -67,9 +67,15 @@ class SquashfsRegularFile(SquashfsMember):
     # -rw-r--r-- user/group   446 2015-06-24 14:49 squashfs-root/text
     LINE_RE = re.compile(r'^\S+\s+\S+\s+\S+\s+\S+\s+\S+\s+(?P<member_name>.*)$')
 
-    def __init__(self, archive, line):
+    @staticmethod
+    def parse(line):
         m = SquashfsRegularFile.LINE_RE.match(line)
-        SquashfsMember.__init__(self, archive, m.group('member_name'))
+        if not m:
+            raise SquashfsInvalidLineFormat('invalid line format')
+        return m.groupdict()
+
+    def __init__(self, archive, member_name):
+        SquashfsMember.__init__(self, archive, member_name)
 
 
 class SquashfsDirectory(Directory, SquashfsMember):
@@ -77,11 +83,15 @@ class SquashfsDirectory(Directory, SquashfsMember):
     # drwxr-xr-x user/group    51 2015-06-24 14:47 squashfs-root
     LINE_RE = re.compile(r'^\S+\s+\S+\s+\S+\s+\S+\s+\S+\s+(?P<member_name>.*)$')
 
-    def __init__(self, archive, line):
+    @staticmethod
+    def parse(line):
         m = SquashfsDirectory.LINE_RE.match(line)
         if not m:
             raise SquashfsInvalidLineFormat('invalid line format')
-        SquashfsMember.__init__(self, archive, m.group('member_name') or '/')
+        return m.groupdict()
+
+    def __init__(self, archive, member_name):
+        SquashfsMember.__init__(self, archive, member_name or '/')
 
     def compare(self, other, source=None):
         return None
@@ -108,12 +118,16 @@ class SquashfsSymlink(Symlink, SquashfsMember):
     # lrwxrwxrwx user/group   6 2015-06-24 14:47 squashfs-root/link -> broken
     LINE_RE = re.compile(r'^\S+\s+\S+\s+\S+\s+\S+\s+\S+\s+(?P<member_name>.*)\s+->\s+(?P<destination>.*)$')
 
-    def __init__(self, archive, line):
+    @staticmethod
+    def parse(line):
         m = SquashfsSymlink.LINE_RE.match(line)
         if not m:
             raise SquashfsInvalidLineFormat('invalid line format')
-        SquashfsMember.__init__(self, archive, m.group('member_name'))
-        self._destination = m.group('destination')
+        return m.groupdict()
+
+    def __init__(self, archive, member_name, destination):
+        SquashfsMember.__init__(self, archive, member_name)
+        self._destination = destination
 
     def is_symlink(self):
         return True
@@ -132,14 +146,32 @@ class SquashfsDevice(Device, SquashfsMember):
                  'b': stat.S_IFBLK,
                }
 
-    def __init__(self, archive, line):
+    @staticmethod
+    def parse(line):
         m = SquashfsDevice.LINE_RE.match(line)
         if not m:
             raise SquashfsInvalidLineFormat('invalid line format')
-        SquashfsMember.__init__(self, archive, m.group('member_name'))
-        self._mode = SquashfsDevice.KIND_MAP[m.group('kind')]
-        self._major = int(m.group('major'))
-        self._minor = int(m.group('minor'))
+        d = m.groupdict()
+        try:
+            d['mode'] = SquashfsDevice.KIND_MAP[d['kind']]
+            del d['kind']
+        except KeyError:
+            raise SquashfsInvalidLineFormat('unknown device kind %s' % d['kind'])
+        try:
+            d['major'] = int(d['major'])
+        except ValueError:
+            raise SquashfsInvalidLineFormat('unable to parse major number %s' % d['major'])
+        try:
+            d['minor'] = int(d['minor'])
+        except ValueError:
+            raise SquashfsInvalidLineFormat('unable to parse minor number %s' % d['minor'])
+        return d
+
+    def __init__(self, archive, member_name, mode, major, minor):
+        SquashfsMember.__init__(self, archive, member_name)
+        self._mode = mode
+        self._major = major
+        self._minor = minor
 
     def get_device(self):
         return (self._mode, self._major, self._minor)
@@ -172,14 +204,15 @@ class SquashfsContainer(Archive):
                 continue
             if len(line) > 0 and line[0] in SQUASHFS_LS_MAPPING:
                 try:
-                    yield SQUASHFS_LS_MAPPING[line[0]](self, line)
+                    cls = SQUASHFS_LS_MAPPING[line[0]]
+                    yield cls, cls.parse(line)
                 except SquashfsInvalidLineFormat:
                     logger.warning('Invalid squashfs entry: %s', line)
             else:
                 logger.warning('Unknown squashfs entry: %s', line)
 
     def open_archive(self):
-        return dict([(m.name, m) for m in self.entries(self.source.path)])
+        return {kwargs['member_name']: (cls, kwargs) for cls, kwargs in self.entries(self.source.path)}
 
     def close_archive(self):
         pass
@@ -197,7 +230,8 @@ class SquashfsContainer(Archive):
         return '%s%s' % (dest_dir, member_name)
 
     def get_member(self, member_name):
-        return self.archive[member_name]
+        cls, kwargs = self.archive[member_name]
+        return cls(self, **kwargs)
 
 
 class SquashfsFile(File):

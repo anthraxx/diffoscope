@@ -116,6 +116,10 @@ class RequiredToolNotFound(Exception):
             return None
         return providers.get(get_current_os(), None)
 
+class OutputParsingError(Exception):
+    def __init__(self, command, object):
+        self.command = command
+        self.object_class = object.__class__
 
 def get_current_os():
     import platform

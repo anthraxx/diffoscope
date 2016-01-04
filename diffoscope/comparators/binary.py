@@ -35,7 +35,7 @@ except ImportError:
 import magic
 from diffoscope.config import Config
 from diffoscope.difference import Difference
-from diffoscope import tool_required, RequiredToolNotFound, logger
+from diffoscope import tool_required, RequiredToolNotFound, OutputParsingError, logger
 
 
 def hexdump_fallback(path):
@@ -216,6 +216,12 @@ class File(object, metaclass=ABCMeta):
                 package = e.get_package()
                 if package:
                     difference.add_comment("Install '%s' to get a better output." % package)
+            except OutputParsingError as e:
+                difference = self.compare_bytes(other, source=source)
+                if difference is None:
+                    return None
+                difference.add_comment("Error parsing output of `%s` for %s" %
+                        (e.command, e.object_class))
             return difference
         return self.compare_bytes(other, source)
 

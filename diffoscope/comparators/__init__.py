@@ -46,7 +46,7 @@ except ImportError as ex:
 from diffoscope.comparators.device import Device
 from diffoscope.comparators.dex import DexFile
 from diffoscope.comparators.directory import Directory, compare_directories
-from diffoscope.comparators.elf import ElfFile, StaticLibFile
+from diffoscope.comparators.elf import ElfFile, ElfSection, StaticLibFile
 from diffoscope.comparators.fsimage import FsImageFile
 from diffoscope.comparators.fonts import TtfFile
 from diffoscope.comparators.gettext import MoFile
@@ -127,6 +127,7 @@ FILE_CLASSES = (
     DotDscFile,
     Md5sumsFile,
     DebDataTarFile,
+    ElfSection,
     TextFile,
     Bzip2File,
     CpioFile,

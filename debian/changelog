@@ -1,3 +1,29 @@
+diffoscope (45) unstable; urgency=medium
+
+  [ Rainer Müller ]
+  * Fix typo in Mach-O comparator.
+
+  [ Jérémy Bobbio ]
+  * Ensure that we always get path names from libarchive as str.
+    (Closes: #808541)
+  * Read ext4 reference diff using UTF-8 to ensure that the test suite
+    works when run under various locales.
+  * Replace file path by a fixed placeholder in readelf and objdump output.
+    This will work better when comparing ELF files given on the command line.
+  * Read lines using an iterator instead of loading a full list in memory.
+    This greatly help diffoscope when running on large binaries. Thanks Mike
+    Hommey for the report and good test case. (Closes: #808120)
+  * Properly report lines we can't parse in squashfs listing.
+  * Correctly parse squashfs device entries with device minors larger than 3
+    digits. Thanks sajolida for providing the samples.
+  * Use libarchive to list files in tar and cpio archives. The output of cpio
+    and tar is too hard to control properly and tend to vary over time.
+    (Closes: #808809)
+  * Ensure files extracted from a squashfs image are deleted after being
+    compared instead being done examining the image.
+
+ -- Jérémy Bobbio <lunar@debian.org>  Mon, 04 Jan 2016 16:24:50 +0100
+
 diffoscope (44) unstable; urgency=medium
 
   [ Mike Hommey ]

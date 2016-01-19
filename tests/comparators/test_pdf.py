@@ -59,6 +59,8 @@ def test_internal_diff(differences):
     expected_diff = open(os.path.join(os.path.dirname(__file__), '../data/pdf_internal_expected_diff')).read()
     assert differences[1].unified_diff == expected_diff
 
+@pytest.mark.skipif(tool_missing('pdftk') or tool_missing('pdftotext'),
+                    reason='missing pdftk or pdftotext')
 def test_compare_non_existing(monkeypatch, pdf1):
     monkeypatch.setattr(Config, 'new_file', True)
     difference = pdf1.compare(NonExistingFile('/nonexisting', pdf1))

@@ -52,6 +52,7 @@ def test_diff(differences):
     expected_diff = open(os.path.join(os.path.dirname(__file__), '../data/sqlite3_expected_diff')).read()
     assert differences[0].unified_diff == expected_diff
 
+@pytest.mark.skipif(tool_missing('sqlite3'), reason='missing sqlite3')
 def test_compare_non_existing(monkeypatch, sqlite3db1):
     monkeypatch.setattr(Config.general, 'new_file', True)
     difference = sqlite3db1.compare(NonExistingFile('/nonexisting', sqlite3db1))

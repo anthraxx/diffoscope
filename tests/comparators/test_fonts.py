@@ -52,6 +52,7 @@ def test_diff(differences):
     expected_diff = open(os.path.join(os.path.dirname(__file__), '../data/ttf_expected_diff')).read()
     assert differences[0].unified_diff == expected_diff
 
+@pytest.mark.skipif(tool_missing('showttf'), reason='missing showttf')
 def test_compare_non_existing(monkeypatch, ttf1):
     monkeypatch.setattr(Config, 'new_file', True)
     difference = ttf1.compare(NonExistingFile('/nonexisting', ttf1))

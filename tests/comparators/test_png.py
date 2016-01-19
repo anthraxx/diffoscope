@@ -52,6 +52,7 @@ def test_diff(differences):
     expected_diff = open(os.path.join(os.path.dirname(__file__), '../data/png_expected_diff')).read()
     assert differences[0].unified_diff == expected_diff
 
+@pytest.mark.skipif(tool_missing('sng'), reason='missing sng')
 def test_compare_non_existing(monkeypatch, png1):
     monkeypatch.setattr(Config, 'new_file', True)
     difference = png1.compare(NonExistingFile('/nonexisting', png1))

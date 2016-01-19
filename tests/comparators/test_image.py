@@ -53,6 +53,7 @@ def test_diff(differences):
     expected_diff = open(os.path.join(os.path.dirname(__file__), '../data/image_expected_diff')).read()
     assert differences[0].unified_diff == expected_diff
 
+@pytest.mark.skipif(tool_missing('img2txt'), reason='img2txt')
 def test_compare_non_existing(monkeypatch, image1):
     monkeypatch.setattr(Config, 'new_file', True)
     difference = image1.compare(NonExistingFile('/nonexisting', image1))

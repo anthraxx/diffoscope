@@ -18,6 +18,7 @@
 # along with diffoscope.  If not, see <http://www.gnu.org/licenses/>.
 
 from contextlib import contextmanager
+import hashlib
 from io import StringIO
 import os
 import os.path
@@ -224,17 +225,22 @@ def empty_file_feeder():
 
 def make_feeder_from_raw_reader(in_file, filter=lambda buf: buf):
     def feeder(out_file):
+        max_lines = Config.general.max_diff_input_lines
         line_count = 0
         end_nl = False
+        if max_lines > 0:
+            h = hashlib.sha1()
         for buf in in_file:
             line_count += 1
-            out_file.write(filter(buf))
-            max_lines = Config.general.max_diff_input_lines
-            if max_lines > 0 and line_count >= max_lines:
-                out_file.write('[ Too much input for diff ]{}\n'.format(' ' * out_file.fileno()).encode('utf-8'))
-                end_nl = True
-                break
+            out = filter(buf)
+            if h:
+                h.update(out)
+            if line_count < max_lines:
+                out_file.write(out)
             end_nl = buf[-1] == '\n'
+        if h and line_count >= max_lines:
+            out_file.write('[ Too much input for diff (SHA1: {}) ]\n'.format(h.hexdigest()).encode('utf-8'))
+            end_nl = True
         return end_nl
     return feeder
 

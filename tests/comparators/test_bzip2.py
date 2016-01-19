@@ -77,3 +77,4 @@ def test_compare_non_existing(monkeypatch, bzip1):
     monkeypatch.setattr(Config, 'new_file', True)
     difference = bzip1.compare(NonExistingFile('/nonexisting', bzip1))
     assert difference.source2 == '/nonexisting'
+    assert difference.details[-1].source2 == '/dev/null'

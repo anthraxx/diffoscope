@@ -58,3 +58,4 @@ def test_compare_non_existing(monkeypatch, image1):
     monkeypatch.setattr(Config, 'new_file', True)
     difference = image1.compare(NonExistingFile('/nonexisting', image1))
     assert difference.source2 == '/nonexisting'
+    assert len(difference.details) > 0

@@ -57,3 +57,4 @@ def test_compare_non_existing(monkeypatch, ttf1):
     monkeypatch.setattr(Config, 'new_file', True)
     difference = ttf1.compare(NonExistingFile('/nonexisting', ttf1))
     assert difference.source2 == '/nonexisting'
+    assert len(difference.details) > 0

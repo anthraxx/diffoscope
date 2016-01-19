@@ -53,6 +53,7 @@ def test_obj_compare_non_existing(monkeypatch, obj1):
     monkeypatch.setattr(Config, 'new_file', True)
     difference = obj1.compare(NonExistingFile('/nonexisting', obj1))
     assert difference.source2 == '/nonexisting'
+    assert len(difference.details) > 0
 
 @pytest.mark.skipif(tool_missing('otool') or tool_missing('lipo'), reason='missing otool or lipo')
 def test_diff(obj_differences):

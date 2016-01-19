@@ -65,3 +65,4 @@ def test_compare_non_existing(monkeypatch, pdf1):
     monkeypatch.setattr(Config, 'new_file', True)
     difference = pdf1.compare(NonExistingFile('/nonexisting', pdf1))
     assert difference.source2 == '/nonexisting'
+    assert len(difference.details) > 0

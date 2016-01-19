@@ -57,3 +57,4 @@ def test_compare_non_existing(monkeypatch, sqlite3db1):
     monkeypatch.setattr(Config.general, 'new_file', True)
     difference = sqlite3db1.compare(NonExistingFile('/nonexisting', sqlite3db1))
     assert difference.source2 == '/nonexisting'
+    assert len(difference.details) > 0

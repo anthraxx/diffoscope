@@ -157,6 +157,14 @@ NO_COMMENT = None
 
 
 class Container(object, metaclass=ABCMeta):
+    def __new__(cls, source):
+        if isinstance(source, NonExistingFile):
+            new = super(Container, NonExistingContainer).__new__(NonExistingContainer)
+            new.__init__(source)
+            return new
+        else:
+            return super(Container, cls).__new__(cls)
+
     def __init__(self, source):
         self._source = source
 
@@ -210,6 +218,14 @@ class Container(object, metaclass=ABCMeta):
 
     def compare(self, other, source=None):
         return starmap(diffoscope.comparators.compare_commented_files, self.comparisons(other))
+
+
+class NonExistingContainer(Container):
+    def get_member_names(self):
+        return self.source.other_file.as_container.get_member_names()
+
+    def get_member(self, member_name):
+        return NonExistingFile('/dev/null')
 
 
 class ArchiveMember(File):

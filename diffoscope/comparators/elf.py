@@ -206,8 +206,7 @@ class ElfSection(File):
 
     @property
     def path(self):
-        raise NotImplementedError('elf sections cannot be extracted')
-        #return self._elf_container.source.path
+        return self._elf_container.source.path
 
     def cleanup(self):
         pass
@@ -225,6 +224,10 @@ class ElfSection(File):
         # Always force diff of the section
         return False
 
+    @property
+    def fuzzy_hash(self):
+        return None
+
     @staticmethod
     def recognizes(file):
         # No file should be recognized as an elf section
@@ -232,22 +235,19 @@ class ElfSection(File):
 
     def compare(self, other, source=None):
         return Difference.from_command(ReadElfSection,
-                self._elf_container.source.path,
-                other._elf_container.source.path,
+                self.path, other.path,
                 command_args=[self._name])
 
 class ElfCodeSection(ElfSection):
     def compare(self, other, source=None):
         return Difference.from_command(ObjdumpDisassembleSection,
-                self._elf_container.source.path,
-                other._elf_container.source.path,
+                self.path, other.path,
                 command_args=[self._name])
 
 class ElfStringSection(ElfSection):
     def compare(self, other, source=None):
         return Difference.from_command(ReadelfStringSection,
-                self._elf_container.source.path,
-                other._elf_container.source.path,
+                self.path, other.path,
                 command_args=[self._name])
 
 

@@ -52,6 +52,7 @@ def test_obj_compare_non_existing(monkeypatch, obj1):
     monkeypatch.setattr(Config, 'new_file', True)
     difference = obj1.compare(NonExistingFile('/nonexisting', obj1))
     assert difference.source2 == '/nonexisting'
+    assert len(difference.details) > 0
 
 @pytest.mark.skipif(tool_missing('readelf'), reason='missing readelf')
 def test_diff(obj_differences):
@@ -96,3 +97,4 @@ def test_lib_compare_non_existing(monkeypatch, lib1):
     monkeypatch.setattr(Config, 'new_file', True)
     difference = lib1.compare(NonExistingFile('/nonexisting', lib1))
     assert difference.source2 == '/nonexisting'
+    assert len(difference.details) > 0

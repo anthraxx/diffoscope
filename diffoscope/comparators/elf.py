@@ -165,12 +165,19 @@ class ObjdumpSection(Command):
         return line
 
 class ObjdumpDisassembleSection(ObjdumpSection):
+    RE_SYMBOL_COMMENT = re.compile(rb'^( [0-9a-f]+:[^#]+)# [0-9a-f]+ <[^>]+>$')
+
     def objdump_options(self):
         # With '--line-numbers' we get the source filename and line within the
         # disassembled instructions.
         # objdump can get the debugging information from the elf or from the
         # stripped symbols file specified in the .gnu_debuglink section
         return ['--line-numbers', '--disassemble']
+
+    def filter(self, line):
+        line = super().filter(line)
+        return ObjdumpDisassembleSection.RE_SYMBOL_COMMENT.sub(r'\1', line)
+
 
 READELF_COMMANDS = [ReadelfFileHeader,
                     ReadelfProgramHeader,

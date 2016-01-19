@@ -1,3 +1,28 @@
+diffoscope (46) unstable; urgency=low
+
+  [ Dhole ]
+  * Improve ELF comparisons by performing comparisons section by section.
+    (Closes: #808197)
+
+  [ Jérémy Bobbio ]
+  * Further split readelf output when examining ELF files.
+  * Skip dumping ELF sections that are already covered by previous readelf
+    calls to avoid redundant output. Thanks Mike Hommey for the report.
+    (Closes: #808267)
+  * Fix ELF comparisons against non-existing files.
+  * Filter symbols for IP-relative ops from ELF disassembled output as
+    they will create differences that don't really exist. Thanks Mike Hommey
+    for the report and test cases. (Closes: #808207)
+  * Add forgotten requirements for tests with non-existing files.
+  * Improve tests for comparisons against non-existing files.
+  * Respect order of containers when performing comparisons. It makes the
+    output somewhat nicer, especially for things that are expected to be in a
+    certain order, like ELF sections.
+  * Fix comparisons of directory with broken symlinks. Thanks Tuomas Tynkkynen
+    for reporting the issue. (Closes: #810825)
+
+ -- Jérémy Bobbio <lunar@debian.org>  Tue, 19 Jan 2016 16:46:47 +0100
+
 diffoscope (45) unstable; urgency=medium
 
   [ Rainer Müller ]

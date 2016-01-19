@@ -49,41 +49,79 @@ class Readelf(Command):
         except UnicodeDecodeError:
             return line
 
+    @staticmethod
+    def should_skip_section(section_name, section_type):
+        return False
+
+
 class ReadelfFileHeader(Readelf):
     def readelf_options(self):
         return ['--file-header']
+
 
 class ReadelfProgramHeader(Readelf):
     def readelf_options(self):
         return ['--program-header']
 
+
 class ReadelfSections(Readelf):
     def readelf_options(self):
         return ['--sections']
+
 
 class ReadelfSymbols(Readelf):
     def readelf_options(self):
         return ['--symbols']
 
+    @staticmethod
+    def should_skip_section(section_name, section_type):
+        return section_type in {'DYNSYM', 'SYMTAB'}
+
+
 class ReadelfRelocs(Readelf):
     def readelf_options(self):
         return ['--relocs']
+
+    @staticmethod
+    def should_skip_section(section_name, section_type):
+        return section_type in {'REL', 'RELA'}
+
 
 class ReadelfDynamic(Readelf):
     def readelf_options(self):
         return ['--dynamic']
 
+    @staticmethod
+    def should_skip_section(section_name, section_type):
+        return section_type == 'DYNAMIC'
+
+
 class ReadelfNotes(Readelf):
     def readelf_options(self):
         return ['--notes']
+
+    @staticmethod
+    def should_skip_section(section_name, section_type):
+        return section_type == 'NOTE'
+
 
 class RedaelfVersionInfo(Readelf):
     def readelf_options(self):
         return ['--version-info']
 
+    @staticmethod
+    def should_skip_section(section_name, section_type):
+        return section_type in {'VERDEF', 'VERSYM', 'VERNEED'}
+
+
 class ReadelfDebugDump(Readelf):
     def readelf_options(self):
         return ['--debug-dump']
+
+    @staticmethod
+    def should_skip_section(section_name, section_type):
+        return section_name.startswith('.debug_') or section_name.startswith('.zdebug_')
+
 
 class ReadElfSection(Readelf):
     def __init__(self, path, section_name, *args, **kwargs):
@@ -134,16 +172,28 @@ class ObjdumpDisassembleSection(ObjdumpSection):
         # stripped symbols file specified in the .gnu_debuglink section
         return ['--line-numbers', '--disassemble']
 
+READELF_COMMANDS = [ReadelfFileHeader,
+                    ReadelfProgramHeader,
+                    ReadelfSections,
+                    ReadelfSymbols,
+                    ReadelfRelocs,
+                    ReadelfDynamic,
+                    ReadelfNotes,
+                    RedaelfVersionInfo,
+                    ReadelfDebugDump,
+                   ]
+
 def _compare_elf_data(path1, path2):
-    return [Difference.from_command(ReadelfFileHeader, path1, path2),
-            Difference.from_command(ReadelfProgramHeader, path1, path2),
-            Difference.from_command(ReadelfSections, path1, path2),
-            Difference.from_command(ReadelfSymbols, path1, path2),
-            Difference.from_command(ReadelfRelocs, path1, path2),
-            Difference.from_command(ReadelfDynamic, path1, path2),
-            Difference.from_command(ReadelfNotes, path1, path2),
-            Difference.from_command(RedaelfVersionInfo, path1, path2),
-            Difference.from_command(ReadelfDebugDump, path1, path2)]
+    return [Difference.from_command(cmd, path1, path2) for cmd in READELF_COMMANDS]
+
+
+def _should_skip_section(name, type):
+    for cmd in READELF_COMMANDS:
+        if cmd.should_skip_section(name, type):
+            logger.debug('skipping section %s, covered by %s', name, cmd)
+            return True
+    return False
+
 
 class ElfSection(File):
     def __init__(self, elf_container, member_name):
@@ -202,7 +252,7 @@ class ElfStringSection(ElfSection):
 
 
 class ElfContainer(Container):
-    SECTION_TYPES = {'X': ElfCodeSection, 'S': ElfStringSection, '_': ElfSection}
+    SECTION_FLAG_MAPPING = {'X': ElfCodeSection, 'S': ElfStringSection, '_': ElfSection}
 
     @tool_required('readelf')
     def __init__(self, *args, **kwargs):
@@ -226,13 +276,15 @@ class ElfContainer(Container):
                     break
                 # Strip number column because there may be spaces in the brakets
                 line = line.split(']', 1)[1].split()
-                name, flag = line[0], line[6] + '_'
+                name, type, flags = line[0], line[1], line[6] + '_'
+                if _should_skip_section(name, type):
+                    continue
                 # Use first match, with last option being '_' as fallback
-                type = [ElfContainer.SECTION_TYPES[type] for type in flag if \
-                        type in ElfContainer.SECTION_TYPES][0]
-                self._sections[name] = type
+                elf_class = [ElfContainer.SECTION_FLAG_MAPPING[flag] for flag in flags if \
+                             flag in ElfContainer.SECTION_FLAG_MAPPING][0]
+                self._sections[name] = elf_class
                 self._section_list.append(name)
-                logger.debug('adding %s section as %s', name, type)
+                logger.debug('adding section %s (%s) as %s', name, type, elf_class)
         except Exception as e:
             command = ' '.join(cmd)
             logger.debug('OutputParsingError in %s from `%s` output - %s:%s'

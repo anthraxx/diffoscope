@@ -49,9 +49,37 @@ class Readelf(Command):
         except UnicodeDecodeError:
             return line
 
-class ReadelfAll(Readelf):
+class ReadelfFileHeader(Readelf):
     def readelf_options(self):
-        return ['--all']
+        return ['--file-header']
+
+class ReadelfProgramHeader(Readelf):
+    def readelf_options(self):
+        return ['--program-header']
+
+class ReadelfSections(Readelf):
+    def readelf_options(self):
+        return ['--sections']
+
+class ReadelfSymbols(Readelf):
+    def readelf_options(self):
+        return ['--symbols']
+
+class ReadelfRelocs(Readelf):
+    def readelf_options(self):
+        return ['--relocs']
+
+class ReadelfDynamic(Readelf):
+    def readelf_options(self):
+        return ['--dynamic']
+
+class ReadelfNotes(Readelf):
+    def readelf_options(self):
+        return ['--notes']
+
+class RedaelfVersionInfo(Readelf):
+    def readelf_options(self):
+        return ['--version-info']
 
 class ReadelfDebugDump(Readelf):
     def readelf_options(self):
@@ -107,7 +135,14 @@ class ObjdumpDisassembleSection(ObjdumpSection):
         return ['--line-numbers', '--disassemble']
 
 def _compare_elf_data(path1, path2):
-    return [Difference.from_command(ReadelfAll, path1, path2),
+    return [Difference.from_command(ReadelfFileHeader, path1, path2),
+            Difference.from_command(ReadelfProgramHeader, path1, path2),
+            Difference.from_command(ReadelfSections, path1, path2),
+            Difference.from_command(ReadelfSymbols, path1, path2),
+            Difference.from_command(ReadelfRelocs, path1, path2),
+            Difference.from_command(ReadelfDynamic, path1, path2),
+            Difference.from_command(ReadelfNotes, path1, path2),
+            Difference.from_command(RedaelfVersionInfo, path1, path2),
             Difference.from_command(ReadelfDebugDump, path1, path2)]
 
 class ElfSection(File):

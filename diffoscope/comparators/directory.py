@@ -82,6 +82,8 @@ def compare_meta(path1, path2):
         differences.append(Difference.from_command(Stat, path1, path2))
     except RequiredToolNotFound:
         logger.warn("'stat' not found! Is PATH wrong?")
+    if os.path.islink(path1) or os.path.islink(path2):
+        return [d for d in differences if d is not None]
     try:
         lsattr1 = lsattr(path1)
         lsattr2 = lsattr(path2)
@@ -171,4 +173,4 @@ class DirectoryContainer(Container):
         return names
 
     def get_member(self, member_name):
-        return FilesystemFile(os.path.join(self.source.path, member_name))
+        return diffoscope.comparators.specialize(FilesystemFile(os.path.join(self.source.path, member_name)))

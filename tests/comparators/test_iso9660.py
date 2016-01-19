@@ -59,16 +59,16 @@ def test_iso9660_rockridge(differences):
 
 @pytest.mark.skipif(tool_missing('isoinfo'), reason='missing isoinfo')
 def test_symlink(differences):
-    assert differences[2].comment == 'symlink'
+    assert differences[3].comment == 'symlink'
     expected_diff = open(os.path.join(os.path.dirname(__file__), '../data/symlink_expected_diff')).read()
-    assert differences[2].unified_diff == expected_diff
+    assert differences[3].unified_diff == expected_diff
 
 @pytest.mark.skipif(tool_missing('isoinfo'), reason='missing isoinfo')
 def test_compressed_files(differences):
-    assert differences[3].source1 == 'text'
-    assert differences[3].source2 == 'text'
+    assert differences[2].source1 == 'text'
+    assert differences[2].source2 == 'text'
     expected_diff = open(os.path.join(os.path.dirname(__file__), '../data/text_ascii_expected_diff')).read()
-    assert differences[3].unified_diff == expected_diff
+    assert differences[2].unified_diff == expected_diff
 
 @pytest.mark.skipif(tool_missing('isoinfo'), reason='missing isoinfo')
 def test_compare_non_existing(monkeypatch, iso1):

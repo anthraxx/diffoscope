@@ -18,6 +18,7 @@
 # You should have received a copy of the GNU General Public License
 # along with diffoscope.  If not, see <http://www.gnu.org/licenses/>.
 
+from collections import OrderedDict
 from contextlib import contextmanager
 import re
 import subprocess
@@ -212,7 +213,7 @@ class SquashfsContainer(Archive):
                 logger.warning('Unknown squashfs entry: %s', line)
 
     def open_archive(self):
-        return {kwargs['member_name']: (cls, kwargs) for cls, kwargs in self.entries(self.source.path)}
+        return OrderedDict([(kwargs['member_name'], (cls, kwargs)) for cls, kwargs in self.entries(self.source.path)])
 
     def close_archive(self):
         pass

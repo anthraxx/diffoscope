@@ -21,20 +21,6 @@
 +-rw----     0.0 fat      655 b- defX 15-Oct-27 11:33 nav.xhtml
 +-rw----     0.0 fat      615 b- defX 15-Oct-27 11:33 ch001.xhtml
 +9 files, 4535 bytes uncompressed, 2325 bytes compressed:  48.7%
-@@ -8,12 +8,12 @@
-   <title>Test Ebook</title>
-   <link rel="stylesheet" type="text/css" href="stylesheet.css" />
- </head>
- <body>
- <div id="test-ebook" class="section level1 unnumbered">
- <h1>Test Ebook</h1>
- <p>Hello World!</p>
--<p>Time: 12:32</p>
-+<p>Time: 12:33</p>
- </div>
- </body>
- </html>
- 
 @@ -1,13 +1,13 @@
  <?xml version="1.0" encoding="UTF-8"?>
  <package version="2.0" xmlns="http://www.idpf.org/2007/opf" unique-identifier="epub-id-1">
@@ -64,3 +50,17 @@
    <docTitle>
      <text>Test Ebook</text>
    </docTitle>
+@@ -8,12 +8,12 @@
+   <title>Test Ebook</title>
+   <link rel="stylesheet" type="text/css" href="stylesheet.css" />
+ </head>
+ <body>
+ <div id="test-ebook" class="section level1 unnumbered">
+ <h1>Test Ebook</h1>
+ <p>Hello World!</p>
+-<p>Time: 12:32</p>
++<p>Time: 12:33</p>
+ </div>
+ </body>
+ </html>
+ 

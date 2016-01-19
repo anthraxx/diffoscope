@@ -51,12 +51,12 @@ def differences(epub1, epub2):
 def test_differences(differences):
     assert differences[0].source1 == 'zipinfo {}'
     assert differences[0].source2 == 'zipinfo {}'
-    assert differences[1].source1 == 'ch001.xhtml'
-    assert differences[1].source2 == 'ch001.xhtml'
-    assert differences[2].source1 == 'content.opf'
-    assert differences[2].source2 == 'content.opf'
-    assert differences[3].source1 == 'toc.ncx'
-    assert differences[3].source2 == 'toc.ncx'
+    assert differences[1].source1 == 'content.opf'
+    assert differences[1].source2 == 'content.opf'
+    assert differences[2].source1 == 'toc.ncx'
+    assert differences[2].source2 == 'toc.ncx'
+    assert differences[3].source1 == 'ch001.xhtml'
+    assert differences[3].source2 == 'ch001.xhtml'
     expected_diff = open(os.path.join(os.path.dirname(__file__), '../data/epub_expected_diffs')).read()
     assert expected_diff == "".join(map(lambda x: x.unified_diff, differences))
 

@@ -51,17 +51,17 @@ def test_listing(differences):
     assert differences[0].unified_diff == expected_diff
 
 def test_symlinks(differences):
-    assert differences[1].source1 == 'dir/link'
-    assert differences[1].source2 == 'dir/link'
-    assert differences[1].comment == 'symlink'
+    assert differences[2].source1 == 'dir/link'
+    assert differences[2].source2 == 'dir/link'
+    assert differences[2].comment == 'symlink'
     expected_diff = open(os.path.join(os.path.dirname(__file__), '../data/symlink_expected_diff')).read()
-    assert differences[1].unified_diff == expected_diff
+    assert differences[2].unified_diff == expected_diff
 
 def test_text_file(differences):
-    assert differences[2].source1 == 'dir/text'
-    assert differences[2].source2 == 'dir/text'
+    assert differences[1].source1 == 'dir/text'
+    assert differences[1].source2 == 'dir/text'
     expected_diff = open(os.path.join(os.path.dirname(__file__), '../data/text_ascii_expected_diff')).read()
-    assert differences[2].unified_diff == expected_diff
+    assert differences[1].unified_diff == expected_diff
 
 def test_compare_non_existing(monkeypatch, tar1):
     monkeypatch.setattr(Config.general, 'new_file', True)

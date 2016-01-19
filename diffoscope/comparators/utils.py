@@ -18,6 +18,7 @@
 # along with diffoscope.  If not, see <http://www.gnu.org/licenses/>.
 
 from abc import ABCMeta, abstractmethod
+from collections import OrderedDict
 from contextlib import contextmanager
 from io import BytesIO
 from itertools import starmap
@@ -174,7 +175,7 @@ class Container(object, metaclass=ABCMeta):
 
     def get_members(self):
         """Returns a directory. The key is what is used to match when comparing containers."""
-        return {name: self.get_member(name) for name in self.get_member_names()}
+        return OrderedDict([(name, self.get_member(name)) for name in self.get_member_names()])
 
     def lookup_file(self, *names):
         """Try to fetch a specific file by digging in containers."""
@@ -202,19 +203,24 @@ class Container(object, metaclass=ABCMeta):
 
     def comparisons(self, other):
         my_members = self.get_members()
+        my_reminders = OrderedDict()
         other_members = other.get_members()
-        for name in sorted(my_members.keys() & other_members.keys()):
-            yield my_members.pop(name), other_members.pop(name), NO_COMMENT
+        # keep it sorted like my members
+        while my_members:
+            my_member_name, my_member = my_members.popitem(last=False)
+            if my_member_name in other_members:
+                yield my_member, other_members.pop(my_member_name), NO_COMMENT
+            else:
+                my_reminders[my_member_name] = my_member
+        my_members = my_reminders
         for my_name, other_name, score in diffoscope.comparators.perform_fuzzy_matching(my_members, other_members):
             comment = 'Files similar despite different names (difference score: %d)' % score
             yield my_members.pop(my_name), other_members.pop(other_name), comment
         if Config.general.new_file:
-            for my_name in my_members.keys() - other_members.keys():
-                my_file = my_members[my_name]
-                yield my_file, NonExistingFile('/dev/null', my_file), NO_COMMENT
-            for other_name in other_members.keys() - my_members.keys():
-                other_file = other_members[other_name]
-                yield NonExistingFile('/dev/null', other_file), other_file, NO_COMMENT
+            for my_member in my_members.values():
+                yield my_member, NonExistingFile('/dev/null', my_member), NO_COMMENT
+            for other_member in other_members.values():
+                yield NonExistingFile('/dev/null', other_member), other_member, NO_COMMENT
 
     def compare(self, other, source=None):
         return starmap(diffoscope.comparators.compare_commented_files, self.comparisons(other))

@@ -17,6 +17,7 @@
 # You should have received a copy of the GNU General Public License
 # along with diffoscope.  If not, see <http://www.gnu.org/licenses/>.
 
+from collections import OrderedDict
 from contextlib import contextmanager
 from functools import partial
 import hashlib
@@ -84,7 +85,7 @@ class DebControlContainer(Container):
             return re.compile(re.escape(version))
 
     def get_members(self):
-        return {self._trim_version_number(name): self.get_member(name) for name in self.get_member_names()}
+        return OrderedDict([(self._trim_version_number(name), self.get_member(name)) for name in self.get_member_names()])
 
     def get_member_names(self):
         return [d['name'] for d in self.source.deb822.get('Files')]

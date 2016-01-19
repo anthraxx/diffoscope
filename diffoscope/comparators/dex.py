@@ -17,6 +17,7 @@
 # You should have received a copy of the GNU General Public License
 # along with diffoscope.  If not, see <http://www.gnu.org/licenses/>.
 
+from collections import OrderedDict
 import re
 import os.path
 import subprocess
@@ -38,7 +39,7 @@ class DexContainer(Archive):
         pass
 
     def get_members(self):
-        return {'dex-content': self.get_member(self.get_member_names()[0])}
+        return OrderedDict({'dex-content': self.get_member(self.get_member_names()[0])})
 
     def get_member_names(self):
         return [get_compressed_content_name(self.source.path, '.dex') + '.jar']

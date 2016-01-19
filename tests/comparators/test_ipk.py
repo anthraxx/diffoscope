@@ -52,8 +52,8 @@ def test_metadata(differences):
     assert differences[0].unified_diff == expected_diff
 
 def test_compressed_files(differences):
-    assert differences[1].details[1].source1 == './control.tar.gz'
-    assert differences[1].details[2].source1 == './data.tar.gz'
+    assert differences[1].details[1].source1 == './data.tar.gz'
+    assert differences[1].details[2].source1 == './control.tar.gz'
 
 def test_compare_non_existing(monkeypatch, ipk1):
     monkeypatch.setattr(Config.general, 'new_file', True)

@@ -38,11 +38,11 @@ from diffoscope.comparators.cbfs import CbfsFile
 from diffoscope.comparators.cpio import CpioFile
 from diffoscope.comparators.deb import DebFile, Md5sumsFile, DebDataTarFile
 try:
-    from diffoscope.comparators.debian import DotChangesFile, DotDscFile
+    from diffoscope.comparators.debian import DotChangesFile, DotDscFile, DotBuildinfoFile
 except ImportError as ex:
     if hasattr(ex, 'msg') and not ex.msg.startswith("No module named 'debian"):
         raise
-    from diffoscope.comparators.debian_fallback import DotChangesFile, DotDscFile
+    from diffoscope.comparators.debian_fallback import DotChangesFile, DotDscFile, DotBuildinfoFile
 from diffoscope.comparators.device import Device
 from diffoscope.comparators.dex import DexFile
 from diffoscope.comparators.directory import FilesystemDirectory, Directory, compare_directories
@@ -127,6 +127,7 @@ FILE_CLASSES = (
     Device,
     DotChangesFile,
     DotDscFile,
+    DotBuildinfoFile,
     Md5sumsFile,
     DebDataTarFile,
     ElfSection,

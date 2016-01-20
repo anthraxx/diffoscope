@@ -23,10 +23,10 @@ import pytest
 from diffoscope.comparators import specialize
 from diffoscope.comparators.binary import FilesystemFile, NonExistingFile
 try:
-    from diffoscope.comparators.debian import DotChangesFile, DotDscFile
+    from diffoscope.comparators.debian import DotChangesFile, DotDscFile, DotBuildinfoFile
     miss_debian_module = False
 except ImportError:
-    from diffoscope.comparators.debian_fallback import DotChangesFile, DotDscFile
+    from diffoscope.comparators.debian_fallback import DotChangesFile, DotDscFile, DotBuildinfoFile
     miss_debian_module = True
 from diffoscope.config import Config
 from diffoscope.presenters.text import output_text
@@ -143,6 +143,61 @@ def test_dot_dsc_internal_diff(dot_dsc_differences):
 def test_dot_dsc_compare_non_existing(monkeypatch, dot_dsc1):
     monkeypatch.setattr(Config.general, 'new_file', True)
     difference = dot_dsc1.compare(NonExistingFile('/nonexisting', dot_dsc1))
+    output_text(difference, print_func=print)
+    assert difference.source2 == '/nonexisting'
+    assert difference.details[-1].source2 == '/dev/null'
+
+TEST_DOT_BUILDINFO_FILE1_PATH = os.path.join(os.path.dirname(__file__), '../data/test1.buildinfo')
+TEST_DOT_BUILDINFO_FILE2_PATH = os.path.join(os.path.dirname(__file__), '../data/test2.buildinfo')
+
+@pytest.fixture
+def dot_buildinfo1(tmpdir):
+    tmpdir.mkdir('a')
+    dot_buildinfo_path = str(tmpdir.join('a/test_1.buildinfo'))
+    shutil.copy(TEST_DOT_BUILDINFO_FILE1_PATH, dot_buildinfo_path)
+    shutil.copy(TEST_DOT_DSC_FILE1_PATH, str(tmpdir.join('a/test_1.dsc')))
+    shutil.copy(TEST_DEB_FILE1_PATH, str(tmpdir.join('a/test_1_all.deb')))
+    return specialize(FilesystemFile(dot_buildinfo_path))
+
+@pytest.fixture
+def dot_buildinfo2(tmpdir):
+    tmpdir.mkdir('b')
+    dot_buildinfo_path = str(tmpdir.join('b/test_1.buildinfo'))
+    shutil.copy(TEST_DOT_BUILDINFO_FILE2_PATH, dot_buildinfo_path)
+    shutil.copy(TEST_DOT_DSC_FILE2_PATH, str(tmpdir.join('b/test_1.dsc')))
+    shutil.copy(TEST_DEB_FILE2_PATH, str(tmpdir.join('b/test_1_all.deb')))
+    return specialize(FilesystemFile(dot_buildinfo_path))
+
+def test_dot_buildinfo_identification(dot_buildinfo1):
+    assert isinstance(dot_buildinfo1, DotBuildinfoFile)
+
+@pytest.mark.skipif(miss_debian_module, reason='debian module is not installed')
+def test_dot_buildinfo_invalid(tmpdir):
+    tmpdir.mkdir('a')
+    dot_buildinfo_path = str(tmpdir.join('a/test_1.buildinfo'))
+    shutil.copy(TEST_DOT_BUILDINFO_FILE1_PATH, dot_buildinfo_path)
+    # we don't copy the referenced .deb
+    identified = specialize(FilesystemFile(dot_buildinfo_path))
+    assert not isinstance(identified, DotBuildinfoFile)
+
+def test_dot_buildinfo_no_differences(dot_buildinfo1):
+    difference = dot_buildinfo1.compare(dot_buildinfo1)
+    assert difference is None
+
+@pytest.fixture
+def dot_buildinfo_differences(dot_buildinfo1, dot_buildinfo2):
+    difference = dot_buildinfo1.compare(dot_buildinfo2)
+    output_text(difference, print_func=print)
+    return difference.details
+
+@pytest.mark.skipif(miss_debian_module, reason='debian module is not installed')
+def test_dot_buildinfo_internal_diff(dot_buildinfo_differences):
+    assert dot_buildinfo_differences[1].source1 == 'test_1_all.deb'
+
+@pytest.mark.skipif(miss_debian_module, reason='debian module is not installed')
+def test_dot_buildinfo_compare_non_existing(monkeypatch, dot_buildinfo1):
+    monkeypatch.setattr(Config.general, 'new_file', True)
+    difference = dot_buildinfo1.compare(NonExistingFile('/nonexisting', dot_buildinfo1))
     output_text(difference, print_func=print)
     assert difference.source2 == '/nonexisting'
     assert difference.details[-1].source2 == '/dev/null'

@@ -30,6 +30,7 @@ from diffoscope.comparators.binary import File, NonExistingFile
 from diffoscope.comparators.utils import Container, NO_COMMENT
 from diffoscope.config import Config
 from diffoscope.difference import Difference
+from diffoscope import logger
 
 
 DOT_CHANGES_FIELDS = [
@@ -88,7 +89,8 @@ class DebControlContainer(Container):
         return OrderedDict([(self._trim_version_number(name), self.get_member(name)) for name in self.get_member_names()])
 
     def get_member_names(self):
-        return [d['name'] for d in self.source.deb822.get('Files')]
+        field = self.source.deb822.get('Files') or self.source.deb822.get('Checksums-Sha256')
+        return [d['name'] for d in field]
 
     def get_member(self, member_name):
         return DebControlMember(self, member_name)
@@ -120,9 +122,14 @@ class DebControlFile(File):
                                    my_value, other_value,
                                    self.path, other.path, source=field))
         # compare Files as string
-        differences.append(Difference.from_text(self.deb822.get_as_string('Files'),
-                                                other.deb822.get_as_string('Files'),
-                                                self.path, other.path, source='Files'))
+        if self.deb822.get('Files'):
+            differences.append(Difference.from_text(self.deb822.get_as_string('Files'),
+                                                    other.deb822.get_as_string('Files'),
+                                                    self.path, other.path, source='Files'))
+        else:
+            differences.append(Difference.from_text(self.deb822.get_as_string('Checksums-Sha256'),
+                                                    other.deb822.get_as_string('Checksums-Sha256'),
+                                                    self.path, other.path, source='Checksums-Sha256'))
         return differences
 
 class DotChangesFile(DebControlFile):
@@ -139,6 +146,7 @@ class DotChangesFile(DebControlFile):
             return False
         file._deb822 = changes
         return True
+
 
 class DotDscFile(DebControlFile):
     RE_FILE_EXTENSION = re.compile(r'\.dsc$')
@@ -161,4 +169,29 @@ class DotDscFile(DebControlFile):
                 if md5.hexdigest() != d['md5sum']:
                     return False
             file._deb822 = dsc
+        return True
+
+
+class DotBuildinfoFile(DebControlFile):
+    RE_FILE_EXTENSION = re.compile(r'\.buildinfo$')
+
+    @staticmethod
+    def recognizes(file):
+        if not DotBuildinfoFile.RE_FILE_EXTENSION.search(file.name):
+            return False
+        with open(file.path, 'rb') as f:
+            # We can parse .buildinfo just like .dsc
+            buildinfo = Dsc(f)
+            for d in buildinfo.get('Checksums-Sha256'):
+                sha256 = hashlib.sha256()
+                # XXX: this will not work for containers
+                in_buildinfo_path = os.path.join(os.path.dirname(file.path), d['Name'])
+                if not os.path.exists(in_buildinfo_path):
+                    return False
+                with open(in_buildinfo_path, 'rb') as f:
+                    for buf in iter(partial(f.read, 32768), b''):
+                        sha256.update(buf)
+                if sha256.hexdigest() != d['sha256']:
+                    return False
+            file._deb822 = buildinfo
         return True

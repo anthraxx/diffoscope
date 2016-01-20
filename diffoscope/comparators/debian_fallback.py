@@ -47,3 +47,17 @@ class DotDscFile(TextFile):
             return None
         difference.add_comment('Unable to find Python debian module. Falling back to text comparison.')
         return difference
+
+class DotBuildinfoFile(TextFile):
+    RE_FILE_EXTENSION = re.compile(r'\.buildinfo$')
+
+    @staticmethod
+    def recognizes(file):
+        return DotDscFile.RE_FILE_EXTENSION.search(file.name)
+
+    def compare(self, other, source=None):
+        difference = super().compare(other)
+        if not difference:
+            return None
+        difference.add_comment('Unable to find Python debian module. Falling back to text comparison.')
+        return difference

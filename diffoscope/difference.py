@@ -228,6 +228,7 @@ def make_feeder_from_raw_reader(in_file, filter=lambda buf: buf):
         max_lines = Config.general.max_diff_input_lines
         line_count = 0
         end_nl = False
+        h = None
         if max_lines > 0:
             h = hashlib.sha1()
         for buf in in_file:
@@ -235,7 +236,7 @@ def make_feeder_from_raw_reader(in_file, filter=lambda buf: buf):
             out = filter(buf)
             if h:
                 h.update(out)
-            if line_count < max_lines:
+            if max_lines == 0 or line_count < max_lines:
                 out_file.write(out)
             end_nl = buf[-1] == '\n'
         if h and line_count >= max_lines:

@@ -120,6 +120,12 @@ class FilesystemDirectory(object):
     def name(self):
         return self._path
 
+    @property
+    def as_container(self):
+        if not hasattr(self, '_as_container'):
+            self._as_container = DirectoryContainer(self)
+        return self._as_container
+
     def is_directory(self):
         return True
 

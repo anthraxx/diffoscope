@@ -45,7 +45,7 @@ except ImportError as ex:
     from diffoscope.comparators.debian_fallback import DotChangesFile, DotDscFile
 from diffoscope.comparators.device import Device
 from diffoscope.comparators.dex import DexFile
-from diffoscope.comparators.directory import Directory, compare_directories
+from diffoscope.comparators.directory import FilesystemDirectory, Directory, compare_directories
 from diffoscope.comparators.elf import ElfFile, ElfSection, StaticLibFile
 from diffoscope.comparators.fsimage import FsImageFile
 from diffoscope.comparators.fonts import TtfFile
@@ -88,8 +88,10 @@ def compare_root_paths(path1, path2):
         bail_if_non_existing(path1, path2)
     if os.path.isdir(path1) and os.path.isdir(path2):
         return compare_directories(path1, path2)
-    file1 = specialize(FilesystemFile(path1))
-    file2 = specialize(FilesystemFile(path2))
+    container1 = FilesystemDirectory(os.path.dirname(path1)).as_container
+    file1 = specialize(FilesystemFile(path1, container=container1))
+    container2 = FilesystemDirectory(os.path.dirname(path2)).as_container
+    file2 = specialize(FilesystemFile(path2, container=container2))
     return compare_files(file1, file2)
 
 

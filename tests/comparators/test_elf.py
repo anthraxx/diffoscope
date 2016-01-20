@@ -101,16 +101,18 @@ def test_lib_compare_non_existing(monkeypatch, lib1):
     assert difference.source2 == '/nonexisting'
     assert len(difference.details) > 0
 
-TEST_DBGSYM_DIR1_PATH = os.path.join(os.path.dirname(__file__), '../data/dbgsym/add')
-TEST_DBGSYM_DIR2_PATH = os.path.join(os.path.dirname(__file__), '../data/dbgsym/mult')
+TEST_DBGSYM_DEB1_PATH = os.path.join(os.path.dirname(__file__), '../data/dbgsym/add/test-dbgsym_1_amd64.deb')
+TEST_DBGSYM_DEB2_PATH = os.path.join(os.path.dirname(__file__), '../data/dbgsym/mult/test-dbgsym_1_amd64.deb')
 
 @pytest.fixture
 def dbgsym_dir1():
-    return specialize(FilesystemDirectory(TEST_DBGSYM_DIR1_PATH))
+    container = FilesystemDirectory(os.path.dirname(TEST_DBGSYM_DEB1_PATH)).as_container
+    return specialize(FilesystemFile(TEST_DBGSYM_DEB1_PATH, container=container))
 
 @pytest.fixture
 def dbgsym_dir2():
-    return specialize(FilesystemDirectory(TEST_DBGSYM_DIR2_PATH))
+    container = FilesystemDirectory(os.path.dirname(TEST_DBGSYM_DEB2_PATH)).as_container
+    return specialize(FilesystemFile(TEST_DBGSYM_DEB2_PATH, container=container))
 
 @pytest.fixture
 def dbgsym_differences(dbgsym_dir1, dbgsym_dir2):
@@ -119,16 +121,15 @@ def dbgsym_differences(dbgsym_dir1, dbgsym_dir2):
 @pytest.mark.skipif(any([tool_missing(tool) for tool in ['readelf', 'objdump', 'objcopy']]), reason='missing readelf, objdump, or objcopy')
 def test_differences_with_dbgsym(dbgsym_differences):
     output_text(dbgsym_differences, print)
-    assert dbgsym_differences.details[1].source1 == 'test-dbgsym_1_amd64.deb'
-    assert dbgsym_differences.details[1].details[2].source1 == 'data.tar.xz'
-    bin_details = dbgsym_differences.details[1].details[2].details[0].details[0]
+    assert dbgsym_differences.details[2].source1 == 'data.tar.xz'
+    bin_details = dbgsym_differences.details[2].details[0].details[0]
     assert bin_details.source1 == './usr/bin/test'
     assert bin_details.details[1].source1.startswith('objdump')
     assert 'test-cases/dbgsym/package/test.c:2' in bin_details.details[1].unified_diff
 
 @pytest.mark.skipif(any([tool_missing(tool) for tool in ['readelf', 'objdump', 'objcopy']]), reason='missing readelf, objdump, or objcopy')
 def test_original_gnu_debuglink(dbgsym_differences):
-    bin_details = dbgsym_differences.details[1].details[2].details[0].details[0]
+    bin_details = dbgsym_differences.details[2].details[0].details[0]
     assert '.gnu_debuglink' in bin_details.details[2].source1
     expected_gnu_debuglink = open(os.path.join(os.path.dirname(__file__), '../data/gnu_debuglink_expected_diff')).read()
     assert bin_details.details[2].unified_diff == expected_gnu_debuglink

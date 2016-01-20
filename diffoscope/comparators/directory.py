@@ -170,7 +170,7 @@ class DirectoryContainer(Container):
             else:
                 root = root[len(path) + 1:]
             names.extend([os.path.join(root, f) for f in files])
-        return names
+        return sorted(names)
 
     def get_member(self, member_name):
         return diffoscope.comparators.specialize(FilesystemFile(os.path.join(self.source.path, member_name), container=self))

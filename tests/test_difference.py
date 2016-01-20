@@ -27,7 +27,7 @@ def test_too_much_input_for_diff(monkeypatch):
     too_long_text_a = StringIO("a\n" * 21)
     too_long_text_b = StringIO("b\n" * 21)
     difference = Difference.from_text_readers(too_long_text_a, too_long_text_b, 'a', 'b')
-    assert '[ Too much input for diff ]' in difference.unified_diff 
+    assert '[ Too much input for diff ' in difference.unified_diff 
 
 def test_too_long_diff_block_lines(monkeypatch):
     monkeypatch.setattr(Config, 'max_diff_block_lines', 10)

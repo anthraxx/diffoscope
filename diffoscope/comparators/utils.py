@@ -246,10 +246,6 @@ class ArchiveMember(File):
         return self._container
 
     @property
-    def name(self):
-        return self._name
-
-    @property
     def path(self):
         if self._path is None:
             logger.debug('unpacking %s', self._name)

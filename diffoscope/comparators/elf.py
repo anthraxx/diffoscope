@@ -130,7 +130,7 @@ class ReadElfSection(Readelf):
         super().__init__(path, *args, **kwargs)
 
     def readelf_options(self):
-        return ['--hex-dump']
+        return ['--decompress', '--hex-dump']
 
     @tool_required('readelf')
     def cmdline(self):
@@ -139,7 +139,7 @@ class ReadElfSection(Readelf):
 
 class ReadelfStringSection(ReadElfSection):
     def readelf_options(self):
-        return ['--string-dump']
+        return ['--decompress', '--string-dump']
 
 class ObjdumpSection(Command):
     def __init__(self, path, section_name, *args, **kwargs):

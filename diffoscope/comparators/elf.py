@@ -24,6 +24,7 @@ import subprocess
 from diffoscope import tool_required, OutputParsingError
 from diffoscope import logger
 from diffoscope.comparators.binary import File
+from diffoscope.comparators.deb import DebFile, get_build_id_map
 from diffoscope.comparators.utils import get_ar_content, Command, Container
 from diffoscope.difference import Difference
 
@@ -259,6 +260,32 @@ class ElfStringSection(ElfSection):
                 command_args=[self._name])
 
 
+@tool_required('readelf')
+def get_build_id(path):
+    try:
+        output = subprocess.check_output(['readelf', '--notes', path])
+    except subprocess.CalledProcessError as e:
+        logger.debug('Unable to get Build Id for %s: %s', path, e)
+        return None
+    m = re.search(r'^\s+Build ID: ([0-9a-f]+)$', output.decode('utf-8'), flags=re.MULTILINE)
+    if not m:
+        return None
+    return m.group(1)
+
+
+@tool_required('readelf')
+def get_debug_link(path):
+    try:
+        output = subprocess.check_output(['readelf', '--string-dump=.gnu_debuglink', path])
+    except subprocess.CalledProcessError as e:
+        logger.debug('Unable to get Build Id for %s: %s', path, e)
+        return None
+    m = re.search(r'^\s+\[\s+0\]\s+(\S+)$', output.decode('utf-8', errors='replace'), flags=re.MULTILINE)
+    if not m:
+        return None
+    return m.group(1)
+
+
 class ElfContainer(Container):
     SECTION_FLAG_MAPPING = {'X': ElfCodeSection, 'S': ElfStringSection, '_': ElfSection}
 
@@ -268,7 +295,7 @@ class ElfContainer(Container):
         logger.debug('creating ElfContainer for file %s', self.source.path)
         cmd = ['readelf', '--wide', '--section-headers', self.source.path]
         output = subprocess.check_output(cmd, shell=False)
-
+        has_debug_symbols = False
         try:
             output = output.decode('utf-8').split('\n')
             if output[1].startswith('File:'):
@@ -284,6 +311,8 @@ class ElfContainer(Container):
                 # Strip number column because there may be spaces in the brakets
                 line = line.split(']', 1)[1].split()
                 name, type, flags = line[0], line[1], line[6] + '_'
+                if name.startswith('.debug') or name.startswith('.zdebug'):
+                    has_debug_symbols = True
                 if _should_skip_section(name, type):
                     continue
                 # Use first match, with last option being '_' as fallback
@@ -296,6 +325,58 @@ class ElfContainer(Container):
             logger.debug('OutputParsingError in %s from `%s` output - %s:%s'
                     % (self.__class__.__name__, command, e.__class__.__name__, e))
             raise OutputParsingError(command, self)
+        if not has_debug_symbols:
+            self._install_debug_symbols()
+
+    @tool_required('objcopy')
+    def _install_debug_symbols(self):
+        # Figure out if we are in a Debian package first
+        try:
+            deb = self.source.container.source.container.source.container.source
+        except AttributeError:
+            return
+        # It needs to be a .deb and we need access a to a -dbgsym package in
+        # the same .changes, directory or archive
+        if not isinstance(deb, DebFile) and not deb.container:
+            return
+        # Retrieve the Build Id for the ELF file we are exhamining
+        build_id = get_build_id(self.source.path)
+        debuglink = get_debug_link(self.source.path)
+        if not build_id or not debuglink:
+            return
+        logger.debug('Looking for a dbgsym package for Build Id %s (debuglink: %s)', build_id, debuglink)
+        # Build a map of Build-Ids if it doesn't exist yet
+        if not hasattr(deb.container, 'dbgsym_build_id_map'):
+            deb.container.dbgsym_build_id_map = get_build_id_map(deb.container)
+        if not build_id in deb.container.dbgsym_build_id_map:
+            logger.debug('Unable to find a matching debug package for Build Id %s', build_id)
+            return
+        dbgsym_package = deb.container.dbgsym_build_id_map[build_id]
+        debug_file = dbgsym_package.as_container.data_tar.as_container.lookup_file('./usr/lib/debug/.build-id/{0}/{1}.debug'.format(build_id[0:2], build_id[2:]))
+        # Create a .debug directory and link the debug symbols there with the right name
+        dest_path = os.path.join(os.path.dirname(self.source.path), '.debug', os.path.basename(debuglink))
+        os.mkdir(os.path.dirname(dest_path))
+        # If #812089 was fixed, we would just do:
+        #os.link(debug_file.path, dest_path)
+        # But for now, we need to do more complicated things…
+        # 1. Use objcopy to create a file with only the original .gnu_debuglink section
+	#    as we will have to update it to get the CRC right.
+        debuglink_path = '{}.debuglink'.format(self.source.path)
+        subprocess.check_call(['objcopy', '--only-section=.gnu_debuglink', self.source.path, debuglink_path], shell=False, stderr=subprocess.DEVNULL)
+	# 2. Monkey-patch the ElfSection object created for the .gnu_debuglink to
+        #    change the path to point to this new file
+        section = self._sections['.gnu_debuglink']
+        class MonkeyPatchedElfSection(section.__class__):
+            @property
+            def path(self):
+                return debuglink_path
+        section.__class__ = MonkeyPatchedElfSection
+        # 3. Create a file with the debug symbols in uncompressed form
+        subprocess.check_call(['objcopy', '--decompress-debug-sections', debug_file.path, dest_path], shell=False, stderr=subprocess.DEVNULL)
+        # 4. Update the .gnu_debuglink to this new file so we get the CRC right
+        subprocess.check_call(['objcopy', '--remove-section=.gnu_debuglink', self.source.path], shell=False, stderr=subprocess.DEVNULL)
+        subprocess.check_call(['objcopy', '--add-gnu-debuglink=%s' % dest_path, self.source.path], shell=False, stderr=subprocess.DEVNULL)
+        logger.debug('Installed debug symbols at %s', dest_path)
 
     def get_member_names(self):
         return self._sections.keys()

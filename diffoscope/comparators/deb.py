@@ -19,8 +19,13 @@
 
 import re
 import os.path
+try:
+    from debian import deb822
+except ImportError:
+    deb822 = None
 from diffoscope import logger
 from diffoscope.difference import Difference
+import diffoscope.comparators
 from diffoscope.comparators.binary import File
 from diffoscope.comparators.libarchive import LibarchiveContainer, list_libarchive
 from diffoscope.comparators.utils import \
@@ -28,8 +33,26 @@ from diffoscope.comparators.utils import \
 from diffoscope.comparators.tar import TarContainer
 
 
+# Return a dict with build ids as keys and file as values for all deb in the
+# given container
+def get_build_id_map(container):
+    d = {}
+    for member in container.get_members().values():
+        diffoscope.comparators.specialize(member)
+        if isinstance(member, DebFile) and member.control:
+            build_ids = member.control.get('Build-Ids', None)
+            if build_ids:
+                d.update({build_id: member for build_id in build_ids.split(',')})
+    return d
+
+
 class DebContainer(LibarchiveContainer):
-    pass
+    @property
+    def data_tar(self):
+        for name, member in self.get_members().items():
+            if name.startswith('data.tar.'):
+                diffoscope.comparators.specialize(member)
+                return diffoscope.comparators.specialize(member.as_container.get_member('content'))
 
 
 class DebFile(File):
@@ -50,6 +73,17 @@ class DebFile(File):
                 logger.debug('Unable to find a md5sums file')
                 self._md5sums = {}
         return self._md5sums
+
+    @property
+    def control(self):
+        if not deb822:
+            return None
+        if not hasattr(self, '_control'):
+            control_file = self.as_container.lookup_file('control.tar.gz', 'control.tar', './control')
+            if control_file:
+                with open(control_file.path) as f:
+                    self._control = deb822.Deb822(f)
+        return self._control
 
     def compare_details(self, other, source=None):
         my_content = get_ar_content(self.path)

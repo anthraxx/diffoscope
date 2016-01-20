@@ -173,4 +173,4 @@ class DirectoryContainer(Container):
         return names
 
     def get_member(self, member_name):
-        return diffoscope.comparators.specialize(FilesystemFile(os.path.join(self.source.path, member_name)))
+        return diffoscope.comparators.specialize(FilesystemFile(os.path.join(self.source.path, member_name), container=self))

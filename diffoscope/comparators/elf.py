@@ -204,7 +204,7 @@ def _should_skip_section(name, type):
 
 class ElfSection(File):
     def __init__(self, elf_container, member_name):
-        self._elf_container = elf_container
+        super().__init__(container=elf_container)
         self._name = member_name
 
     @property
@@ -213,7 +213,7 @@ class ElfSection(File):
 
     @property
     def path(self):
-        return self._elf_container.source.path
+        return self.container.source.path
 
     def cleanup(self):
         pass

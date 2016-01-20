@@ -236,14 +236,10 @@ class NonExistingContainer(Container):
 
 class ArchiveMember(File):
     def __init__(self, container, member_name):
-        self._container = container
+        super().__init__(container=container)
         self._name = member_name
         self._temp_dir = None
         self._path = None
-
-    @property
-    def container(self):
-        return self._container
 
     @property
     def path(self):

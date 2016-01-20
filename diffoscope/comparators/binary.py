@@ -87,6 +87,9 @@ class File(object, metaclass=ABCMeta):
                 self._mimedb_encoding = magic.Magic(mime_encoding=True)
             return self._mimedb_encoding.from_file(path).decode('utf-8')
 
+    def __init__(self, container=None):
+        self._container = container
+
     def __repr__(self):
         return '<%s %s>' % (self.__class__, self.name)
 
@@ -109,6 +112,10 @@ class File(object, metaclass=ABCMeta):
     @property
     def name(self):
         return self._name
+
+    @property
+    def container(self):
+        return self._container
 
     @property
     def as_container(self):
@@ -227,7 +234,8 @@ class File(object, metaclass=ABCMeta):
 
 
 class FilesystemFile(File):
-    def __init__(self, path):
+    def __init__(self, path, container=None):
+        super().__init__(container=container)
         self._name = path
 
     @property

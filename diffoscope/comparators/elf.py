@@ -17,6 +17,7 @@
 # You should have received a copy of the GNU General Public License
 # along with diffoscope.  If not, see <http://www.gnu.org/licenses/>.
 
+from collections import OrderedDict
 import os.path
 import re
 import subprocess
@@ -274,8 +275,7 @@ class ElfContainer(Container):
                 output = output[2:]
             output = output[5:]
 
-            self._sections = {}
-            self._section_list = [] # using a list to store original order
+            self._sections = OrderedDict()
             # Entires of readelf --section-headers have the following columns:
             # [Nr]  Name  Type  Address  Off  Size  ES  Flg  Lk  Inf  Al
             for line in output:
@@ -289,8 +289,7 @@ class ElfContainer(Container):
                 # Use first match, with last option being '_' as fallback
                 elf_class = [ElfContainer.SECTION_FLAG_MAPPING[flag] for flag in flags if \
                              flag in ElfContainer.SECTION_FLAG_MAPPING][0]
-                self._sections[name] = elf_class
-                self._section_list.append(name)
+                self._sections[name] = elf_class(self, name)
                 logger.debug('adding section %s (%s) as %s', name, type, elf_class)
         except Exception as e:
             command = ' '.join(cmd)
@@ -299,10 +298,10 @@ class ElfContainer(Container):
             raise OutputParsingError(command, self)
 
     def get_member_names(self):
-        return self._section_list
+        return self._sections.keys()
 
     def get_member(self, member_name):
-        return self._sections[member_name](self, member_name)
+        return self._sections[member_name]
 
 class ElfFile(File):
     CONTAINER_CLASS = ElfContainer

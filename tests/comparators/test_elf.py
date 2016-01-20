@@ -82,7 +82,7 @@ def test_lib_no_differences(lib1):
 def lib_differences(lib1, lib2):
     return lib1.compare(lib2).details
 
-@pytest.mark.skipif(tool_missing('readelf'), reason='missing readelf')
+@pytest.mark.skipif(tool_missing('readelf') or tool_missing('objdump'), reason='missing readelf or objdump')
 def test_lib_differences(lib_differences):
     assert len(lib_differences) == 2
     assert lib_differences[0].source1 == 'metadata'
@@ -92,7 +92,7 @@ def test_lib_differences(lib_differences):
     expected_objdump_diff = open(os.path.join(os.path.dirname(__file__), '../data/elf_lib_objdump_expected_diff')).read()
     assert lib_differences[1].unified_diff == expected_objdump_diff
 
-@pytest.mark.skipif(tool_missing('readelf'), reason='missing readelf')
+@pytest.mark.skipif(tool_missing('readelf') or tool_missing('objdump'), reason='missing readelf')
 def test_lib_compare_non_existing(monkeypatch, lib1):
     monkeypatch.setattr(Config, 'new_file', True)
     difference = lib1.compare(NonExistingFile('/nonexisting', lib1))

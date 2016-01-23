@@ -53,7 +53,7 @@ class DotBuildinfoFile(TextFile):
 
     @staticmethod
     def recognizes(file):
-        return DotDscFile.RE_FILE_EXTENSION.search(file.name)
+        return DotBuildinfoFile.RE_FILE_EXTENSION.search(file.name)
 
     def compare(self, other, source=None):
         difference = super().compare(other)

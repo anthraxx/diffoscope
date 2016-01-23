@@ -21,6 +21,11 @@ import os.path
 import pytest
 from diffoscope.comparators import specialize
 from diffoscope.comparators.binary import FilesystemFile, NonExistingFile
+try:
+    import diffoscope.comparators.debian
+    miss_debian_module = False
+except ImportError:
+    miss_debian_module = True
 from diffoscope.comparators.directory import FilesystemDirectory
 from diffoscope.comparators.elf import ElfFile, StaticLibFile
 from diffoscope.config import Config
@@ -119,6 +124,7 @@ def dbgsym_differences(dbgsym_dir1, dbgsym_dir2):
     return dbgsym_dir1.compare(dbgsym_dir2)
 
 @pytest.mark.skipif(any([tool_missing(tool) for tool in ['readelf', 'objdump', 'objcopy']]), reason='missing readelf, objdump, or objcopy')
+@pytest.mark.skipif(miss_debian_module, reason='debian module is not installed')
 def test_differences_with_dbgsym(dbgsym_differences):
     output_text(dbgsym_differences, print)
     assert dbgsym_differences.details[2].source1 == 'data.tar.xz'
@@ -128,6 +134,7 @@ def test_differences_with_dbgsym(dbgsym_differences):
     assert 'test-cases/dbgsym/package/test.c:2' in bin_details.details[1].unified_diff
 
 @pytest.mark.skipif(any([tool_missing(tool) for tool in ['readelf', 'objdump', 'objcopy']]), reason='missing readelf, objdump, or objcopy')
+@pytest.mark.skipif(miss_debian_module, reason='debian module is not installed')
 def test_original_gnu_debuglink(dbgsym_differences):
     bin_details = dbgsym_differences.details[2].details[0].details[0]
     assert '.gnu_debuglink' in bin_details.details[2].source1

@@ -1,3 +1,25 @@
+diffoscope (47) unstable; urgency=low
+
+  * Don't show a difference for identical but long diff inputs (e.g. objdump
+    output). This should make diffoscope run longer for large diff inputs, but
+    more correct reports worths it.
+  * Fix symbol ignore regexp for ELF files.
+  * Ask readelf to decompress sections before dumping their content.
+  * Don't redefine .name() in Archive when its already defined in File.
+  * All files can now belong to a container. This will help us implement
+    cross-file analysis.
+  * Update requirements for ELF tests.
+  * Sort file order when comparing directories.
+  * Use Python OrderedDict instead of keeping a list of sections in ELF
+    container.
+  * Install detached symbols from debug .deb before comparing ELF files.
+    This means objdump output should have line numbers for Debian packages
+    built with recent debhelper as long as the associated debug package is in
+    the same directory.
+  * Add support for Debian .buildinfo files.
+
+ -- Jérémy Bobbio <lunar@debian.org>  Sat, 23 Jan 2016 18:08:33 +0000
+
 diffoscope (46) unstable; urgency=low
 
   [ Dhole ]

@@ -126,6 +126,16 @@ class ReadelfDebugDump(Readelf):
 
 
 class ReadElfSection(Readelf):
+    @staticmethod
+    def base_options():
+        if not hasattr(ReadElfSection, '_base_options'):
+            options = []
+            help_output = subprocess.check_output(['readelf', '--help'], shell=False, stderr=subprocess.DEVNULL).decode('us-ascii', errors='replace')
+            if '--decompress' in help_output:
+                options.append('--decompress')
+            ReadElfSection._base_options = options
+        return ReadElfSection._base_options
+
     def __init__(self, path, section_name, *args, **kwargs):
         self._path = path
         self._section_name = section_name
@@ -136,11 +146,11 @@ class ReadElfSection(Readelf):
         return self._section_name
 
     def readelf_options(self):
-        return ['--decompress', '--hex-dump={}'.format(self.section_name)]
+        return ReadElfSection.base_options() + ['--hex-dump={}'.format(self.section_name)]
 
 class ReadelfStringSection(ReadElfSection):
     def readelf_options(self):
-        return ['--decompress', '--string-dump={}'.format(self.section_name)]
+        return ReadElfSection.base_options() + ['--string-dump={}'.format(self.section_name)]
 
 class ObjdumpSection(Command):
     def __init__(self, path, section_name, *args, **kwargs):

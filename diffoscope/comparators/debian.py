@@ -182,6 +182,8 @@ class DotBuildinfoFile(DebControlFile):
         with open(file.path, 'rb') as f:
             # We can parse .buildinfo just like .dsc
             buildinfo = Dsc(f)
+            if not 'Checksums-Sha256' in buildinfo:
+                return False
             for d in buildinfo.get('Checksums-Sha256'):
                 sha256 = hashlib.sha256()
                 # XXX: this will not work for containers

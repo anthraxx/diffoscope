@@ -81,7 +81,7 @@ class DebFile(File):
         if not hasattr(self, '_control'):
             control_file = self.as_container.lookup_file('control.tar.gz', 'control.tar', './control')
             if control_file:
-                with open(control_file.path) as f:
+                with open(control_file.path, 'rb') as f:
                     self._control = deb822.Deb822(f)
         return self._control
 

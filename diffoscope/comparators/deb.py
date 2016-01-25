@@ -42,7 +42,7 @@ def get_build_id_map(container):
         if isinstance(member, DebFile) and member.control:
             build_ids = member.control.get('Build-Ids', None)
             if build_ids:
-                d.update({build_id: member for build_id in build_ids.split(',')})
+                d.update({build_id: member for build_id in build_ids.split()})
     return d
 
 

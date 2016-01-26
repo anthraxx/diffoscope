@@ -1,3 +1,16 @@
+diffoscope (48) unstable; urgency=medium
+
+  * Open debian/control file in binary mode (Closes: #812524)
+  * Fix recognizes() for files ending in .buildinfo but without a
+    Checksums-Sha256 field. (Closes: #812534)
+  * Fix finding debug packages with multiple Build-Ids.
+  * Cleanup how arguments are given to readelf for sections.
+  * Only pass --decompress to readelf when the option is supported. This
+    restores compatibility with older versions of binutils.
+  * Skip dbgsym tests if the debian Python module is not available.
+
+ -- Jérémy Bobbio <lunar@debian.org>  Tue, 26 Jan 2016 12:13:57 +0100
+
 diffoscope (47) unstable; urgency=low
 
   * Don't show a difference for identical but long diff inputs (e.g. objdump

@@ -361,7 +361,11 @@ class ElfContainer(Container):
             logger.debug('Unable to find a matching debug package for Build Id %s', build_id)
             return
         dbgsym_package = deb.container.dbgsym_build_id_map[build_id]
-        debug_file = dbgsym_package.as_container.data_tar.as_container.lookup_file('./usr/lib/debug/.build-id/{0}/{1}.debug'.format(build_id[0:2], build_id[2:]))
+        debug_file_path = './usr/lib/debug/.build-id/{0}/{1}.debug'.format(build_id[0:2], build_id[2:])
+        debug_file = dbgsym_package.as_container.data_tar.as_container.lookup_file(debug_file_path)
+        if not debug_file:
+            logger.debug('Unable to find the matching debug file %s in %s', debug_file_path, dbgsym_package)
+            return
         # Create a .debug directory and link the debug symbols there with the right name
         dest_path = os.path.join(os.path.dirname(self.source.path), '.debug', os.path.basename(debuglink))
         os.mkdir(os.path.dirname(dest_path))

@@ -92,7 +92,7 @@ def lib_differences(lib1, lib2):
 @pytest.mark.skipif(tool_missing('readelf') or tool_missing('objdump'), reason='missing readelf or objdump')
 def test_lib_differences(lib_differences):
     assert len(lib_differences) == 2
-    assert lib_differences[0].source1 == 'metadata'
+    assert lib_differences[0].source1 == 'file list'
     expected_metadata_diff = open(os.path.join(os.path.dirname(__file__), '../data/elf_lib_metadata_expected_diff')).read()
     assert lib_differences[0].unified_diff == expected_metadata_diff
     assert 'objdump' in lib_differences[1].source1

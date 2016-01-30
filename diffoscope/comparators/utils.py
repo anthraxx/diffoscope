@@ -36,14 +36,6 @@ from diffoscope.difference import Difference
 from diffoscope import logger, tool_required, get_temporary_directory
 
 
-@tool_required('ar')
-def get_ar_content(path):
-    if path == '/dev/null':
-        return ''
-    return subprocess.check_output(
-        ['ar', 'tv', path], stderr=subprocess.STDOUT, shell=False).decode('utf-8')
-
-
 class Command(object, metaclass=ABCMeta):
     def __init__(self, path):
         self._path = path

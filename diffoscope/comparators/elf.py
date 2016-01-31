@@ -118,12 +118,31 @@ class RedaelfVersionInfo(Readelf):
 
 
 class ReadelfDebugDump(Readelf):
-    def readelf_options(self):
-        return ['--debug-dump']
+    def __new__(cls, *args, **kwargs):
+        # Find the section group from the class name
+        debug_section_group = cls.__name__[len('ReadelfDebugDump_'):]
+        if debug_section_group:
+            return ReadelfDebugDump(debug_section_group, *args, **kwargs)
+        else:
+            return super(Readelf, cls).__new__(cls)
 
-    @staticmethod
-    def should_skip_section(section_name, section_type):
-        return section_name.startswith('.debug_') or section_name.startswith('.zdebug_')
+    def __init__(self, debug_section_group, *args, **kwargs):
+        self._debug_section_group = debug_section_group
+        super().__init__(*args, **kwargs)
+
+    def readelf_options(self):
+        return ['--debug-dump=%s' % self._debug_section_group]
+
+
+DEBUG_SECTION_GROUPS = ['rawline', 'info', 'abbrev', 'pubnames', 'aranges',
+                        'macro', 'frames', 'loc', 'ranges', 'pubtypes',
+                        'trace_info', 'trace_abbrev', 'trace_aranges',
+                        'gdb_index']
+
+
+READELF_DEBUG_DUMP_COMMANDS = \
+    [ type('ReadelfDebugDump_%s' % section_group, (ReadelfDebugDump,), {})
+      for section_group in  DEBUG_SECTION_GROUPS ]
 
 
 class ReadElfSection(Readelf):
@@ -199,11 +218,11 @@ READELF_COMMANDS = [ReadelfFileHeader,
                     ReadelfDynamic,
                     ReadelfNotes,
                     RedaelfVersionInfo,
-                    ReadelfDebugDump,
                    ]
 
+
 def _compare_elf_data(path1, path2):
-    return [Difference.from_command(cmd, path1, path2) for cmd in READELF_COMMANDS]
+    return [Difference.from_command(cmd, path1, path2) for cmd in READELF_COMMANDS + READELF_DEBUG_DUMP_COMMANDS]
 
 
 def _should_skip_section(name, type):
@@ -211,6 +230,10 @@ def _should_skip_section(name, type):
         if cmd.should_skip_section(name, type):
             logger.debug('skipping section %s, covered by %s', name, cmd)
             return True
+    if name.startswith('.debug') or name.startswith('.zdebug'):
+        # section .debug_str looks much nicer with `readelf --string-dump`
+        # the rest is handled by READELF_DEBUG_DUMP_COMMANDS
+        return name != '.debug_str'
     return False
 
 

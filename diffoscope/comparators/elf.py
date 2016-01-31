@@ -233,7 +233,7 @@ def _should_skip_section(name, type):
     if name.startswith('.debug') or name.startswith('.zdebug'):
         # section .debug_str looks much nicer with `readelf --string-dump`
         # the rest is handled by READELF_DEBUG_DUMP_COMMANDS
-        return name != '.debug_str'
+        return not name.endswith('_str')
     return False
 
 

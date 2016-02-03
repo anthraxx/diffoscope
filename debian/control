@@ -21,7 +21,7 @@ Build-Depends: binutils-multiarch,
                vim-common
 Standards-Version: 3.9.7
 Homepage: https://diffoscope.org/
-Vcs-Git: git://anonscm.debian.org/reproducible/diffoscope.git
+Vcs-Git: https://anonscm.debian.org/git/reproducible/diffoscope.git
 Vcs-Browser: https://anonscm.debian.org/cgit/reproducible/diffoscope.git
 XS-Testsuite: autopkgtest
 

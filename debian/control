@@ -19,7 +19,7 @@ Build-Depends: binutils-multiarch,
                python3-setuptools,
                python3-tlsh (>= 3.4.1),
                vim-common
-Standards-Version: 3.9.6
+Standards-Version: 3.9.7
 Homepage: https://diffoscope.org/
 Vcs-Git: git://anonscm.debian.org/reproducible/diffoscope.git
 Vcs-Browser: https://anonscm.debian.org/cgit/reproducible/diffoscope.git

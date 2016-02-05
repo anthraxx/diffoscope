@@ -49,10 +49,11 @@ def differences(tmpdir):
 
 def test_content(differences):
     output_text(differences[0], print_func=print)
-    assert differences[0].source1 == 'dir/text'
+    assert differences[0].source1 == 'dir'
+    assert differences[0].details[0].source1 == 'text'
     expected_diff = open(os.path.join(os.path.dirname(__file__), '../data/text_ascii_expected_diff')).read()
-    assert differences[0].unified_diff == expected_diff
+    assert differences[0].details[0].unified_diff == expected_diff
 
 def test_stat(differences):
     output_text(differences[0], print_func=print)
-    assert 'stat' in differences[0].details[0].source1
+    assert 'stat' in differences[0].details[0].details[0].source1

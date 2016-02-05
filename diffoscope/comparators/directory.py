@@ -168,15 +168,11 @@ class FilesystemDirectory(object):
 
 class DirectoryContainer(Container):
     def get_member_names(self):
-        path = self.source.path
-        names = []
-        for root, _, files in os.walk(path):
-            if root == path:
-                root = ''
-            else:
-                root = root[len(path) + 1:]
-            names.extend([os.path.join(root, f) for f in files])
-        return sorted(names)
+        return sorted(os.listdir(self.source.path))
 
     def get_member(self, member_name):
-        return diffoscope.comparators.specialize(FilesystemFile(os.path.join(self.source.path, member_name), container=self))
+        member_path = os.path.join(self.source.path, member_name)
+        if not os.path.islink(member_path) and os.path.isdir(member_path):
+            return FilesystemDirectory(member_path)
+        else:
+            return diffoscope.comparators.specialize(FilesystemFile(os.path.join(self.source.path, member_name), container=self))

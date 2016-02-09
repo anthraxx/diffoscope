@@ -370,7 +370,7 @@ class ElfContainer(Container):
             return
         # It needs to be a .deb and we need access a to a -dbgsym package in
         # the same .changes, directory or archive
-        if not isinstance(deb, DebFile) and not deb.container:
+        if not isinstance(deb, DebFile) or not deb.container:
             return
         # Retrieve the Build Id for the ELF file we are exhamining
         build_id = get_build_id(self.source.path)

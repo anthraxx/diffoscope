@@ -52,6 +52,7 @@ from diffoscope.comparators.fonts import TtfFile
 from diffoscope.comparators.gettext import MoFile
 from diffoscope.comparators.gzip import GzipFile
 from diffoscope.comparators.haskell import HiFile
+from diffoscope.comparators.icc import IccFile
 from diffoscope.comparators.image import ImageFile
 from diffoscope.comparators.ipk import IpkFile
 from diffoscope.comparators.iso9660 import Iso9660File
@@ -146,6 +147,7 @@ FILE_CLASSES = (
     IpkFile,
     GzipFile,
     HiFile,
+    IccFile,
     Iso9660File,
     ClassFile,
     MonoExeFile,

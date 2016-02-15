@@ -1,0 +1,23 @@
+@@ -1,20 +1,20 @@
+ icc:
+ Header:
+   Size		= 14684 bytes
+   Version	= 4.3
+   Profile Kind	= display-device
+   Colorspace	= rgb
+   Conn. Space	= xyz
+-  Date, Time	= 2016-02-15, 21:02:09
++  Date, Time	= 2016-02-15, 21:03:22
+   Flags		= Not embedded profile, Use anywhere
+   Dev. Attrbts	= reflective, glossy
+   Rndrng Intnt	= perceptual
+   Creator	= lcms
+-  Profile ID	= 0x0477fa4b
++  Profile ID	= 0x06017f17
+ 
+ tag 00:
+   sig	'desc' [0x64657363]
+   size	38
+   type	'mluc' [0x6d6c7563]
+ Text:
+   en_US:	sRGB [24 bytes]

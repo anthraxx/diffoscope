@@ -39,72 +39,72 @@ OS_NAMES = { 'arch': 'Arch Linux'
            }
 
 class RequiredToolNotFound(Exception):
-    PROVIDERS = { 'bzip2':      { 'debian': 'bzip2',
-                                  'arch': 'bzip2'}
+    PROVIDERS = { 'bzip2':      { 'debian': 'bzip2'
+                                , 'arch': 'bzip2' }
                 , 'cbfstool':   {}
-                , 'cd-iccdump': { 'debian': 'colord',
-                                  'arch': 'colord'}
-                , 'cmp':        { 'debian': 'diffutils',
-                                  'arch': 'diffutils'}
-                , 'cpio':       { 'debian': 'cpio',
-                                  'arch': 'cpio'}
-                , 'diff':       { 'debian': 'diffutils',
-                                  'arch': 'diffutils'}
-                , 'enjarify':   { 'debian': 'enjarify',
-                                  'arch': 'enjarify'}
-                , 'file':       { 'debian': 'file',
-                                  'arch': 'file'}
-                , 'find':       { 'debian': 'findutils',
-                                  'arch': 'findutils'}
-                , 'getfacl':    { 'debian': 'acl',
-                                  'arch': 'acl'}
-                , 'ghc':        { 'debian': 'ghc',
-                                  'arch': 'ghc'}
-                , 'gpg':        { 'debian': 'gnupg',
-                                  'arch': 'gnupg'}
-                , 'gzip':       { 'debian': 'gzip',
-                                  'arch': 'gzip'}
-                , 'img2txt':    { 'debian': 'caca-utils',
-                                  'arch': 'libcaca'}
-                , 'isoinfo':    { 'debian': 'genisoimage',
-                                  'arch': 'cdrkit'}
-                , 'javap':      { 'debian': 'default-jdk | java-sdk',
-                                  'arch': 'java-environment'}
-                , 'ls':         { 'debian': 'coreutils',
-                                  'arch': 'coreutils'}
-                , 'lsattr':     { 'debian': 'e2fsprogs',
-                                  'arch': 'e2fsprogs'}
-                , 'msgunfmt':   { 'debian': 'gettext',
-                                  'arch': 'gettext'}
-                , 'objdump':    { 'debian': 'binutils-multiarch',
-                                  'arch': 'binutils'}
-                , 'pdftk':      { 'debian': 'pdftk'}
-                , 'pdftotext':  { 'debian': 'poppler-utils',
-                                  'arch': 'poppler'}
-                , 'pedump':     { 'debian': 'mono-utils',
-                                  'arch': 'mono-tools'}
-                , 'ppudump':    { 'debian': 'fp-utils',
-                                  'arch': 'fpc'}
-                , 'readelf':    { 'debian': 'binutils-multiarch',
-                                  'arch': 'binutils'}
-                , 'rpm2cpio':   { 'debian': 'rpm2cpio',
-                                  'arch': 'rpmextract'}
-                , 'showttf':    { 'debian': 'fontforge-extras'}
-                , 'sng':        { 'debian': 'sng'}
-                , 'stat':       { 'debian': 'coreutils',
-                                  'arch': 'coreutils'}
-                , 'sqlite3':    { 'debian': 'sqlite3',
-                                  'arch': 'sqlite'}
-                , 'tar':        { 'debian': 'tar',
-                                  'arch': 'tar'}
-                , 'unsquashfs': { 'debian': 'squashfs-tools',
-                                  'arch': 'squashfs-tools'}
-                , 'xxd':        { 'debian': 'vim-common',
-                                  'arch': 'vim'}
-                , 'xz':         { 'debian': 'xz-utils',
-                                  'arch': 'xz' }
-                , 'zipinfo':    { 'debian': 'unzip',
-                                  'arch': 'unzip'}
+                , 'cd-iccdump': { 'debian': 'colord'
+                                , 'arch': 'colord' }
+                , 'cmp':        { 'debian': 'diffutils'
+                                , 'arch': 'diffutils' }
+                , 'cpio':       { 'debian': 'cpio'
+                                , 'arch': 'cpio' }
+                , 'diff':       { 'debian': 'diffutils'
+                                , 'arch': 'diffutils' }
+                , 'enjarify':   { 'debian': 'enjarify'
+                                , 'arch': 'enjarify' }
+                , 'file':       { 'debian': 'file'
+                                , 'arch': 'file' }
+                , 'find':       { 'debian': 'findutils'
+                                , 'arch': 'findutils' }
+                , 'getfacl':    { 'debian': 'acl'
+                                , 'arch': 'acl' }
+                , 'ghc':        { 'debian': 'ghc'
+                                , 'arch': 'ghc' }
+                , 'gpg':        { 'debian': 'gnupg'
+                                , 'arch': 'gnupg' }
+                , 'gzip':       { 'debian': 'gzip'
+                                , 'arch': 'gzip' }
+                , 'img2txt':    { 'debian': 'caca-utils'
+                                , 'arch': 'libcaca' }
+                , 'isoinfo':    { 'debian': 'genisoimage'
+                                , 'arch': 'cdrkit' }
+                , 'javap':      { 'debian': 'default-jdk | java-sdk'
+                                , 'arch': 'java-environment' }
+                , 'ls':         { 'debian': 'coreutils'
+                                , 'arch': 'coreutils' }
+                , 'lsattr':     { 'debian': 'e2fsprogs'
+                                , 'arch': 'e2fsprogs' }
+                , 'msgunfmt':   { 'debian': 'gettext'
+                                , 'arch': 'gettext' }
+                , 'objdump':    { 'debian': 'binutils-multiarch'
+                                , 'arch': 'binutils' }
+                , 'pdftk':      { 'debian': 'pdftk' }
+                , 'pdftotext':  { 'debian': 'poppler-utils'
+                                , 'arch': 'poppler' }
+                , 'pedump':     { 'debian': 'mono-utils'
+                                , 'arch': 'mono-tools' }
+                , 'ppudump':    { 'debian': 'fp-utils'
+                                , 'arch': 'fpc' }
+                , 'readelf':    { 'debian': 'binutils-multiarch'
+                                , 'arch': 'binutils' }
+                , 'rpm2cpio':   { 'debian': 'rpm2cpio'
+                                , 'arch': 'rpmextract' }
+                , 'showttf':    { 'debian': 'fontforge-extras' }
+                , 'sng':        { 'debian': 'sng' }
+                , 'stat':       { 'debian': 'coreutils'
+                                , 'arch': 'coreutils' }
+                , 'sqlite3':    { 'debian': 'sqlite3'
+                                , 'arch': 'sqlite' }
+                , 'tar':        { 'debian': 'tar'
+                                , 'arch': 'tar' }
+                , 'unsquashfs': { 'debian': 'squashfs-tools'
+                                , 'arch': 'squashfs-tools' }
+                , 'xxd':        { 'debian': 'vim-common'
+                                , 'arch': 'vim' }
+                , 'xz':         { 'debian': 'xz-utils'
+                                , 'arch': 'xz' }
+                , 'zipinfo':    { 'debian': 'unzip'
+                                , 'arch': 'unzip' }
                 }
 
     def __init__(self, command):

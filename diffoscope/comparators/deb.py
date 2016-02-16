@@ -37,7 +37,11 @@ from diffoscope.comparators.tar import TarContainer
 # given container
 def get_build_id_map(container):
     d = {}
-    for member in container.get_members().values():
+    for member_name, member in container.get_members().items():
+        # Let's assume the name will end with .deb to avoid looking at
+        # too many irrelevant files
+        if not member_name.endswith('.deb'):
+            continue
         diffoscope.comparators.specialize(member)
         if isinstance(member, DebFile) and member.control:
             build_ids = member.control.get('Build-Ids', None)

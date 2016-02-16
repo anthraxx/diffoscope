@@ -42,7 +42,8 @@ class RequiredToolNotFound(Exception):
     PROVIDERS = { 'bzip2':      { 'debian': 'bzip2',
                                   'arch': 'bzip2'}
                 , 'cbfstool':   {}
-                , 'cd-iccdump': { 'debian': 'colord' }
+                , 'cd-iccdump': { 'debian': 'colord',
+                                  'arch': 'colord'}
                 , 'cmp':        { 'debian': 'diffutils',
                                   'arch': 'diffutils'}
                 , 'cpio':       { 'debian': 'cpio',

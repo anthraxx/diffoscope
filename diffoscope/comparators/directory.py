@@ -175,4 +175,4 @@ class DirectoryContainer(Container):
         if not os.path.islink(member_path) and os.path.isdir(member_path):
             return FilesystemDirectory(member_path)
         else:
-            return diffoscope.comparators.specialize(FilesystemFile(os.path.join(self.source.path, member_name), container=self))
+            return FilesystemFile(os.path.join(self.source.path, member_name), container=self)

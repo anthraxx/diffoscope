@@ -1,3 +1,39 @@
+diffoscope (49) unstable; urgency=medium
+
+  [ Jérémy Bobbio ]
+  * Don't crash when we can't find the debug file in a matching debug package.
+    This repairs diffoscope for xserver-xorg and other packages.
+  * Use libarchive to read metadata from ar archives. The output is more
+    precise and less dependent on binutils version. The command line `ar` tool
+    is not used any more so remove it from the required tools.
+  * Split readelf --debug-dump output when examining ELF files. Based on a
+    patch by Dhole.
+  * Keep both .debug_str and .zdebug_str as ElfSection. Thanks to Niels Thykier
+    for noticing the problem.
+  * Fix a logic error in _install_debug_symbols. Thanks anthraxx for the report
+    and the fix.
+  * Use recursive containers for directory and only look at files with ending
+    in .deb when looking for Build IDs. Both avoid looking at too many files
+    when searching for matching debug packages. Thanks Helmut Grohne and Steven
+    Chamberlain for the reports and tests. (Closes: #813052)
+  * Add support for ICC profiles. This adds a Recommends on colord in Debian.
+  * Harmonize spaces and commas in package list.
+  * Update PPU files test data for FPC 3.0.0.
+  * Update exepcted javap output for OpenJDK 1.8.
+  * Stop specializing files from directories earlier than necessary.
+
+  [ anthraxx ]
+  * Adding cd-iccdump package reference for Arch Linux.
+
+  [ Mattia Rizzolo ]
+  * Use HTTPS in Vcs-Git.
+
+  [ Holger Levsen ]
+  * Bump standards version to 3.9.7, no changes needed.
+  * Use /git/ instead /cgit/ in Vcs-Browser.
+
+ -- Jérémy Bobbio <lunar@debian.org>  Wed, 17 Feb 2016 18:12:45 +0100
+
 diffoscope (48) unstable; urgency=medium
 
   * Open debian/control file in binary mode (Closes: #812524)

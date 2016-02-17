@@ -1,15 +1,16 @@
-@@ -36,12 +36,12 @@
+@@ -31,13 +31,13 @@
+         line 1: 0
+ 
    public static int main(java.lang.String[]);
-     Signature: ([Ljava/lang/String;)I
+     descriptor: ([Ljava/lang/String;)I
      flags: ACC_PUBLIC, ACC_STATIC
-     LineNumberTable:
-       line 3: 0
      Code:
        stack=1, locals=1, args_size=1
 -         0: bipush        42
--         2: ireturn       
-+         0: iconst_m1     
-+         1: ireturn       
+-         2: ireturn
++         0: iconst_m1
++         1: ireturn
        LineNumberTable:
          line 3: 0
  }
+ SourceFile: "Test.java"

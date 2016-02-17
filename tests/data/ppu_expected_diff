@@ -1,17 +1,17 @@
 @@ -15,15 +15,15 @@
- Definitions stored      : 200
- Symbols stored          : 21
+ Definitions stored      : 121
+ Symbols stored          : 398
  
  Interface section
  ------------------
- Module Name: CastleTextureFont_DejaVuSans_10
+ Module Name: CastleGenericLists
  
--Source file 1 : castletexturefont_dejavusans_10.pas 2015/11/01 12:49:43
-+Source file 1 : castletexturefont_dejavusans_10.pas 2015/11/01 13:05:11
- Uses unit: System (Crc: C28919E4, IntfcCrc: 33F67B81, IndCrc: AB715672)
- Uses unit: objpas (Crc: 322FFBC4, IntfcCrc: 68A68DD4, IndCrc: AB715672)
- Uses unit: CastleTextureFontData (Crc: 080D58E3, IntfcCrc: 0EE179C8, IndCrc: 70B73331)
- Link unit object file: castletexturefont_dejavusans_10.o (static )
- DerefMapsize: 3
- DerefMap[0] = CASTLETEXTUREFONTDATA
+-Source file 1 : castlegenericlists.pas 2016/02/17 15:03:46
++Source file 1 : castlegenericlists.pas 2016/02/17 15:04:53
+ Uses unit: System (Crc: 09C1FD4E, IntfcCrc: 3A093E2F, IndCrc: FEDD6E0A)
+ Uses unit: objpas (Crc: 663BC437, IntfcCrc: CA7886A2, IndCrc: 64D020AC)
+ Uses unit: fgl (Crc: C38E0A5A, IntfcCrc: 470D2834, IndCrc: 0764D076)
+ Link unit object file: castlegenericlists.o (static )
+ DerefMapsize: 2
+ DerefMap[0] = FGL
  DerefMap[1] = SYSTEM

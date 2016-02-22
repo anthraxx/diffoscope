@@ -76,7 +76,7 @@ def test_identification_of_md5sums_in_deb(deb1, deb2, monkeypatch):
     assert test_identification_of_md5sums_in_deb.found
 
 def test_md5sums(differences):
-    assert differences[1].details[0].details[1].comment == 'Files in package differs'
+    assert differences[1].details[0].details[1].details[0].comment == 'Files in package differ'
 
 def test_identical_files_in_md5sums(deb1, deb2):
     for name in ['./usr/share/doc/test/README.Debian', './usr/share/doc/test/copyright']:

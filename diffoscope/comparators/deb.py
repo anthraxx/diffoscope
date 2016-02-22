@@ -117,9 +117,16 @@ class Md5sumsFile(File):
             logger.debug('Malformed md5sums, ignoring.')
             return {}
 
-    def compare(self, other, source=None):
-        return Difference(None, self.path, other.path, source='md5sums',
-                          comment="Files in package differs")
+    def strip_checksum(self, path):
+        with open(path) as f:
+            for line in f:
+                yield " ".join(line.split(" ")[2:])
+
+    def compare_details(self, other, source=None):
+        return [Difference(None, self.path, other.path, source="md5sums", comment="Files in package differ"),
+                Difference.from_text_readers(self.strip_checksum(self.path), self.strip_checksum(other.path),
+                                             self.path, other.path, source="line order")]
+
 
 
 class DebTarContainer(TarContainer):

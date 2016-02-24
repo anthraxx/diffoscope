@@ -45,6 +45,10 @@ def differences(tmpdir):
     shutil.copy(TEST_FILE2_PATH, str(tmpdir.join('b/dir/text')))
     os.utime(str(tmpdir.join('a/dir/text')), (0, 0))
     os.utime(str(tmpdir.join('b/dir/text')), (0, 0))
+    os.utime(str(tmpdir.join('a/dir')), (0, 0))
+    os.utime(str(tmpdir.join('b/dir')), (0, 0))
+    os.utime(str(tmpdir.join('a')), (0, 0))
+    os.utime(str(tmpdir.join('b')), (0, 0))
     return compare_directories(str(tmpdir.join('a')), str(tmpdir.join('b'))).details
 
 def test_content(differences):

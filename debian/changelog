@@ -8,7 +8,7 @@ diffoscope (50) unstable; urgency=medium
   * Reset mtimes of test directories and ignore ctimes (Closes: #815171)
   * Add comparator for Postscript files
 
- -- Reiner Herrmann <reiner@reiner-h.de>  Sat, 27 Feb 2016 18:56:43 +0100
+ -- Holger Levsen <holger@debian.org>  Sat, 27 Feb 2016 19:37:20 +0100
 
 diffoscope (49) unstable; urgency=medium
 

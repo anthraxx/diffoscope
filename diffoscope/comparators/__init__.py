@@ -61,6 +61,7 @@ from diffoscope.comparators.mono import MonoExeFile
 from diffoscope.comparators.pdf import PdfFile
 from diffoscope.comparators.png import PngFile
 from diffoscope.comparators.ppu import PpuFile
+from diffoscope.comparators.ps import PsFile
 try:
     from diffoscope.comparators.rpm import RpmFile
 except ImportError as ex:
@@ -132,6 +133,7 @@ FILE_CLASSES = (
     Md5sumsFile,
     DebDataTarFile,
     ElfSection,
+    PsFile,
     TextFile,
     Bzip2File,
     CpioFile,

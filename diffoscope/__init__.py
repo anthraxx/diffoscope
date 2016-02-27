@@ -85,6 +85,8 @@ class RequiredToolNotFound(Exception):
                                 , 'arch': 'mono-tools' }
                 , 'ppudump':    { 'debian': 'fp-utils'
                                 , 'arch': 'fpc' }
+                , 'ps2ascii':   { 'debian': 'ghostscript'
+                                , 'arch': 'ghostscript' }
                 , 'readelf':    { 'debian': 'binutils-multiarch'
                                 , 'arch': 'binutils' }
                 , 'rpm2cpio':   { 'debian': 'rpm2cpio'

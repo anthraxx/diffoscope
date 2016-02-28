@@ -1,3 +1,10 @@
+diffoscope (51) unstable; urgency=medium
+
+  * Team upload.
+  * Re-upload, the last uploaded tarball was broken, missing test files.
+
+ -- Mattia Rizzolo <mattia@debian.org>  Sun, 28 Feb 2016 11:56:35 +0000
+
 diffoscope (50) unstable; urgency=medium
 
   [ Jérémy Bobbio ]

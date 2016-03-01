@@ -43,13 +43,4 @@ Description: in-depth comparison of files, archives, and directories
  be shown in a text or HTML report.
  .
  diffoscope is developed as part of the “reproducible builds” Debian
- project and was formerly known as “debbindiff”.
-
-Package: debbindiff
-Depends: diffoscope, ${misc:Depends}
-Architecture: all
-Priority: extra
-Section: oldlibs
-Description: transitional package
- This is a transitional package. It can safely be removed once
- callers have been update to use 'diffoscope' instead of 'debbindiff'.
+ project.

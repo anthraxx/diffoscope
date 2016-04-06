@@ -53,7 +53,6 @@ OPTIONS
                          threshold for fuzzy-matching (0 to disable, 60 is
                          default, 400 is high fuzziness)
 --new-file               treat absent files as empty
---max-report-size bytes  maximum bytes written in report
 --css url                link to an extra CSS for the HTML report
 
 EXIT STATUS

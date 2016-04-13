@@ -83,7 +83,7 @@ system against the diffoscope package:
 Join the users and developers mailing-list:
 <https://lists.reproducible-builds.org/listinfo/diffoscope>
 
-diffoscope website is at <https://diffosocope.org/>
+diffoscope website is at <https://diffoscope.org/>
 
 License
 -------

@@ -1,3 +1,23 @@
+diffoscope (52) unstable; urgency=medium
+
+  [ Mattia Rizzolo ]
+  * debian/gbp.conf: add a conf to have gbp tag the releases how we like them.
+
+  [ Holger Levsen ]
+  * Drop transitional debbindiff package.
+  * debian/control: Drop XS-Prefix from Testsuite: field, thanks lintian.
+  * Mention --max-report-size only once in the manpage. (Closes: #819956)
+
+  [ Satyam Zode ]
+  * Fix typo in documentation.
+
+  [ Reiner Herrmann ]
+  * Bump Standards-Version to 3.9.8, no changes required.
+  * Let objdump demangle symbols for better readability.
+  * Install bin/diffoscope instead of auto-generated script. (Closes: #821777)
+
+ -- Reiner Herrmann <reiner@reiner-h.de>  Wed, 20 Apr 2016 20:28:03 +0200
+
 diffoscope (51) unstable; urgency=medium
 
   * Team upload.

@@ -170,7 +170,7 @@ class FilesystemDirectory(object):
 
 class DirectoryContainer(Container):
     def get_member_names(self):
-        return sorted(os.listdir(self.source.path))
+        return sorted(os.listdir(self.source.path or '.'))
 
     def get_member(self, member_name):
         member_path = os.path.join(self.source.path, member_name)

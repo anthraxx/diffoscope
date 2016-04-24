@@ -51,12 +51,28 @@ def get_build_id_map(container):
 
 
 class DebContainer(LibarchiveContainer):
+    RE_DATA_TAR = re.compile(r'^data\.tar(\.gz|\.xz|\.bz2|\.lzma)?$')
+    RE_CONTROL_TAR = re.compile(r'^control\.tar(\.gz|\.xz)?$')
+
     @property
     def data_tar(self):
         for name, member in self.get_members().items():
-            if name.startswith('data.tar.'):
+            if DebContainer.RE_DATA_TAR.match(name):
                 diffoscope.comparators.specialize(member)
-                return diffoscope.comparators.specialize(member.as_container.get_member('content'))
+                if name.endswith('.tar'):
+                    return member
+                else:
+                    return diffoscope.comparators.specialize(member.as_container.get_member('content'))
+
+    @property
+    def control_tar(self):
+        for name, member in self.get_members().items():
+            if DebContainer.RE_CONTROL_TAR.match(name):
+                diffoscope.comparators.specialize(member)
+                if name.endswith('.tar'):
+                    return member
+                else:
+                    return diffoscope.comparators.specialize(member.as_container.get_member('content'))
 
 
 class DebFile(File):
@@ -70,7 +86,7 @@ class DebFile(File):
     @property
     def md5sums(self):
         if not hasattr(self, '_md5sums'):
-            md5sums_file = self.as_container.lookup_file('control.tar.gz', 'control.tar', './md5sums')
+            md5sums_file = self.as_container.control_tar.as_container.lookup_file('./md5sums')
             if md5sums_file:
                 self._md5sums = md5sums_file.parse()
             else:
@@ -83,7 +99,7 @@ class DebFile(File):
         if not deb822:
             return None
         if not hasattr(self, '_control'):
-            control_file = self.as_container.lookup_file('control.tar.gz', 'control.tar', './control')
+            control_file = self.as_container.control_tar.as_container.lookup_file('./control')
             if control_file:
                 with open(control_file.path, 'rb') as f:
                     self._control = deb822.Deb822(f)
@@ -102,7 +118,7 @@ class Md5sumsFile(File):
                file.name == './md5sums' and \
                isinstance(file.container.source, ArchiveMember) and \
                isinstance(file.container.source.container.source, ArchiveMember) and \
-               file.container.source.container.source.name.startswith('control.tar.') and \
+               DebContainer.RE_CONTROL_TAR.match(file.container.source.container.source.name) and \
                isinstance(file.container.source.container.source.container.source, DebFile)
 
     def parse(self):
@@ -154,7 +170,7 @@ class DebDataTarFile(File):
     def recognizes(file):
         return isinstance(file, ArchiveMember) and \
                isinstance(file.container.source, ArchiveMember) and \
-               file.container.source.name.startswith('data.tar.') and \
+               DebContainer.RE_DATA_TAR.match(file.container.source.name) and \
                isinstance(file.container.source.container.source, DebFile)
 
     def compare_details(self, other, source=None):

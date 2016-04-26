@@ -3,22 +3,23 @@ Section: devel
 Priority: optional
 Maintainer: Reproducible builds folks <reproducible-builds@lists.alioth.debian.org>
 Uploaders:
+ Holger Levsen <holger@debian.org>,
  Reiner Herrmann <reiner@reiner-h.de>,
- Holger Levsen <holger@debian.org>
-Build-Depends: binutils-multiarch,
-               debhelper (>= 9),
-               dh-python,
-               python3-all,
-               python3-debian,
-               python3-docutils,
-               python3-guestfs,
-               python3-libarchive-c,
-               python3-magic,
-               python3-pytest,
-               python3-rpm,
-               python3-setuptools,
-               python3-tlsh (>= 3.4.1),
-               vim-common
+Build-Depends:
+ binutils-multiarch,
+ debhelper (>= 9),
+ dh-python,
+ python3-all,
+ python3-debian,
+ python3-docutils,
+ python3-guestfs,
+ python3-libarchive-c,
+ python3-magic,
+ python3-pytest,
+ python3-rpm,
+ python3-setuptools,
+ python3-tlsh (>= 3.4.1),
+ vim-common,
 Standards-Version: 3.9.8
 Homepage: https://diffoscope.org/
 Vcs-Git: https://anonscm.debian.org/git/reproducible/diffoscope.git
@@ -27,14 +28,16 @@ Testsuite: autopkgtest
 
 Package: diffoscope
 Architecture: all
-Depends: python3-pkg-resources,
-         ${misc:Depends},
-         ${python3:Depends},
-Recommends: ${diffoscope:Recommends},
-            ${python3:Recommends},
 Suggests: libjs-jquery
 Breaks: debbindiff (<< 29)
 Replaces: debbindiff (<< 29)
+Depends:
+ python3-pkg-resources,
+ ${misc:Depends},
+ ${python3:Depends},
+Recommends:
+ ${diffoscope:Recommends},
+ ${python3:Recommends},
 Description: in-depth comparison of files, archives, and directories
  diffoscope will try to get to the bottom of what makes files or directories
  different. It will recursively unpack archives of many kinds and transform

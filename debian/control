@@ -4,6 +4,7 @@ Priority: optional
 Maintainer: Reproducible builds folks <reproducible-builds@lists.alioth.debian.org>
 Uploaders:
  Holger Levsen <holger@debian.org>,
+ Mattia Rizzolo <mattia@debian.org>,
  Reiner Herrmann <reiner@reiner-h.de>,
 Build-Depends:
  binutils-multiarch,

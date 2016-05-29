@@ -134,7 +134,7 @@ class Md5sumsFile(File):
             return {}
 
     def strip_checksum(self, path):
-        with open(path) as f:
+        with open(path, 'r', encoding='utf-8') as f:
             for line in f:
                 yield " ".join(line.split(" ")[2:])
 

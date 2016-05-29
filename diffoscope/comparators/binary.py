@@ -182,8 +182,13 @@ class File(object, metaclass=ABCMeta):
     def has_same_content_as(self, other):
         logger.debug('%s has_same_content %s', self, other)
         # try comparing small files directly first
-        my_size = os.path.getsize(self.path)
-        other_size = os.path.getsize(other.path)
+        try:
+            my_size = os.path.getsize(self.path)
+            other_size = os.path.getsize(other.path)
+        except OSError:
+            # files not readable (e.g. broken symlinks) or something else,
+            # just assume they are different
+            return False
         if my_size == other_size and my_size <= SMALL_FILE_THRESHOLD:
             if open(self.path, 'rb').read() == open(other.path, 'rb').read():
                 return True

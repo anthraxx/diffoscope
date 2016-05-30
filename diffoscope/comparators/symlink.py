@@ -36,7 +36,7 @@ class Symlink(File):
         return os.readlink(self.name)
 
     def create_placeholder(self):
-        with get_named_temporary_file('w+', suffix='diffoscope', delete=False) as f:
+        with get_named_temporary_file('w+', delete=False) as f:
             f.write(format_symlink(self.symlink_destination))
             f.flush()
             return f.name

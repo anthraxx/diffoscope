@@ -40,7 +40,7 @@ class Device(File):
         return self.get_device() == other.get_device()
 
     def create_placeholder(self):
-        with get_named_temporary_file(mode='w+', suffix='diffoscope', delete=False) as f:
+        with get_named_temporary_file(mode='w+', delete=False) as f:
             f.write(format_device(*self.get_device()))
             f.flush()
             return f.name

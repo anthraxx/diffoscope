@@ -67,7 +67,7 @@ def get_rpm_header(path, ts):
 
 def compare_rpm_headers(path1, path2):
     # compare headers
-    with get_temporary_directory(suffix='diffoscope') as rpmdb_dir:
+    with get_temporary_directory() as rpmdb_dir:
         rpm.addMacro("_dbpath", rpmdb_dir)
         ts = rpm.TransactionSet()
         ts.setVSFlags(-1)

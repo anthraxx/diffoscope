@@ -238,7 +238,7 @@ class ArchiveMember(File):
         if self._path is None:
             logger.debug('unpacking %s', self._name)
             assert self._temp_dir is None
-            self._temp_dir = get_temporary_directory(suffix='diffoscope')
+            self._temp_dir = get_temporary_directory()
             self._path = self.container.extract(self._name, self._temp_dir.name)
         return self._path
 

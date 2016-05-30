@@ -397,10 +397,10 @@ class ElfContainer(Container):
         #os.link(debug_file.path, dest_path)
         # But for now, we need to do more complicated things…
         # 1. Use objcopy to create a file with only the original .gnu_debuglink section
-	#    as we will have to update it to get the CRC right.
+        #    as we will have to update it to get the CRC right.
         debuglink_path = get_named_temporary_file(prefix='{}.debuglink.'.format(self.source.path)).name
         subprocess.check_call(['objcopy', '--only-section=.gnu_debuglink', self.source.path, debuglink_path], shell=False, stderr=subprocess.DEVNULL)
-	# 2. Monkey-patch the ElfSection object created for the .gnu_debuglink to
+        # 2. Monkey-patch the ElfSection object created for the .gnu_debuglink to
         #    change the path to point to this new file
         section = self._sections['.gnu_debuglink']
         class MonkeyPatchedElfSection(section.__class__):

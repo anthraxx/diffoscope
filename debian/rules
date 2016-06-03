@@ -1,16 +1,14 @@
 #!/usr/bin/make -f
 
-VERSION = $(shell dpkg-parsechangelog --show-field Version)
+VERSION_dch := $(shell dpkg-parsechangelog --show-field Version)
+VERSION_py := $(shell awk '/^VERSION = / {gsub(/"/, "", $$3); print $$3}' diffoscope/__init__.py )
+
+ifneq ($(VERSION_dch),$(VERSION_py))
+ $(error "Version in debian/changelog doesn't match diffoscope version")
+endif
 
 %:
 	dh $@ --with python3 --buildsystem=pybuild
-
-override_dh_auto_build:
-	@if ! grep -q 'VERSION = "$(VERSION)"' diffoscope/__init__.py; then \
-		echo "Version in debian/changelog doesn't match diffoscope version"; \
-		exit 1; \
-	fi
-	dh_auto_build -O--buildsystem=pybuild
 
 override_dh_python3:
 	dh_python3 --recommends=python-debian --recommends=rpm-python --recommends=tlsh --recommends=guestfs

@@ -1,3 +1,27 @@
+diffoscope (53) unstable; urgency=medium
+
+  [ Reiner Herrmann ]
+  * In the directory comparator, fall back to current directory instead of
+    empty name. (Closes: #820624)
+  * Improve deb(5) support. (Closes: #818414)
+
+  [ Mattia Rizzolo ]
+  * debian/control: add myself to Uploaders.
+  * Clean up temporary debuglink files.
+  * Fix FileNotFoundError with broken symlinks. (Closes: #818856)
+  * Decode Md5sumsFile in utf-8. (Closes: #823874)
+  * Always suffix temporary files with '_diffoscope'.
+  * Rewrite sanity check for the version to always run every time debian/rules
+    is invoked, not only during a binary build.
+
+  [ Ed Maste ]
+  * Add FreeBSD packages for required tools.
+
+  [ Ceridwen ]
+  * Add README.rst to MANIFEST.in.
+
+ -- Mattia Rizzolo <mattia@debian.org>  Fri, 03 Jun 2016 14:23:16 +0000
+
 diffoscope (52) unstable; urgency=medium
 
   [ Mattia Rizzolo ]

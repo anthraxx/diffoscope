@@ -87,7 +87,7 @@ class RequiredToolNotFound(Exception):
                 , 'objdump':    { 'debian': 'binutils-multiarch'
                                 , 'arch': 'binutils' }
                 , 'pdftk':      { 'debian': 'pdftk'
-                                , 'FreeBSD': 'pdftk'
+                                , 'FreeBSD': 'pdftk' }
                 , 'pdftotext':  { 'debian': 'poppler-utils'
                                 , 'arch': 'poppler'
                                 , 'FreeBSD': 'poppler-utils' }
@@ -98,7 +98,7 @@ class RequiredToolNotFound(Exception):
                                 , 'arch': 'fpc'
                                 , 'FreeBSD': 'fpc' }
                 , 'ps2ascii':   { 'debian': 'ghostscript'
-                                , 'arch': 'ghostscript' }
+                                , 'arch': 'ghostscript'
                                 , 'FreeBSD': 'ghostscript9-base' }
                 , 'readelf':    { 'debian': 'binutils-multiarch'
                                 , 'arch': 'binutils' }

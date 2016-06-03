@@ -1,3 +1,10 @@
+diffoscope (54) unstable; urgency=medium
+
+  * Fix syntax in RequiredToolNotFound.PROVIDERS.  This caused --list-tools to
+    miss entries, and by it missing Recommends in the Debian package.
+
+ -- Mattia Rizzolo <mattia@debian.org>  Fri, 03 Jun 2016 16:16:02 +0000
+
 diffoscope (53) unstable; urgency=medium
 
   [ Reiner Herrmann ]

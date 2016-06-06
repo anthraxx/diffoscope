@@ -32,7 +32,7 @@ class Sqlite3Dump(Command):
 class Sqlite3Database(File):
     @staticmethod
     def recognizes(file):
-        return file.magic_file_type == 'SQLite 3.x database'
+        return file.magic_file_type and file.magic_file_type.startswith('SQLite 3.x database')
 
     def compare_details(self, other, source=None):
         return [Difference.from_command(Sqlite3Dump, self.path, other.path)]

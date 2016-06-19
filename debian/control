@@ -7,9 +7,11 @@ Uploaders:
  Mattia Rizzolo <mattia@debian.org>,
  Reiner Herrmann <reiner@reiner-h.de>,
 Build-Depends:
+ bash-completion,
  binutils-multiarch,
  debhelper (>= 9),
  dh-python,
+ python-argcomplete,
  python3-all,
  python3-debian,
  python3-docutils,

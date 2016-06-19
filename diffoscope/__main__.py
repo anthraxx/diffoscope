@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# PYTHON_ARGCOMPLETE_OK
 # -*- coding: utf-8 -*-
 #
 # diffoscope: in-depth comparison of files, archives, and directories
@@ -30,6 +31,10 @@ try:
     import tlsh
 except ImportError:
     tlsh = None
+try:
+    import argcomplete
+except ImportError:
+    argcomplete = None
 from diffoscope import logger, VERSION, set_locale, clean_all_temp_files
 import diffoscope.comparators
 from diffoscope.config import Config
@@ -60,25 +65,30 @@ def create_parser():
                         dest='max_report_size', type=int,
                         help='maximum bytes written in report (default: %d)' %
                         Config.general.max_report_size,
-                        default=Config.general.max_report_size)
+                        default=Config.general.max_report_size).completer=RangeCompleter(0,
+                        Config.general.max_report_size, 200000)
     parser.add_argument('--separate-file-diff-size', metavar='BYTES',
                         dest='separate_file_diff_size', type=int,
                         help='diff size to load diff on demand, with --html-dir (default: %d)' %
                         Config.general.separate_file_diff_size,
-                        default=Config.general.separate_file_diff_size)
+                        default=Config.general.separate_file_diff_size).completer=RangeCompleter(0,
+                        Config.general.separate_file_diff_size, 20000)
     parser.add_argument('--max-diff-block-lines', dest='max_diff_block_lines', type=int,
                         help='maximum number of lines per diff block (default: %d)' %
                         Config.general.max_diff_block_lines,
-                        default=Config.general.max_diff_block_lines)
+                        default=Config.general.max_diff_block_lines).completer=RangeCompleter(0,
+                        Config.general.max_diff_block_lines, 5)
     parser.add_argument('--max-diff-input-lines', dest='max_diff_input_lines', type=int,
                         help='maximum number of lines fed to diff (default: %d)' %
                         Config.general.max_diff_input_lines,
-                        default=Config.general.max_diff_input_lines)
+                        default=Config.general.max_diff_input_lines).completer=RangeCompleter(0,
+                        Config.general.max_diff_input_lines, 5000)
     parser.add_argument('--fuzzy-threshold', dest='fuzzy_threshold', type=int,
                         help='threshold for fuzzy-matching '
                              '(0 to disable, %d is default, 400 is high fuzziness)' %
                              (Config.general.fuzzy_threshold),
-                        default=Config.general.fuzzy_threshold)
+                        default=Config.general.fuzzy_threshold).completer=RangeCompleter(0,
+                        400, 20)
     parser.add_argument('--new-file', dest='new_file', action='store_true',
                         help='treat absent files as empty')
     parser.add_argument('--css', metavar='url', dest='css_url',
@@ -89,6 +99,12 @@ def create_parser():
     parser.add_argument('file2', help='second file to compare')
     if not tlsh:
         parser.epilog = 'File renaming detection based on fuzzy-matching is currently disabled. It can be enabled by installing the “tlsh” module available at https://github.com/trendmicro/tlsh'
+    if argcomplete:
+        argcomplete.autocomplete(parser)
+    elif '_ARGCOMPLETE' in os.environ:
+        logger.error('Argument completion requested but the "argcomplete" module is not installed. It can be obtained at https://pypi.python.org/pypi/argcomplete')
+        sys.exit(1)
+
     return parser
 
 
@@ -105,6 +121,12 @@ def make_printer(path):
     if path != '-':
         output.close()
 
+class RangeCompleter(object):
+    def __init__(self, start, end, step):
+        self.choices = range(start, end + 1, step)
+
+    def __call__(self, prefix, **kwargs):
+        return (str(i) for i in self.choices if str(i).startswith(prefix))
 
 class ListToolsAction(argparse.Action):
     def __call__(self, parser, namespace, os_override, option_string=None):

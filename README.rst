@@ -59,6 +59,10 @@ Optionally, the following modules will enhance it:
   ``python-magic``. It is built from `file
   <http://www.darwinsys.com/file/>`_.
   Available on Debian and Fedora as ``python3-magic``.
+* ``argcomplete`` is used for argument completion.
+  Available on Debian as ``python3-argcomplete``.
+  Available on Fedora as ``python-argcomplete``.
+  Available on `PyPI <https://pypi.python.org/pypi/argcomplete/>`
 
 The various comparators rely on external commands being available. To
 get a list of them, please run::

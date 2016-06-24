@@ -207,7 +207,7 @@ class File(object, metaclass=ABCMeta):
                     difference = self.compare_bytes(other, source=source)
                     if difference is None:
                         return None
-                    difference.add_comment("No differences found inside, yet data differs")
+                    difference.add_comment("No file format specific differences found inside, yet data differs")
             except subprocess.CalledProcessError as e:
                 difference = self.compare_bytes(other, source=source)
                 if e.output:

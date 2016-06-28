@@ -95,8 +95,8 @@ def create_parser():
                         help='link to an extra CSS for the HTML report')
     parser.add_argument('--jquery', metavar='url', dest='jquery_url',
                         help='link to the jquery url, with --html-dir. Specify “disable” to disable JavaScript. When omitted diffoscope will try to create a symlink to a system installation. Known locations: %s' % ', '.join(JQUERY_SYSTEM_LOCATIONS))
-    parser.add_argument('file1', help='first file to compare')
-    parser.add_argument('file2', help='second file to compare')
+    parser.add_argument('path1', help='first file or directory to compare')
+    parser.add_argument('path2', help='second file or directory to compare')
     if not tlsh:
         parser.epilog = 'File renaming detection based on fuzzy-matching is currently disabled. It can be enabled by installing the “tlsh” module available at https://github.com/trendmicro/tlsh'
     if argcomplete:

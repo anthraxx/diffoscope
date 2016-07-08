@@ -37,6 +37,12 @@ from diffoscope.config import Config
 from diffoscope.difference import Difference
 from diffoscope import tool_required, RequiredToolNotFound, OutputParsingError, logger
 
+# helper function to convert to bytes if necessary
+def maybe_decode(s):
+    if str == bytes:
+        return s
+    else:
+        return s.decode('utf-8')
 
 def hexdump_fallback(path):
     hexdump = StringIO()
@@ -79,13 +85,13 @@ class File(object, metaclass=ABCMeta):
         def guess_file_type(self, path):
             if not hasattr(self, '_mimedb'):
                 self._mimedb = magic.Magic()
-            return self._mimedb.from_file(path).decode('utf-8')
+            return maybe_decode(self._mimedb.from_file(path))
 
         @classmethod
         def guess_encoding(self, path):
             if not hasattr(self, '_mimedb_encoding'):
                 self._mimedb_encoding = magic.Magic(mime_encoding=True)
-            return self._mimedb_encoding.from_file(path).decode('utf-8')
+            return maybe_decode(self._mimedb_encoding.from_file(path))
 
     def __init__(self, container=None):
         self._container = container

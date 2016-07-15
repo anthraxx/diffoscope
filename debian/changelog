@@ -1,3 +1,25 @@
+diffoscope (55) unstable; urgency=medium
+
+  [ anthraxx ]
+  * Fix sqlite3 magic recognition when using file >= 5.27. (Closes: #830434)
+
+  [ Satyam Zode ]
+  * Add argument completion feature to diffoscope. (Closes: #826711)
+
+  [ Chris Lamb ]
+  * Improve message when data differs. (Closes: #827981)
+
+  [ Reiner Herrmann ]
+  * Clarify the input arguments. (Closes: #826894)
+
+  [ Holger Levsen ]
+  * Add link to homepage in HTML output.
+
+  [ Rainer Müller ]
+  * python-magic >=0.4.12 does not require decode.
+
+ -- Reiner Herrmann <reiner@reiner-h.de>  Fri, 15 Jul 2016 21:50:29 +0200
+
 diffoscope (54) unstable; urgency=medium
 
   * Fix syntax in RequiredToolNotFound.PROVIDERS.  This caused --list-tools to

@@ -27,6 +27,7 @@ debian/diffoscope.bash-completion:
 	register-python-argcomplete diffoscope > $@
 
 override_dh_auto_build: debian/diffoscope.bash-completion debian/diffoscope.1
+	dh_auto_build -O--buildsystem=pybuild
 
 override_dh_installman: debian/diffoscope.1
 	dh_installman -O--buildsystem=pybuild

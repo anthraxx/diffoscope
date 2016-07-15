@@ -39,10 +39,10 @@ from diffoscope import tool_required, RequiredToolNotFound, OutputParsingError, 
 
 # helper function to convert to bytes if necessary
 def maybe_decode(s):
-    if str == bytes:
-        return s
-    else:
+    if type(s) is bytes:
         return s.decode('utf-8')
+    else:
+        return s
 
 def hexdump_fallback(path):
     hexdump = StringIO()

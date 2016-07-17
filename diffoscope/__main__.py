@@ -200,6 +200,8 @@ def main(args=None):
     except KeyboardInterrupt:
         logger.info('Keyboard Interrupt')
         sys.exit(2)
+    except BrokenPipeError:
+        sys.exit(2)
     except Exception:
         traceback.print_exc()
         if parsed_args and parsed_args.debugger:

@@ -26,14 +26,23 @@ from diffoscope.comparators.libarchive import LibarchiveContainer, list_libarchi
 from diffoscope.comparators.utils import Command, tool_required
 from diffoscope import logger
 
+# TODO: this would also be useful for Go archives. Currently those are handled
+# by StaticLibFile, but then readelf complains with "Error: Not an ELF file".
+# ArFile gives slightly more reasonable output, e.g. a readable plain diff of
+# the __.PKGDEF member which is just a text file containing the Go interface.
+
 class ArContainer(LibarchiveContainer):
     def get_members(self):
         members = LibarchiveContainer.get_members(self)
         cls = members.__class__
-        # for some reason libarchive outputs / and // as member names
-        # filter these out, otherwise they cause exceptions later
+        # for some reason libarchive outputs ["/", "//"] as member names for
+        # some archives. for now, let's just filter these out, otherwise they
+        # cause exceptions later. eventually, we should investigate this in
+        # more detail and handle it properly.
         filtered_out = cls([p for p in members.items() if not os.path.basename(p[0])])
-        logger.debug("ignored ar members %s, probably a libarchive bug", list(filtered_out.keys()))
+        if filtered_out:
+            logger.debug("ignored directory ar members %s in %s, don't yet know how to handle these",
+                list(filtered_out.keys()), self.source.path)
         return cls([p for p in members.items() if os.path.basename(p[0])])
 
 

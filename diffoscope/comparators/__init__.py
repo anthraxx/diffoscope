@@ -30,6 +30,7 @@ except ImportError:
 from diffoscope import logger, tool_required
 from diffoscope.config import Config
 from diffoscope.difference import Difference
+from diffoscope.comparators.ar import ArFile
 from diffoscope.comparators.binary import \
     File, FilesystemFile, NonExistingFile, compare_binary_files
 from diffoscope.comparators.bzip2 import Bzip2File
@@ -158,6 +159,7 @@ FILE_CLASSES = (
     PpuFile,
     RpmFile,
     SquashfsFile,
+    ArFile,
     TarFile,
     XzFile,
     ZipFile,

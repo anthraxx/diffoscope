@@ -40,9 +40,8 @@ OS_NAMES = { 'arch': 'Arch Linux'
            }
 
 class RequiredToolNotFound(Exception):
-    PROVIDERS = { 'ar':         { 'debian': 'binutils-multiarch'
-                                , 'arch': 'binutils' }
-                , 'bzip2':      { 'debian': 'bzip2'
+    PROVIDERS = {
+                  'bzip2':      { 'debian': 'bzip2'
                                 , 'arch': 'bzip2' }
                 , 'cbfstool':   {}
                 , 'cd-iccdump': { 'debian': 'colord'

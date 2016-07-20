@@ -51,6 +51,7 @@ from diffoscope.comparators.elf import ElfFile, ElfSection, StaticLibFile
 from diffoscope.comparators.fsimage import FsImageFile
 from diffoscope.comparators.fonts import TtfFile
 from diffoscope.comparators.gettext import MoFile
+from diffoscope.comparators.git import GitIndexFile
 from diffoscope.comparators.gzip import GzipFile
 from diffoscope.comparators.haskell import HiFile
 from diffoscope.comparators.icc import IccFile
@@ -166,6 +167,7 @@ FILE_CLASSES = (
     MozillaZipFile,
     ImageFile,
     CbfsFile,
+    GitIndexFile,
     )
 
 

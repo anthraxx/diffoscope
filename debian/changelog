@@ -1,3 +1,21 @@
+diffoscope (56) unstable; urgency=medium
+
+  [ Jérémy Bobbio ]
+  * Fix maybe_decode() so that it actually works.
+
+  [ Chris Lamb ]
+  * Mask EPIPE to avoid ugly tracebacks when eg. prematurely terminating $PAGER.
+  * Add git index file comparator.
+  * Drop unused imports in Ar comparator.
+
+  [ Ximin Luo ]
+  * Add support for AR archives (including Rust .rlib files).
+  * Add some more documentation for ArFile/ArContainer.
+  * RequiredToolNotFound.PROVIDERS dict values are package names, not binary
+    names.
+
+ -- Reiner Herrmann <reiner@reiner-h.de>  Thu, 28 Jul 2016 00:02:56 +0200
+
 diffoscope (55) unstable; urgency=medium
 
   [ anthraxx ]

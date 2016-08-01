@@ -29,8 +29,8 @@ class TryDiffoscope(object):
 
     def main(self):
         response = requests.post(self.args.url, files={
-            'file_a': open(self.args.file[0]),
-            'file_b': open(self.args.file[1]),
+            'file_a': open(self.args.file[0], 'rb'),
+            'file_b': open(self.args.file[1], 'rb'),
         })
 
         response.raise_for_status()

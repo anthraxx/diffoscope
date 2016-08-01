@@ -50,3 +50,21 @@ Description: in-depth comparison of files, archives, and directories
  .
  diffoscope is developed as part of the “reproducible builds” Debian
  project.
+
+Package: trydiffoscope
+Architecture: all
+Depends:
+ ${misc:Depends},
+ python3-requests,
+ ${python3:Depends},
+Description: in-depth comparison of files, archives, and directories (try.diffoscope.org client)
+ diffoscope will try to get to the bottom of what makes files or directories
+ different. It will recursively unpack archives of many kinds and transform
+ various binary formats into more human readable form to compare them. It can
+ compare two tarballs, ISO images, or PDF just as easily. The differences can
+ be shown in a text or HTML report.
+ .
+ diffoscope is developed as part of the “reproducible builds” Debian
+ project.
+ .
+ This package contains the https://try.diffoscope.org/ command-line client.

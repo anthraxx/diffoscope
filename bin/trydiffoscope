@@ -22,6 +22,7 @@ import os
 import sys
 import argparse
 import requests
+import webbrowser
 
 class TryDiffoscope(object):
     def __init__(self, args):
@@ -35,7 +36,12 @@ class TryDiffoscope(object):
 
         response.raise_for_status()
 
-        print(response.json()['url'])
+        url = response.json()['url']
+
+        print(url)
+
+        if self.args.webbrowser:
+            webbrowser.open(url)
 
         return 0
 
@@ -53,6 +59,13 @@ if __name__ == '__main__':
         '--url',
         help="Use this trydiffoscope endpoint (for development)",
         default='https://try.diffoscope.org/api/v1/compare',
+    )
+
+    parser.add_argument(
+        '-w',
+        '--webbrowser',
+        help="Open a web browser after uploading.",
+        action='store_true',
     )
 
     args = parser.parse_args()

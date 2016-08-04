@@ -36,16 +36,21 @@ class TryDiffoscope(object):
         })
 
         response.raise_for_status()
+        status_url = response.json()['url']
 
-        url = response.json()['url']
-
-        while self.args.poll:
-            time.sleep(1)
-            response = requests.head(url)
+        while True:
+            response = requests.get(status_url)
             response.raise_for_status()
 
-            if response.status_code == 302:
+            url = response.json()['url']
+
+            if not self.args.poll:
                 break
+
+            if response.json()['state'] not in ('queued', 'running'):
+                break
+
+            time.sleep(1)
 
         print(url)
 
@@ -67,7 +72,7 @@ if __name__ == '__main__':
     parser.add_argument(
         '--url',
         help="Use this trydiffoscope endpoint (for development)",
-        default='https://try.diffoscope.org/api/v1/compare',
+        default='https://try.diffoscope.org/api/v2/comparison',
     )
 
     parser.add_argument(

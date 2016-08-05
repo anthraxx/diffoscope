@@ -94,6 +94,9 @@ HEADER = """<!DOCTYPE html>
       font-size:0.75em;
       font-family: Lucida Console, monospace;
     }
+    table.diff tr:hover td {
+      background: #FFFF00;
+    }
     td.line {
       color:#8080a0
     }

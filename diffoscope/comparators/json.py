@@ -33,7 +33,10 @@ class JSONFile(File):
             return False
 
         with open(file.path) as f:
-            file.parsed = json.load(f)
+            try:
+                file.parsed = json.load(f)
+            except json.JSONDecodeError:
+                return False
 
         return True
 

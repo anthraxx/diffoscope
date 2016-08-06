@@ -34,10 +34,11 @@ logger.addHandler(ch)
 formatter = logging.Formatter('%(levelname)8s %(message)s')
 ch.setFormatter(formatter)
 
-OS_NAMES = { 'arch': 'Arch Linux'
-           , 'debian': 'Debian'
-           , 'FreeBSD': 'FreeBSD'
-           }
+OS_NAMES = {
+    'arch': 'Arch Linux',
+    'debian': 'Debian',
+    'FreeBSD': 'FreeBSD',
+}
 
 class RequiredToolNotFound(Exception):
     PROVIDERS = {

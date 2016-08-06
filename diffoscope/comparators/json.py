@@ -29,16 +29,18 @@ class JSONFile(File):
 
     @staticmethod
     def recognizes(file):
-        return JSONFile.RE_FILE_EXTENSION.search(file.name)
+        if JSONFile.RE_FILE_EXTENSION.search(file.name) is None:
+            return False
+
+        with open(file.path) as f:
+            file.parsed = json.load(f)
+
+        return True
 
     def compare_details(self, other, source=None):
-        def dumps(path):
-            with open(path) as f:
-                return json.dumps(json.load(f), indent=4, sort_keys=True)
-
         return [Difference.from_text(
-            dumps(self.path),
-            dumps(other.path),
+            json.dumps(self.parsed, indent=4, sort_keys=True),
+            json.dumps(other.parsed, indent=4, sort_keys=True),
             self,
             other,
         )]

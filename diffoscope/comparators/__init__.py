@@ -58,6 +58,7 @@ from diffoscope.comparators.icc import IccFile
 from diffoscope.comparators.image import ImageFile
 from diffoscope.comparators.ipk import IpkFile
 from diffoscope.comparators.iso9660 import Iso9660File
+from diffoscope.comparators.json import JSONFile
 from diffoscope.comparators.macho import MachoFile
 from diffoscope.comparators.mono import MonoExeFile
 from diffoscope.comparators.pdf import PdfFile
@@ -136,6 +137,7 @@ FILE_CLASSES = (
     DebDataTarFile,
     ElfSection,
     PsFile,
+    JSONFile,
     TextFile,
     Bzip2File,
     CpioFile,

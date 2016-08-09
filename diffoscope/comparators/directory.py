@@ -82,7 +82,7 @@ def compare_meta(path1, path2):
     try:
         differences.append(Difference.from_command(Stat, path1, path2))
     except RequiredToolNotFound:
-        logger.warn("'stat' not found! Is PATH wrong?")
+        logger.warning("'stat' not found! Is PATH wrong?")
     if os.path.islink(path1) or os.path.islink(path2):
         return [d for d in differences if d is not None]
     try:

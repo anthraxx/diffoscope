@@ -218,6 +218,8 @@ def get_current_os():
     import platform
     system = platform.system()
     if system == "Linux":
+        # FIXME: Will break under Python 3.7, see:
+        # https://docs.python.org/3/library/platform.html#platform.linux_distribution
         return platform.linux_distribution()[0]
     return system
 

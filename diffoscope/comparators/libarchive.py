@@ -18,7 +18,6 @@
 # along with diffoscope.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from contextlib import contextmanager
 import ctypes
 import os.path
 import time

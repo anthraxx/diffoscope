@@ -22,7 +22,6 @@ import os
 import os.path
 import re
 import subprocess
-import stat
 import struct
 from diffoscope import logger, tool_required
 from diffoscope.comparators.binary import File

@@ -18,19 +18,15 @@
 # along with diffoscope.  If not, see <http://www.gnu.org/licenses/>.
 
 from collections import OrderedDict
-from contextlib import contextmanager
 from functools import partial
 import hashlib
 import os.path
 import re
 from debian.deb822 import Dsc
 from diffoscope.changes import Changes
-import diffoscope.comparators
-from diffoscope.comparators.binary import File, NonExistingFile
-from diffoscope.comparators.utils import Container, NO_COMMENT
-from diffoscope.config import Config
+from diffoscope.comparators.binary import File
+from diffoscope.comparators.utils import Container
 from diffoscope.difference import Difference
-from diffoscope import logger
 
 
 DOT_CHANGES_FIELDS = [

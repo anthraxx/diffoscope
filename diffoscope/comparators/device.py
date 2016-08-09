@@ -17,9 +17,7 @@
 # You should have received a copy of the GNU General Public License
 # along with diffoscope.  If not, see <http://www.gnu.org/licenses/>.
 
-from contextlib import contextmanager
 import os
-import tempfile
 from diffoscope.comparators.binary import File, FilesystemFile
 from diffoscope.comparators.utils import format_device
 from diffoscope.difference import Difference

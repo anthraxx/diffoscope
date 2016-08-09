@@ -19,15 +19,12 @@
 
 from abc import ABCMeta, abstractmethod
 from binascii import hexlify
-from contextlib import contextmanager
-from functools import wraps
 from io import StringIO
 import os
 import os.path
 import re
 from stat import S_ISCHR, S_ISBLK
 import subprocess
-import tempfile
 try:
     import tlsh
 except ImportError:

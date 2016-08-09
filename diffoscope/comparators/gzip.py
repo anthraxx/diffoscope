@@ -21,9 +21,8 @@ from collections import OrderedDict
 import re
 import subprocess
 import os.path
-import diffoscope.comparators
 from diffoscope import logger, tool_required
-from diffoscope.comparators.utils import Archive, get_compressed_content_name, NO_COMMENT
+from diffoscope.comparators.utils import Archive, get_compressed_content_name
 from diffoscope.difference import Difference
 
 

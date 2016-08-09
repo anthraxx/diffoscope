@@ -44,7 +44,6 @@ from xml.sax.saxutils import escape
 from diffoscope import logger, VERSION
 from diffoscope.config import Config
 from diffoscope.presenters.icon import FAVICON_BASE64
-from functools import reduce
 
 # minimum line size, we add a zero-sized breakable space every
 # LINESIZE characters

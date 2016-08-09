@@ -19,7 +19,6 @@
 # along with diffoscope.  If not, see <http://www.gnu.org/licenses/>.
 
 from collections import OrderedDict
-from contextlib import contextmanager
 import re
 import subprocess
 import stat

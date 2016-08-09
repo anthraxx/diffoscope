@@ -19,20 +19,16 @@
 
 from abc import ABCMeta, abstractmethod
 from collections import OrderedDict
-from contextlib import contextmanager
 from io import BytesIO
 from itertools import starmap
 # The following would be shutil.which in Python 3.3
 import os
-import shutil
 from stat import S_ISCHR, S_ISBLK
 import subprocess
-import tempfile
 from threading import Thread
 import diffoscope.comparators
 from diffoscope.comparators.binary import File, NonExistingFile
 from diffoscope.config import Config
-from diffoscope.difference import Difference
 from diffoscope import logger, tool_required, get_temporary_directory
 
 

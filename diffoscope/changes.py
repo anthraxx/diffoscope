@@ -41,7 +41,6 @@ __author__ = 'Jonny Lamb'
 __copyright__ = 'Copyright © 2008 Jonny Lamb, Copyright © 2010 Jan Dittberner'
 __license__ = 'MIT'
 
-import sys
 import os.path
 import hashlib
 import subprocess

@@ -25,8 +25,6 @@ import os.path
 import re
 import signal
 import subprocess
-import sys
-import traceback
 from threading import Thread
 from multiprocessing.dummy import Queue
 from diffoscope.config import Config

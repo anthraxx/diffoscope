@@ -26,7 +26,7 @@ except ImportError:
     guestfs = None
 from diffoscope import logger
 from diffoscope.comparators.binary import File
-from diffoscope.comparators.utils import Archive, get_compressed_content_name
+from diffoscope.comparators.utils import Archive
 from diffoscope.difference import Difference
 
 

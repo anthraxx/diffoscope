@@ -18,7 +18,6 @@
 # along with diffoscope.  If not, see <http://www.gnu.org/licenses/>.
 
 import re
-import os.path
 try:
     from debian import deb822
 except ImportError:
@@ -29,7 +28,7 @@ import diffoscope.comparators
 from diffoscope.comparators.binary import File
 from diffoscope.comparators.libarchive import LibarchiveContainer, list_libarchive
 from diffoscope.comparators.utils import \
-    Archive, ArchiveMember
+    ArchiveMember
 from diffoscope.comparators.tar import TarContainer
 
 

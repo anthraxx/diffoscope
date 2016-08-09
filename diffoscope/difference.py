@@ -328,7 +328,7 @@ class Difference(object):
                                       *args, **kwargs)
 
     @staticmethod
-    def from_command(cls, path1, path2, *args, **kwargs):
+    def from_command(klass, path1, path2, *args, **kwargs):
         command_args = []
         if 'command_args' in kwargs:
             command_args = kwargs['command_args']
@@ -337,13 +337,13 @@ class Difference(object):
         if path1 == '/dev/null':
             feeder1 = empty_file_feeder()
         else:
-            command1 = cls(path1, *command_args)
+            command1 = klass(path1, *command_args)
             feeder1 = make_feeder_from_command(command1)
         command2 = None
         if path2 == '/dev/null':
             feeder2 = empty_file_feeder()
         else:
-            command2 = cls(path2, *command_args)
+            command2 = klass(path2, *command_args)
             feeder2 = make_feeder_from_command(command2)
         if 'source' not in kwargs:
             source_cmd = command1 or command2

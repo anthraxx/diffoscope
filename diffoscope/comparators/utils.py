@@ -61,7 +61,7 @@ class Command(object, metaclass=ABCMeta):
 
     @abstractmethod
     def cmdline(self):
-        raise NotImplemented
+        raise NotImplementedError()
 
     def env(self):
         return None # inherit parent environment by default
@@ -183,11 +183,11 @@ class Container(object, metaclass=ABCMeta):
 
     @abstractmethod
     def get_member_names(self):
-        raise NotImplemented
+        raise NotImplementedError()
 
     @abstractmethod
     def get_member(self, member_name):
-        raise NotImplemented
+        raise NotImplementedError()
 
     def comparisons(self, other):
         my_members = self.get_members()
@@ -276,19 +276,19 @@ class Archive(Container, metaclass=ABCMeta):
 
     @abstractmethod
     def open_archive(self):
-        raise NotImplemented
+        raise NotImplementedError()
 
     @abstractmethod
     def close_archive(self):
-        raise NotImplemented
+        raise NotImplementedError()
 
     @abstractmethod
     def get_member_names(self):
-        raise NotImplemented
+        raise NotImplementedError()
 
     @abstractmethod
     def extract(self, member_name, dest_dir):
-        raise NotImplemented
+        raise NotImplementedError()
 
     def get_member(self, member_name):
         return ArchiveMember(self, member_name)
@@ -321,7 +321,7 @@ class NonExistingArchive(Archive):
 
     def extract(self, member_name, dest_dir):
         # should never be called
-        raise NotImplemented
+        raise NotImplementedError()
 
     def get_member(self, member_name):
         return NonExistingFile('/dev/null')

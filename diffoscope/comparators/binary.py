@@ -100,7 +100,7 @@ class File(object, metaclass=ABCMeta):
     @property
     @abstractmethod
     def path(self):
-        raise NotImplemented
+        raise NotImplementedError()
 
     # Remove any temporary data associated with the file. The function
     # should be idempotent and work during the destructor.
@@ -156,15 +156,15 @@ class File(object, metaclass=ABCMeta):
 
     @abstractmethod
     def is_directory():
-        raise NotImplemented
+        raise NotImplementedError()
 
     @abstractmethod
     def is_symlink():
-        raise NotImplemented
+        raise NotImplementedError()
 
     @abstractmethod
     def is_device():
-        raise NotImplemented
+        raise NotImplementedError()
 
     def compare_bytes(self, other, source=None):
         return compare_binary_files(self, other, source)

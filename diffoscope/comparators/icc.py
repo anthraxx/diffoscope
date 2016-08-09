@@ -27,7 +27,7 @@ from diffoscope.difference import Difference
 class Iccdump(Command):
     @tool_required('cd-iccdump')
     def cmdline(self):
-          return ['cd-iccdump', self.path]
+        return ['cd-iccdump', self.path]
 
 
 class IccFile(File):

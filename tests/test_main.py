@@ -21,7 +21,7 @@ import os
 import signal
 import tempfile
 import pytest
-from diffoscope.__main__ import main
+from diffoscope.main import main
 
 def test_non_existing_files(capsys):
     args = '/nonexisting1 /nonexisting2'

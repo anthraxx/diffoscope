@@ -26,7 +26,7 @@ for root in ['.', '..']:
         sys.path = [root] + sys.path
         break
 
-from diffoscope.__main__ import main
+from diffoscope.main import main
 
 if __name__ == '__main__':
     main()

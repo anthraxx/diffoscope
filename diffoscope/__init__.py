@@ -109,6 +109,14 @@ class RequiredToolNotFound(Exception):
             'debian': 'default-jdk | java-sdk',
             'arch': 'java-environment',
         },
+        'llvm-bcanalyzer': {
+            'debian': 'llvm',
+            'arch': 'llvm',
+        },
+        'llvm-dis': {
+            'debian': 'llvm',
+            'arch': 'llvm',
+        },
         'ls': {
             'debian': 'coreutils',
             'arch': 'coreutils',

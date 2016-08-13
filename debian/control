@@ -42,7 +42,6 @@ Standards-Version: 3.9.8
 Homepage: https://diffoscope.org/
 Vcs-Git: https://anonscm.debian.org/git/reproducible/diffoscope.git
 Vcs-Browser: https://anonscm.debian.org/git/reproducible/diffoscope.git
-Testsuite: autopkgtest
 
 Package: diffoscope
 Architecture: all

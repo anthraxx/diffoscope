@@ -44,8 +44,8 @@ class Stat(Command):
         return ['stat', self.path]
 
     FILE_RE = re.compile(r'^\s*File:.*$')
-    DEVICE_RE = re.compile(r'Device: [0-9a-f]+h/[0-9]+d')
-    INODE_RE = re.compile(r'Inode: [0-9]+')
+    DEVICE_RE = re.compile(r'Device: [0-9a-f]+h/[0-9]+d\s+')
+    INODE_RE = re.compile(r'Inode: [0-9]+\s+')
     ACCESS_TIME_RE = re.compile(r'^Access: [0-9]{4}-[0-9]{2}-[0-9]{2}.*$')
     CHANGE_TIME_RE = re.compile(r'^Change: [0-9]{4}-[0-9]{2}-[0-9]{2}.*$')
 

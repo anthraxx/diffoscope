@@ -1,0 +1,12 @@
+@@ -1,10 +1,10 @@
+ 
+ Archive index:
+-__rust_allocate in alloc_system-d16b8f0e.0.o
++__rust_all0cate in alloc_system-d16b8f0e.0.o
+ __rust_deallocate in alloc_system-d16b8f0e.0.o
+ __rust_reallocate in alloc_system-d16b8f0e.0.o
+ __rust_reallocate_inplace in alloc_system-d16b8f0e.0.o
+ __rust_usable_size in alloc_system-d16b8f0e.0.o
+ 
+ alloc_system-d16b8f0e.0.o:
+ 0000000000000000 T __rust_allocate

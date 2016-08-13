@@ -131,6 +131,10 @@ class RequiredToolNotFound(Exception):
             'arch': 'gettext',
             'FreeBSD': 'gettext-tools',
         },
+        'nm': {
+            'debian': 'binutils-multiarch',
+            'arch': 'binutils',
+        },
         'objdump': {
             'debian': 'binutils-multiarch',
             'arch': 'binutils',

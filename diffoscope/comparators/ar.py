@@ -18,12 +18,14 @@
 # You should have received a copy of the GNU General Public License
 # along with diffoscope.  If not, see <http://www.gnu.org/licenses/>.
 
-import os.path
 import re
+from diffoscope import tool_required
 from diffoscope.difference import Difference
 from diffoscope.comparators.binary import File
 from diffoscope.comparators.libarchive import LibarchiveContainer, list_libarchive
+from diffoscope.comparators.utils import Command
 from diffoscope import logger
+
 
 # TODO: this would also be useful for Go archives. Currently those are handled
 # by StaticLibFile, but then readelf complains with "Error: Not an ELF file".
@@ -34,16 +36,20 @@ class ArContainer(LibarchiveContainer):
     def get_members(self):
         members = LibarchiveContainer.get_members(self)
         cls = members.__class__
-        # for some reason libarchive outputs ["/", "//"] as member names for
-        # some archives. for now, let's just filter these out, otherwise they
-        # cause exceptions later. eventually, we should investigate this in
-        # more detail and handle it properly.
-        filtered_out = cls([p for p in members.items() if not os.path.basename(p[0])])
+        known_ignores = {
+            "/" : "this is the symbol table, already accounted for in other output",
+            "//" : "this is the table for GNU long names, already accounted for in the archive filelist",
+        }
+        filtered_out = cls([p for p in members.items() if p[0] in known_ignores])
         if filtered_out:
-            logger.debug("ignored directory ar members %s in %s, don't yet know how to handle these",
-                list(filtered_out.keys()), self.source.path)
-        return cls([p for p in members.items() if os.path.basename(p[0])])
+            for k, v in filtered_out.items():
+                logger.debug("ignored ar member '%s' because %s", k, known_ignores[k])
+        return cls([p for p in members.items() if p[0] not in known_ignores])
 
+class ArSymbolTableDumper(Command):
+    @tool_required('nm')
+    def cmdline(self):
+        return ['nm', '-s', self.path]
 
 class ArFile(File):
     CONTAINER_CLASS = ArContainer
@@ -54,6 +60,7 @@ class ArFile(File):
         return ArFile.RE_FILE_TYPE.search(file.magic_file_type)
 
     def compare_details(self, other, source=None):
-        return [Difference.from_text_readers(list_libarchive(self.path),
-                                        list_libarchive(other.path),
-                                        self.path, other.path, source="file list")]
+        return [Difference.from_command(ArSymbolTableDumper, self.path, other.path),
+                Difference.from_text_readers(list_libarchive(self.path),
+                                             list_libarchive(other.path),
+                                             self.path, other.path, source="file list")]

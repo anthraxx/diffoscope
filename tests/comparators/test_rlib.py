@@ -52,22 +52,31 @@ def test_no_differences(rlib1):
 def differences(rlib1, rlib2):
     return rlib1.compare(rlib2).details
 
-def test_item0_elf(differences):
-    assert differences[0].source1 == 'alloc_system-d16b8f0e.0.o'
-    assert differences[0].source2 == 'alloc_system-d16b8f0e.0.o'
-    expected_diff = open(os.path.join(os.path.dirname(__file__), '../data/rlib_elf_expected_diff')).read()
-    assert differences[0].details[0].unified_diff == expected_diff
+def test_num_items(differences):
+    assert len(differences) == 4
 
-def test_item1_rust_metadata_bin(differences):
-    assert differences[1].source1 == 'rust.metadata.bin'
-    assert differences[1].source2 == 'rust.metadata.bin'
+def test_item0_armap(differences):
+    assert differences[0].source1 == 'nm -s {}'
+    assert differences[0].source2 == 'nm -s {}'
+    expected_diff = open(os.path.join(os.path.dirname(__file__), '../data/rlib_armap_expected_diff')).read()
+    assert differences[0].unified_diff == expected_diff
+
+def test_item1_elf(differences):
+    assert differences[1].source1 == 'alloc_system-d16b8f0e.0.o'
+    assert differences[1].source2 == 'alloc_system-d16b8f0e.0.o'
+    expected_diff = open(os.path.join(os.path.dirname(__file__), '../data/rlib_elf_expected_diff')).read()
+    assert differences[1].details[0].unified_diff == expected_diff
+
+def test_item2_rust_metadata_bin(differences):
+    assert differences[2].source1 == 'rust.metadata.bin'
+    assert differences[2].source2 == 'rust.metadata.bin'
 
 @pytest.mark.skipif(tool_missing('llvm-dis'), reason='missing llvm-dis')
-def test_item2_deflate_llvm_bitcode(differences):
-    assert differences[2].source1 == 'alloc_system-d16b8f0e.0.bytecode.deflate'
-    assert differences[2].source2 == 'alloc_system-d16b8f0e.0.bytecode.deflate'
+def test_item3_deflate_llvm_bitcode(differences):
+    assert differences[3].source1 == 'alloc_system-d16b8f0e.0.bytecode.deflate'
+    assert differences[3].source2 == 'alloc_system-d16b8f0e.0.bytecode.deflate'
     expected_diff = open(os.path.join(os.path.dirname(__file__), '../data/rlib_llvm_dis_expected_diff')).read()
-    actual_diff = differences[2].details[0].details[1].unified_diff
+    actual_diff = differences[3].details[0].details[1].unified_diff
     assert diff_ignore_line_numbers(actual_diff) == diff_ignore_line_numbers(expected_diff)
 
 def test_compare_non_existing(monkeypatch, rlib1):

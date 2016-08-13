@@ -159,5 +159,5 @@ def test_list_tools(capsys):
     assert excinfo.value.code == 0
     out, err = capsys.readouterr()
     assert err == ''
-    assert 'External tools required:' in out
+    assert 'External-Tools-Required: ' in out
     assert 'xxd,' in out

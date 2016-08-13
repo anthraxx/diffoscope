@@ -30,63 +30,100 @@ class TryDiffoscope(object):
         self.args = args
 
     def main(self):
-        response = requests.post(self.args.url, files={
+        response = requests.post(self.args.endpoint, files={
             'file_a': open(self.args.file[0], 'rb'),
             'file_b': open(self.args.file[1], 'rb'),
         })
 
         response.raise_for_status()
-        status_url = response.json()['url']
+        poll_uri = response.json()['result']['uri']
 
         while True:
-            response = requests.get(status_url)
+            response = requests.get(poll_uri)
             response.raise_for_status()
+            comparison = response.json()['result']
 
-            url = response.json()['url']
+            # Bail out early if --url or --webbrowser specified
+            if self.args.url or self.args.webbrowser:
+                print(comparison['uri'])
 
-            if not self.args.poll:
-                break
+                if self.args.webbrowser:
+                    webbrowser.open(comparison['uri'])
 
-            if response.json()['state'] not in ('queued', 'running'):
+                return 0
+
+            if comparison['state'] not in ('queued', 'running'):
                 break
 
             time.sleep(1)
 
-        print(url)
+        if comparison['state'] not in ('identical', 'different'):
+            print("E: Received state '{}' from server. See {}".format(
+                comparison['state'],
+                comparison['uri'],
+            ), file=sys.stderr)
+            return 2
 
-        if self.args.webbrowser:
-            webbrowser.open(url)
+        if comparison['state'] == 'identical':
+            return 0
 
-        return 0
+        # Report/save output
+        to_save = {x for x in ('html', 'text') if getattr(self.args, x)}
+
+        for x in to_save:
+            response = requests.get(comparison['formats'][x])
+            response.raise_for_status()
+
+            with open(getattr(self.args, x), 'w') as f:
+                print(response.text, file=f)
+
+        if not to_save:
+            response = requests.get(comparison['formats']['text'])
+            response.raise_for_status()
+            print(response.content.decode('utf-8'))
+
+        return 1
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
 
     parser.add_argument(
         'file',
-        help="Files to compare",
+        help="files to compare",
         nargs=2,
         default=[],
     )
 
     parser.add_argument(
+        '--endpoint',
+        help="specify trydiffoscope API endpoint",
+        default='https://try.diffoscope.org/api/v3/comparison',
+    )
+
+    parser.add_argument(
+        '--text',
+        help="write plain text output to given file",
+        default=None,
+    )
+
+    parser.add_argument(
+        '--html',
+        help="write HTML report to given file",
+        default=None,
+    )
+
+    parser.add_argument(
         '-u',
         '--url',
-        help="Specify trydiffoscope endpoint (for development)",
-        default='https://try.diffoscope.org/api/v2/comparison',
+        help="print URL instead of managing results locally",
+        action='store_true',
     )
 
     parser.add_argument(
         '-w',
         '--webbrowser',
-        help="Open a web browser after uploading.",
-        action='store_true',
-    )
-
-    parser.add_argument(
-        '-p',
-        '--poll',
-        help="Poll for result before printing URL.",
+        help="open webbrowser to URL instead of managing results "
+            "locally (implies -u)",
         action='store_true',
     )
 

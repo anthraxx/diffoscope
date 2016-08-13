@@ -130,7 +130,6 @@ class RangeCompleter(object):
 
 class ListToolsAction(argparse.Action):
     def __call__(self, parser, namespace, os_override, option_string=None):
-        from functools import reduce
         from diffoscope import tool_required, RequiredToolNotFound, OS_NAMES, get_current_os
         print("External-Tools-Required: ", end='')
         print(', '.join(sorted(tool_required.all)))

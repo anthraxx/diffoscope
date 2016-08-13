@@ -3,6 +3,7 @@ Section: devel
 Priority: optional
 Maintainer: Reproducible builds folks <reproducible-builds@lists.alioth.debian.org>
 Uploaders:
+ Chris Lamb <lamby@debian.org>,
  Holger Levsen <holger@debian.org>,
  Mattia Rizzolo <mattia@debian.org>,
  Reiner Herrmann <reiner@reiner-h.de>,

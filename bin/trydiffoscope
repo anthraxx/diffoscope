@@ -71,7 +71,7 @@ if __name__ == '__main__':
 
     parser.add_argument(
         '--url',
-        help="Use this trydiffoscope endpoint (for development)",
+        help="Specify trydiffoscope endpoint (for development)",
         default='https://try.diffoscope.org/api/v2/comparison',
     )
 
@@ -85,7 +85,7 @@ if __name__ == '__main__':
     parser.add_argument(
         '-p',
         '--poll',
-        help="Poll for result instead of using.",
+        help="Poll for result before printing URL.",
         action='store_true',
     )
 

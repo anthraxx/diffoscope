@@ -33,7 +33,7 @@ def tool_missing(cmd):
 
 
 def tool_older_than(cmdline, min_ver, vcls=StrictVersion):
-    actual_ver = subprocess.check_output(["llvm-config", "--version"]).decode("utf-8").strip()
+    actual_ver = subprocess.check_output(cmdline).decode("utf-8").strip()
     print(actual_ver, min_ver, vcls)
     return vcls(actual_ver) < vcls(min_ver)
 

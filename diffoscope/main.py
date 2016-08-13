@@ -139,7 +139,7 @@ class ListToolsAction(argparse.Action):
                 os_list = [os_override]
             else:
                 print()
-                print("No package mapping found for: {} (possible values: {})".format(os_override, ", ".join(sorted(OS_NAMES.keys()))))
+                print("No package mapping found for: {} (possible values: {})".format(os_override, ", ".join(sorted(OS_NAMES.keys()))), file=sys.stderr)
                 sys.exit(1)
         else:
             current_os = get_current_os()

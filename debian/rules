@@ -14,14 +14,12 @@ export PYBUILD_TEST_ARGS = -v -r sxX
 	dh $@ --with python3 --with bash-completion --buildsystem=pybuild
 
 override_dh_python3:
-	#dh_python3 --recommends=python-debian --recommends=rpm-python --recommends=tlsh --recommends=guestfs --recommends=argcomplete
-	dh_python3 --recommends=tlsh --recommends=argcomplete
+	dh_python3 --recommends=python-debian --recommends=rpm-python --recommends=tlsh --recommends=guestfs --recommends=argcomplete
 
 override_dh_gencontrol:
 	TOOLS="$$(bin/diffoscope --list-tools=debian | tail -n 1 | \
 		sed -e 's/\(^\| \)\(coreutils\|diffutils\|e2fsprogs\|findutils\|gzip\|tar\)\(,\|$$\)//g')"; \
 		[ -n "$$TOOLS" ] || { echo '--list-tools failed' >&2; exit 1; }; \
-		TOOLS="$$TOOLS, python3-debian, python3-guestfs, python3-rpm"; \
 		echo "diffoscope:Recommends=$$TOOLS" >> debian/diffoscope.substvars
 	dh_gencontrol -O--buildsystem=pybuild
 

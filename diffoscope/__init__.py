@@ -113,6 +113,10 @@ class RequiredToolNotFound(Exception):
             'debian': 'llvm',
             'arch': 'llvm',
         },
+        'llvm-config': {
+            'debian': 'llvm',
+            'arch': 'llvm',
+        },
         'llvm-dis': {
             'debian': 'llvm',
             'arch': 'llvm',

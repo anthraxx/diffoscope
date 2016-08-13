@@ -18,16 +18,24 @@
 # along with diffoscope.  If not, see <http://www.gnu.org/licenses/>.
 
 from distutils.spawn import find_executable
+from distutils.version import StrictVersion
 import diffoscope
 import pytest
+import subprocess
 
 @pytest.fixture(autouse=True)
 def set_locale():
-    diffoscope.set_locale()    
+    diffoscope.set_locale()
 
 
 def tool_missing(cmd):
     return find_executable(cmd) is None
+
+
+def tool_older_than(cmdline, min_ver, vcls=StrictVersion):
+    actual_ver = subprocess.check_output(["llvm-config", "--version"]).decode("utf-8").strip()
+    print(actual_ver, min_ver, vcls)
+    return vcls(actual_ver) < vcls(min_ver)
 
 
 # from Jerry Kindall at http://stackoverflow.com/a/7088133

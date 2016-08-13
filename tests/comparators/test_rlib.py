@@ -28,7 +28,7 @@ from diffoscope.comparators.llvm import LlvmBitCodeFile
 from diffoscope.comparators.rust import RustObjectFile
 from diffoscope.comparators.utils import diff_ignore_line_numbers
 from diffoscope.config import Config
-from conftest import tool_missing
+from conftest import tool_missing, tool_older_than
 
 TEST_FILE1_PATH = os.path.join(os.path.dirname(__file__), '../data/test1.rlib')
 TEST_FILE2_PATH = os.path.join(os.path.dirname(__file__), '../data/test2.rlib')
@@ -72,6 +72,7 @@ def test_item2_rust_metadata_bin(differences):
     assert differences[2].source2 == 'rust.metadata.bin'
 
 @pytest.mark.skipif(tool_missing('llvm-dis'), reason='missing llvm-dis')
+@pytest.mark.skipif(tool_older_than(['llvm-config', '--version'], '3.8'), reason='llvm version too low')
 def test_item3_deflate_llvm_bitcode(differences):
     assert differences[3].source1 == 'alloc_system-d16b8f0e.0.bytecode.deflate'
     assert differences[3].source2 == 'alloc_system-d16b8f0e.0.bytecode.deflate'

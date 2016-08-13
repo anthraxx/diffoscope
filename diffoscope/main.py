@@ -132,7 +132,7 @@ class ListToolsAction(argparse.Action):
     def __call__(self, parser, namespace, os_override, option_string=None):
         from functools import reduce
         from diffoscope import tool_required, RequiredToolNotFound, OS_NAMES, get_current_os
-        print("External tools required:")
+        print("External-Tools-Required: ", end='')
         print(', '.join(sorted(tool_required.all)))
         if os_override:
             if os_override in OS_NAMES.keys():
@@ -148,8 +148,7 @@ class ListToolsAction(argparse.Action):
             else:
                 os_list = OS_NAMES.keys()
         for os in os_list:
-            print()
-            print("Available in {} packages: ".format(OS_NAMES.get(os, os)))
+            print("Available-in-{}-packages: ".format(OS_NAMES.get(os, os)), end='')
             print(', '.join(sorted(filter(None, { RequiredToolNotFound.PROVIDERS.get(k, {}).get(os, None) for k in tool_required.all }))))
         sys.exit(0)
 

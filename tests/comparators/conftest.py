@@ -33,6 +33,8 @@ def tool_missing(cmd):
 
 
 def tool_older_than(cmdline, min_ver, vcls=StrictVersion):
+    if find_executable(cmdline[0]) is None:
+        return True
     actual_ver = subprocess.check_output(cmdline).decode("utf-8").strip()
     return vcls(actual_ver) < vcls(min_ver)
 

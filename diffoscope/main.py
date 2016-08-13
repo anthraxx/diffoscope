@@ -149,7 +149,7 @@ class ListToolsAction(argparse.Action):
                 os_list = OS_NAMES.keys()
         for os in os_list:
             print()
-            print("Available in {} packages:".format(OS_NAMES[os] if os in OS_NAMES else os))
+            print("Available in {} packages: ".format(OS_NAMES.get(os, os)))
             print(', '.join(sorted(filter(None, { RequiredToolNotFound.PROVIDERS.get(k, {}).get(os, None) for k in tool_required.all }))))
         sys.exit(0)
 

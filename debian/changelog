@@ -1,3 +1,83 @@
+diffoscope (57) unstable; urgency=medium
+
+  [Chris Lamb]
+  * Add myself to Uploaders.
+  * Add try.diffoscope.org command-line client in new binary package
+    "trydiffoscope" to save installation of dependencies:
+    - Open files in binary mode to support comparing binary files.
+    - Optionally open URL in web browser.
+    - Optionally poll locally until result is available.
+    - Move to version 2 of API, don't continue to poll on error.
+    - Correct and improve help text.
+  * Code cleanups:
+    - Tidy PROVIDERS dict in diffoscope/__init__.py.
+    - Tidy OS_NAMES dict.
+    - Correct indentation levels in various files.
+    - Drop unused imports.
+    - platform.get_linux_distribution() will break in Python 3.7.
+    - Don't name first argument of Difference.from_command "cls" as it's not a
+      classmethod.
+    - comparators/directory.py: Call logger.warning over logger.warn.
+    - Rename diffoscope.__main__ to diffoscope.main as its not a "real" magic
+      name.
+    - Raise NotImplementedError() instances over NotImplemented classes.
+    - Add short option for trydiffoscope --url.
+    - Rewrite trydiffoscope to match diffoscope's command-line API.
+    - Use keepalive in trydiffoscope client to avoid new HTTP requests.
+    - Highlight lines via HTML/CSS when hovering over a line to make it easier
+      to visually track.
+    - Rename debian/install -> debian/diffoscope.install now we have multiple
+      binary packages.
+  * Add a JSON comparator.
+    - Add tests for JSON comparator.
+    - Move parsing to JSONFile.recognizes
+    - Ensure decode errors in JSON comparator are not fatal.
+  * Ignore /.*eggs and /.cache - they get created when running tests.
+  * Reflow long dh_python3 call in debian/rules.
+  * Use dict.get fallback to shorten OS_NAMES lookup in --list-tools.
+  * --list-tools:
+    - Output --list-tools in RFC822 format to make parsing less brittle.
+    - Print "no package mapping" in --list-tools to stderr, not stdout.
+    - Remove unused ``reduce`` import.
+    - Reflow long PROVIDERS lookup.
+  * Add .travis.yml from http://travis.debian.net/
+  * Don't skip squashfs test_listing test; we can workaround it, as long as we
+    have a uid 1000.
+  * Drop "Testsuite: autopkgtest" in debian/control; it is added automatically
+    by dpkg-source version 1.17.11.
+
+  [Mattia Rizzolo]
+  * autopkgtest: be more verbose when running the tests
+  * debian/control:
+    - Mark build-dependency needed only for tests with a <build profile
+      (reverted as they break dh-python)
+    - add more build-dependencies to be able to run more tests at build time
+    - default-jdk-headless is enough to have javap, instead of all of
+      default-jdk
+  * debian/rules:
+    - be more verbose when running the tests, in particular, show why tests are
+      being skipped
+    - teach pybuild where to put diffoscope's files
+  * do not try to execute the command if the command is not available
+
+  [Ximin Luo]
+  * Add support for reading LLVM bitcode files
+    - Ignore line numbers because different llvm-dis versions output extra
+      metadata
+    - Disable the llvm-dis test if the version is lower than 3.8
+  * Add support for reading Rust LLVM object files
+  * Add test for rlib files, helping also to test ArFile, LlvmBitCodeFile and
+    RustObjectFile
+  * Fix failing directory test
+  * Add support for reading the symbol table to ArFile
+  * Fix typo in tool_older_than
+    - Remove debugging print from tool_older_than
+
+  [anthraxx]
+  * skip rlib test if llvm-dis tool is missing
+
+ -- Chris Lamb <lamby@debian.org>  Sat, 13 Aug 2016 23:46:42 +0100
+
 diffoscope (56) unstable; urgency=medium
 
   [ Jérémy Bobbio ]

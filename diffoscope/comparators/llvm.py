@@ -32,7 +32,10 @@ class LlvmBcAnalyzer(Command):
 class LlvmBcDisassembler(Command):
     @tool_required('llvm-dis')
     def cmdline(self):
-        return ['llvm-dis', '-o', '-', self.path]
+        # execute llvm-dis from the same directory as the file, so it doesn't
+        # embed the whole path, including our tempdir, into the output.
+        # this makes it easier to generate reproducible diffs for our tests.
+        return ['find', self.path, '-execdir', 'llvm-dis', '-o', '-', '{}', ';']
 
 class LlvmBitCodeFile(File):
     @staticmethod

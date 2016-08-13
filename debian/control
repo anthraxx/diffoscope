@@ -9,8 +9,18 @@ Uploaders:
 Build-Depends:
  bash-completion,
  binutils-multiarch <!nocheck>,
+ caca-utils <!nocheck>,
+ colord <!nocheck>,
  debhelper (>= 9),
+ default-jdk-headless <!nocheck>,
  dh-python,
+ enjarify <!nocheck>,
+ fp-utils <!nocheck>,
+ ghostscript <!nocheck>,
+ llvm <!nocheck>,
+ mono-utils <!nocheck>,
+ pdftk <!nocheck>,
+ poppler-utils <!nocheck>,
  python-argcomplete,
  python3-all,
  python3-debian <!nocheck>,
@@ -22,7 +32,12 @@ Build-Depends:
  python3-rpm <!nocheck>,
  python3-setuptools,
  python3-tlsh (>= 3.4.1) <!nocheck>,
- vim-common,
+ rpm2cpio <!nocheck>,
+ sng <!nocheck>,
+ sqlite3 <!nocheck>,
+ squashfs-tools <!nocheck>,
+ unzip <!nocheck>,
+ vim-common <!nocheck>,
 Standards-Version: 3.9.8
 Homepage: https://diffoscope.org/
 Vcs-Git: https://anonscm.debian.org/git/reproducible/diffoscope.git
@@ -31,9 +46,12 @@ Testsuite: autopkgtest
 
 Package: diffoscope
 Architecture: all
-Suggests: libjs-jquery
-Breaks: debbindiff (<< 29)
-Replaces: debbindiff (<< 29)
+Suggests:
+ libjs-jquery,
+Breaks:
+ debbindiff (<< 29),
+Replaces:
+ debbindiff (<< 29),
 Depends:
  python3-pkg-resources,
  ${misc:Depends},
@@ -54,8 +72,8 @@ Description: in-depth comparison of files, archives, and directories
 Package: trydiffoscope
 Architecture: all
 Depends:
- ${misc:Depends},
  python3-requests,
+ ${misc:Depends},
  ${python3:Depends},
 Description: in-depth comparison of files, archives, and directories (try.diffoscope.org client)
  diffoscope will try to get to the bottom of what makes files or directories

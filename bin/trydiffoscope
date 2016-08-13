@@ -70,6 +70,7 @@ if __name__ == '__main__':
     )
 
     parser.add_argument(
+        '-u',
         '--url',
         help="Specify trydiffoscope endpoint (for development)",
         default='https://try.diffoscope.org/api/v2/comparison',

@@ -26,6 +26,7 @@ from diffoscope.comparators.binary import FilesystemFile, NonExistingFile
 from diffoscope.comparators.ar import ArFile
 from diffoscope.comparators.llvm import LlvmBitCodeFile
 from diffoscope.comparators.rust import RustObjectFile
+from diffoscope.comparators.utils import diff_ignore_line_numbers
 from diffoscope.config import Config
 
 TEST_FILE1_PATH = os.path.join(os.path.dirname(__file__), '../data/test1.rlib')
@@ -64,7 +65,8 @@ def test_item2_deflate_llvm_bitcode(differences):
     assert differences[2].source1 == 'alloc_system-d16b8f0e.0.bytecode.deflate'
     assert differences[2].source2 == 'alloc_system-d16b8f0e.0.bytecode.deflate'
     expected_diff = open(os.path.join(os.path.dirname(__file__), '../data/rlib_llvm_dis_expected_diff')).read()
-    assert differences[2].details[0].details[1].unified_diff == expected_diff
+    actual_diff = differences[2].details[0].details[1].unified_diff
+    assert diff_ignore_line_numbers(actual_diff) == diff_ignore_line_numbers(expected_diff)
 
 def test_compare_non_existing(monkeypatch, rlib1):
     monkeypatch.setattr(Config.general, 'new_file', True)

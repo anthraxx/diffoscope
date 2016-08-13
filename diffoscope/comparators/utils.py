@@ -23,6 +23,7 @@ from io import BytesIO
 from itertools import starmap
 # The following would be shutil.which in Python 3.3
 import os
+import re
 from stat import S_ISCHR, S_ISBLK
 import subprocess
 from threading import Thread
@@ -140,6 +141,12 @@ def get_compressed_content_name(path, expected_extension):
     else:
         name = "%s-content" % basename
     return name
+
+
+DIFF_LINE_NUMBERS_RE = re.compile(r"(^|\n)@@ -(\d+),(\d+) \+(\d+),(\d+) @@(?=\n|$)")
+
+def diff_ignore_line_numbers(diff):
+    return DIFF_LINE_NUMBERS_RE.sub(r"\1@@ -XX,XX +XX,XX @@", diff)
 
 
 NO_COMMENT = None

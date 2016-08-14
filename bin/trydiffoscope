@@ -18,6 +18,7 @@
 # You should have received a copy of the GNU General Public License
 # along with diffoscope.  If not, see <http://www.gnu.org/licenses/>.
 
+import io
 import os
 import sys
 import time
@@ -133,6 +134,9 @@ if __name__ == '__main__':
     for x in args.file:
         if not os.path.exists(x):
             parser.error("{}: does not exist".format(x))
+
+    if sys.stdout.encoding != 'UTF-8':
+        sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='UTF-8')
 
     try:
         sys.exit(TryDiffoscope(args).main())

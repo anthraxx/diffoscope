@@ -1,5 +1,6 @@
 #!/usr/bin/make -f
 
+MANPAGES = $(patsubst %.1.rst,%.1,$(wildcard debian/*.1.rst))
 VERSION_dch := $(shell dpkg-parsechangelog --show-field Version)
 VERSION_py := $(shell awk '/^VERSION = / {gsub(/"/, "", $$3); print $$3}' diffoscope/__init__.py )
 
@@ -37,7 +38,7 @@ debian/diffoscope.bash-completion:
 override_dh_auto_build: debian/diffoscope.bash-completion debian/diffoscope.1
 	dh_auto_build -O--buildsystem=pybuild
 
-override_dh_installman: debian/diffoscope.1
+override_dh_installman: $(MANPAGES)
 	dh_installman -O--buildsystem=pybuild
 
 diffoscope/presenters/icon.py: favicon.png

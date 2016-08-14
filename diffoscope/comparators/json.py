@@ -44,6 +44,6 @@ class JSONFile(File):
         return [Difference.from_text(
             json.dumps(self.parsed, indent=4, sort_keys=True),
             json.dumps(other.parsed, indent=4, sort_keys=True),
-            self,
-            other,
+            self.path,
+            other.path,
         )]

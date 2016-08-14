@@ -28,7 +28,7 @@ override_dh_gencontrol:
 		echo "diffoscope:Recommends=$$TOOLS" >> debian/diffoscope.substvars
 	dh_gencontrol -O--buildsystem=pybuild
 
-debian/diffoscope.1: debian/diffoscope.1.rst
+debian/%.1: debian/%.1.rst
 	rst2man $< $@
 
 debian/diffoscope.bash-completion:

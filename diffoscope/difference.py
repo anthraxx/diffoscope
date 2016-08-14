@@ -290,6 +290,11 @@ class Difference(object):
         else:
             self._source1 = path1
             self._source2 = path2
+        # Ensure renderable types
+        if not isinstance(self._source1, str):
+            raise TypeError("path1/source[0] is not a string")
+        if not isinstance(self._source2, str):
+            raise TypeError("path2/source[1] is not a string")
         self._details = []
 
     def __repr__(self):

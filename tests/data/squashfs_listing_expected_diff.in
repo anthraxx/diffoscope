@@ -1,5 +1,5 @@
 @@ -1,7 +1,7 @@
- Parallel unsquashfs: Using 4 processors
+ Parallel unsquashfs: Using $NUM_PROCESSORS processors
  3 inodes (3 blocks) to write
  
 -drwxr-xr-x $USER/$USER              51 2015-06-24 14:47 

@@ -20,6 +20,7 @@
 import os.path
 import pwd
 import pytest
+import multiprocessing
 from diffoscope.comparators import specialize
 from diffoscope.comparators.binary import FilesystemFile, NonExistingFile
 from diffoscope.comparators.squashfs import SquashfsFile
@@ -65,6 +66,7 @@ def test_listing(differences):
     # Workaround #794096
     for x, y in (
         ('$USER', pwd.getpwuid(1000).pw_name),
+        ('$NUM_PROCESSORS', str(multiprocessing.cpu_count())),
     ):
         expected_diff = expected_diff.replace(x, y)
     assert differences[1].unified_diff == expected_diff

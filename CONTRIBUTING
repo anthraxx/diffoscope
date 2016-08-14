@@ -26,4 +26,14 @@ One possible workflow:
 ----
 
 
+=== Uploading the package
+
+When uploading diffoscope to the Debian archive, please take extra care to
+make sure the uploaded source package is correct, that is it includes the
+files tests/data/test(1|2).(a|o) which in some cases are removed by dpkg-dev
+when building the package. See https://bugs.debian.org/834315 for an example
+ftbfs bug caused by this and see https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=735377#44
+and followups to learn how this happened and how to prevent it.
+
+
 // vim: set filetype=asciidoc:

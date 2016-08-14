@@ -599,7 +599,7 @@ def output_html_directory(directory, difference, css_url=None, jquery_url=None):
                 os.unlink(jquery_symlink)
             for path in JQUERY_SYSTEM_LOCATIONS:
                 if os.path.exists(path):
-                    os.symlink("/usr/share/javascript/jquery/jquery.js", jquery_symlink)
+                    os.symlink(path, jquery_symlink)
                     jquery_url = "./jquery.js"
                     break
             if not jquery_url:

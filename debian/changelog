@@ -1,3 +1,16 @@
+diffoscope (58) unstable; urgency=medium
+
+  * Shorten Description of trydiffoscope to appease Lintian.
+  * Make squashfs test_listing test more robust:
+    - Add ".in" suffix to squashfs listing expected diff as we are about to
+      template it properly.
+    - Replace $USER with the current user with uid 1000.
+    - Move test_listing replacements to a loop so we can easily add more.
+    - Don't assume that the test environment as 4 CPUs in squashfs.test_listing
+    - Don't assume default group is the same name as the user in test_listing.
+
+ -- Chris Lamb <lamby@debian.org>  Sun, 14 Aug 2016 10:22:19 +0100
+
 diffoscope (57) unstable; urgency=medium
 
   [Chris Lamb]

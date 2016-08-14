@@ -61,7 +61,7 @@ def test_superblock(differences):
 @pytest.mark.skipif(try_except(lambda: 1000 not in {x.pw_uid for x in pwd.getpwall()}, True, KeyError), reason="No uid 1000")
 @pytest.mark.skipif(tool_missing('unsquashfs'), reason='missing unsquashfs')
 def test_listing(differences):
-    expected_diff = open(os.path.join(os.path.dirname(__file__), '../data/squashfs_listing_expected_diff')).read()
+    expected_diff = open(os.path.join(os.path.dirname(__file__), '../data/squashfs_listing_expected_diff.in')).read()
     # Workaround #794096
     expected_diff = expected_diff.replace('lunar/lunar', '{user}/{user}'.format(
         user=pwd.getpwuid(1000).pw_name,

@@ -8,4 +8,4 @@
 .coverage
 /htmlcov/
 favicon.png
-/debian/diffoscope.1
+/debian/*.1

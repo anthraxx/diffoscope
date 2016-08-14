@@ -19,6 +19,7 @@
 
 import os.path
 import pwd
+import grp
 import pytest
 import multiprocessing
 from diffoscope.comparators import specialize
@@ -60,12 +61,14 @@ def test_superblock(differences):
     assert differences[0].unified_diff == expected_diff
 
 @pytest.mark.skipif(try_except(lambda: 1000 not in {x.pw_uid for x in pwd.getpwall()}, True, KeyError), reason="No uid 1000")
+@pytest.mark.skipif(try_except(lambda: 1000 not in {x.gr_gid for x in grp.getgrall()}, True, KeyError), reason="No gid 1000")
 @pytest.mark.skipif(tool_missing('unsquashfs'), reason='missing unsquashfs')
 def test_listing(differences):
     expected_diff = open(os.path.join(os.path.dirname(__file__), '../data/squashfs_listing_expected_diff.in')).read()
     # Workaround #794096
     for x, y in (
         ('$USER', pwd.getpwuid(1000).pw_name),
+        ('$GROUP', grp.getgrgid(1000).gr_name),
         ('$NUM_PROCESSORS', str(multiprocessing.cpu_count())),
     ):
         expected_diff = expected_diff.replace(x, y)

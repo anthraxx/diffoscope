@@ -1,0 +1,29 @@
+=== Contributing code to this project
+
+It's helpful to track fixes or new features via wishlist bugs against the
+'diffoscope' package, eg with the 'reportbug' tool ('devscripts' package).
+
+The code is available in the link:https://anonscm.debian.org/git/reproducible/diffoscope.git/tree/[diffoscope.git repository].
+
+Patches can be submitted as requests to pull from a publicly-visible 
+git repository (this is the prefered way) communicated via IRC or mail,
+or completly via mail (using git format-patch, see below).
+If appropriate, please make a topic branch based on the 'master' branch.
+
+You can send patches or requests to the link:diffoscope@lists.reproducible-builds.org[development list],
+or to the tracking bug: <bugnumber>@bugs.debian.org.
+
+One possible workflow:
+----
+  git clone git://anonscm.debian.org/reproducible/diffoscope.git
+  git checkout origin/master -b <topicname>
+  # <edits>
+  git commit -a
+  git format-patch -M origin/master
+
+  reportbug qa.debian.org
+  # <describe the issue, attach the patch>
+----
+
+
+// vim: set filetype=asciidoc:

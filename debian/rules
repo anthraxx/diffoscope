@@ -15,7 +15,8 @@ export PYBUILD_TEST_ARGS = -v -r sxX
 	dh $@ --with python3 --with bash-completion --buildsystem=pybuild
 
 override_dh_python3:
-	dh_python3 \
+	dh_python3 -p trydiffoscope
+	dh_python3 -p diffoscope \
 		--recommends=python-debian \
 		--recommends=rpm-python \
 		--recommends=tlsh \

@@ -18,15 +18,12 @@
 # along with diffoscope.  If not, see <http://www.gnu.org/licenses/>.
 
 import os.path
-import pwd
-import grp
 import pytest
-import multiprocessing
 from diffoscope.comparators import specialize
 from diffoscope.comparators.binary import FilesystemFile, NonExistingFile
 from diffoscope.comparators.squashfs import SquashfsFile
 from diffoscope.config import Config
-from conftest import tool_missing, try_except
+from conftest import tool_missing
 
 TEST_FILE1_PATH = os.path.join(os.path.dirname(__file__), '../data/test1.squashfs')
 TEST_FILE2_PATH = os.path.join(os.path.dirname(__file__), '../data/test2.squashfs')
@@ -59,23 +56,6 @@ def differences(squashfs1, squashfs2):
 def test_superblock(differences):
     expected_diff = open(os.path.join(os.path.dirname(__file__), '../data/squashfs_superblock_expected_diff')).read()
     assert differences[0].unified_diff == expected_diff
-
-@pytest.mark.skipif(try_except(lambda: 1000 not in {x.pw_uid for x in pwd.getpwall()}, True, KeyError), reason="No uid 1000")
-@pytest.mark.skipif(try_except(lambda: 1000 not in {x.gr_gid for x in grp.getgrall()}, True, KeyError), reason="No gid 1000")
-@pytest.mark.skipif(tool_missing('unsquashfs'), reason='missing unsquashfs')
-def test_listing(differences):
-    expected_diff = open(os.path.join(os.path.dirname(__file__), '../data/squashfs_listing_expected_diff.in')).read()
-    # Workaround #794096
-    user = pwd.getpwuid(1000).pw_name
-    group = grp.getgrgid(1000).gr_name
-    for x, y in (
-        ('$USER', user),
-        ('$GROUP', group),
-        ('$WHITESPACE', " " * (23 - len(user) - len(group))),
-        ('$NUM_PROCESSORS', str(multiprocessing.cpu_count())),
-    ):
-        expected_diff = expected_diff.replace(x, y)
-    assert differences[1].unified_diff == expected_diff
 
 @pytest.mark.skipif(tool_missing('unsquashfs'), reason='missing unsquashfs')
 def test_symlink(differences):

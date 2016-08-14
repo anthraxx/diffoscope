@@ -63,9 +63,10 @@ def test_superblock(differences):
 def test_listing(differences):
     expected_diff = open(os.path.join(os.path.dirname(__file__), '../data/squashfs_listing_expected_diff.in')).read()
     # Workaround #794096
-    expected_diff = expected_diff.replace(
-        '$USER', pwd.getpwuid(1000).pw_name,
-    )
+    for x, y in (
+        ('$USER', pwd.getpwuid(1000).pw_name),
+    ):
+        expected_diff = expected_diff.replace(x, y)
     assert differences[1].unified_diff == expected_diff
 
 @pytest.mark.skipif(tool_missing('unsquashfs'), reason='missing unsquashfs')

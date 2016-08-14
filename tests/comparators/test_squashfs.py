@@ -66,9 +66,12 @@ def test_superblock(differences):
 def test_listing(differences):
     expected_diff = open(os.path.join(os.path.dirname(__file__), '../data/squashfs_listing_expected_diff.in')).read()
     # Workaround #794096
+    user = pwd.getpwuid(1000).pw_name
+    group = grp.getgrgid(1000).gr_name
     for x, y in (
-        ('$USER', pwd.getpwuid(1000).pw_name),
-        ('$GROUP', grp.getgrgid(1000).gr_name),
+        ('$USER', user),
+        ('$GROUP', group),
+        ('$WHITESPACE', " " * (23 - len(user) - len(group))),
         ('$NUM_PROCESSORS', str(multiprocessing.cpu_count())),
     ):
         expected_diff = expected_diff.replace(x, y)

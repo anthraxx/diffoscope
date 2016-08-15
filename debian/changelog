@@ -4,7 +4,7 @@ diffoscope (59) unstable; urgency=medium
   * SquashFS test_testing:
     - Don't assume that user and group are 5 characters long in squashfs
       test_listing.
-    - Drop test test; simply too unreliable and/or has too many requirements to
+    - Drop test; simply too unreliable and/or has too many requirements to
       satisfy (eg. shorter usernames) for it to not be skipped.
   * Difference class:
     - Ensure that we pass str instances to our Difference class as paths,

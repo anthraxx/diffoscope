@@ -91,16 +91,14 @@ temp_dirs = []
 
 
 def get_named_temporary_file(*args, **kwargs):
-    if 'suffix' not in kwargs:
-        kwargs['suffix'] = '_diffoscope'
+    kwargs['suffix'] = kwargs.pop('suffix', '_diffoscope')
     f = tempfile.NamedTemporaryFile(*args, **kwargs)
     temp_files.append(f.name)
     return f
 
 
 def get_temporary_directory(*args, **kwargs):
-    if 'suffix' not in kwargs:
-        kwargs['suffix'] = '_diffoscope'
+    kwargs['suffix'] = kwargs.pop('suffix', '_diffoscope')
     d = tempfile.TemporaryDirectory(*args, **kwargs)
     temp_dirs.append(d)
     return d

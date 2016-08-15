@@ -1,3 +1,39 @@
+diffoscope (59) unstable; urgency=medium
+
+  [ Chris Lamb ]
+  * SquashFS test_testing:
+    - Don't assume that user and group are 5 characters long in squashfs
+      test_listing.
+    - Drop test test; simply too unreliable and/or has too many requirements to
+      satisfy (eg. shorter usernames) for it to not be skipped.
+  * Difference class:
+    - Ensure that we pass str instances to our Difference class as paths,
+      otherwise we can't be sure we can render them. For example, passing a
+      class here breaks the HTML renderer.
+    - Add test for type checking of path1/path2/source.
+    - Pass a str for the path in the JSON comparator, fixing the HTML reporting
+      of JSON output.
+  * When looping over JQUERY_SYSTEM_LOCATIONS, actually use the variable we are
+    looping with when performing the symlink(2) call.
+  * trydiffoscope:
+    - Add manpage for trydiffoscope.
+    - Write trydiffoscope console output as UTF-8, even if STDOUT claims it
+      doesn't support it.
+  * debian/rules:
+    - Make separate calls to dh_python3 for diffoscope and trydiffoscope to
+      avoid both getting the same Recommends substvar.
+    - Use a pattern-based rule for rst2man-based manpages instead of
+      hard-coding "diffoscope.1".
+    - Dynamically calculate manpages to generate over hardcoding.
+  * .gitignore: Ignore all generated manpages, not just diffoscope.1.
+
+  [ Holger Levsen ]
+  * ./CONTRIBUTING:
+    - Add new file.
+    - Explain what to look out for when uploading diffoscope.
+
+ -- Chris Lamb <lamby@debian.org>  Mon, 15 Aug 2016 09:54:48 +0100
+
 diffoscope (58) unstable; urgency=medium
 
   * Shorten Description of trydiffoscope to appease Lintian.

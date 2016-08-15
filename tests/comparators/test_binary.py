@@ -22,7 +22,8 @@ import subprocess
 
 import diffoscope.comparators.binary
 
-from diffoscope import RequiredToolNotFound, tool_required
+from diffoscope import tool_required
+from diffoscope.exc import RequiredToolNotFound
 from diffoscope.difference import Difference
 from diffoscope.comparators import specialize
 from diffoscope.comparators.binary import File, FilesystemFile, NonExistingFile
@@ -133,7 +134,7 @@ def test_with_compare_details_and_failed_process():
 
 @pytest.mark.skipif(tool_missing('xxd'), reason='missing xxd')
 def test_with_compare_details_and_tool_not_found(monkeypatch):
-    monkeypatch.setattr('diffoscope.RequiredToolNotFound.get_package', lambda _: 'some-package')
+    monkeypatch.setattr('diffoscope.exc.RequiredToolNotFound.get_package', lambda _: 'some-package')
     class MockFile(FilesystemFile):
         @tool_required('nonexistent')
         def compare_details(self, other, source=None):

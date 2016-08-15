@@ -23,7 +23,8 @@ import subprocess
 
 import diffoscope.comparators
 
-from diffoscope import logger, tool_required, RequiredToolNotFound
+from diffoscope import logger, tool_required
+from diffoscope.exc import RequiredToolNotFound
 from diffoscope.difference import Difference
 from diffoscope.comparators.utils import Container, Command
 from diffoscope.comparators.binary import FilesystemFile

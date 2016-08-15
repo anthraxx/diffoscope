@@ -28,7 +28,8 @@ import subprocess
 
 from multiprocessing.dummy import Queue
 
-from diffoscope import logger, tool_required, RequiredToolNotFound
+from diffoscope import logger, tool_required
+from diffoscope.exc import RequiredToolNotFound
 from diffoscope.config import Config
 
 

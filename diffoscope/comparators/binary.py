@@ -26,8 +26,8 @@ import magic
 import binascii
 import subprocess
 
-from diffoscope import tool_required, RequiredToolNotFound, logger, \
-    OutputParsingError
+from diffoscope import tool_required, logger
+from diffoscope.exc import OutputParsingError, RequiredToolNotFound
 from diffoscope.config import Config
 from diffoscope.difference import Difference
 
@@ -54,6 +54,7 @@ def hexdump_fallback(path):
 
 def compare_binary_files(file1, file2, source=None):
     import diffoscope.comparators.utils
+
     try:
         return Difference.from_command(diffoscope.comparators.utils.Xxd, file1.path, file2.path, source=[file1.name, file2.name])
     except RequiredToolNotFound:

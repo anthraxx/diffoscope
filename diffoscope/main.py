@@ -31,6 +31,7 @@ import contextlib
 import diffoscope.comparators
 
 from diffoscope import logger, VERSION, set_locale, clean_all_temp_files
+from diffoscope.exc import RequiredToolNotFound
 from diffoscope.config import Config
 from diffoscope.presenters.html import output_html, output_html_directory, \
     JQUERY_SYSTEM_LOCATIONS
@@ -134,7 +135,8 @@ class RangeCompleter(object):
 
 class ListToolsAction(argparse.Action):
     def __call__(self, parser, namespace, os_override, option_string=None):
-        from diffoscope import tool_required, RequiredToolNotFound, OS_NAMES, get_current_os
+        from diffoscope import tool_required, OS_NAMES, get_current_os
+
         print("External-Tools-Required: ", end='')
         print(', '.join(sorted(tool_required.all)))
         if os_override:

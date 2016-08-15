@@ -17,7 +17,6 @@
 # You should have received a copy of the GNU General Public License
 # along with diffoscope.  If not, see <http://www.gnu.org/licenses/>.
 
-import os.path
 import pytest
 
 from diffoscope.config import Config
@@ -25,10 +24,10 @@ from diffoscope.comparators import specialize
 from diffoscope.comparators.zip import ZipFile, MozillaZipFile
 from diffoscope.comparators.binary import FilesystemFile, NonExistingFile
 
-from conftest import tool_missing
+from conftest import tool_missing, data
 
-TEST_FILE1_PATH = os.path.join(os.path.dirname(__file__), '../data/test1.zip')
-TEST_FILE2_PATH = os.path.join(os.path.dirname(__file__), '../data/test2.zip')
+TEST_FILE1_PATH = data('test1.zip')
+TEST_FILE2_PATH = data('test2.zip')
 
 @pytest.fixture
 def zip1():
@@ -51,14 +50,14 @@ def differences(zip1, zip2):
 
 @pytest.mark.skipif(tool_missing('zipinfo'), reason='missing zip')
 def test_metadata(differences):
-    expected_diff = open(os.path.join(os.path.dirname(__file__), '../data/zip_zipinfo_expected_diff')).read()
+    expected_diff = open(data('zip_zipinfo_expected_diff')).read()
     assert differences[0].unified_diff == expected_diff
 
 @pytest.mark.skipif(tool_missing('zipinfo'), reason='missing zip')
 def test_compressed_files(differences):
     assert differences[1].source1 == 'dir/text'
     assert differences[1].source2 == 'dir/text'
-    expected_diff = open(os.path.join(os.path.dirname(__file__), '../data/text_ascii_expected_diff')).read()
+    expected_diff = open(data('text_ascii_expected_diff')).read()
     assert differences[1].unified_diff == expected_diff
 
 @pytest.mark.skipif(tool_missing('zipinfo'), reason='missing zip')
@@ -68,8 +67,8 @@ def test_compare_non_existing(monkeypatch, zip1):
     assert difference.source2 == '/nonexisting'
     assert difference.details[-1].source2 == '/dev/null'
 
-TEST_MOZZIP1_PATH = os.path.join(os.path.dirname(__file__), '../data/test1.mozzip')
-TEST_MOZZIP2_PATH = os.path.join(os.path.dirname(__file__), '../data/test2.mozzip')
+TEST_MOZZIP1_PATH = data('test1.mozzip')
+TEST_MOZZIP2_PATH = data('test2.mozzip')
 
 @pytest.fixture
 def mozzip1():
@@ -92,7 +91,7 @@ def mozzip_differences(mozzip1, mozzip2):
 
 @pytest.mark.skipif(tool_missing('zipinfo'), reason='missing zip')
 def test_mozzip_metadata(mozzip_differences):
-    expected_diff = open(os.path.join(os.path.dirname(__file__), '../data/mozzip_zipinfo_expected_diff')).read()
+    expected_diff = open(data('mozzip_zipinfo_expected_diff')).read()
     diff = mozzip_differences[0].unified_diff
     assert (diff.replace(TEST_MOZZIP1_PATH, 'test1.mozzip')
                 .replace(TEST_MOZZIP2_PATH, 'test2.mozzip')) == expected_diff
@@ -101,7 +100,7 @@ def test_mozzip_metadata(mozzip_differences):
 def test_mozzip_compressed_files(mozzip_differences):
     assert mozzip_differences[1].source1 == 'dir/text'
     assert mozzip_differences[1].source2 == 'dir/text'
-    expected_diff = open(os.path.join(os.path.dirname(__file__), '../data/text_ascii_expected_diff')).read()
+    expected_diff = open(data('text_ascii_expected_diff')).read()
     assert mozzip_differences[1].unified_diff == expected_diff
 
 @pytest.mark.skipif(tool_missing('zipinfo'), reason='missing zip')

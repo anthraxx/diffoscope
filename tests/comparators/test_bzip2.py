@@ -19,17 +19,16 @@
 
 import shutil
 import pytest
-import os.path
 
+from diffoscope.config import Config
 from diffoscope.comparators import specialize
 from diffoscope.comparators.binary import FilesystemFile, NonExistingFile
 from diffoscope.comparators.bzip2 import Bzip2File
-from diffoscope.config import Config
 
-from conftest import tool_missing
+from conftest import tool_missing, data
 
-TEST_FILE1_PATH = os.path.join(os.path.dirname(__file__), '../data/test1.bz2')
-TEST_FILE2_PATH = os.path.join(os.path.dirname(__file__), '../data/test2.bz2')
+TEST_FILE1_PATH = data('test1.bz2')
+TEST_FILE2_PATH = data('test2.bz2')
 
 
 @pytest.fixture
@@ -70,7 +69,7 @@ def test_content_source_without_extension(tmpdir):
 
 @pytest.mark.skipif(tool_missing('bzip2'), reason='missing bzip2')
 def test_content_diff(differences):
-    expected_diff = open(os.path.join(os.path.dirname(__file__), '../data/text_ascii_expected_diff')).read()
+    expected_diff = open(data('text_ascii_expected_diff')).read()
     assert differences[0].unified_diff == expected_diff
 
 @pytest.mark.skipif(tool_missing('bzip2'), reason='missing bzip2')

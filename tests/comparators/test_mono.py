@@ -18,22 +18,21 @@
 # along with diffoscope.  If not, see <http://www.gnu.org/licenses/>.
 
 import pytest
-import os.path
 
 from diffoscope.config import Config
 from diffoscope.comparators import specialize
 from diffoscope.comparators.mono import MonoExeFile
 from diffoscope.comparators.binary import FilesystemFile, NonExistingFile
 
-from conftest import tool_missing
+from conftest import tool_missing, data
 
 # these were generated with:
 
 # echo 'public class Test { static public void Main () {} }' > test.cs
 # mcs -out:test1.exe test.cs ; sleep 2; mcs -out:test2.exe test.cs
 
-TEST_FILE1_PATH = os.path.join(os.path.dirname(__file__), '../data/test1.exe')
-TEST_FILE2_PATH = os.path.join(os.path.dirname(__file__), '../data/test2.exe')
+TEST_FILE1_PATH = data('test1.exe')
+TEST_FILE2_PATH = data('test2.exe')
 
 @pytest.fixture
 def exe1():
@@ -56,7 +55,7 @@ def differences(exe1, exe2):
 
 @pytest.mark.skipif(tool_missing('pedump'), reason='missing pedump')
 def test_diff(differences):
-    expected_diff = open(os.path.join(os.path.dirname(__file__), '../data/pe_expected_diff')).read()
+    expected_diff = open(data('pe_expected_diff')).read()
     assert differences[0].unified_diff == expected_diff
 
 @pytest.mark.skipif(tool_missing('pedump'), reason='missing pedump')

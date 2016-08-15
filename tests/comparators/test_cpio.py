@@ -18,17 +18,16 @@
 # along with diffoscope.  If not, see <http://www.gnu.org/licenses/>.
 
 import pytest
-import os.path
 
 from diffoscope.config import Config
 from diffoscope.comparators import specialize
 from diffoscope.comparators.cpio import CpioFile
 from diffoscope.comparators.binary import FilesystemFile, NonExistingFile
 
-from conftest import tool_missing
+from conftest import tool_missing, data
 
-TEST_FILE1_PATH = os.path.join(os.path.dirname(__file__), '../data/test1.cpio')
-TEST_FILE2_PATH = os.path.join(os.path.dirname(__file__), '../data/test2.cpio')
+TEST_FILE1_PATH = data('test1.cpio')
+TEST_FILE2_PATH = data('test2.cpio')
 
 @pytest.fixture
 def cpio1():
@@ -51,21 +50,21 @@ def differences(cpio1, cpio2):
 
 @pytest.mark.skipif(tool_missing('cpio'), reason='missing cpio')
 def test_listing(differences):
-    expected_diff = open(os.path.join(os.path.dirname(__file__), '../data/cpio_listing_expected_diff')).read()
+    expected_diff = open(data('cpio_listing_expected_diff')).read()
     assert differences[0].unified_diff == expected_diff
 
 @pytest.mark.skipif(tool_missing('cpio'), reason='missing cpio')
 def test_symlink(differences):
     assert differences[1].source1 == 'dir/link'
     assert differences[1].comment == 'symlink'
-    expected_diff = open(os.path.join(os.path.dirname(__file__), '../data/symlink_expected_diff')).read()
+    expected_diff = open(data('symlink_expected_diff')).read()
     assert differences[1].unified_diff == expected_diff
 
 @pytest.mark.skipif(tool_missing('cpio'), reason='missing cpio')
 def test_compressed_files(differences):
     assert differences[2].source1 == 'dir/text'
     assert differences[2].source2 == 'dir/text'
-    expected_diff = open(os.path.join(os.path.dirname(__file__), '../data/text_ascii_expected_diff')).read()
+    expected_diff = open(data('text_ascii_expected_diff')).read()
     assert differences[2].unified_diff == expected_diff
 
 @pytest.mark.skipif(tool_missing('cpio'), reason='missing cpio')

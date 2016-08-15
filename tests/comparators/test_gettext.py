@@ -19,17 +19,16 @@
 
 import codecs
 import pytest
-import os.path
 
 from diffoscope.config import Config
 from diffoscope.comparators import specialize
 from diffoscope.comparators.binary import FilesystemFile, NonExistingFile
 from diffoscope.comparators.gettext import MoFile
 
-from conftest import tool_missing
+from conftest import tool_missing, data
 
-TEST_FILE1_PATH = os.path.join(os.path.dirname(__file__), '../data/test1.mo')
-TEST_FILE2_PATH = os.path.join(os.path.dirname(__file__), '../data/test2.mo')
+TEST_FILE1_PATH = data('test1.mo')
+TEST_FILE2_PATH = data('test2.mo')
 
 @pytest.fixture
 def mo1():
@@ -52,21 +51,21 @@ def differences(mo1, mo2):
 
 @pytest.mark.skipif(tool_missing('msgunfmt'), reason='missing msgunfmt')
 def test_diff(differences):
-    expected_diff = open(os.path.join(os.path.dirname(__file__), '../data/mo_expected_diff')).read()
+    expected_diff = open(data('mo_expected_diff')).read()
     assert differences[0].unified_diff == expected_diff
 
 @pytest.fixture
 def mo_no_charset():
-    return specialize(FilesystemFile(os.path.join(os.path.dirname(__file__), '../data/test_no_charset.mo')))
+    return specialize(FilesystemFile(data('test_no_charset.mo')))
 
 @pytest.fixture
 def mo_iso8859_1():
-    return specialize(FilesystemFile(os.path.join(os.path.dirname(__file__), '../data/test_iso8859-1.mo')))
+    return specialize(FilesystemFile(data('test_iso8859-1.mo')))
 
 @pytest.mark.skipif(tool_missing('msgunfmt'), reason='missing msgunfmt')
 def test_charsets(mo_no_charset, mo_iso8859_1):
     difference = mo_no_charset.compare(mo_iso8859_1)
-    expected_diff = codecs.open(os.path.join(os.path.dirname(__file__), '../data/mo_charsets_expected_diff'), encoding='utf-8').read()
+    expected_diff = codecs.open(data('mo_charsets_expected_diff'), encoding='utf-8').read()
     assert difference.details[0].unified_diff == expected_diff
 
 @pytest.mark.skipif(tool_missing('msgunfmt'), reason='missing msgunfmt')

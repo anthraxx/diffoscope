@@ -19,19 +19,20 @@
 
 import codecs
 import pytest
-import os.path
 
 from diffoscope.config import Config
 from diffoscope.comparators import specialize
 from diffoscope.comparators.binary import FilesystemFile, NonExistingFile
 
+from conftest import data
+
 @pytest.fixture
 def ascii1():
-    return specialize(FilesystemFile(os.path.join(os.path.dirname(__file__), '../data/text_ascii1')))
+    return specialize(FilesystemFile(data('text_ascii1')))
 
 @pytest.fixture
 def ascii2():
-    return specialize(FilesystemFile(os.path.join(os.path.dirname(__file__), '../data/text_ascii2')))
+    return specialize(FilesystemFile(data('text_ascii2')))
 
 def test_no_differences(ascii1):
     difference = ascii1.compare(ascii1)
@@ -40,37 +41,37 @@ def test_no_differences(ascii1):
 def test_difference_in_ascii(ascii1, ascii2):
     difference = ascii1.compare(ascii2)
     assert difference is not None
-    expected_diff = open(os.path.join(os.path.dirname(__file__), '../data/text_ascii_expected_diff')).read()
+    expected_diff = open(data('text_ascii_expected_diff')).read()
     assert difference.unified_diff == expected_diff
     assert not difference.comments
     assert len(difference.details) == 0
 
 @pytest.fixture
 def unicode1():
-    return specialize(FilesystemFile(os.path.join(os.path.dirname(__file__), '../data/text_unicode1')))
+    return specialize(FilesystemFile(data('text_unicode1')))
 
 @pytest.fixture
 def unicode2():
-    return specialize(FilesystemFile(os.path.join(os.path.dirname(__file__), '../data/text_unicode2')))
+    return specialize(FilesystemFile(data('text_unicode2')))
 
 def test_difference_in_unicode(unicode1, unicode2):
     difference = unicode1.compare(unicode2)
-    expected_diff = codecs.open(os.path.join(os.path.dirname(__file__), '../data/text_unicode_expected_diff'), encoding='utf-8').read()
+    expected_diff = codecs.open(data('text_unicode_expected_diff'), encoding='utf-8').read()
     assert difference.unified_diff == expected_diff
 
 @pytest.fixture
 def iso8859():
-    return specialize(FilesystemFile(os.path.join(os.path.dirname(__file__), '../data/text_iso8859')))
+    return specialize(FilesystemFile(data('text_iso8859')))
 
 def test_difference_between_iso88591_and_unicode(iso8859, unicode1):
     difference = iso8859.compare(unicode1)
-    expected_diff = codecs.open(os.path.join(os.path.dirname(__file__), '../data/text_iso8859_expected_diff'), encoding='utf-8').read()
+    expected_diff = codecs.open(data('text_iso8859_expected_diff'), encoding='utf-8').read()
     assert difference.unified_diff == expected_diff
 
 def test_difference_between_iso88591_and_unicode_only(iso8859, tmpdir):
     utf8_path = str(tmpdir.join('utf8'))
     with open(utf8_path, 'wb') as f:
-        f.write(codecs.open(os.path.join(os.path.dirname(__file__), '../data/text_iso8859'), encoding='iso8859-1').read().encode('utf-8'))
+        f.write(codecs.open(data('text_iso8859'), encoding='iso8859-1').read().encode('utf-8'))
     utf8 = specialize(FilesystemFile(utf8_path))
     difference = iso8859.compare(utf8)
     assert difference.unified_diff is None

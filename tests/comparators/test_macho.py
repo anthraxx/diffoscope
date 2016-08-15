@@ -26,10 +26,10 @@ from diffoscope.comparators import specialize
 from diffoscope.comparators.macho import MachoFile
 from diffoscope.comparators.binary import FilesystemFile, NonExistingFile
 
-from conftest import tool_missing
+from conftest import tool_missing, data
 
-TEST_OBJ1_PATH = os.path.join(os.path.dirname(__file__), '../data/test1.macho')
-TEST_OBJ2_PATH = os.path.join(os.path.dirname(__file__), '../data/test2.macho')
+TEST_OBJ1_PATH = data('test1.macho')
+TEST_OBJ2_PATH = data('test2.macho')
 
 @pytest.fixture
 def obj1():
@@ -64,5 +64,5 @@ def test_diff(obj_differences):
     for idx, diff in enumerate(obj_differences):
         with open(os.path.join(os.path.dirname(__file__), '../data', l[idx]), 'w') as f:
             print(diff.unified_diff, file=f)
-    expected_diff = open(os.path.join(os.path.dirname(__file__), '../data/macho_expected_diff')).read()
+    expected_diff = open(data('macho_expected_diff')).read()
     assert obj_differences[0].unified_diff == expected_diff

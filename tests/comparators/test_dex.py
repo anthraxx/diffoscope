@@ -18,17 +18,16 @@
 # along with diffoscope.  If not, see <http://www.gnu.org/licenses/>.
 
 import pytest
-import os.path
 
 from diffoscope.config import Config
 from diffoscope.comparators import specialize
 from diffoscope.comparators.dex import DexFile
 from diffoscope.comparators.binary import FilesystemFile, NonExistingFile
 
-from conftest import tool_missing
+from conftest import tool_missing, data
 
-TEST_FILE1_PATH = os.path.join(os.path.dirname(__file__), '../data/test1.dex')
-TEST_FILE2_PATH = os.path.join(os.path.dirname(__file__), '../data/test2.dex')
+TEST_FILE1_PATH = data('test1.dex')
+TEST_FILE2_PATH = data('test2.dex')
 
 @pytest.fixture
 def dex1():
@@ -61,7 +60,7 @@ def test_differences(differences):
     assert zipinfo.source2 == 'zipinfo -v {}'
     assert classdiff.source1 == 'com/example/MainActivity.class'
     assert classdiff.source2 == 'com/example/MainActivity.class'
-    expected_diff = open(os.path.join(os.path.dirname(__file__), '../data/dex_expected_diffs')).read()
+    expected_diff = open(data('dex_expected_diffs')).read()
     found_diff = zipinfo.unified_diff + classdiff.details[0].unified_diff
     assert expected_diff == found_diff
 

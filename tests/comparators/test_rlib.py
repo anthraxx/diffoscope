@@ -19,7 +19,6 @@
 # along with diffoscope.  If not, see <http://www.gnu.org/licenses/>.
 
 import pytest
-import os.path
 
 from diffoscope.config import Config
 from diffoscope.comparators import specialize
@@ -27,10 +26,10 @@ from diffoscope.comparators.ar import ArFile
 from diffoscope.comparators.utils import diff_ignore_line_numbers
 from diffoscope.comparators.binary import FilesystemFile, NonExistingFile
 
-from conftest import tool_missing, tool_older_than
+from conftest import tool_missing, tool_older_than, data
 
-TEST_FILE1_PATH = os.path.join(os.path.dirname(__file__), '../data/test1.rlib')
-TEST_FILE2_PATH = os.path.join(os.path.dirname(__file__), '../data/test2.rlib')
+TEST_FILE1_PATH = data('test1.rlib')
+TEST_FILE2_PATH = data('test2.rlib')
 
 @pytest.fixture
 def rlib1():
@@ -57,13 +56,13 @@ def test_num_items(differences):
 def test_item0_armap(differences):
     assert differences[0].source1 == 'nm -s {}'
     assert differences[0].source2 == 'nm -s {}'
-    expected_diff = open(os.path.join(os.path.dirname(__file__), '../data/rlib_armap_expected_diff')).read()
+    expected_diff = open(data('rlib_armap_expected_diff')).read()
     assert differences[0].unified_diff == expected_diff
 
 def test_item1_elf(differences):
     assert differences[1].source1 == 'alloc_system-d16b8f0e.0.o'
     assert differences[1].source2 == 'alloc_system-d16b8f0e.0.o'
-    expected_diff = open(os.path.join(os.path.dirname(__file__), '../data/rlib_elf_expected_diff')).read()
+    expected_diff = open(data('rlib_elf_expected_diff')).read()
     assert differences[1].details[0].unified_diff == expected_diff
 
 def test_item2_rust_metadata_bin(differences):
@@ -75,7 +74,7 @@ def test_item2_rust_metadata_bin(differences):
 def test_item3_deflate_llvm_bitcode(differences):
     assert differences[3].source1 == 'alloc_system-d16b8f0e.0.bytecode.deflate'
     assert differences[3].source2 == 'alloc_system-d16b8f0e.0.bytecode.deflate'
-    expected_diff = open(os.path.join(os.path.dirname(__file__), '../data/rlib_llvm_dis_expected_diff')).read()
+    expected_diff = open(data('rlib_llvm_dis_expected_diff')).read()
     actual_diff = differences[3].details[0].details[1].unified_diff
     assert diff_ignore_line_numbers(actual_diff) == diff_ignore_line_numbers(expected_diff)
 

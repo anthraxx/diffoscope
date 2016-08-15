@@ -27,7 +27,7 @@ from diffoscope.comparators.elf import ElfFile, StaticLibFile
 from diffoscope.comparators.binary import FilesystemFile, NonExistingFile
 from diffoscope.comparators.directory import FilesystemDirectory
 
-from conftest import tool_missing
+from conftest import tool_missing, data
 
 try:
     import diffoscope.comparators.debian # noqa
@@ -35,8 +35,8 @@ try:
 except ImportError:
     miss_debian_module = True
 
-TEST_OBJ1_PATH = os.path.join(os.path.dirname(__file__), '../data/test1.o')
-TEST_OBJ2_PATH = os.path.join(os.path.dirname(__file__), '../data/test2.o')
+TEST_OBJ1_PATH = data('test1.o')
+TEST_OBJ2_PATH = data('test2.o')
 
 @pytest.fixture
 def obj1():
@@ -67,11 +67,11 @@ def test_obj_compare_non_existing(monkeypatch, obj1):
 @pytest.mark.skipif(tool_missing('readelf'), reason='missing readelf')
 def test_diff(obj_differences):
     assert len(obj_differences) == 1
-    expected_diff = open(os.path.join(os.path.dirname(__file__), '../data/elf_obj_expected_diff')).read()
+    expected_diff = open(data('elf_obj_expected_diff')).read()
     assert obj_differences[0].unified_diff == expected_diff
 
-TEST_LIB1_PATH = os.path.join(os.path.dirname(__file__), '../data/test1.a')
-TEST_LIB2_PATH = os.path.join(os.path.dirname(__file__), '../data/test2.a')
+TEST_LIB1_PATH = data('test1.a')
+TEST_LIB2_PATH = data('test2.a')
 
 @pytest.fixture
 def lib1():
@@ -96,10 +96,10 @@ def lib_differences(lib1, lib2):
 def test_lib_differences(lib_differences):
     assert len(lib_differences) == 2
     assert lib_differences[0].source1 == 'file list'
-    expected_metadata_diff = open(os.path.join(os.path.dirname(__file__), '../data/elf_lib_metadata_expected_diff')).read()
+    expected_metadata_diff = open(data('elf_lib_metadata_expected_diff')).read()
     assert lib_differences[0].unified_diff == expected_metadata_diff
     assert 'objdump' in lib_differences[1].source1
-    expected_objdump_diff = open(os.path.join(os.path.dirname(__file__), '../data/elf_lib_objdump_expected_diff')).read()
+    expected_objdump_diff = open(data('elf_lib_objdump_expected_diff')).read()
     assert lib_differences[1].unified_diff == expected_objdump_diff
 
 @pytest.mark.skipif(tool_missing('readelf') or tool_missing('objdump'), reason='missing readelf')
@@ -109,8 +109,8 @@ def test_lib_compare_non_existing(monkeypatch, lib1):
     assert difference.source2 == '/nonexisting'
     assert len(difference.details) > 0
 
-TEST_DBGSYM_DEB1_PATH = os.path.join(os.path.dirname(__file__), '../data/dbgsym/add/test-dbgsym_1_amd64.deb')
-TEST_DBGSYM_DEB2_PATH = os.path.join(os.path.dirname(__file__), '../data/dbgsym/mult/test-dbgsym_1_amd64.deb')
+TEST_DBGSYM_DEB1_PATH = data('dbgsym/add/test-dbgsym_1_amd64.deb')
+TEST_DBGSYM_DEB2_PATH = data('dbgsym/mult/test-dbgsym_1_amd64.deb')
 
 @pytest.fixture
 def dbgsym_dir1():
@@ -141,5 +141,5 @@ def test_differences_with_dbgsym(dbgsym_differences):
 def test_original_gnu_debuglink(dbgsym_differences):
     bin_details = dbgsym_differences.details[2].details[0].details[0]
     assert '.gnu_debuglink' in bin_details.details[2].source1
-    expected_gnu_debuglink = open(os.path.join(os.path.dirname(__file__), '../data/gnu_debuglink_expected_diff')).read()
+    expected_gnu_debuglink = open(data('gnu_debuglink_expected_diff')).read()
     assert bin_details.details[2].unified_diff == expected_gnu_debuglink

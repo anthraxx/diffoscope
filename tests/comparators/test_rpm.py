@@ -18,13 +18,12 @@
 # along with diffoscope.  If not, see <http://www.gnu.org/licenses/>.
 
 import pytest
-import os.path
 
 from diffoscope.config import Config
 from diffoscope.comparators import specialize
 from diffoscope.comparators.binary import FilesystemFile, NonExistingFile
 
-from conftest import tool_missing
+from conftest import tool_missing, data
 
 try:
     from diffoscope.comparators.rpm import RpmFile
@@ -33,8 +32,8 @@ except ImportError:
     from diffoscope.comparators.rpm_fallback import RpmFile
     miss_rpm_module = True
 
-TEST_FILE1_PATH = os.path.join(os.path.dirname(__file__), '../data/test1.rpm')
-TEST_FILE2_PATH = os.path.join(os.path.dirname(__file__), '../data/test2.rpm')
+TEST_FILE1_PATH = data('test1.rpm')
+TEST_FILE2_PATH = data('test2.rpm')
 
 @pytest.fixture
 def rpm1():
@@ -60,7 +59,7 @@ def differences(rpm1, rpm2):
 @pytest.mark.skipif(tool_missing('rpm2cpio'), reason='missing rpm2cpio')
 def test_header(differences):
     assert differences[0].source1 == 'header'
-    expected_diff = open(os.path.join(os.path.dirname(__file__), '../data/rpm_header_expected_diff')).read()
+    expected_diff = open(data('rpm_header_expected_diff')).read()
     assert differences[0].unified_diff == expected_diff
 
 @pytest.mark.skipif(miss_rpm_module, reason='rpm module is not installed')
@@ -68,7 +67,7 @@ def test_header(differences):
 def test_listing(differences):
     assert differences[1].source1 == 'content'
     assert differences[1].details[0].source1 == 'file list'
-    expected_diff = open(os.path.join(os.path.dirname(__file__), '../data/rpm_listing_expected_diff')).read()
+    expected_diff = open(data('rpm_listing_expected_diff')).read()
     assert differences[1].details[0].unified_diff == expected_diff
 
 @pytest.mark.skipif(miss_rpm_module, reason='rpm module is not installed')
@@ -76,7 +75,7 @@ def test_listing(differences):
 def test_content(differences):
     assert differences[1].source1 == 'content'
     assert differences[1].details[1].source1 == './dir/text'
-    expected_diff = open(os.path.join(os.path.dirname(__file__), '../data/text_ascii_expected_diff')).read()
+    expected_diff = open(data('text_ascii_expected_diff')).read()
     assert differences[1].details[1].unified_diff == expected_diff
 
 @pytest.mark.skipif(miss_rpm_module, reason='rpm module is not installed')

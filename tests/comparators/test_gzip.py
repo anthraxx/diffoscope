@@ -17,7 +17,6 @@
 # You should have received a copy of the GNU General Public License
 # along with diffoscope.  If not, see <http://www.gnu.org/licenses/>.
 
-import os.path
 import shutil
 import pytest
 
@@ -26,8 +25,10 @@ from diffoscope.comparators import specialize
 from diffoscope.comparators.gzip import GzipFile
 from diffoscope.comparators.binary import FilesystemFile, NonExistingFile
 
-TEST_FILE1_PATH = os.path.join(os.path.dirname(__file__), '../data/test1.gz')
-TEST_FILE2_PATH = os.path.join(os.path.dirname(__file__), '../data/test2.gz')
+from conftest import data
+
+TEST_FILE1_PATH = data('test1.gz')
+TEST_FILE2_PATH = data('test2.gz')
 
 @pytest.fixture
 def gzip1():
@@ -51,7 +52,7 @@ def differences(gzip1, gzip2):
 def test_metadata(differences):
     assert differences[0].source1 == 'metadata'
     assert differences[0].source2 == 'metadata'
-    expected_diff = open(os.path.join(os.path.dirname(__file__), '../data/gzip_metadata_expected_diff')).read()
+    expected_diff = open(data('gzip_metadata_expected_diff')).read()
     assert differences[0].unified_diff == expected_diff
 
 def test_content_source(differences):
@@ -70,7 +71,7 @@ def test_content_source_without_extension(tmpdir):
     assert difference[1].source2 == 'test2-content'
 
 def test_content_diff(differences):
-    expected_diff = open(os.path.join(os.path.dirname(__file__), '../data/text_ascii_expected_diff')).read()
+    expected_diff = open(data('text_ascii_expected_diff')).read()
     assert differences[1].unified_diff == expected_diff
 
 def test_compare_non_existing(monkeypatch, gzip1):

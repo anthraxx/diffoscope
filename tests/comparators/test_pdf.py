@@ -18,17 +18,16 @@
 # along with diffoscope.  If not, see <http://www.gnu.org/licenses/>.
 
 import pytest
-import os.path
 
 from diffoscope.config import Config
 from diffoscope.comparators import specialize
 from diffoscope.comparators.pdf import PdfFile
 from diffoscope.comparators.binary import FilesystemFile, NonExistingFile
 
-from conftest import tool_missing
+from conftest import tool_missing, data
 
-TEST_FILE1_PATH = os.path.join(os.path.dirname(__file__), '../data/test1.pdf')
-TEST_FILE2_PATH = os.path.join(os.path.dirname(__file__), '../data/test2.pdf')
+TEST_FILE1_PATH = data('test1.pdf')
+TEST_FILE2_PATH = data('test2.pdf')
 
 @pytest.fixture
 def pdf1():
@@ -52,13 +51,13 @@ def differences(pdf1, pdf2):
 @pytest.mark.skipif(tool_missing('pdftk') or tool_missing('pdftotext'),
                     reason='missing pdftk or pdftotext')
 def test_text_diff(differences):
-    expected_diff = open(os.path.join(os.path.dirname(__file__), '../data/pdf_text_expected_diff')).read()
+    expected_diff = open(data('pdf_text_expected_diff')).read()
     assert differences[0].unified_diff == expected_diff
 
 @pytest.mark.skipif(tool_missing('pdftk') or tool_missing('pdftotext'),
                     reason='missing pdftk or pdftotext')
 def test_internal_diff(differences):
-    expected_diff = open(os.path.join(os.path.dirname(__file__), '../data/pdf_internal_expected_diff')).read()
+    expected_diff = open(data('pdf_internal_expected_diff')).read()
     assert differences[1].unified_diff == expected_diff
 
 @pytest.mark.skipif(tool_missing('pdftk') or tool_missing('pdftotext'),

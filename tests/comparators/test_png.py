@@ -18,17 +18,16 @@
 # along with diffoscope.  If not, see <http://www.gnu.org/licenses/>.
 
 import pytest
-import os.path
 
 from diffoscope.config import Config
 from diffoscope.comparators import specialize
 from diffoscope.comparators.png import PngFile
 from diffoscope.comparators.binary import FilesystemFile, NonExistingFile
 
-from conftest import tool_missing
+from conftest import tool_missing, data
 
-TEST_FILE1_PATH = os.path.join(os.path.dirname(__file__), '../data/test1.png')
-TEST_FILE2_PATH = os.path.join(os.path.dirname(__file__), '../data/test2.png')
+TEST_FILE1_PATH = data('test1.png')
+TEST_FILE2_PATH = data('test2.png')
 
 @pytest.fixture
 def png1():
@@ -51,7 +50,7 @@ def differences(png1, png2):
 
 @pytest.mark.skipif(tool_missing('sng'), reason='missing sng')
 def test_diff(differences):
-    expected_diff = open(os.path.join(os.path.dirname(__file__), '../data/png_expected_diff')).read()
+    expected_diff = open(data('png_expected_diff')).read()
     assert differences[0].unified_diff == expected_diff
 
 @pytest.mark.skipif(tool_missing('sng'), reason='missing sng')

@@ -18,7 +18,6 @@
 # along with diffoscope.  If not, see <http://www.gnu.org/licenses/>.
 
 import pytest
-import os.path
 
 import diffoscope.comparators
 
@@ -27,8 +26,10 @@ from diffoscope.comparators import specialize
 from diffoscope.comparators.deb import DebFile, Md5sumsFile, DebDataTarFile
 from diffoscope.comparators.binary import FilesystemFile, NonExistingFile
 
-TEST_FILE1_PATH = os.path.join(os.path.dirname(__file__), '../data/test1.deb')
-TEST_FILE2_PATH = os.path.join(os.path.dirname(__file__), '../data/test2.deb')
+from conftest import data
+
+TEST_FILE1_PATH = data('test1.deb')
+TEST_FILE2_PATH = data('test2.deb')
 
 @pytest.fixture
 def deb1():
@@ -50,7 +51,7 @@ def differences(deb1, deb2):
     return deb1.compare(deb2).details
 
 def test_metadata(differences):
-    expected_diff = open(os.path.join(os.path.dirname(__file__), '../data/deb_metadata_expected_diff')).read()
+    expected_diff = open(data('deb_metadata_expected_diff')).read()
     assert differences[0].unified_diff == expected_diff
 
 def test_compressed_files(differences):

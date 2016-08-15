@@ -17,15 +17,16 @@
 # You should have received a copy of the GNU General Public License
 # along with diffoscope.  If not, see <http://www.gnu.org/licenses/>.
 
-import os
 import pytest
 
 from diffoscope.comparators import specialize
 from diffoscope.comparators.json import JSONFile
 from diffoscope.comparators.binary import FilesystemFile
 
-TEST_FILE1_PATH = os.path.join(os.path.dirname(__file__), '../data/test1.json')
-TEST_FILE2_PATH = os.path.join(os.path.dirname(__file__), '../data/test2.json')
+from conftest import data
+
+TEST_FILE1_PATH = data('test1.json')
+TEST_FILE2_PATH = data('test2.json')
 
 @pytest.fixture
 def json1():
@@ -46,6 +47,6 @@ def differences(json1, json2):
     return json1.compare(json2).details
 
 def test_diff(differences):
-    with open(os.path.join(os.path.dirname(__file__), '../data/json_expected_diff')) as f:
+    with open(data('json_expected_diff')) as f:
         expected_diff = f.read()
     assert differences[0].unified_diff == expected_diff

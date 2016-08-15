@@ -17,7 +17,6 @@
 # You should have received a copy of the GNU General Public License
 # along with diffoscope.  If not, see <http://www.gnu.org/licenses/>.
 
-import os
 import struct
 import pytest
 import subprocess
@@ -28,10 +27,10 @@ from diffoscope.presenters.text import output_text
 from diffoscope.comparators.cbfs import CbfsFile
 from diffoscope.comparators.binary import FilesystemFile, NonExistingFile
 
-from conftest import tool_missing
+from conftest import tool_missing, data
 
-TEST_FILE1_PATH = os.path.join(os.path.dirname(__file__), '../data/text_ascii1')
-TEST_FILE2_PATH = os.path.join(os.path.dirname(__file__), '../data/text_ascii2')
+TEST_FILE1_PATH = data('text_ascii1')
+TEST_FILE2_PATH = data('text_ascii2')
 
 @pytest.fixture
 def rom1(tmpdir):
@@ -77,14 +76,14 @@ def differences(rom1, rom2):
 
 @pytest.mark.skipif(tool_missing('cbfstool'), reason='missing cbfstool')
 def test_listing(differences):
-    expected_diff = open(os.path.join(os.path.dirname(__file__), '../data/cbfs_listing_expected_diff')).read()
+    expected_diff = open(data('cbfs_listing_expected_diff')).read()
     assert differences[0].unified_diff == expected_diff
 
 @pytest.mark.skipif(tool_missing('cbfstool'), reason='missing cbfstool')
 def test_content(differences):
     assert differences[1].source1 == 'text'
     assert differences[1].source2 == 'text'
-    expected_diff = open(os.path.join(os.path.dirname(__file__), '../data/text_ascii_expected_diff')).read()
+    expected_diff = open(data('text_ascii_expected_diff')).read()
     assert differences[1].unified_diff == expected_diff
 
 @pytest.mark.skipif(tool_missing('cbfstool'), reason='missing cbfstool')

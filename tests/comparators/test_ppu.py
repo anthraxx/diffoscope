@@ -19,14 +19,13 @@
 # along with diffoscope.  If not, see <http://www.gnu.org/licenses/>.
 
 import pytest
-import os.path
 
 from diffoscope.config import Config
 from diffoscope.comparators import specialize
 from diffoscope.comparators.ppu import PpuFile
 from diffoscope.comparators.binary import FilesystemFile, NonExistingFile
 
-from conftest import tool_missing
+from conftest import tool_missing, data
 
 # These test files were taken from two different builds of the Debian package
 # fp-units-castle-game-engine (version 5.1.1-2 on amd64) on the Debian
@@ -34,8 +33,8 @@ from conftest import tool_missing
 # castletexturefont_dejavusans_10.ppu which are generated during package
 # building of the cge package from dejavusans font in the fonts-dejavu package.
 
-TEST_FILE1_PATH = os.path.join(os.path.dirname(__file__), '../data/test1.ppu')
-TEST_FILE2_PATH = os.path.join(os.path.dirname(__file__), '../data/test2.ppu')
+TEST_FILE1_PATH = data('test1.ppu')
+TEST_FILE2_PATH = data('test2.ppu')
 
 @pytest.fixture
 def file1():
@@ -60,7 +59,7 @@ def differences(file1, file2):
 @pytest.mark.skipif(tool_missing('ppudump'), reason='missing ppudump')
 def test_diff(differences):
     print(differences[0].unified_diff)
-    expected_diff = open(os.path.join(os.path.dirname(__file__), '../data/ppu_expected_diff')).read()
+    expected_diff = open(data('ppu_expected_diff')).read()
     assert differences[0].unified_diff == expected_diff
 
 @pytest.mark.skipif(tool_missing('ppudump'), reason='missing ppudump')

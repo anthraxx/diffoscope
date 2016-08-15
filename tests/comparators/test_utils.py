@@ -19,7 +19,6 @@
 
 import codecs
 import pytest
-import os.path
 
 from diffoscope.config import Config
 from diffoscope.difference import Difference
@@ -27,7 +26,7 @@ from diffoscope.comparators import specialize
 from diffoscope.comparators.utils import Command
 from diffoscope.comparators.binary import FilesystemFile
 
-from conftest import tool_missing
+from conftest import tool_missing, data
 
 try:
     import tlsh # noqa
@@ -38,20 +37,20 @@ except ImportError:
 
 @pytest.fixture
 def fuzzy_tar1():
-    return specialize(FilesystemFile(os.path.join(os.path.dirname(__file__), '../data/fuzzy1.tar')))
+    return specialize(FilesystemFile(data('fuzzy1.tar')))
 
 @pytest.fixture
 def fuzzy_tar2():
-    return specialize(FilesystemFile(os.path.join(os.path.dirname(__file__), '../data/fuzzy2.tar')))
+    return specialize(FilesystemFile(data('fuzzy2.tar')))
 
 @pytest.fixture
 def fuzzy_tar3():
-    return specialize(FilesystemFile(os.path.join(os.path.dirname(__file__), '../data/fuzzy3.tar')))
+    return specialize(FilesystemFile(data('fuzzy3.tar')))
 
 @pytest.mark.skipif(miss_tlsh, reason='tlsh is missing')
 def test_fuzzy_matching(fuzzy_tar1, fuzzy_tar2):
     differences = fuzzy_tar1.compare(fuzzy_tar2).details
-    expected_diff = codecs.open(os.path.join(os.path.dirname(__file__), '../data/text_iso8859_expected_diff'), encoding='utf-8').read()
+    expected_diff = codecs.open(data('text_iso8859_expected_diff'), encoding='utf-8').read()
     assert differences[1].source1 == './matching'
     assert differences[1].source2 == './fuzzy'
     assert 'similar' in differences[1].comment
@@ -61,15 +60,15 @@ def test_fuzzy_matching(fuzzy_tar1, fuzzy_tar2):
 def test_fuzzy_matching_only_once(fuzzy_tar1, fuzzy_tar3):
     differences = fuzzy_tar1.compare(fuzzy_tar3).details
     assert len(differences) == 2
-    expected_diff = codecs.open(os.path.join(os.path.dirname(__file__), '../data/text_iso8859_expected_diff'), encoding='utf-8').read()
+    expected_diff = codecs.open(data('text_iso8859_expected_diff'), encoding='utf-8').read()
 
 @pytest.fixture
 def fuzzy_tar_in_tar1():
-    return specialize(FilesystemFile(os.path.join(os.path.dirname(__file__), '../data/fuzzy-tar-in-tar1.tar')))
+    return specialize(FilesystemFile(data('fuzzy-tar-in-tar1.tar')))
 
 @pytest.fixture
 def fuzzy_tar_in_tar2():
-    return specialize(FilesystemFile(os.path.join(os.path.dirname(__file__), '../data/fuzzy-tar-in-tar2.tar')))
+    return specialize(FilesystemFile(data('fuzzy-tar-in-tar2.tar')))
 
 @pytest.mark.skipif(miss_tlsh, reason='tlsh is missing')
 def test_no_fuzzy_matching(monkeypatch, fuzzy_tar_in_tar1, fuzzy_tar_in_tar2):

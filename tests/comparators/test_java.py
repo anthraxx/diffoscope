@@ -18,17 +18,16 @@
 # along with diffoscope.  If not, see <http://www.gnu.org/licenses/>.
 
 import pytest
-import os.path
 
 from diffoscope.config import Config
 from diffoscope.comparators import specialize
 from diffoscope.comparators.java import ClassFile
 from diffoscope.comparators.binary import FilesystemFile, NonExistingFile
 
-from conftest import tool_missing
+from conftest import tool_missing, data
 
-TEST_FILE1_PATH = os.path.join(os.path.dirname(__file__), '../data/Test1.class')
-TEST_FILE2_PATH = os.path.join(os.path.dirname(__file__), '../data/Test2.class')
+TEST_FILE1_PATH = data('Test1.class')
+TEST_FILE2_PATH = data('Test2.class')
 
 @pytest.fixture
 def class1():
@@ -51,7 +50,7 @@ def differences(class1, class2):
 
 @pytest.mark.skipif(tool_missing('javap'), reason='missing javap')
 def test_diff(differences):
-    expected_diff = open(os.path.join(os.path.dirname(__file__), '../data/class_expected_diff')).read()
+    expected_diff = open(data('class_expected_diff')).read()
     assert differences[0].unified_diff == expected_diff
 
 @pytest.mark.skipif(tool_missing('javap'), reason='missing javap')

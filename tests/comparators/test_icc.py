@@ -18,17 +18,16 @@
 # along with diffoscope.  If not, see <http://www.gnu.org/licenses/>.
 
 import pytest
-import os.path
 
 from diffoscope.config import Config
 from diffoscope.comparators import specialize
 from diffoscope.comparators.icc import IccFile
 from diffoscope.comparators.binary import FilesystemFile, NonExistingFile
 
-from conftest import tool_missing
+from conftest import tool_missing, data
 
-TEST_FILE1_PATH = os.path.join(os.path.dirname(__file__), '../data/test1.icc')
-TEST_FILE2_PATH = os.path.join(os.path.dirname(__file__), '../data/test2.icc')
+TEST_FILE1_PATH = data('test1.icc')
+TEST_FILE2_PATH = data('test2.icc')
 
 @pytest.fixture
 def icc1():
@@ -51,7 +50,7 @@ def differences(icc1, icc2):
 
 @pytest.mark.skipif(tool_missing('cd-iccdump'), reason='missing cd-iccdump')
 def test_diff(differences):
-    expected_diff = open(os.path.join(os.path.dirname(__file__), '../data/icc_expected_diff')).read()
+    expected_diff = open(data('icc_expected_diff')).read()
     assert differences[0].unified_diff == expected_diff
 
 @pytest.mark.skipif(tool_missing('cd-iccdump'), reason='missing cd-iccdump')

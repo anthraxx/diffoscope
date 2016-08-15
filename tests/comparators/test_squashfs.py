@@ -18,17 +18,16 @@
 # along with diffoscope.  If not, see <http://www.gnu.org/licenses/>.
 
 import pytest
-import os.path
 
 from diffoscope.config import Config
 from diffoscope.comparators import specialize
 from diffoscope.comparators.binary import FilesystemFile, NonExistingFile
 from diffoscope.comparators.squashfs import SquashfsFile
 
-from conftest import tool_missing
+from conftest import tool_missing, data
 
-TEST_FILE1_PATH = os.path.join(os.path.dirname(__file__), '../data/test1.squashfs')
-TEST_FILE2_PATH = os.path.join(os.path.dirname(__file__), '../data/test2.squashfs')
+TEST_FILE1_PATH = data('test1.squashfs')
+TEST_FILE2_PATH = data('test2.squashfs')
 
 @pytest.fixture
 def squashfs1():
@@ -56,20 +55,20 @@ def differences(squashfs1, squashfs2):
 
 @pytest.mark.skipif(tool_missing('unsquashfs'), reason='missing unsquashfs')
 def test_superblock(differences):
-    expected_diff = open(os.path.join(os.path.dirname(__file__), '../data/squashfs_superblock_expected_diff')).read()
+    expected_diff = open(data('squashfs_superblock_expected_diff')).read()
     assert differences[0].unified_diff == expected_diff
 
 @pytest.mark.skipif(tool_missing('unsquashfs'), reason='missing unsquashfs')
 def test_symlink(differences):
     assert differences[2].comment == 'symlink'
-    expected_diff = open(os.path.join(os.path.dirname(__file__), '../data/symlink_expected_diff')).read()
+    expected_diff = open(data('symlink_expected_diff')).read()
     assert differences[2].unified_diff == expected_diff
 
 @pytest.mark.skipif(tool_missing('unsquashfs'), reason='missing unsquashfs')
 def test_compressed_files(differences):
     assert differences[3].source1 == '/text'
     assert differences[3].source2 == '/text'
-    expected_diff = open(os.path.join(os.path.dirname(__file__), '../data/text_ascii_expected_diff')).read()
+    expected_diff = open(data('text_ascii_expected_diff')).read()
     assert differences[3].unified_diff == expected_diff
 
 @pytest.mark.skipif(tool_missing('unsquashfs'), reason='missing unsquashfs')

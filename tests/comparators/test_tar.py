@@ -18,15 +18,16 @@
 # along with diffoscope.  If not, see <http://www.gnu.org/licenses/>.
 
 import pytest
-import os.path
 
 from diffoscope.config import Config
 from diffoscope.comparators import specialize
 from diffoscope.comparators.tar import TarFile
 from diffoscope.comparators.binary import FilesystemFile, NonExistingFile
 
-TEST_FILE1_PATH = os.path.join(os.path.dirname(__file__), '../data/test1.tar')
-TEST_FILE2_PATH = os.path.join(os.path.dirname(__file__), '../data/test2.tar')
+from conftest import data
+
+TEST_FILE1_PATH = data('test1.tar')
+TEST_FILE2_PATH = data('test2.tar')
 
 @pytest.fixture
 def tar1():
@@ -48,20 +49,20 @@ def differences(tar1, tar2):
     return tar1.compare(tar2).details
 
 def test_listing(differences):
-    expected_diff = open(os.path.join(os.path.dirname(__file__), '../data/tar_listing_expected_diff')).read()
+    expected_diff = open(data('tar_listing_expected_diff')).read()
     assert differences[0].unified_diff == expected_diff
 
 def test_symlinks(differences):
     assert differences[2].source1 == 'dir/link'
     assert differences[2].source2 == 'dir/link'
     assert differences[2].comment == 'symlink'
-    expected_diff = open(os.path.join(os.path.dirname(__file__), '../data/symlink_expected_diff')).read()
+    expected_diff = open(data('symlink_expected_diff')).read()
     assert differences[2].unified_diff == expected_diff
 
 def test_text_file(differences):
     assert differences[1].source1 == 'dir/text'
     assert differences[1].source2 == 'dir/text'
-    expected_diff = open(os.path.join(os.path.dirname(__file__), '../data/text_ascii_expected_diff')).read()
+    expected_diff = open(data('text_ascii_expected_diff')).read()
     assert differences[1].unified_diff == expected_diff
 
 def test_compare_non_existing(monkeypatch, tar1):
@@ -72,7 +73,7 @@ def test_compare_non_existing(monkeypatch, tar1):
 
 @pytest.fixture
 def no_permissions_tar():
-    return specialize(FilesystemFile(os.path.join(os.path.dirname(__file__), '../data/no-perms.tar')))
+    return specialize(FilesystemFile(data('no-perms.tar')))
 
 # Reported as Debian #797164. This is a good way to notice if we unpack directories
 # as we won't be able to remove files in one if we don't have write permissions.

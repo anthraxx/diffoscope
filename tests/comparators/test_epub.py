@@ -18,17 +18,16 @@
 # along with diffoscope.  If not, see <http://www.gnu.org/licenses/>.
 
 import pytest
-import os.path
 
 from diffoscope.config import Config
 from diffoscope.comparators import specialize
 from diffoscope.comparators.zip import ZipFile
 from diffoscope.comparators.binary import FilesystemFile, NonExistingFile
 
-from conftest import tool_missing
+from conftest import tool_missing, data
 
-TEST_FILE1_PATH = os.path.join(os.path.dirname(__file__), '../data/test1.epub')
-TEST_FILE2_PATH = os.path.join(os.path.dirname(__file__), '../data/test2.epub')
+TEST_FILE1_PATH = data('test1.epub')
+TEST_FILE2_PATH = data('test2.epub')
 
 @pytest.fixture
 def epub1():
@@ -59,7 +58,7 @@ def test_differences(differences):
     assert differences[2].source2 == 'toc.ncx'
     assert differences[3].source1 == 'ch001.xhtml'
     assert differences[3].source2 == 'ch001.xhtml'
-    expected_diff = open(os.path.join(os.path.dirname(__file__), '../data/epub_expected_diffs')).read()
+    expected_diff = open(data('epub_expected_diffs')).read()
     assert expected_diff == "".join(map(lambda x: x.unified_diff, differences))
 
 @pytest.mark.skipif(tool_missing('zipinfo'), reason='missing zip')

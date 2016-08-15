@@ -18,7 +18,6 @@
 # along with diffoscope.  If not, see <http://www.gnu.org/licenses/>.
 
 import pytest
-import os.path
 import subprocess
 
 import diffoscope.comparators.binary
@@ -28,13 +27,13 @@ from diffoscope.difference import Difference
 from diffoscope.comparators import specialize
 from diffoscope.comparators.binary import File, FilesystemFile, NonExistingFile
 
-from conftest import tool_missing
+from conftest import tool_missing, data
 
-TEST_FILE1_PATH = os.path.join(os.path.dirname(__file__), '../data/binary1')
-TEST_FILE2_PATH = os.path.join(os.path.dirname(__file__), '../data/binary2')
-TEST_ASCII_PATH = os.path.join(os.path.dirname(__file__), '../data/text_ascii1')
-TEST_UNICODE_PATH = os.path.join(os.path.dirname(__file__), '../data/text_unicode1')
-TEST_ISO8859_PATH = os.path.join(os.path.dirname(__file__), '../data/text_iso8859')
+TEST_FILE1_PATH = data('binary1')
+TEST_FILE2_PATH = data('binary2')
+TEST_ASCII_PATH = data('text_ascii1')
+TEST_UNICODE_PATH = data('text_unicode1')
+TEST_ISO8859_PATH = data('text_iso8859')
 
 @pytest.fixture
 def binary1():
@@ -72,7 +71,7 @@ def test_no_differences_with_xxd(binary1):
 @pytest.mark.skipif(tool_missing('xxd'), reason='missing xxd')
 def test_compare_with_xxd(binary1, binary2):
     difference = binary1.compare_bytes(binary2)
-    expected_diff = open(os.path.join(os.path.dirname(__file__), '../data/binary_expected_diff')).read()
+    expected_diff = open(data('binary_expected_diff')).read()
     assert difference.unified_diff == expected_diff
 
 def test_compare_non_existing_with_xxd(binary1):
@@ -91,7 +90,7 @@ def test_no_differences_without_xxd(xxd_not_found, binary1):
 
 def test_compare_without_xxd(xxd_not_found, binary1, binary2):
     difference = binary1.compare(binary2)
-    expected_diff = open(os.path.join(os.path.dirname(__file__), '../data/binary_hexdump_expected_diff')).read()
+    expected_diff = open(data('binary_hexdump_expected_diff')).read()
     assert difference.unified_diff == expected_diff
 
 def test_with_compare_details():
@@ -108,7 +107,7 @@ def test_with_compare_details_and_fallback():
         def compare_details(self, other, source=None):
             return []
     difference = MockFile(TEST_FILE1_PATH).compare(MockFile(TEST_FILE2_PATH))
-    expected_diff = open(os.path.join(os.path.dirname(__file__), '../data/binary_expected_diff')).read()
+    expected_diff = open(data('binary_expected_diff')).read()
     assert 'yet data differs' in difference.comment
     assert difference.unified_diff == expected_diff
 
@@ -127,7 +126,7 @@ def test_with_compare_details_and_failed_process():
             subprocess.check_output(['sh', '-c', 'echo "%s"; exit 42' % output], shell=False)
             raise Exception('should not be run')
     difference = MockFile(TEST_FILE1_PATH).compare(MockFile(TEST_FILE2_PATH))
-    expected_diff = open(os.path.join(os.path.dirname(__file__), '../data/binary_expected_diff')).read()
+    expected_diff = open(data('../data/binary_expected_diff')).read()
     assert output in difference.comment
     assert '42' in difference.comment
     assert difference.unified_diff == expected_diff
@@ -140,7 +139,7 @@ def test_with_compare_details_and_tool_not_found(monkeypatch):
         def compare_details(self, other, source=None):
             raise Exception('should not be run')
     difference = MockFile(TEST_FILE1_PATH).compare(MockFile(TEST_FILE2_PATH))
-    expected_diff = open(os.path.join(os.path.dirname(__file__), '../data/binary_expected_diff')).read()
+    expected_diff = open(data('binary_expected_diff')).read()
     assert 'nonexistent' in difference.comment
     assert 'some-package' in difference.comment
     assert difference.unified_diff == expected_diff

@@ -24,8 +24,10 @@ import pytest
 from diffoscope.presenters.text import output_text
 from diffoscope.comparators.directory import compare_directories
 
-TEST_FILE1_PATH = os.path.join(os.path.dirname(__file__), '../data/text_ascii1')
-TEST_FILE2_PATH = os.path.join(os.path.dirname(__file__), '../data/text_ascii2')
+from conftest import data
+
+TEST_FILE1_PATH = data('text_ascii1')
+TEST_FILE2_PATH = data('text_ascii2')
 
 def test_no_differences():
     difference = compare_directories(os.path.dirname(__file__), os.path.dirname(__file__))
@@ -55,7 +57,7 @@ def test_content(differences):
     output_text(differences[0], print_func=print)
     assert differences[0].source1 == 'dir'
     assert differences[0].details[0].source1 == 'text'
-    expected_diff = open(os.path.join(os.path.dirname(__file__), '../data/text_ascii_expected_diff')).read()
+    expected_diff = open(data('text_ascii_expected_diff')).read()
     assert differences[0].details[0].unified_diff == expected_diff
 
 def test_stat(differences):

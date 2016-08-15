@@ -18,15 +18,16 @@
 # along with diffoscope.  If not, see <http://www.gnu.org/licenses/>.
 
 import pytest
-import os.path
 
 from diffoscope.config import Config
 from diffoscope.comparators import specialize
 from diffoscope.comparators.ipk import IpkFile
 from diffoscope.comparators.binary import FilesystemFile, NonExistingFile
 
-TEST_FILE1_PATH = os.path.join(os.path.dirname(__file__), '../data/base-files_157-r45695_ar71xx.ipk')
-TEST_FILE2_PATH = os.path.join(os.path.dirname(__file__), '../data/base-files_157-r45918_ar71xx.ipk')
+from conftest import data
+
+TEST_FILE1_PATH = data('base-files_157-r45695_ar71xx.ipk')
+TEST_FILE2_PATH = data('base-files_157-r45918_ar71xx.ipk')
 
 @pytest.fixture
 def ipk1():
@@ -49,7 +50,7 @@ def differences(ipk1, ipk2):
 
 def test_metadata(differences):
     assert differences[0].source1 == 'metadata'
-    expected_diff = open(os.path.join(os.path.dirname(__file__), '../data/ipk_metadata_expected_diff')).read()
+    expected_diff = open(data('ipk_metadata_expected_diff')).read()
     assert differences[0].unified_diff == expected_diff
 
 def test_compressed_files(differences):

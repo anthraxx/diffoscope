@@ -17,6 +17,7 @@
 # You should have received a copy of the GNU General Public License
 # along with diffoscope.  If not, see <http://www.gnu.org/licenses/>.
 
+import os
 import pytest
 import diffoscope
 import subprocess
@@ -33,6 +34,12 @@ def set_locale():
 def tool_missing(cmd):
     return find_executable(cmd) is None
 
+def data(filename):
+    return os.path.join(
+        os.path.dirname(os.path.dirname(__file__)),
+        'data',
+        filename,
+    )
 
 def tool_older_than(cmdline, min_ver, vcls=StrictVersion):
     if find_executable(cmdline[0]) is None:

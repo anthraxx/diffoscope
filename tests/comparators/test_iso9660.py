@@ -18,17 +18,16 @@
 # along with diffoscope.  If not, see <http://www.gnu.org/licenses/>.
 
 import pytest
-import os.path
 
 from diffoscope.config import Config
 from diffoscope.comparators import specialize
 from diffoscope.comparators.binary import FilesystemFile, NonExistingFile
 from diffoscope.comparators.iso9660 import Iso9660File
 
-from conftest import tool_missing
+from conftest import tool_missing, data
 
-TEST_FILE1_PATH = os.path.join(os.path.dirname(__file__), '../data/test1.iso')
-TEST_FILE2_PATH = os.path.join(os.path.dirname(__file__), '../data/test2.iso')
+TEST_FILE1_PATH = data('test1.iso')
+TEST_FILE2_PATH = data('test2.iso')
 
 @pytest.fixture
 def iso1():
@@ -51,25 +50,25 @@ def differences(iso1, iso2):
 
 @pytest.mark.skipif(tool_missing('isoinfo'), reason='missing isoinfo')
 def test_iso9660_content(differences):
-    expected_diff = open(os.path.join(os.path.dirname(__file__), '../data/iso9660_content_expected_diff')).read()
+    expected_diff = open(data('iso9660_content_expected_diff')).read()
     assert differences[0].unified_diff == expected_diff
 
 @pytest.mark.skipif(tool_missing('isoinfo'), reason='missing isoinfo')
 def test_iso9660_rockridge(differences):
-    expected_diff = open(os.path.join(os.path.dirname(__file__), '../data/iso9660_rockridge_expected_diff')).read()
+    expected_diff = open(data('iso9660_rockridge_expected_diff')).read()
     assert differences[1].unified_diff == expected_diff
 
 @pytest.mark.skipif(tool_missing('isoinfo'), reason='missing isoinfo')
 def test_symlink(differences):
     assert differences[3].comment == 'symlink'
-    expected_diff = open(os.path.join(os.path.dirname(__file__), '../data/symlink_expected_diff')).read()
+    expected_diff = open(data('symlink_expected_diff')).read()
     assert differences[3].unified_diff == expected_diff
 
 @pytest.mark.skipif(tool_missing('isoinfo'), reason='missing isoinfo')
 def test_compressed_files(differences):
     assert differences[2].source1 == 'text'
     assert differences[2].source2 == 'text'
-    expected_diff = open(os.path.join(os.path.dirname(__file__), '../data/text_ascii_expected_diff')).read()
+    expected_diff = open(data('text_ascii_expected_diff')).read()
     assert differences[2].unified_diff == expected_diff
 
 @pytest.mark.skipif(tool_missing('isoinfo'), reason='missing isoinfo')

@@ -18,14 +18,13 @@
 # along with diffoscope.  If not, see <http://www.gnu.org/licenses/>.
 
 import pytest
-import os.path
 
 from diffoscope.config import Config
 from diffoscope.comparators import specialize
 from diffoscope.comparators.binary import FilesystemFile, NonExistingFile
 from diffoscope.comparators.fsimage import FsImageFile
 
-from conftest import tool_missing
+from conftest import tool_missing, data
 
 try:
     import guestfs
@@ -33,8 +32,8 @@ try:
 except ImportError:
     miss_guestfs = True
 
-TEST_FILE1_PATH = os.path.join(os.path.dirname(__file__), '../data/test1.ext4')
-TEST_FILE2_PATH = os.path.join(os.path.dirname(__file__), '../data/test2.ext4')
+TEST_FILE1_PATH = data('test1.ext4')
+TEST_FILE2_PATH = data('test2.ext4')
 
 def guestfs_working():
     if miss_guestfs:
@@ -83,7 +82,7 @@ def test_differences(differences):
     assert tardiff.source2 == './date.txt'
     assert encodingdiff.source1 == 'encoding'
     assert encodingdiff.source2 == 'encoding'
-    expected_diff = open(os.path.join(os.path.dirname(__file__), '../data/ext4_expected_diffs'), encoding='utf-8').read()
+    expected_diff = open(data('ext4_expected_diffs'), encoding='utf-8').read()
     found_diff = tarinfo.unified_diff + tardiff.unified_diff + encodingdiff.unified_diff
     assert expected_diff == found_diff
 

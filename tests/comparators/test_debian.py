@@ -19,12 +19,13 @@
 
 import shutil
 import pytest
-import os.path
 
 from diffoscope.config import Config
 from diffoscope.comparators import specialize
 from diffoscope.presenters.text import output_text
 from diffoscope.comparators.binary import FilesystemFile, NonExistingFile
+
+from conftest import data
 
 try:
     from diffoscope.comparators.debian import DotChangesFile, DotDscFile, \
@@ -34,10 +35,10 @@ except ImportError:
     from diffoscope.comparators.debian_fallback import DotChangesFile, DotDscFile, DotBuildinfoFile
     miss_debian_module = True
 
-TEST_DOT_CHANGES_FILE1_PATH = os.path.join(os.path.dirname(__file__), '../data/test1.changes')
-TEST_DOT_CHANGES_FILE2_PATH = os.path.join(os.path.dirname(__file__), '../data/test2.changes')
-TEST_DEB_FILE1_PATH = os.path.join(os.path.dirname(__file__), '../data/test1.deb')
-TEST_DEB_FILE2_PATH = os.path.join(os.path.dirname(__file__), '../data/test2.deb')
+TEST_DOT_CHANGES_FILE1_PATH = data('test1.changes')
+TEST_DOT_CHANGES_FILE2_PATH = data('test2.changes')
+TEST_DEB_FILE1_PATH = data('test1.deb')
+TEST_DEB_FILE2_PATH = data('test2.deb')
 
 @pytest.fixture
 def dot_changes1(tmpdir):
@@ -80,7 +81,7 @@ def dot_changes_differences(dot_changes1, dot_changes2):
 @pytest.mark.skipif(miss_debian_module, reason='debian module is not installed')
 def test_dot_changes_description(dot_changes_differences):
     assert dot_changes_differences[0]
-    expected_diff = open(os.path.join(os.path.dirname(__file__), '../data/dot_changes_description_expected_diff')).read()
+    expected_diff = open(data('dot_changes_description_expected_diff')).read()
     assert dot_changes_differences[0].unified_diff == expected_diff
 
 @pytest.mark.skipif(miss_debian_module, reason='debian module is not installed')
@@ -95,10 +96,10 @@ def test_dot_changes_compare_non_existing(monkeypatch, dot_changes1):
     assert difference.source2 == '/nonexisting'
     assert difference.details[-1].source2 == '/dev/null'
 
-TEST_DOT_DSC_FILE1_PATH = os.path.join(os.path.dirname(__file__), '../data/test1.dsc')
-TEST_DOT_DSC_FILE2_PATH = os.path.join(os.path.dirname(__file__), '../data/test2.dsc')
-TEST_DEB_SRC1_PATH = os.path.join(os.path.dirname(__file__), '../data/test1.debsrc.tar.gz')
-TEST_DEB_SRC2_PATH = os.path.join(os.path.dirname(__file__), '../data/test2.debsrc.tar.gz')
+TEST_DOT_DSC_FILE1_PATH = data('test1.dsc')
+TEST_DOT_DSC_FILE2_PATH = data('test2.dsc')
+TEST_DEB_SRC1_PATH = data('test1.debsrc.tar.gz')
+TEST_DEB_SRC2_PATH = data('test2.debsrc.tar.gz')
 
 @pytest.fixture
 def dot_dsc1(tmpdir):
@@ -150,8 +151,8 @@ def test_dot_dsc_compare_non_existing(monkeypatch, dot_dsc1):
     assert difference.source2 == '/nonexisting'
     assert difference.details[-1].source2 == '/dev/null'
 
-TEST_DOT_BUILDINFO_FILE1_PATH = os.path.join(os.path.dirname(__file__), '../data/test1.buildinfo')
-TEST_DOT_BUILDINFO_FILE2_PATH = os.path.join(os.path.dirname(__file__), '../data/test2.buildinfo')
+TEST_DOT_BUILDINFO_FILE1_PATH = data('test1.buildinfo')
+TEST_DOT_BUILDINFO_FILE2_PATH = data('test2.buildinfo')
 
 @pytest.fixture
 def dot_buildinfo1(tmpdir):

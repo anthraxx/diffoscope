@@ -32,8 +32,8 @@ from conftest import tool_missing
 # echo 'public class Test { static public void Main () {} }' > test.cs
 # mcs -out:test1.exe test.cs ; sleep 2; mcs -out:test2.exe test.cs
 
-TEST_FILE1_PATH = os.path.join(os.path.dirname(__file__), '../data/test1.exe') 
-TEST_FILE2_PATH = os.path.join(os.path.dirname(__file__), '../data/test2.exe') 
+TEST_FILE1_PATH = os.path.join(os.path.dirname(__file__), '../data/test1.exe')
+TEST_FILE2_PATH = os.path.join(os.path.dirname(__file__), '../data/test2.exe')
 
 @pytest.fixture
 def exe1():

@@ -53,7 +53,7 @@ class CbfsContainer(Archive):
                 if line.startswith('Name'):
                     header = False
                 continue
-            name = line.split()[0] 
+            name = line.split()[0]
             if name == '(empty)':
                 continue
             yield name

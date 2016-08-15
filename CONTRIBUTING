@@ -5,7 +5,7 @@ It's helpful to track fixes or new features via wishlist bugs against the
 
 The code is available in the link:https://anonscm.debian.org/git/reproducible/diffoscope.git/tree/[diffoscope.git repository].
 
-Patches can be submitted as requests to pull from a publicly-visible 
+Patches can be submitted as requests to pull from a publicly-visible
 git repository (this is the prefered way) communicated via IRC or mail,
 or completly via mail (using git format-patch, see below).
 If appropriate, please make a topic branch based on the 'master' branch.

@@ -34,8 +34,8 @@ from conftest import tool_missing
 # castletexturefont_dejavusans_10.ppu which are generated during package
 # building of the cge package from dejavusans font in the fonts-dejavu package.
 
-TEST_FILE1_PATH = os.path.join(os.path.dirname(__file__), '../data/test1.ppu') 
-TEST_FILE2_PATH = os.path.join(os.path.dirname(__file__), '../data/test2.ppu') 
+TEST_FILE1_PATH = os.path.join(os.path.dirname(__file__), '../data/test1.ppu')
+TEST_FILE2_PATH = os.path.join(os.path.dirname(__file__), '../data/test2.ppu')
 
 @pytest.fixture
 def file1():

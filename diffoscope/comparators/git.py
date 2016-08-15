@@ -100,4 +100,3 @@ Device ID: ({major}, {minor})
     minor=os.minor(x['dev']),
     hexsha=binascii.b2a_hex(x['sha']).decode('utf-8'),
 )
-

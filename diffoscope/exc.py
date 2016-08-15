@@ -185,7 +185,9 @@ class RequiredToolNotFound(Exception):
     def get_package(self):
         from . import get_current_os
 
-        providers = RequiredToolNotFound.PROVIDERS.get(self.command, None)
-        if not providers:
+        try:
+            providers = RequiredToolNotFound.PROVIDERS[self.command]
+        except KeyError:
             return None
+
         return providers.get(get_current_os(), None)

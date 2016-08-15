@@ -46,11 +46,3 @@ def tool_older_than(cmdline, min_ver, vcls=StrictVersion):
         return True
     actual_ver = subprocess.check_output(cmdline).decode("utf-8").strip()
     return vcls(actual_ver) < vcls(min_ver)
-
-
-# from Jerry Kindall at http://stackoverflow.com/a/7088133
-def try_except(success, failure, *exceptions):
-    try:
-        return success()
-    except exceptions or Exception:
-        return failure() if callable(failure) else failure

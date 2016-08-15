@@ -35,3 +35,10 @@ def test_too_long_diff_block_lines(monkeypatch):
     too_long_text_b = StringIO("b\n" * 21)
     difference = Difference.from_text_readers(too_long_text_a, too_long_text_b, 'a', 'b')
     assert '[ 11 lines removed ]' in difference.unified_diff
+
+def test_non_str_arguments_to_source1_source2():
+    a = StringIO('a')
+    b = StringIO('b')
+
+    with pytest.raises(TypeError):
+        Difference.from_text_readers(a, b, a, b)

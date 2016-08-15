@@ -17,22 +17,25 @@
 # You should have received a copy of the GNU General Public License
 # along with diffoscope.  If not, see <http://www.gnu.org/licenses/>.
 
-from abc import ABCMeta, abstractmethod
-from binascii import hexlify
-from io import StringIO
+import io
 import os
-import os.path
 import re
-from stat import S_ISCHR, S_ISBLK
+import abc
+import stat
+import magic
+import binascii
 import subprocess
+
+from diffoscope import tool_required, RequiredToolNotFound, logger, \
+    OutputParsingError
+from diffoscope.config import Config
+from diffoscope.difference import Difference
+
 try:
     import tlsh
 except ImportError:
     tlsh = None
-import magic
-from diffoscope.config import Config
-from diffoscope.difference import Difference
-from diffoscope import tool_required, RequiredToolNotFound, OutputParsingError, logger
+
 
 # helper function to convert to bytes if necessary
 def maybe_decode(s):
@@ -42,10 +45,10 @@ def maybe_decode(s):
         return s
 
 def hexdump_fallback(path):
-    hexdump = StringIO()
+    hexdump = io.StringIO()
     with open(path, 'rb') as f:
         for buf in iter(lambda: f.read(32), b''):
-            hexdump.write('%s\n' % hexlify(buf).decode('us-ascii'))
+            hexdump.write('%s\n' % binascii.hexlify(buf).decode('us-ascii'))
     return hexdump.getvalue()
 
 
@@ -62,7 +65,7 @@ def compare_binary_files(file1, file2, source=None):
 SMALL_FILE_THRESHOLD = 65536 # 64 kiB
 
 
-class File(object, metaclass=ABCMeta):
+class File(object, metaclass=abc.ABCMeta):
     if hasattr(magic, 'open'): # use Magic-file-extensions from file
         @classmethod
         def guess_file_type(self, path):
@@ -98,7 +101,7 @@ class File(object, metaclass=ABCMeta):
 
     # This should return a path that allows to access the file content
     @property
-    @abstractmethod
+    @abc.abstractmethod
     def path(self):
         raise NotImplementedError()
 
@@ -154,15 +157,15 @@ class File(object, metaclass=ABCMeta):
                     self._fuzzy_hash = None
             return self._fuzzy_hash
 
-    @abstractmethod
+    @abc.abstractmethod
     def is_directory():
         raise NotImplementedError()
 
-    @abstractmethod
+    @abc.abstractmethod
     def is_symlink():
         raise NotImplementedError()
 
-    @abstractmethod
+    @abc.abstractmethod
     def is_device():
         raise NotImplementedError()
 
@@ -258,7 +261,7 @@ class FilesystemFile(File):
 
     def is_device(self):
         mode = os.lstat(self._name).st_mode
-        return S_ISCHR(mode) or S_ISBLK(mode)
+        return stat.S_ISCHR(mode) or stat.S_ISBLK(mode)
 
 
 class NonExistingFile(File):

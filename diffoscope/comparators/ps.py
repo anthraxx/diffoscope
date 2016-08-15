@@ -18,10 +18,11 @@
 # along with diffoscope.  If not, see <http://www.gnu.org/licenses/>.
 
 import re
+
 from diffoscope import tool_required, RequiredToolNotFound, logger
+from diffoscope.difference import Difference
 from diffoscope.comparators.text import TextFile
 from diffoscope.comparators.utils import Command
-from diffoscope.difference import Difference
 
 
 class Pstotext(Command):

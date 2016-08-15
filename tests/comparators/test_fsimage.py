@@ -17,18 +17,21 @@
 # You should have received a copy of the GNU General Public License
 # along with diffoscope.  If not, see <http://www.gnu.org/licenses/>.
 
-import os.path
 import pytest
+import os.path
+
+from diffoscope.config import Config
+from diffoscope.comparators import specialize
+from diffoscope.comparators.binary import FilesystemFile, NonExistingFile
+from diffoscope.comparators.fsimage import FsImageFile
+
+from conftest import tool_missing
+
 try:
     import guestfs
     miss_guestfs = False
 except ImportError:
     miss_guestfs = True
-from diffoscope.comparators import specialize
-from diffoscope.comparators.binary import FilesystemFile, NonExistingFile
-from diffoscope.comparators.fsimage import FsImageFile
-from diffoscope.config import Config
-from conftest import tool_missing
 
 TEST_FILE1_PATH = os.path.join(os.path.dirname(__file__), '../data/test1.ext4')
 TEST_FILE2_PATH = os.path.join(os.path.dirname(__file__), '../data/test2.ext4')

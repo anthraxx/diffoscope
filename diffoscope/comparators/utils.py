@@ -17,23 +17,24 @@
 # You should have received a copy of the GNU General Public License
 # along with diffoscope.  If not, see <http://www.gnu.org/licenses/>.
 
-from abc import ABCMeta, abstractmethod
-from collections import OrderedDict
-from io import BytesIO
-from itertools import starmap
-# The following would be shutil.which in Python 3.3
+import abc
 import os
 import re
-from stat import S_ISCHR, S_ISBLK
+import io
+import stat
+import threading
+import itertools
 import subprocess
-from threading import Thread
+import collections
+
 import diffoscope.comparators
-from diffoscope.comparators.binary import File, NonExistingFile
-from diffoscope.config import Config
+
 from diffoscope import logger, tool_required, get_temporary_directory
+from diffoscope.config import Config
+from diffoscope.comparators.binary import File, NonExistingFile
 
 
-class Command(object, metaclass=ABCMeta):
+class Command(object, metaclass=abc.ABCMeta):
     def __init__(self, path):
         self._path = path
         logger.debug('running %s', self.cmdline())
@@ -44,15 +45,15 @@ class Command(object, metaclass=ABCMeta):
                                          stdout=subprocess.PIPE,
                                          stderr=subprocess.PIPE)
         if hasattr(self, 'feed_stdin'):
-            self._stdin_feeder = Thread(target=self._feed_stdin, args=(self._process.stdin,))
+            self._stdin_feeder = threading.Thread(target=self._feed_stdin, args=(self._process.stdin,))
             self._stdin_feeder.daemon = True
             self._stdin_feeder.start()
         else:
             self._stdin_feeder = None
             self._process.stdin.close()
-        self._stderr = BytesIO()
+        self._stderr = io.BytesIO()
         self._stderr_line_count = 0
-        self._stderr_reader = Thread(target=self._read_stderr)
+        self._stderr_reader = threading.Thread(target=self._read_stderr)
         self._stderr_reader.daemon = True
         self._stderr_reader.start()
 
@@ -60,7 +61,7 @@ class Command(object, metaclass=ABCMeta):
     def path(self):
         return self._path
 
-    @abstractmethod
+    @abc.abstractmethod
     def cmdline(self):
         raise NotImplementedError()
 
@@ -125,9 +126,9 @@ def format_symlink(destination):
 
 
 def format_device(mode, major, minor):
-    if S_ISCHR(mode):
+    if stat.S_ISCHR(mode):
         kind = 'character'
-    elif S_ISBLK(mode):
+    elif stat.S_ISBLK(mode):
         kind = 'block'
     else:
         kind = 'weird'
@@ -152,7 +153,7 @@ def diff_ignore_line_numbers(diff):
 NO_COMMENT = None
 
 
-class Container(object, metaclass=ABCMeta):
+class Container(object, metaclass=abc.ABCMeta):
     def __new__(cls, source):
         if isinstance(source, NonExistingFile):
             new = super(Container, NonExistingContainer).__new__(NonExistingContainer)
@@ -170,7 +171,7 @@ class Container(object, metaclass=ABCMeta):
 
     def get_members(self):
         """Returns a directory. The key is what is used to match when comparing containers."""
-        return OrderedDict([(name, self.get_member(name)) for name in self.get_member_names()])
+        return collections.OrderedDict([(name, self.get_member(name)) for name in self.get_member_names()])
 
     def lookup_file(self, *names):
         """Try to fetch a specific file by digging in containers."""
@@ -188,17 +189,17 @@ class Container(object, metaclass=ABCMeta):
             return None
         return container.lookup_file(*remainings)
 
-    @abstractmethod
+    @abc.abstractmethod
     def get_member_names(self):
         raise NotImplementedError()
 
-    @abstractmethod
+    @abc.abstractmethod
     def get_member(self, member_name):
         raise NotImplementedError()
 
     def comparisons(self, other):
         my_members = self.get_members()
-        my_reminders = OrderedDict()
+        my_reminders = collections.OrderedDict()
         other_members = other.get_members()
         # keep it sorted like my members
         while my_members:
@@ -218,7 +219,7 @@ class Container(object, metaclass=ABCMeta):
                 yield NonExistingFile('/dev/null', other_member), other_member, NO_COMMENT
 
     def compare(self, other, source=None):
-        return starmap(diffoscope.comparators.compare_commented_files, self.comparisons(other))
+        return itertools.starmap(diffoscope.comparators.compare_commented_files, self.comparisons(other))
 
 
 class NonExistingContainer(Container):
@@ -263,7 +264,7 @@ class ArchiveMember(File):
         return False
 
 
-class Archive(Container, metaclass=ABCMeta):
+class Archive(Container, metaclass=abc.ABCMeta):
     def __new__(cls, source, *args, **kwargs):
         if isinstance(source, NonExistingFile):
             return super(Container, NonExistingArchive).__new__(NonExistingArchive)
@@ -281,19 +282,19 @@ class Archive(Container, metaclass=ABCMeta):
     def archive(self):
         return self._archive
 
-    @abstractmethod
+    @abc.abstractmethod
     def open_archive(self):
         raise NotImplementedError()
 
-    @abstractmethod
+    @abc.abstractmethod
     def close_archive(self):
         raise NotImplementedError()
 
-    @abstractmethod
+    @abc.abstractmethod
     def get_member_names(self):
         raise NotImplementedError()
 
-    @abstractmethod
+    @abc.abstractmethod
     def extract(self, member_name, dest_dir):
         raise NotImplementedError()
 

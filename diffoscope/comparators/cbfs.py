@@ -19,14 +19,14 @@
 
 import io
 import os
-import os.path
 import re
-import subprocess
 import struct
+import subprocess
+
 from diffoscope import logger, tool_required
-from diffoscope.comparators.binary import File
-from diffoscope.comparators.utils import Archive, Command
 from diffoscope.difference import Difference
+from diffoscope.comparators.utils import Archive, Command
+from diffoscope.comparators.binary import File
 
 
 class CbfsListing(Command):

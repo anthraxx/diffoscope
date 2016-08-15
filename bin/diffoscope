@@ -19,8 +19,9 @@
 # You should have received a copy of the GNU General Public License
 # along with diffoscope.  If not, see <http://www.gnu.org/licenses/>.
 
-import os.path
+import os
 import sys
+
 for root in ['.', '..']:
     if os.path.exists(os.path.join(root, 'diffoscope/__init__.py')):
         sys.path = [root] + sys.path

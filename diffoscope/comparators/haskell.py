@@ -18,14 +18,14 @@
 # along with diffoscope.  If not, see <http://www.gnu.org/licenses/>.
 
 import re
-import platform
 import struct
+import platform
 import subprocess
-from diffoscope import tool_required
-from diffoscope.comparators.binary import File
-from diffoscope.comparators.utils import Command
+
+from diffoscope import tool_required, logger
 from diffoscope.difference import Difference
-from diffoscope import logger
+from diffoscope.comparators.utils import Command
+from diffoscope.comparators.binary import File
 
 
 class ShowIface(Command):

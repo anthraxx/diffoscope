@@ -17,12 +17,13 @@
 # You should have received a copy of the GNU General Public License
 # along with diffoscope.  If not, see <http://www.gnu.org/licenses/>.
 
-from functools import partial
 import re
+import functools
+
 from diffoscope import tool_required
-from diffoscope.comparators.binary import File
-from diffoscope.comparators.utils import Command
 from diffoscope.difference import Difference
+from diffoscope.comparators.utils import Command
+from diffoscope.comparators.binary import File
 
 
 class Sng(Command):
@@ -32,7 +33,7 @@ class Sng(Command):
 
     def feed_stdin(self, stdin):
         with open(self.path, 'rb') as f:
-            for buf in iter(partial(f.read, 32768), b''):
+            for buf in iter(functools.partial(f.read, 32768), b''):
                 stdin.write(buf)
 
 

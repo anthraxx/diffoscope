@@ -17,16 +17,18 @@
 # You should have received a copy of the GNU General Public License
 # along with diffoscope.  If not, see <http://www.gnu.org/licenses/>.
 
-from collections import OrderedDict
-from functools import partial
-import hashlib
-import os.path
 import re
+import os.path
+import hashlib
+import functools
+import collections
+
 from debian.deb822 import Dsc
+
 from diffoscope.changes import Changes
-from diffoscope.comparators.binary import File
-from diffoscope.comparators.utils import Container
 from diffoscope.difference import Difference
+from diffoscope.comparators.utils import Container
+from diffoscope.comparators.binary import File
 
 
 DOT_CHANGES_FIELDS = [
@@ -82,7 +84,7 @@ class DebControlContainer(Container):
             return re.compile(re.escape(version))
 
     def get_members(self):
-        return OrderedDict([(self._trim_version_number(name), self.get_member(name)) for name in self.get_member_names()])
+        return collections.OrderedDict([(self._trim_version_number(name), self.get_member(name)) for name in self.get_member_names()])
 
     def get_member_names(self):
         field = self.source.deb822.get('Files') or self.source.deb822.get('Checksums-Sha256')
@@ -160,7 +162,7 @@ class DotDscFile(DebControlFile):
                 if not os.path.exists(in_dsc_path):
                     return False
                 with open(in_dsc_path, 'rb') as f:
-                    for buf in iter(partial(f.read, 32768), b''):
+                    for buf in iter(functools.partial(f.read, 32768), b''):
                         md5.update(buf)
                 if md5.hexdigest() != d['md5sum']:
                     return False
@@ -187,7 +189,7 @@ class DotBuildinfoFile(DebControlFile):
                 if not os.path.exists(in_buildinfo_path):
                     return False
                 with open(in_buildinfo_path, 'rb') as f:
-                    for buf in iter(partial(f.read, 32768), b''):
+                    for buf in iter(functools.partial(f.read, 32768), b''):
                         sha256.update(buf)
                 if sha256.hexdigest() != d['sha256']:
                     return False

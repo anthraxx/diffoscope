@@ -17,17 +17,19 @@
 # You should have received a copy of the GNU General Public License
 # along with diffoscope.  If not, see <http://www.gnu.org/licenses/>.
 
-from collections import OrderedDict
 import re
 import os.path
+import collections
+
+from diffoscope import logger
+from diffoscope.difference import Difference
+from diffoscope.comparators.utils import Archive
+from diffoscope.comparators.binary import File
+
 try:
     import guestfs
 except ImportError:
     guestfs = None
-from diffoscope import logger
-from diffoscope.comparators.binary import File
-from diffoscope.comparators.utils import Archive
-from diffoscope.difference import Difference
 
 
 class FsImageContainer(Archive):
@@ -55,7 +57,7 @@ class FsImageContainer(Archive):
         self.g.close()
 
     def get_members(self):
-        return OrderedDict({'fsimage-content': self.get_member(self.get_member_names()[0])})
+        return collections.OrderedDict({'fsimage-content': self.get_member(self.get_member_names()[0])})
 
     def get_member_names(self):
         return [os.path.basename(self.source.path) + '.tar']

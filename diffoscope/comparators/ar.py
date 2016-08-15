@@ -19,12 +19,13 @@
 # along with diffoscope.  If not, see <http://www.gnu.org/licenses/>.
 
 import re
-from diffoscope import tool_required
+
+from diffoscope import logger, tool_required
 from diffoscope.difference import Difference
-from diffoscope.comparators.binary import File
-from diffoscope.comparators.libarchive import LibarchiveContainer, list_libarchive
 from diffoscope.comparators.utils import Command
-from diffoscope import logger
+from diffoscope.comparators.binary import File
+from diffoscope.comparators.libarchive import LibarchiveContainer, \
+    list_libarchive
 
 
 # TODO: this would also be useful for Go archives. Currently those are handled

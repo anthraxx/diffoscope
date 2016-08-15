@@ -19,10 +19,12 @@
 
 import os.path
 import pytest
-from diffoscope.comparators import specialize
-from diffoscope.comparators.binary import FilesystemFile, NonExistingFile
-from diffoscope.comparators.zip import ZipFile, MozillaZipFile
+
 from diffoscope.config import Config
+from diffoscope.comparators import specialize
+from diffoscope.comparators.zip import ZipFile, MozillaZipFile
+from diffoscope.comparators.binary import FilesystemFile, NonExistingFile
+
 from conftest import tool_missing
 
 TEST_FILE1_PATH = os.path.join(os.path.dirname(__file__), '../data/test1.zip')

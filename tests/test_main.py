@@ -18,10 +18,12 @@
 # along with diffoscope.  If not, see <http://www.gnu.org/licenses/>.
 
 import os
+import pytest
 import signal
 import tempfile
-import pytest
+
 from diffoscope.main import main
+
 
 def test_non_existing_files(capsys):
     args = '/nonexisting1 /nonexisting2'

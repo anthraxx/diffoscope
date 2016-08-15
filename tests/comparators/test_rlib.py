@@ -18,16 +18,15 @@
 # You should have received a copy of the GNU General Public License
 # along with diffoscope.  If not, see <http://www.gnu.org/licenses/>.
 
-import os.path
-import shutil
 import pytest
-from diffoscope.comparators import specialize
-from diffoscope.comparators.binary import FilesystemFile, NonExistingFile
-from diffoscope.comparators.ar import ArFile
-from diffoscope.comparators.llvm import LlvmBitCodeFile
-from diffoscope.comparators.rust import RustObjectFile
-from diffoscope.comparators.utils import diff_ignore_line_numbers
+import os.path
+
 from diffoscope.config import Config
+from diffoscope.comparators import specialize
+from diffoscope.comparators.ar import ArFile
+from diffoscope.comparators.utils import diff_ignore_line_numbers
+from diffoscope.comparators.binary import FilesystemFile, NonExistingFile
+
 from conftest import tool_missing, tool_older_than
 
 TEST_FILE1_PATH = os.path.join(os.path.dirname(__file__), '../data/test1.rlib')

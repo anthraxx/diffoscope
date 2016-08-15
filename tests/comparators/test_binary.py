@@ -17,14 +17,17 @@
 # You should have received a copy of the GNU General Public License
 # along with diffoscope.  If not, see <http://www.gnu.org/licenses/>.
 
+import pytest
 import os.path
 import subprocess
-import pytest
-from diffoscope.comparators import specialize
+
 import diffoscope.comparators.binary
-from diffoscope.comparators.binary import File, FilesystemFile, NonExistingFile
-from diffoscope.difference import Difference
+
 from diffoscope import RequiredToolNotFound, tool_required
+from diffoscope.difference import Difference
+from diffoscope.comparators import specialize
+from diffoscope.comparators.binary import File, FilesystemFile, NonExistingFile
+
 from conftest import tool_missing
 
 TEST_FILE1_PATH = os.path.join(os.path.dirname(__file__), '../data/binary1')

@@ -20,11 +20,12 @@
 import pytest
 import os.path
 
-from conftest import tool_missing
-from diffoscope.comparators import specialize
-from diffoscope.comparators.binary import FilesystemFile, NonExistingFile
-from diffoscope.comparators.image import ImageFile
 from diffoscope.config import Config
+from diffoscope.comparators import specialize
+from diffoscope.comparators.image import ImageFile
+from diffoscope.comparators.binary import FilesystemFile, NonExistingFile
+
+from conftest import tool_missing
 
 TEST_FILE1_PATH = os.path.join(os.path.dirname(__file__), '../data/test1.jpg')
 TEST_FILE2_PATH = os.path.join(os.path.dirname(__file__), '../data/test2.jpg')

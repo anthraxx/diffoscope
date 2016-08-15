@@ -17,17 +17,18 @@
 # You should have received a copy of the GNU General Public License
 # along with diffoscope.  If not, see <http://www.gnu.org/licenses/>.
 
-from contextlib import contextmanager
-import os.path
 import re
-import shutil
 import sys
+import shutil
+import os.path
 import zipfile
-from diffoscope.difference import Difference
+import contextlib
+
 from diffoscope import tool_required
+from diffoscope.difference import Difference
+from diffoscope.comparators.utils import Archive, ArchiveMember, Command
 from diffoscope.comparators.binary import File
 from diffoscope.comparators.directory import Directory
-from diffoscope.comparators.utils import Archive, ArchiveMember, Command
 
 
 class Zipinfo(Command):
@@ -58,7 +59,7 @@ class ZipDirectory(Directory, ArchiveMember):
     def has_same_content_as(self, other):
         return False
 
-    @contextmanager
+    @contextlib.contextmanager
     def get_content(self):
         yield
 

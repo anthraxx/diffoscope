@@ -20,10 +20,11 @@
 import os.path
 import shutil
 import pytest
-from diffoscope.comparators import specialize
-from diffoscope.comparators.binary import FilesystemFile, NonExistingFile
-from diffoscope.comparators.gzip import GzipFile
+
 from diffoscope.config import Config
+from diffoscope.comparators import specialize
+from diffoscope.comparators.gzip import GzipFile
+from diffoscope.comparators.binary import FilesystemFile, NonExistingFile
 
 TEST_FILE1_PATH = os.path.join(os.path.dirname(__file__), '../data/test1.gz')
 TEST_FILE2_PATH = os.path.join(os.path.dirname(__file__), '../data/test2.gz')

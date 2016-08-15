@@ -17,11 +17,13 @@
 # You should have received a copy of the GNU General Public License
 # along with diffoscope.  If not, see <http://www.gnu.org/licenses/>.
 
+import pytest
+import diffoscope
+import subprocess
+
 from distutils.spawn import find_executable
 from distutils.version import StrictVersion
-import diffoscope
-import pytest
-import subprocess
+
 
 @pytest.fixture(autouse=True)
 def set_locale():

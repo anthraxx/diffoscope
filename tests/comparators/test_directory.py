@@ -18,11 +18,11 @@
 # along with diffoscope.  If not, see <http://www.gnu.org/licenses/>.
 
 import os
-import os.path
 import shutil
 import pytest
-from diffoscope.comparators.directory import compare_directories
+
 from diffoscope.presenters.text import output_text
+from diffoscope.comparators.directory import compare_directories
 
 TEST_FILE1_PATH = os.path.join(os.path.dirname(__file__), '../data/text_ascii1')
 TEST_FILE2_PATH = os.path.join(os.path.dirname(__file__), '../data/text_ascii2')

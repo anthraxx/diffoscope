@@ -17,17 +17,18 @@
 # You should have received a copy of the GNU General Public License
 # along with diffoscope.  If not, see <http://www.gnu.org/licenses/>.
 
-from collections import OrderedDict
-import os.path
 import re
+import os.path
 import subprocess
-from diffoscope import tool_required, OutputParsingError
-from diffoscope import logger, get_named_temporary_file
-from diffoscope.comparators.binary import File
-from diffoscope.comparators.libarchive import list_libarchive
+import collections
+
+from diffoscope import tool_required, OutputParsingError, logger, \
+    get_named_temporary_file
+from diffoscope.difference import Difference
 from diffoscope.comparators.deb import DebFile, get_build_id_map
 from diffoscope.comparators.utils import Command, Container
-from diffoscope.difference import Difference
+from diffoscope.comparators.binary import File
+from diffoscope.comparators.libarchive import list_libarchive
 
 
 class Readelf(Command):
@@ -335,7 +336,7 @@ class ElfContainer(Container):
                 output = output[2:]
             output = output[5:]
 
-            self._sections = OrderedDict()
+            self._sections = collections.OrderedDict()
             # Entires of readelf --section-headers have the following columns:
             # [Nr]  Name  Type  Address  Off  Size  ES  Flg  Lk  Inf  Al
             for line in output:

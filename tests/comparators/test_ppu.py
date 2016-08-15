@@ -18,12 +18,14 @@
 # You should have received a copy of the GNU General Public License
 # along with diffoscope.  If not, see <http://www.gnu.org/licenses/>.
 
-import os.path
 import pytest
-from diffoscope.comparators import specialize
-from diffoscope.comparators.binary import FilesystemFile, NonExistingFile
-from diffoscope.comparators.ppu import PpuFile
+import os.path
+
 from diffoscope.config import Config
+from diffoscope.comparators import specialize
+from diffoscope.comparators.ppu import PpuFile
+from diffoscope.comparators.binary import FilesystemFile, NonExistingFile
+
 from conftest import tool_missing
 
 # These test files were taken from two different builds of the Debian package

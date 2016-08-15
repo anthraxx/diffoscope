@@ -18,68 +18,75 @@
 # You should have received a copy of the GNU General Public License
 # along with diffoscope.  If not, see <http://www.gnu.org/licenses/>.
 
+import re
+import sys
 import magic
 import operator
 import os.path
-import re
-import sys
-try:
-    import tlsh
-except ImportError:
-    tlsh = None
+
 from diffoscope import logger, tool_required
 from diffoscope.config import Config
 from diffoscope.difference import Difference
 from diffoscope.comparators.ar import ArFile
-from diffoscope.comparators.binary import \
-    File, FilesystemFile, NonExistingFile, compare_binary_files
-from diffoscope.comparators.bzip2 import Bzip2File
-from diffoscope.comparators.java import ClassFile
-from diffoscope.comparators.cbfs import CbfsFile
-from diffoscope.comparators.cpio import CpioFile
+from diffoscope.comparators.ps import PsFile
+from diffoscope.comparators.xz import XzFile
 from diffoscope.comparators.deb import DebFile, Md5sumsFile, DebDataTarFile
+from diffoscope.comparators.zip import ZipFile, MozillaZipFile
+from diffoscope.comparators.dex import DexFile
+from diffoscope.comparators.tar import TarFile
+from diffoscope.comparators.ipk import IpkFile
+from diffoscope.comparators.png import PngFile
+from diffoscope.comparators.ppu import PpuFile
+from diffoscope.comparators.elf import ElfFile, ElfSection, StaticLibFile
+from diffoscope.comparators.icc import IccFile
+from diffoscope.comparators.git import GitIndexFile
+from diffoscope.comparators.pdf import PdfFile
+from diffoscope.comparators.rust import RustObjectFile
+from diffoscope.comparators.cpio import CpioFile
+from diffoscope.comparators.text import TextFile
+from diffoscope.comparators.gzip import GzipFile
+from diffoscope.comparators.java import ClassFile
+from diffoscope.comparators.json import JSONFile
+from diffoscope.comparators.llvm import LlvmBitCodeFile
+from diffoscope.comparators.mono import MonoExeFile
+from diffoscope.comparators.cbfs import CbfsFile
+from diffoscope.comparators.image import ImageFile
+from diffoscope.comparators.fonts import TtfFile
+from diffoscope.comparators.macho import MachoFile
+from diffoscope.comparators.bzip2 import Bzip2File
+from diffoscope.comparators.sqlite import Sqlite3Database
+from diffoscope.comparators.binary import File, FilesystemFile, NonExistingFile, \
+    compare_binary_files
+from diffoscope.comparators.device import Device
+from diffoscope.comparators.symlink import Symlink
+from diffoscope.comparators.fsimage import FsImageFile
+from diffoscope.comparators.gettext import MoFile
+from diffoscope.comparators.iso9660 import Iso9660File
+from diffoscope.comparators.haskell import HiFile
+from diffoscope.comparators.squashfs import SquashfsFile
+from diffoscope.comparators.directory import FilesystemDirectory, Directory, \
+    compare_directories
+
 try:
-    from diffoscope.comparators.debian import DotChangesFile, DotDscFile, DotBuildinfoFile
+    import tlsh
+except ImportError:
+    tlsh = None
+
+try:
+    from diffoscope.comparators.debian import DotChangesFile, DotDscFile, \
+        DotBuildinfoFile
 except ImportError as ex:
     if hasattr(ex, 'msg') and not ex.msg.startswith("No module named 'debian"):
         raise
-    from diffoscope.comparators.debian_fallback import DotChangesFile, DotDscFile, DotBuildinfoFile
-from diffoscope.comparators.device import Device
-from diffoscope.comparators.dex import DexFile
-from diffoscope.comparators.directory import FilesystemDirectory, Directory, compare_directories
-from diffoscope.comparators.elf import ElfFile, ElfSection, StaticLibFile
-from diffoscope.comparators.fsimage import FsImageFile
-from diffoscope.comparators.fonts import TtfFile
-from diffoscope.comparators.gettext import MoFile
-from diffoscope.comparators.git import GitIndexFile
-from diffoscope.comparators.gzip import GzipFile
-from diffoscope.comparators.haskell import HiFile
-from diffoscope.comparators.icc import IccFile
-from diffoscope.comparators.image import ImageFile
-from diffoscope.comparators.ipk import IpkFile
-from diffoscope.comparators.iso9660 import Iso9660File
-from diffoscope.comparators.json import JSONFile
-from diffoscope.comparators.llvm import LlvmBitCodeFile
-from diffoscope.comparators.macho import MachoFile
-from diffoscope.comparators.mono import MonoExeFile
-from diffoscope.comparators.pdf import PdfFile
-from diffoscope.comparators.png import PngFile
-from diffoscope.comparators.ppu import PpuFile
-from diffoscope.comparators.ps import PsFile
-from diffoscope.comparators.rust import RustObjectFile
+    from diffoscope.comparators.debian_fallback import DotChangesFile, \
+        DotDscFile, DotBuildinfoFile
+
 try:
     from diffoscope.comparators.rpm import RpmFile
 except ImportError as ex:
     if hasattr(ex, 'msg') and ex.msg != "No module named 'rpm'":
         raise
     from diffoscope.comparators.rpm_fallback import RpmFile
-from diffoscope.comparators.sqlite import Sqlite3Database
-from diffoscope.comparators.squashfs import SquashfsFile
-from diffoscope.comparators.symlink import Symlink
-from diffoscope.comparators.text import TextFile
-from diffoscope.comparators.tar import TarFile
-from diffoscope.comparators.xz import XzFile
-from diffoscope.comparators.zip import ZipFile, MozillaZipFile
 
 
 def bail_if_non_existing(*paths):

@@ -18,10 +18,11 @@
 # along with diffoscope.  If not, see <http://www.gnu.org/licenses/>.
 
 import os
-from diffoscope.comparators.binary import File, FilesystemFile
-from diffoscope.comparators.utils import format_device
+
+from diffoscope import get_named_temporary_file
 from diffoscope.difference import Difference
-from diffoscope import logger, get_named_temporary_file
+from diffoscope.comparators.utils import format_device
+from diffoscope.comparators.binary import File, FilesystemFile
 
 
 class Device(File):

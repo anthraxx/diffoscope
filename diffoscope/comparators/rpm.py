@@ -18,15 +18,17 @@
 # You should have received a copy of the GNU General Public License
 # along with diffoscope.  If not, see <http://www.gnu.org/licenses/>.
 
-from binascii import hexlify
-from io import StringIO
-import os.path
-import subprocess
+import io
 import rpm
+import os.path
+import binascii
+import subprocess
+
 from diffoscope import logger, tool_required, get_temporary_directory
-from diffoscope.comparators.rpm_fallback import AbstractRpmFile
-from diffoscope.comparators.utils import Archive
 from diffoscope.difference import Difference
+from diffoscope.comparators.utils import Archive
+from diffoscope.comparators.rpm_fallback import AbstractRpmFile
+
 
 def convert_header_field(io, header):
     if isinstance(header, list):
@@ -43,13 +45,13 @@ def convert_header_field(io, header):
         try:
             io.write(header.decode('utf-8'))
         except UnicodeDecodeError:
-            io.write(hexlify(header).decode('us-ascii'))
+            io.write(binascii.hexlify(header).decode('us-ascii'))
     else:
         io.write(repr(header))
 
 
 def get_rpm_header(path, ts):
-    s = StringIO()
+    s = io.StringIO()
     with open(path, 'r') as f:
         try:
             hdr = ts.hdrFromFdno(f)

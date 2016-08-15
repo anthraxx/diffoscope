@@ -17,14 +17,15 @@
 # You should have received a copy of the GNU General Public License
 # along with diffoscope.  If not, see <http://www.gnu.org/licenses/>.
 
-import os.path
 import pytest
+import os.path
+
 import diffoscope.comparators
-from diffoscope.comparators import specialize
-from diffoscope.comparators.binary import FilesystemFile, NonExistingFile
-from diffoscope.comparators.deb import DebFile, Md5sumsFile, DebDataTarFile
+
 from diffoscope.config import Config
-from conftest import tool_missing
+from diffoscope.comparators import specialize
+from diffoscope.comparators.deb import DebFile, Md5sumsFile, DebDataTarFile
+from diffoscope.comparators.binary import FilesystemFile, NonExistingFile
 
 TEST_FILE1_PATH = os.path.join(os.path.dirname(__file__), '../data/test1.deb')
 TEST_FILE2_PATH = os.path.join(os.path.dirname(__file__), '../data/test2.deb')

@@ -18,10 +18,11 @@
 # along with diffoscope.  If not, see <http://www.gnu.org/licenses/>.
 
 import os
+
+from diffoscope import logger, get_named_temporary_file
+from diffoscope.difference import Difference
 from diffoscope.comparators.binary import File
 from diffoscope.comparators.utils import format_symlink
-from diffoscope.difference import Difference
-from diffoscope import logger, get_named_temporary_file
 
 
 class Symlink(File):

@@ -18,14 +18,16 @@
 # along with diffoscope.  If not, see <http://www.gnu.org/licenses/>.
 
 import os
-from subprocess import check_call
 import struct
 import pytest
-from diffoscope.comparators import specialize
-from diffoscope.comparators.binary import FilesystemFile, NonExistingFile
-from diffoscope.comparators.cbfs import CbfsFile
+import subprocess
+
 from diffoscope.config import Config
+from diffoscope.comparators import specialize
 from diffoscope.presenters.text import output_text
+from diffoscope.comparators.cbfs import CbfsFile
+from diffoscope.comparators.binary import FilesystemFile, NonExistingFile
+
 from conftest import tool_missing
 
 TEST_FILE1_PATH = os.path.join(os.path.dirname(__file__), '../data/text_ascii1')
@@ -34,16 +36,16 @@ TEST_FILE2_PATH = os.path.join(os.path.dirname(__file__), '../data/text_ascii2')
 @pytest.fixture
 def rom1(tmpdir):
     path = str(tmpdir.join('coreboot1'))
-    check_call(['cbfstool', path, 'create', '-m', 'x86', '-s', '32768'], shell=False)
-    check_call(['cbfstool', path, 'add', '-f', TEST_FILE1_PATH, '-n', 'text', '-t', 'raw'], shell=False)
+    subprocess.check_call(['cbfstool', path, 'create', '-m', 'x86', '-s', '32768'], shell=False)
+    subprocess.check_call(['cbfstool', path, 'add', '-f', TEST_FILE1_PATH, '-n', 'text', '-t', 'raw'], shell=False)
     return specialize(FilesystemFile(path))
 
 @pytest.fixture
 def rom2(tmpdir):
     path = str(tmpdir.join('coreboot2.rom'))
     size = 32768
-    check_call(['cbfstool', path, 'create', '-m', 'x86', '-s', '%s' % size], shell=False)
-    check_call(['cbfstool', path, 'add', '-f', TEST_FILE2_PATH, '-n', 'text', '-t', 'raw'], shell=False)
+    subprocess.check_call(['cbfstool', path, 'create', '-m', 'x86', '-s', '%s' % size], shell=False)
+    subprocess.check_call(['cbfstool', path, 'add', '-f', TEST_FILE2_PATH, '-n', 'text', '-t', 'raw'], shell=False)
     # Remove the last 4 bytes to exercice the full header search
     buf = bytearray(size)
     with open(path, 'rb') as f:

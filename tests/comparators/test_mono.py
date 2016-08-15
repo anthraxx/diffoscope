@@ -17,12 +17,14 @@
 # You should have received a copy of the GNU General Public License
 # along with diffoscope.  If not, see <http://www.gnu.org/licenses/>.
 
-import os.path
 import pytest
-from diffoscope.comparators import specialize
-from diffoscope.comparators.binary import FilesystemFile, NonExistingFile
-from diffoscope.comparators.mono import MonoExeFile
+import os.path
+
 from diffoscope.config import Config
+from diffoscope.comparators import specialize
+from diffoscope.comparators.mono import MonoExeFile
+from diffoscope.comparators.binary import FilesystemFile, NonExistingFile
+
 from conftest import tool_missing
 
 # these were generated with:

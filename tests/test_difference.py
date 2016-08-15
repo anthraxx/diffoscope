@@ -17,28 +17,30 @@
 # You should have received a copy of the GNU General Public License
 # along with diffoscope.  If not, see <http://www.gnu.org/licenses/>.
 
-from io import StringIO
+import io
 import pytest
+
 from diffoscope.config import Config
 from diffoscope.difference import Difference
 
+
 def test_too_much_input_for_diff(monkeypatch):
     monkeypatch.setattr(Config, 'max_diff_input_lines', 20)
-    too_long_text_a = StringIO("a\n" * 21)
-    too_long_text_b = StringIO("b\n" * 21)
+    too_long_text_a = io.StringIO("a\n" * 21)
+    too_long_text_b = io.StringIO("b\n" * 21)
     difference = Difference.from_text_readers(too_long_text_a, too_long_text_b, 'a', 'b')
     assert '[ Too much input for diff ' in difference.unified_diff 
 
 def test_too_long_diff_block_lines(monkeypatch):
     monkeypatch.setattr(Config, 'max_diff_block_lines', 10)
-    too_long_text_a = StringIO("a\n" * 21)
-    too_long_text_b = StringIO("b\n" * 21)
+    too_long_text_a = io.StringIO("a\n" * 21)
+    too_long_text_b = io.StringIO("b\n" * 21)
     difference = Difference.from_text_readers(too_long_text_a, too_long_text_b, 'a', 'b')
     assert '[ 11 lines removed ]' in difference.unified_diff
 
 def test_non_str_arguments_to_source1_source2():
-    a = StringIO('a')
-    b = StringIO('b')
+    a = io.StringIO('a')
+    b = io.StringIO('b')
 
     with pytest.raises(TypeError):
         Difference.from_text_readers(a, b, a, b)

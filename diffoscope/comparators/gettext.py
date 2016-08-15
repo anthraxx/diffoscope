@@ -17,13 +17,14 @@
 # You should have received a copy of the GNU General Public License
 # along with diffoscope.  If not, see <http://www.gnu.org/licenses/>.
 
-from io import BytesIO
+import io
 import re
-from diffoscope import tool_required
-from diffoscope.comparators.binary import File
-from diffoscope.comparators.utils import Command
-from diffoscope.difference import Difference
+
 from diffoscope import logger
+from diffoscope import tool_required
+from diffoscope.difference import Difference
+from diffoscope.comparators.utils import Command
+from diffoscope.comparators.binary import File
 
 
 class Msgunfmt(Command):
@@ -31,7 +32,7 @@ class Msgunfmt(Command):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self._header = BytesIO()
+        self._header = io.BytesIO()
         self._encoding = None
 
     @tool_required('msgunfmt')

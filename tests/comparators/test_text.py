@@ -18,11 +18,12 @@
 # along with diffoscope.  If not, see <http://www.gnu.org/licenses/>.
 
 import codecs
-import os.path
 import pytest
+import os.path
+
+from diffoscope.config import Config
 from diffoscope.comparators import specialize
 from diffoscope.comparators.binary import FilesystemFile, NonExistingFile
-from diffoscope.config import Config
 
 @pytest.fixture
 def ascii1():

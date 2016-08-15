@@ -18,9 +18,11 @@
 # along with diffoscope.  If not, see <http://www.gnu.org/licenses/>.
 
 import re
+
 from diffoscope.difference import Difference
 from diffoscope.comparators.binary import File
-from diffoscope.comparators.libarchive import LibarchiveContainer, list_libarchive
+from diffoscope.comparators.libarchive import LibarchiveContainer, \
+    list_libarchive
 
 class TarContainer(LibarchiveContainer):
     pass

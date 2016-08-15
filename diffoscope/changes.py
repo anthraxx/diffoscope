@@ -44,7 +44,9 @@ __license__ = 'MIT'
 import os.path
 import hashlib
 import subprocess
+
 from debian import deb822
+
 from diffoscope import logger, tool_required
 
 

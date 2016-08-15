@@ -17,18 +17,21 @@
 # You should have received a copy of the GNU General Public License
 # along with diffoscope.  If not, see <http://www.gnu.org/licenses/>.
 
-import os.path
 import pytest
+import os.path
+
+from diffoscope.config import Config
 from diffoscope.comparators import specialize
 from diffoscope.comparators.binary import FilesystemFile, NonExistingFile
+
+from conftest import tool_missing
+
 try:
     from diffoscope.comparators.rpm import RpmFile
     miss_rpm_module = False
 except ImportError:
     from diffoscope.comparators.rpm_fallback import RpmFile
     miss_rpm_module = True
-from diffoscope.config import Config
-from conftest import tool_missing
 
 TEST_FILE1_PATH = os.path.join(os.path.dirname(__file__), '../data/test1.rpm')
 TEST_FILE2_PATH = os.path.join(os.path.dirname(__file__), '../data/test2.rpm')

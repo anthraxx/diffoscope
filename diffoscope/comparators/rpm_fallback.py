@@ -18,7 +18,9 @@
 # along with diffoscope.  If not, see <http://www.gnu.org/licenses/>.
 
 import re
+
 from diffoscope.comparators.binary import File
+
 
 class AbstractRpmFile(File):
     RE_FILE_TYPE = re.compile('^RPM\s')

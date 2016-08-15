@@ -19,28 +19,32 @@
 # You should have received a copy of the GNU General Public License
 # along with diffoscope.  If not, see <http://www.gnu.org/licenses/>.
 
-import argparse
-from contextlib import contextmanager
-import logging
-import codecs
 import os
-import signal
 import sys
+import codecs
+import signal
+import logging
+import argparse
 import traceback
+import contextlib
+
+import diffoscope.comparators
+
+from diffoscope import logger, VERSION, set_locale, clean_all_temp_files
+from diffoscope.config import Config
+from diffoscope.presenters.html import output_html, output_html_directory, \
+    JQUERY_SYSTEM_LOCATIONS
+from diffoscope.presenters.text import output_text
+
 try:
     import tlsh
 except ImportError:
     tlsh = None
+
 try:
     import argcomplete
 except ImportError:
     argcomplete = None
-from diffoscope import logger, VERSION, set_locale, clean_all_temp_files
-import diffoscope.comparators
-from diffoscope.config import Config
-from diffoscope.presenters.html import output_html
-from diffoscope.presenters.html import output_html_directory, JQUERY_SYSTEM_LOCATIONS
-from diffoscope.presenters.text import output_text
 
 
 def create_parser():
@@ -108,7 +112,7 @@ def create_parser():
     return parser
 
 
-@contextmanager
+@contextlib.contextmanager
 def make_printer(path):
     if path == '-':
         output = sys.stdout

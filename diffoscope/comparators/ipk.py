@@ -19,6 +19,7 @@
 # along with diffoscope.  If not, see <http://www.gnu.org/licenses/>.
 
 import re
+
 from diffoscope.comparators.gzip import GzipFile
 
 

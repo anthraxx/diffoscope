@@ -17,19 +17,22 @@
 # You should have received a copy of the GNU General Public License
 # along with diffoscope.  If not, see <http://www.gnu.org/licenses/>.
 
-import os.path
 import shutil
 import pytest
+import os.path
+
+from diffoscope.config import Config
 from diffoscope.comparators import specialize
+from diffoscope.presenters.text import output_text
 from diffoscope.comparators.binary import FilesystemFile, NonExistingFile
+
 try:
-    from diffoscope.comparators.debian import DotChangesFile, DotDscFile, DotBuildinfoFile
+    from diffoscope.comparators.debian import DotChangesFile, DotDscFile, \
+        DotBuildinfoFile
     miss_debian_module = False
 except ImportError:
     from diffoscope.comparators.debian_fallback import DotChangesFile, DotDscFile, DotBuildinfoFile
     miss_debian_module = True
-from diffoscope.config import Config
-from diffoscope.presenters.text import output_text
 
 TEST_DOT_CHANGES_FILE1_PATH = os.path.join(os.path.dirname(__file__), '../data/test1.changes')
 TEST_DOT_CHANGES_FILE2_PATH = os.path.join(os.path.dirname(__file__), '../data/test2.changes')

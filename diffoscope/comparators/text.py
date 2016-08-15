@@ -17,10 +17,11 @@
 # You should have received a copy of the GNU General Public License
 # along with diffoscope.  If not, see <http://www.gnu.org/licenses/>.
 
-import codecs
 import re
-from diffoscope.comparators.binary import File
+import codecs
+
 from diffoscope.difference import Difference
+from diffoscope.comparators.binary import File
 
 
 class TextFile(File):

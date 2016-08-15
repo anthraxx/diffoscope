@@ -20,10 +20,11 @@
 
 import re
 import subprocess
+
 from diffoscope import tool_required
-from diffoscope.comparators.binary import File
-from diffoscope.comparators.utils import Command
 from diffoscope.difference import Difference
+from diffoscope.comparators.utils import Command
+from diffoscope.comparators.binary import File
 
 
 class Otool(Command):

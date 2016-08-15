@@ -31,19 +31,21 @@
 # Dave Burt <dave (at) burt.id.au> (mainly for html theme)
 #
 
-import cgi
-from io import StringIO
-import re
-import sys
+import io
 import os
-import os.path
+import re
+import cgi
+import sys
 import codecs
 import hashlib
-from contextlib import contextmanager
+import contextlib
+
 from xml.sax.saxutils import escape
+
 from diffoscope import logger, VERSION
 from diffoscope.config import Config
 from diffoscope.presenters.icon import FAVICON_BASE64
+
 
 # minimum line size, we add a zero-sized breakable space every
 # LINESIZE characters
@@ -279,7 +281,7 @@ def linediff(s, t):
 
 def convert(s, ponct=0, tag=''):
     i = 0
-    t = StringIO()
+    t = io.StringIO()
     for c in s:
         # used by diffs
         if c == DIFFON:
@@ -569,7 +571,7 @@ def output_html(difference, css_url=None, print_func=None):
                    force=True)
     output_footer(print_func)
 
-@contextmanager
+@contextlib.contextmanager
 def file_printer(directory, filename):
     with codecs.open(os.path.join(directory,filename), 'w', encoding='utf-8') as f:
         print_func = f.write

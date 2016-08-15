@@ -18,14 +18,15 @@
 # along with diffoscope.  If not, see <http://www.gnu.org/licenses/>.
 
 import os
-import os.path
 import re
 import subprocess
+
+import diffoscope.comparators
+
 from diffoscope import logger, tool_required, RequiredToolNotFound
 from diffoscope.difference import Difference
-import diffoscope.comparators
-from diffoscope.comparators.binary import FilesystemFile
 from diffoscope.comparators.utils import Container, Command
+from diffoscope.comparators.binary import FilesystemFile
 
 
 def list_files(path):

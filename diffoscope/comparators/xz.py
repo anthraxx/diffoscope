@@ -17,13 +17,14 @@
 # You should have received a copy of the GNU General Public License
 # along with diffoscope.  If not, see <http://www.gnu.org/licenses/>.
 
-from collections import OrderedDict
-import os.path
 import re
+import os.path
 import subprocess
-from diffoscope.comparators.binary import File
-from diffoscope.comparators.utils import Archive, get_compressed_content_name
+import collections
+
 from diffoscope import logger, tool_required
+from diffoscope.comparators.utils import Archive, get_compressed_content_name
+from diffoscope.comparators.binary import File
 
 
 class XzContainer(Archive):
@@ -34,7 +35,7 @@ class XzContainer(Archive):
         pass
 
     def get_members(self):
-        return OrderedDict({'xz-content': self.get_member(self.get_member_names()[0])})
+        return collections.OrderedDict({'xz-content': self.get_member(self.get_member_names()[0])})
 
     def get_member_names(self):
         return [get_compressed_content_name(self.source.path, '.xz')]

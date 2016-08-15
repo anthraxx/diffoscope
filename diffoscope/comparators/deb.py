@@ -18,18 +18,20 @@
 # along with diffoscope.  If not, see <http://www.gnu.org/licenses/>.
 
 import re
+
+from diffoscope import logger
+from diffoscope.difference import Difference
+from diffoscope.comparators.tar import TarContainer
+from diffoscope.comparators.utils import ArchiveMember
+from diffoscope.comparators.binary import File
+from diffoscope.comparators.libarchive import LibarchiveContainer, list_libarchive
+
+import diffoscope.comparators
+
 try:
     from debian import deb822
 except ImportError:
     deb822 = None
-from diffoscope import logger
-from diffoscope.difference import Difference
-import diffoscope.comparators
-from diffoscope.comparators.binary import File
-from diffoscope.comparators.libarchive import LibarchiveContainer, list_libarchive
-from diffoscope.comparators.utils import \
-    ArchiveMember
-from diffoscope.comparators.tar import TarContainer
 
 
 # Return a dict with build ids as keys and file as values for all deb in the

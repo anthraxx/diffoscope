@@ -17,12 +17,13 @@
 # You should have received a copy of the GNU General Public License
 # along with diffoscope.  If not, see <http://www.gnu.org/licenses/>.
 
-import os.path
 import pytest
-from diffoscope.comparators import specialize
-from diffoscope.comparators.binary import FilesystemFile, NonExistingFile
-from diffoscope.comparators.ipk import IpkFile
+import os.path
+
 from diffoscope.config import Config
+from diffoscope.comparators import specialize
+from diffoscope.comparators.ipk import IpkFile
+from diffoscope.comparators.binary import FilesystemFile, NonExistingFile
 
 TEST_FILE1_PATH = os.path.join(os.path.dirname(__file__), '../data/base-files_157-r45695_ar71xx.ipk')
 TEST_FILE2_PATH = os.path.join(os.path.dirname(__file__), '../data/base-files_157-r45918_ar71xx.ipk')

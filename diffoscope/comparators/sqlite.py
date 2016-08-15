@@ -18,9 +18,9 @@
 # along with diffoscope.  If not, see <http://www.gnu.org/licenses/>.
 
 from diffoscope import tool_required
+from diffoscope.difference import Difference
 from diffoscope.comparators.binary import File
 from diffoscope.comparators.utils import Command
-from diffoscope.difference import Difference
 
 
 class Sqlite3Dump(Command):

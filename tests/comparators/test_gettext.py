@@ -18,12 +18,14 @@
 # along with diffoscope.  If not, see <http://www.gnu.org/licenses/>.
 
 import codecs
-import os.path
 import pytest
+import os.path
+
+from diffoscope.config import Config
 from diffoscope.comparators import specialize
 from diffoscope.comparators.binary import FilesystemFile, NonExistingFile
 from diffoscope.comparators.gettext import MoFile
-from diffoscope.config import Config
+
 from conftest import tool_missing
 
 TEST_FILE1_PATH = os.path.join(os.path.dirname(__file__), '../data/test1.mo')

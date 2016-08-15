@@ -17,18 +17,19 @@
 # You should have received a copy of the GNU General Public License
 # along with diffoscope.  If not, see <http://www.gnu.org/licenses/>.
 
-from contextlib import contextmanager
-import hashlib
-from io import StringIO
 import os
-import os.path
 import re
+import io
 import signal
+import hashlib
+import threading
+import contextlib
 import subprocess
-from threading import Thread
+
 from multiprocessing.dummy import Queue
-from diffoscope.config import Config
+
 from diffoscope import logger, tool_required, RequiredToolNotFound
+from diffoscope.config import Config
 
 
 class DiffParser(object):
@@ -39,7 +40,7 @@ class DiffParser(object):
         self._end_nl_q1 = end_nl_q1
         self._end_nl_q2 = end_nl_q2
         self._action = self.read_headers
-        self._diff = StringIO()
+        self._diff = io.StringIO()
         self._success = False
         self._remaining_hunk_lines = None
         self._block_len = None
@@ -145,7 +146,7 @@ def run_diff(fd1, fd2, end_nl_q1, end_nl_q2):
     os.close(fd1)
     os.close(fd2)
     parser = DiffParser(p.stdout, end_nl_q1, end_nl_q2)
-    t_read = Thread(target=parser.parse)
+    t_read = threading.Thread(target=parser.parse)
     t_read.daemon = True
     t_read.start()
     t_read.join()
@@ -159,7 +160,7 @@ def run_diff(fd1, fd2, end_nl_q1, end_nl_q2):
 
 
 # inspired by https://stackoverflow.com/a/6874161
-class ExThread(Thread):
+class ExThread(threading.Thread):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.__status_queue = Queue()
@@ -193,7 +194,7 @@ def feed(feeder, f, end_nl_q):
         f.close()
 
 
-@contextmanager
+@contextlib.contextmanager
 def fd_from_feeder(feeder, end_nl_q):
     pipe_r, pipe_w = os.pipe()
     outf = os.fdopen(pipe_w, 'wb')

@@ -18,17 +18,18 @@
 # You should have received a copy of the GNU General Public License
 # along with diffoscope.  If not, see <http://www.gnu.org/licenses/>.
 
-from collections import OrderedDict
 import re
-import subprocess
 import stat
+import subprocess
+import collections
+
 from diffoscope import logger, tool_required
+from diffoscope.difference import Difference
+from diffoscope.comparators.utils import Archive, ArchiveMember, Command
 from diffoscope.comparators.binary import File
 from diffoscope.comparators.device import Device
-from diffoscope.comparators.directory import Directory
 from diffoscope.comparators.symlink import Symlink
-from diffoscope.comparators.utils import Archive, ArchiveMember, Command
-from diffoscope.difference import Difference
+from diffoscope.comparators.directory import Directory
 
 
 class SquashfsSuperblock(Command):
@@ -212,7 +213,7 @@ class SquashfsContainer(Archive):
                 logger.warning('Unknown squashfs entry: %s', line)
 
     def open_archive(self):
-        return OrderedDict([(kwargs['member_name'], (cls, kwargs)) for cls, kwargs in self.entries(self.source.path)])
+        return collections.OrderedDict([(kwargs['member_name'], (cls, kwargs)) for cls, kwargs in self.entries(self.source.path)])
 
     def close_archive(self):
         pass

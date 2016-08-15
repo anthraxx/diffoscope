@@ -18,19 +18,23 @@
 # along with diffoscope.  If not, see <http://www.gnu.org/licenses/>.
 
 import codecs
-import os.path
 import pytest
+import os.path
+
+from diffoscope.config import Config
+from diffoscope.difference import Difference
+from diffoscope.comparators import specialize
+from diffoscope.comparators.utils import Command
+from diffoscope.comparators.binary import FilesystemFile
+
+from conftest import tool_missing
+
 try:
-    import tlsh
+    import tlsh # noqa
     miss_tlsh = False
 except ImportError:
     miss_tlsh = True
-from diffoscope.comparators import specialize
-from diffoscope.comparators.binary import FilesystemFile, NonExistingFile
-from diffoscope.comparators.utils import Command
-from diffoscope.config import Config
-from diffoscope.difference import Difference
-from conftest import tool_missing
+
 
 @pytest.fixture
 def fuzzy_tar1():

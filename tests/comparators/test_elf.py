@@ -17,20 +17,23 @@
 # You should have received a copy of the GNU General Public License
 # along with diffoscope.  If not, see <http://www.gnu.org/licenses/>.
 
-import os.path
 import pytest
+import os.path
+
+from diffoscope.config import Config
 from diffoscope.comparators import specialize
+from diffoscope.presenters.text import output_text
+from diffoscope.comparators.elf import ElfFile, StaticLibFile
 from diffoscope.comparators.binary import FilesystemFile, NonExistingFile
+from diffoscope.comparators.directory import FilesystemDirectory
+
+from conftest import tool_missing
+
 try:
-    import diffoscope.comparators.debian
+    import diffoscope.comparators.debian # noqa
     miss_debian_module = False
 except ImportError:
     miss_debian_module = True
-from diffoscope.comparators.directory import FilesystemDirectory
-from diffoscope.comparators.elf import ElfFile, StaticLibFile
-from diffoscope.config import Config
-from diffoscope.presenters.text import output_text
-from conftest import tool_missing
 
 TEST_OBJ1_PATH = os.path.join(os.path.dirname(__file__), '../data/test1.o')
 TEST_OBJ2_PATH = os.path.join(os.path.dirname(__file__), '../data/test2.o')

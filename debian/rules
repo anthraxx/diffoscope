@@ -9,7 +9,6 @@ ifneq ($(VERSION_dch),$(VERSION_py))
 endif
 
 export PYBUILD_DESTDIR = debian/diffoscope
-export PYBUILD_TEST_ARGS = -v -r sxX
 
 %:
 	dh $@ --with python3 --with bash-completion --buildsystem=pybuild
@@ -38,6 +37,11 @@ debian/diffoscope.bash-completion:
 
 override_dh_auto_build: debian/diffoscope.bash-completion $(MANPAGES)
 	dh_auto_build -O--buildsystem=pybuild
+
+override_dh_auto_test:
+	python3-coverage run --include=diffoscope/\* --module pytest -v -r sxX
+	python3-coverage report --show-missing
+	python3-coverage html
 
 override_dh_installman: $(MANPAGES)
 	dh_installman -O--buildsystem=pybuild

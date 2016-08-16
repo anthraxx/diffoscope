@@ -9,3 +9,5 @@
 /htmlcov/
 favicon.png
 /debian/*.1
+.coverage
+/htmlcov/

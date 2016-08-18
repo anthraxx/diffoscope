@@ -35,5 +35,7 @@ when building the package. See https://bugs.debian.org/834315 for an example
 ftbfs bug caused by this and see https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=735377#44
 and followups to learn how this happened and how to prevent it.
 
+After uploading, please also update the version on PyPI.
+
 
 // vim: set filetype=asciidoc:

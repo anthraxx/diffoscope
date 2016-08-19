@@ -14,7 +14,7 @@ Build-Depends:
  colord <!nocheck>,
  debhelper (>= 9),
  default-jdk-headless <!nocheck>,
- dh-python,
+ dh-python (>= 2.20160818~),
  libjs-jquery,
  libjs-jquery-hotkeys,
  libjs-jquery-isonscreen,

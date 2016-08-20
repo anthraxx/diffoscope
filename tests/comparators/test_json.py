@@ -19,7 +19,6 @@
 
 import pytest
 
-from diffoscope.comparators import specialize
 from diffoscope.comparators.json import JSONFile
 
 from utils import data, load_fixture

@@ -1,0 +1,19 @@
+@@ -10,7 +10,18 @@
+ User ID:   1000
+ Group ID:  1000
+ Created:   1471689380.154572964
+ Modified:  1471689380.154572964
+ Inode:     52205983
+ Device ID: (8, 6)
+ 
++Path:      b'b'
++SHA:       e69de29bb2d1d6434b8b29ae775ad8c2e48c5391
++Size:      0
++Flags:     0b1
++User ID:   1000
++Group ID:  1000
++Created:   1471689417.184218147
++Modified:  1471689417.184218147
++Inode:     52206041
++Device ID: (8, 6)
++

@@ -27,6 +27,8 @@ from distutils.version import StrictVersion
 
 from diffoscope.config import Config
 from diffoscope.comparators import specialize
+from diffoscope.presenters.html import output_html
+from diffoscope.presenters.text import output_text
 from diffoscope.comparators.binary import FilesystemFile, NonExistingFile
 
 
@@ -62,6 +64,9 @@ def assert_non_existing(monkeypatch, fixture, has_null_source=True, has_details=
     monkeypatch.setattr(Config.general, 'new_file', True)
 
     difference = fixture.compare(NonExistingFile('/nonexisting', fixture))
+
+    output_html(difference, print_func=print)
+    output_text(difference, print_func=print)
 
     assert difference.source2 == '/nonexisting'
     assert not has_details or len(difference.details) > 0

@@ -24,7 +24,7 @@ from diffoscope.comparators import specialize
 from diffoscope.comparators.mono import MonoExeFile
 from diffoscope.comparators.binary import FilesystemFile, NonExistingFile
 
-from conftest import skip_unless_tool_exists, data
+from utils import skip_unless_tool_exists, data
 
 # these were generated with:
 

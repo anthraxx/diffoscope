@@ -26,7 +26,7 @@ from diffoscope.comparators import specialize
 from diffoscope.comparators.utils import Command
 from diffoscope.comparators.binary import FilesystemFile
 
-from conftest import skip_unless_tool_exists, data
+from utils import skip_unless_tool_exists, data
 
 try:
     import tlsh # noqa

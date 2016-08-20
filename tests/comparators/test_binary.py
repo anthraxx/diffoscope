@@ -28,7 +28,7 @@ from diffoscope.difference import Difference
 from diffoscope.comparators import specialize
 from diffoscope.comparators.binary import File, FilesystemFile, NonExistingFile
 
-from conftest import skip_unless_tool_exists, data
+from utils import skip_unless_tool_exists, data
 
 TEST_FILE1_PATH = data('binary1')
 TEST_FILE2_PATH = data('binary2')

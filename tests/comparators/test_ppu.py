@@ -25,7 +25,7 @@ from diffoscope.comparators import specialize
 from diffoscope.comparators.ppu import PpuFile
 from diffoscope.comparators.binary import FilesystemFile, NonExistingFile
 
-from conftest import skip_unless_tool_exists, data
+from utils import skip_unless_tool_exists, data
 
 # These test files were taken from two different builds of the Debian package
 # fp-units-castle-game-engine (version 5.1.1-2 on amd64) on the Debian

@@ -23,7 +23,7 @@ from diffoscope.comparators import specialize
 from diffoscope.comparators.json import JSONFile
 from diffoscope.comparators.binary import FilesystemFile
 
-from conftest import data
+from utils import data
 
 TEST_FILE1_PATH = data('test1.json')
 TEST_FILE2_PATH = data('test2.json')

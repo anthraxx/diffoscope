@@ -25,7 +25,7 @@ from diffoscope.comparators import specialize
 from diffoscope.comparators.xz import XzFile
 from diffoscope.comparators.binary import FilesystemFile, NonExistingFile
 
-from conftest import skip_unless_tool_exists, data
+from utils import skip_unless_tool_exists, data
 
 TEST_FILE1_PATH = data('test1.xz')
 TEST_FILE2_PATH = data('test2.xz')

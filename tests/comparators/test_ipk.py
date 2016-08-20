@@ -24,7 +24,7 @@ from diffoscope.comparators import specialize
 from diffoscope.comparators.ipk import IpkFile
 from diffoscope.comparators.binary import FilesystemFile, NonExistingFile
 
-from conftest import data
+from utils import data
 
 TEST_FILE1_PATH = data('base-files_157-r45695_ar71xx.ipk')
 TEST_FILE2_PATH = data('base-files_157-r45918_ar71xx.ipk')

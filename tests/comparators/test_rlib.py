@@ -26,7 +26,7 @@ from diffoscope.comparators.ar import ArFile
 from diffoscope.comparators.utils import diff_ignore_line_numbers
 from diffoscope.comparators.binary import FilesystemFile, NonExistingFile
 
-from conftest import skip_unless_tool_exists, tool_older_than, data
+from utils import skip_unless_tool_exists, tool_older_than, data
 
 TEST_FILE1_PATH = data('test1.rlib')
 TEST_FILE2_PATH = data('test2.rlib')

@@ -27,7 +27,7 @@ from diffoscope.presenters.text import output_text
 from diffoscope.comparators.cbfs import CbfsFile
 from diffoscope.comparators.binary import FilesystemFile, NonExistingFile
 
-from conftest import skip_unless_tool_exists, data
+from utils import skip_unless_tool_exists, data
 
 TEST_FILE1_PATH = data('text_ascii1')
 TEST_FILE2_PATH = data('text_ascii2')

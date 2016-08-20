@@ -26,7 +26,7 @@ from diffoscope.comparators import specialize
 from diffoscope.comparators.deb import DebFile, Md5sumsFile, DebDataTarFile
 from diffoscope.comparators.binary import FilesystemFile, NonExistingFile
 
-from conftest import data
+from utils import data
 
 TEST_FILE1_PATH = data('test1.deb')
 TEST_FILE2_PATH = data('test2.deb')

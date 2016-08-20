@@ -24,7 +24,7 @@ from diffoscope.comparators import specialize
 from diffoscope.comparators.fonts import TtfFile
 from diffoscope.comparators.binary import FilesystemFile, NonExistingFile
 
-from conftest import skip_unless_tool_exists, data
+from utils import skip_unless_tool_exists, data
 
 TEST_FILE1_PATH = data('Samyak-Malayalam1.ttf')
 TEST_FILE2_PATH = data('Samyak-Malayalam2.ttf')

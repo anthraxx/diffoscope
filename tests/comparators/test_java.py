@@ -24,7 +24,7 @@ from diffoscope.comparators import specialize
 from diffoscope.comparators.java import ClassFile
 from diffoscope.comparators.binary import FilesystemFile, NonExistingFile
 
-from conftest import skip_unless_tool_exists, data
+from utils import skip_unless_tool_exists, data
 
 TEST_FILE1_PATH = data('Test1.class')
 TEST_FILE2_PATH = data('Test2.class')

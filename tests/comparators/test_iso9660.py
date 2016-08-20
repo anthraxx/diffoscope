@@ -24,7 +24,7 @@ from diffoscope.comparators import specialize
 from diffoscope.comparators.binary import FilesystemFile, NonExistingFile
 from diffoscope.comparators.iso9660 import Iso9660File
 
-from conftest import skip_unless_tool_exists, data
+from utils import skip_unless_tool_exists, data
 
 TEST_FILE1_PATH = data('test1.iso')
 TEST_FILE2_PATH = data('test2.iso')

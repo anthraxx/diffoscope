@@ -23,7 +23,7 @@ from diffoscope.comparators import specialize
 from diffoscope.comparators.binary import FilesystemFile
 from diffoscope.comparators.haskell import HiFile
 
-from conftest import skip_unless_tool_exists, data
+from utils import skip_unless_tool_exists, data
 
 TEST_FILE1_PATH = data('test1.hi')
 TEST_FILE2_PATH = data('test2.hi')

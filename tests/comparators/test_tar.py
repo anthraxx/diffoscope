@@ -24,7 +24,7 @@ from diffoscope.comparators import specialize
 from diffoscope.comparators.tar import TarFile
 from diffoscope.comparators.binary import FilesystemFile, NonExistingFile
 
-from conftest import data
+from utils import data
 
 TEST_FILE1_PATH = data('test1.tar')
 TEST_FILE2_PATH = data('test2.tar')

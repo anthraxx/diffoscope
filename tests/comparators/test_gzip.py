@@ -25,7 +25,7 @@ from diffoscope.comparators import specialize
 from diffoscope.comparators.gzip import GzipFile
 from diffoscope.comparators.binary import FilesystemFile, NonExistingFile
 
-from conftest import data
+from utils import data
 
 TEST_FILE1_PATH = data('test1.gz')
 TEST_FILE2_PATH = data('test2.gz')

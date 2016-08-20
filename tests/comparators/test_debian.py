@@ -25,7 +25,7 @@ from diffoscope.comparators import specialize
 from diffoscope.presenters.text import output_text
 from diffoscope.comparators.binary import FilesystemFile, NonExistingFile
 
-from conftest import data
+from utils import data
 
 try:
     from diffoscope.comparators.debian import DotChangesFile, DotDscFile, \

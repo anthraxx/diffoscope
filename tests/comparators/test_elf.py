@@ -27,7 +27,7 @@ from diffoscope.comparators.elf import ElfFile, StaticLibFile
 from diffoscope.comparators.binary import FilesystemFile, NonExistingFile
 from diffoscope.comparators.directory import FilesystemDirectory
 
-from conftest import skip_unless_tool_exists, data
+from utils import skip_unless_tool_exists, data
 
 try:
     import diffoscope.comparators.debian # noqa

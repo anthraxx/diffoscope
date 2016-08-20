@@ -26,7 +26,7 @@ from diffoscope.comparators import specialize
 from diffoscope.comparators.macho import MachoFile
 from diffoscope.comparators.binary import FilesystemFile, NonExistingFile
 
-from conftest import skip_unless_tool_exists, data
+from utils import skip_unless_tool_exists, data
 
 TEST_OBJ1_PATH = data('test1.macho')
 TEST_OBJ2_PATH = data('test2.macho')

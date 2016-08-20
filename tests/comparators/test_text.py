@@ -24,7 +24,7 @@ from diffoscope.config import Config
 from diffoscope.comparators import specialize
 from diffoscope.comparators.binary import FilesystemFile, NonExistingFile
 
-from conftest import data
+from utils import data
 
 @pytest.fixture
 def ascii1():

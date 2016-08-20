@@ -21,7 +21,7 @@ import pytest
 
 from diffoscope.comparators.json import JSONFile
 
-from utils import data, load_fixture
+from utils import data, load_fixture, assert_non_existing
 
 json1 = load_fixture(data('test1.json'))
 json2 = load_fixture(data('test2.json'))
@@ -40,3 +40,6 @@ def test_diff(differences):
     with open(data('json_expected_diff')) as f:
         expected_diff = f.read()
     assert differences[0].unified_diff == expected_diff
+
+def test_compare_non_existing(monkeypatch, json1):
+    assert_non_existing(monkeypatch, json1)

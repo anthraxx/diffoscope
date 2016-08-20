@@ -27,7 +27,7 @@ from diffoscope.presenters.text import output_text
 from diffoscope.comparators.cbfs import CbfsFile
 from diffoscope.comparators.binary import FilesystemFile, NonExistingFile
 
-from conftest import tool_missing, data
+from conftest import skip_unless_tool_exists, data
 
 TEST_FILE1_PATH = data('text_ascii1')
 TEST_FILE2_PATH = data('text_ascii2')
@@ -55,15 +55,15 @@ def rom2(tmpdir):
         f.write(buf[:-4])
     return specialize(FilesystemFile(path))
 
-@pytest.mark.skipif(tool_missing('cbfstool'), reason='missing cbfstool')
+@skip_unless_tool_exists('cbfstool')
 def test_identification_using_offset(rom1):
     assert isinstance(rom1, CbfsFile)
 
-@pytest.mark.skipif(tool_missing('cbfstool'), reason='missing cbfstool')
+@skip_unless_tool_exists('cbfstool')
 def test_identification_without_offset(rom2):
     assert isinstance(rom2, CbfsFile)
 
-@pytest.mark.skipif(tool_missing('cbfstool'), reason='missing cbfstool')
+@skip_unless_tool_exists('cbfstool')
 def test_no_differences(rom1):
     difference = rom1.compare(rom1)
     assert difference is None
@@ -74,19 +74,19 @@ def differences(rom1, rom2):
     output_text(difference, print_func=print)
     return difference.details
 
-@pytest.mark.skipif(tool_missing('cbfstool'), reason='missing cbfstool')
+@skip_unless_tool_exists('cbfstool')
 def test_listing(differences):
     expected_diff = open(data('cbfs_listing_expected_diff')).read()
     assert differences[0].unified_diff == expected_diff
 
-@pytest.mark.skipif(tool_missing('cbfstool'), reason='missing cbfstool')
+@skip_unless_tool_exists('cbfstool')
 def test_content(differences):
     assert differences[1].source1 == 'text'
     assert differences[1].source2 == 'text'
     expected_diff = open(data('text_ascii_expected_diff')).read()
     assert differences[1].unified_diff == expected_diff
 
-@pytest.mark.skipif(tool_missing('cbfstool'), reason='missing cbfstool')
+@skip_unless_tool_exists('cbfstool')
 def test_compare_non_existing(monkeypatch, rom1):
     monkeypatch.setattr(Config.general, 'new_file', True)
     difference = rom1.compare(NonExistingFile('/nonexisting', rom1))

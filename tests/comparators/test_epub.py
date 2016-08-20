@@ -24,7 +24,7 @@ from diffoscope.comparators import specialize
 from diffoscope.comparators.zip import ZipFile
 from diffoscope.comparators.binary import FilesystemFile, NonExistingFile
 
-from conftest import tool_missing, data
+from conftest import skip_unless_tool_exists, data
 
 TEST_FILE1_PATH = data('test1.epub')
 TEST_FILE2_PATH = data('test2.epub')
@@ -48,7 +48,7 @@ def test_no_differences(epub1):
 def differences(epub1, epub2):
     return epub1.compare(epub2).details
 
-@pytest.mark.skipif(tool_missing('zipinfo'), reason='missing zip')
+@skip_unless_tool_exists('zipinfo')
 def test_differences(differences):
     assert differences[0].source1 == 'zipinfo {}'
     assert differences[0].source2 == 'zipinfo {}'
@@ -61,7 +61,7 @@ def test_differences(differences):
     expected_diff = open(data('epub_expected_diffs')).read()
     assert expected_diff == "".join(map(lambda x: x.unified_diff, differences))
 
-@pytest.mark.skipif(tool_missing('zipinfo'), reason='missing zip')
+@skip_unless_tool_exists('zipinfo')
 def test_compare_non_existing(monkeypatch, epub1):
     monkeypatch.setattr(Config.general, 'new_file', True)
     difference = epub1.compare(NonExistingFile('/nonexisting', epub1))

@@ -25,7 +25,7 @@ from diffoscope.comparators import specialize
 from diffoscope.comparators.ppu import PpuFile
 from diffoscope.comparators.binary import FilesystemFile, NonExistingFile
 
-from conftest import tool_missing, data
+from conftest import skip_unless_tool_exists, data
 
 # These test files were taken from two different builds of the Debian package
 # fp-units-castle-game-engine (version 5.1.1-2 on amd64) on the Debian
@@ -44,7 +44,7 @@ def file1():
 def file2():
     return specialize(FilesystemFile(TEST_FILE2_PATH))
 
-@pytest.mark.skipif(tool_missing('ppudump'), reason='missing ppudump')
+@skip_unless_tool_exists('ppudump')
 def test_identification(file1):
     assert isinstance(file1, PpuFile)
 
@@ -56,13 +56,13 @@ def test_no_differences(file1):
 def differences(file1, file2):
     return file1.compare(file2).details
 
-@pytest.mark.skipif(tool_missing('ppudump'), reason='missing ppudump')
+@skip_unless_tool_exists('ppudump')
 def test_diff(differences):
     print(differences[0].unified_diff)
     expected_diff = open(data('ppu_expected_diff')).read()
     assert differences[0].unified_diff == expected_diff
 
-@pytest.mark.skipif(tool_missing('ppudump'), reason='missing ppudump')
+@skip_unless_tool_exists('ppudump')
 def test_compare_non_existing(monkeypatch, file1):
     monkeypatch.setattr(Config, 'new_file', True)
     difference = file1.compare(NonExistingFile('/nonexisting', file1))

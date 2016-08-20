@@ -24,7 +24,7 @@ from diffoscope.comparators import specialize
 from diffoscope.comparators.java import ClassFile
 from diffoscope.comparators.binary import FilesystemFile, NonExistingFile
 
-from conftest import tool_missing, data
+from conftest import skip_unless_tool_exists, data
 
 TEST_FILE1_PATH = data('Test1.class')
 TEST_FILE2_PATH = data('Test2.class')
@@ -48,12 +48,12 @@ def test_no_differences(class1):
 def differences(class1, class2):
     return class1.compare(class2).details
 
-@pytest.mark.skipif(tool_missing('javap'), reason='missing javap')
+@skip_unless_tool_exists('javap')
 def test_diff(differences):
     expected_diff = open(data('class_expected_diff')).read()
     assert differences[0].unified_diff == expected_diff
 
-@pytest.mark.skipif(tool_missing('javap'), reason='missing javap')
+@skip_unless_tool_exists('javap')
 def test_compare_non_existing(monkeypatch, class1):
     monkeypatch.setattr(Config, 'new_file', True)
     difference = class1.compare(NonExistingFile('/nonexisting', class1))

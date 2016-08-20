@@ -24,7 +24,7 @@ from diffoscope.comparators import specialize
 from diffoscope.comparators.binary import FilesystemFile, NonExistingFile
 from diffoscope.comparators.sqlite import Sqlite3Database
 
-from conftest import tool_missing, data
+from conftest import skip_unless_tool_exists, data
 
 TEST_FILE1_PATH = data('test1.sqlite3')
 TEST_FILE2_PATH = data('test2.sqlite3')
@@ -48,12 +48,12 @@ def test_no_differences(sqlite3db1):
 def differences(sqlite3db1, sqlite3db2):
     return sqlite3db1.compare(sqlite3db2).details
 
-@pytest.mark.skipif(tool_missing('sqlite3'), reason='missing sqlite3')
+@skip_unless_tool_exists('sqlite3')
 def test_diff(differences):
     expected_diff = open(data('sqlite3_expected_diff')).read()
     assert differences[0].unified_diff == expected_diff
 
-@pytest.mark.skipif(tool_missing('sqlite3'), reason='missing sqlite3')
+@skip_unless_tool_exists('sqlite3')
 def test_compare_non_existing(monkeypatch, sqlite3db1):
     monkeypatch.setattr(Config.general, 'new_file', True)
     difference = sqlite3db1.compare(NonExistingFile('/nonexisting', sqlite3db1))

@@ -24,7 +24,7 @@ from diffoscope.comparators import specialize
 from diffoscope.comparators.binary import FilesystemFile, NonExistingFile
 from diffoscope.comparators.fsimage import FsImageFile
 
-from conftest import tool_missing, data
+from conftest import skip_unless_tool_exists, data
 
 try:
     import guestfs
@@ -58,7 +58,7 @@ def test_identification(img1):
     assert isinstance(img1, FsImageFile)
 
 @pytest.mark.skipif(not guestfs_working(), reason='guestfs not working on the system')
-@pytest.mark.skipif(tool_missing('qemu-img'), reason='missing qemu-img')
+@skip_unless_tool_exists('qemu-img')
 @pytest.mark.skipif(miss_guestfs, reason='guestfs is missing')
 def test_no_differences(img1):
     difference = img1.compare(img1)
@@ -69,7 +69,7 @@ def differences(img1, img2):
     return img1.compare(img2).details
 
 @pytest.mark.skipif(not guestfs_working(), reason='guestfs not working on the system')
-@pytest.mark.skipif(tool_missing('qemu-img'), reason='missing qemu-img')
+@skip_unless_tool_exists('qemu-img')
 @pytest.mark.skipif(miss_guestfs, reason='guestfs is missing')
 def test_differences(differences):
     assert differences[0].source1 == 'test1.ext4.tar'
@@ -87,7 +87,7 @@ def test_differences(differences):
     assert expected_diff == found_diff
 
 @pytest.mark.skipif(not guestfs_working(), reason='guestfs not working on the system')
-@pytest.mark.skipif(tool_missing('qemu-img'), reason='missing qemu-img')
+@skip_unless_tool_exists('qemu-img')
 @pytest.mark.skipif(miss_guestfs, reason='guestfs is missing')
 def test_compare_non_existing(monkeypatch, img1):
     monkeypatch.setattr(Config.general, 'new_file', True)

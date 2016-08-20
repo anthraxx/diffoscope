@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+#, reason='missing zipinfo') -*- coding: utf-8 -*-
 #
 # diffoscope: in-depth comparison of files, archives, and directories
 #
@@ -27,7 +27,7 @@ from diffoscope.comparators.elf import ElfFile, StaticLibFile
 from diffoscope.comparators.binary import FilesystemFile, NonExistingFile
 from diffoscope.comparators.directory import FilesystemDirectory
 
-from conftest import tool_missing, data
+from conftest import skip_unless_tool_exists, data
 
 try:
     import diffoscope.comparators.debian # noqa
@@ -57,14 +57,14 @@ def test_obj_no_differences(obj1):
 def obj_differences(obj1, obj2):
     return obj1.compare(obj2).details
 
-@pytest.mark.skipif(tool_missing('readelf'), reason='missing readelf')
+@skip_unless_tool_exists('readelf')
 def test_obj_compare_non_existing(monkeypatch, obj1):
     monkeypatch.setattr(Config, 'new_file', True)
     difference = obj1.compare(NonExistingFile('/nonexisting', obj1))
     assert difference.source2 == '/nonexisting'
     assert len(difference.details) > 0
 
-@pytest.mark.skipif(tool_missing('readelf'), reason='missing readelf')
+@skip_unless_tool_exists('readelf')
 def test_diff(obj_differences):
     assert len(obj_differences) == 1
     expected_diff = open(data('elf_obj_expected_diff')).read()
@@ -92,7 +92,7 @@ def test_lib_no_differences(lib1):
 def lib_differences(lib1, lib2):
     return lib1.compare(lib2).details
 
-@pytest.mark.skipif(tool_missing('readelf') or tool_missing('objdump'), reason='missing readelf or objdump')
+@skip_unless_tool_exists('readelf', 'objdump')
 def test_lib_differences(lib_differences):
     assert len(lib_differences) == 2
     assert lib_differences[0].source1 == 'file list'
@@ -102,7 +102,7 @@ def test_lib_differences(lib_differences):
     expected_objdump_diff = open(data('elf_lib_objdump_expected_diff')).read()
     assert lib_differences[1].unified_diff == expected_objdump_diff
 
-@pytest.mark.skipif(tool_missing('readelf') or tool_missing('objdump'), reason='missing readelf')
+@skip_unless_tool_exists('readelf', 'objdump')
 def test_lib_compare_non_existing(monkeypatch, lib1):
     monkeypatch.setattr(Config, 'new_file', True)
     difference = lib1.compare(NonExistingFile('/nonexisting', lib1))
@@ -126,7 +126,7 @@ def dbgsym_dir2():
 def dbgsym_differences(dbgsym_dir1, dbgsym_dir2):
     return dbgsym_dir1.compare(dbgsym_dir2)
 
-@pytest.mark.skipif(any([tool_missing(tool) for tool in ['readelf', 'objdump', 'objcopy']]), reason='missing readelf, objdump, or objcopy')
+@skip_unless_tool_exists('readelf', 'objdump', 'objcopy')
 @pytest.mark.skipif(miss_debian_module, reason='debian module is not installed')
 def test_differences_with_dbgsym(dbgsym_differences):
     output_text(dbgsym_differences, print)
@@ -136,7 +136,7 @@ def test_differences_with_dbgsym(dbgsym_differences):
     assert bin_details.details[1].source1.startswith('objdump')
     assert 'test-cases/dbgsym/package/test.c:2' in bin_details.details[1].unified_diff
 
-@pytest.mark.skipif(any([tool_missing(tool) for tool in ['readelf', 'objdump', 'objcopy']]), reason='missing readelf, objdump, or objcopy')
+@skip_unless_tool_exists('readelf', 'objdump', 'objcopy')
 @pytest.mark.skipif(miss_debian_module, reason='debian module is not installed')
 def test_original_gnu_debuglink(dbgsym_differences):
     bin_details = dbgsym_differences.details[2].details[0].details[0]

@@ -24,7 +24,7 @@ from diffoscope.comparators import specialize
 from diffoscope.comparators.dex import DexFile
 from diffoscope.comparators.binary import FilesystemFile, NonExistingFile
 
-from conftest import tool_missing, data
+from conftest import skip_unless_tool_exists, data
 
 TEST_FILE1_PATH = data('test1.dex')
 TEST_FILE2_PATH = data('test2.dex')
@@ -48,9 +48,9 @@ def test_no_differences(dex1):
 def differences(dex1, dex2):
     return dex1.compare(dex2).details
 
-@pytest.mark.skipif(tool_missing('enjarify'), reason='missing enjarify')
-@pytest.mark.skipif(tool_missing('zipinfo'), reason='missing zipinfo')
-@pytest.mark.skipif(tool_missing('javap'), reason='missing javap')
+@skip_unless_tool_exists('enjarify')
+@skip_unless_tool_exists('zipinfo')
+@skip_unless_tool_exists('javap')
 def test_differences(differences):
     assert differences[0].source1 == 'test1.jar'
     assert differences[0].source2 == 'test2.jar'
@@ -64,9 +64,9 @@ def test_differences(differences):
     found_diff = zipinfo.unified_diff + classdiff.details[0].unified_diff
     assert expected_diff == found_diff
 
-@pytest.mark.skipif(tool_missing('enjarify'), reason='missing enjarify')
-@pytest.mark.skipif(tool_missing('zipinfo'), reason='missing zipinfo')
-@pytest.mark.skipif(tool_missing('javap'), reason='missing javap')
+@skip_unless_tool_exists('enjarify')
+@skip_unless_tool_exists('zipinfo')
+@skip_unless_tool_exists('javap')
 def test_compare_non_existing(monkeypatch, dex1):
     monkeypatch.setattr(Config.general, 'new_file', True)
     difference = dex1.compare(NonExistingFile('/nonexisting', dex1))

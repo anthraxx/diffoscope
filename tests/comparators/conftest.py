@@ -30,9 +30,11 @@ from distutils.version import StrictVersion
 def set_locale():
     diffoscope.set_locale()
 
-
-def tool_missing(cmd):
-    return find_executable(cmd) is None
+def skip_unless_tool_exists(*alternatives):
+    return pytest.mark.skipif(
+        not any(find_executable(x) for x in alternatives),
+        reason="missing {}".format(" or ".join(alternatives)),
+    )
 
 def data(filename):
     return os.path.join(

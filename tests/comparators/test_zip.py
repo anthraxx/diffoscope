@@ -24,7 +24,7 @@ from diffoscope.comparators import specialize
 from diffoscope.comparators.zip import ZipFile, MozillaZipFile
 from diffoscope.comparators.binary import FilesystemFile, NonExistingFile
 
-from conftest import tool_missing, data
+from conftest import skip_unless_tool_exists, data
 
 TEST_FILE1_PATH = data('test1.zip')
 TEST_FILE2_PATH = data('test2.zip')
@@ -48,19 +48,19 @@ def test_no_differences(zip1):
 def differences(zip1, zip2):
     return zip1.compare(zip2).details
 
-@pytest.mark.skipif(tool_missing('zipinfo'), reason='missing zip')
+@skip_unless_tool_exists('zipinfo')
 def test_metadata(differences):
     expected_diff = open(data('zip_zipinfo_expected_diff')).read()
     assert differences[0].unified_diff == expected_diff
 
-@pytest.mark.skipif(tool_missing('zipinfo'), reason='missing zip')
+@skip_unless_tool_exists('zipinfo')
 def test_compressed_files(differences):
     assert differences[1].source1 == 'dir/text'
     assert differences[1].source2 == 'dir/text'
     expected_diff = open(data('text_ascii_expected_diff')).read()
     assert differences[1].unified_diff == expected_diff
 
-@pytest.mark.skipif(tool_missing('zipinfo'), reason='missing zip')
+@skip_unless_tool_exists('zipinfo')
 def test_compare_non_existing(monkeypatch, zip1):
     monkeypatch.setattr(Config.general, 'new_file', True)
     difference = zip1.compare(NonExistingFile('/nonexisting', zip1))
@@ -89,21 +89,21 @@ def test_mozzip_no_differences(mozzip1):
 def mozzip_differences(mozzip1, mozzip2):
     return mozzip1.compare(mozzip2).details
 
-@pytest.mark.skipif(tool_missing('zipinfo'), reason='missing zip')
+@skip_unless_tool_exists('zipinfo')
 def test_mozzip_metadata(mozzip_differences):
     expected_diff = open(data('mozzip_zipinfo_expected_diff')).read()
     diff = mozzip_differences[0].unified_diff
     assert (diff.replace(TEST_MOZZIP1_PATH, 'test1.mozzip')
                 .replace(TEST_MOZZIP2_PATH, 'test2.mozzip')) == expected_diff
 
-@pytest.mark.skipif(tool_missing('zipinfo'), reason='missing zip')
+@skip_unless_tool_exists('zipinfo')
 def test_mozzip_compressed_files(mozzip_differences):
     assert mozzip_differences[1].source1 == 'dir/text'
     assert mozzip_differences[1].source2 == 'dir/text'
     expected_diff = open(data('text_ascii_expected_diff')).read()
     assert mozzip_differences[1].unified_diff == expected_diff
 
-@pytest.mark.skipif(tool_missing('zipinfo'), reason='missing zip')
+@skip_unless_tool_exists('zipinfo')
 def test_mozzip_compare_non_existing(monkeypatch, mozzip1):
     monkeypatch.setattr(Config.general, 'new_file', True)
     difference = mozzip1.compare(NonExistingFile('/nonexisting', mozzip1))

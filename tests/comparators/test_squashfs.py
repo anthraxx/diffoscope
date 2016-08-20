@@ -24,7 +24,7 @@ from diffoscope.comparators import specialize
 from diffoscope.comparators.binary import FilesystemFile, NonExistingFile
 from diffoscope.comparators.squashfs import SquashfsFile
 
-from conftest import tool_missing, data
+from conftest import skip_unless_tool_exists, data
 
 TEST_FILE1_PATH = data('test1.squashfs')
 TEST_FILE2_PATH = data('test2.squashfs')
@@ -53,25 +53,25 @@ def test_no_warnings(capfd, squashfs1, squashfs2):
 def differences(squashfs1, squashfs2):
     return squashfs1.compare(squashfs2).details
 
-@pytest.mark.skipif(tool_missing('unsquashfs'), reason='missing unsquashfs')
+@skip_unless_tool_exists('unsquashfs')
 def test_superblock(differences):
     expected_diff = open(data('squashfs_superblock_expected_diff')).read()
     assert differences[0].unified_diff == expected_diff
 
-@pytest.mark.skipif(tool_missing('unsquashfs'), reason='missing unsquashfs')
+@skip_unless_tool_exists('unsquashfs')
 def test_symlink(differences):
     assert differences[2].comment == 'symlink'
     expected_diff = open(data('symlink_expected_diff')).read()
     assert differences[2].unified_diff == expected_diff
 
-@pytest.mark.skipif(tool_missing('unsquashfs'), reason='missing unsquashfs')
+@skip_unless_tool_exists('unsquashfs')
 def test_compressed_files(differences):
     assert differences[3].source1 == '/text'
     assert differences[3].source2 == '/text'
     expected_diff = open(data('text_ascii_expected_diff')).read()
     assert differences[3].unified_diff == expected_diff
 
-@pytest.mark.skipif(tool_missing('unsquashfs'), reason='missing unsquashfs')
+@skip_unless_tool_exists('unsquashfs')
 def test_compare_non_existing(monkeypatch, squashfs1):
     monkeypatch.setattr(Config.general, 'new_file', True)
     difference = squashfs1.compare(NonExistingFile('/nonexisting', squashfs1))

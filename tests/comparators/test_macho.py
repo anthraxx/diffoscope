@@ -26,7 +26,7 @@ from diffoscope.comparators import specialize
 from diffoscope.comparators.macho import MachoFile
 from diffoscope.comparators.binary import FilesystemFile, NonExistingFile
 
-from conftest import tool_missing, data
+from conftest import skip_unless_tool_exists, data
 
 TEST_OBJ1_PATH = data('test1.macho')
 TEST_OBJ2_PATH = data('test2.macho')
@@ -50,14 +50,14 @@ def test_obj_no_differences(obj1):
 def obj_differences(obj1, obj2):
     return obj1.compare(obj2).details
 
-@pytest.mark.skipif(tool_missing('otool') or tool_missing('lipo'), reason='missing otool or lipo')
+@skip_unless_tool_exists('otool', 'lipo')
 def test_obj_compare_non_existing(monkeypatch, obj1):
     monkeypatch.setattr(Config, 'new_file', True)
     difference = obj1.compare(NonExistingFile('/nonexisting', obj1))
     assert difference.source2 == '/nonexisting'
     assert len(difference.details) > 0
 
-@pytest.mark.skipif(tool_missing('otool') or tool_missing('lipo'), reason='missing otool or lipo')
+@skip_unless_tool_exists('otool', 'lipo')
 def test_diff(obj_differences):
     assert len(obj_differences) == 4
     l = ['macho_expected_diff_arch', 'macho_expected_diff_headers', 'macho_expected_diff_loadcommands', 'macho_expected_diff_disassembly']

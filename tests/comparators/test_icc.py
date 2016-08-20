@@ -24,7 +24,7 @@ from diffoscope.comparators import specialize
 from diffoscope.comparators.icc import IccFile
 from diffoscope.comparators.binary import FilesystemFile, NonExistingFile
 
-from conftest import tool_missing, data
+from conftest import skip_unless_tool_exists, data
 
 TEST_FILE1_PATH = data('test1.icc')
 TEST_FILE2_PATH = data('test2.icc')
@@ -48,12 +48,12 @@ def test_no_differences(icc1):
 def differences(icc1, icc2):
     return icc1.compare(icc2).details
 
-@pytest.mark.skipif(tool_missing('cd-iccdump'), reason='missing cd-iccdump')
+@skip_unless_tool_exists('cd-iccdump')
 def test_diff(differences):
     expected_diff = open(data('icc_expected_diff')).read()
     assert differences[0].unified_diff == expected_diff
 
-@pytest.mark.skipif(tool_missing('cd-iccdump'), reason='missing cd-iccdump')
+@skip_unless_tool_exists('cd-iccdump')
 def test_compare_non_existing(monkeypatch, icc1):
     monkeypatch.setattr(Config, 'new_file', True)
     difference = icc1.compare(NonExistingFile('/nonexisting', icc1))

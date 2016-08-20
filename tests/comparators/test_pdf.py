@@ -24,7 +24,7 @@ from diffoscope.comparators import specialize
 from diffoscope.comparators.pdf import PdfFile
 from diffoscope.comparators.binary import FilesystemFile, NonExistingFile
 
-from conftest import tool_missing, data
+from conftest import skip_unless_tool_exists, data
 
 TEST_FILE1_PATH = data('test1.pdf')
 TEST_FILE2_PATH = data('test2.pdf')
@@ -48,20 +48,17 @@ def test_no_differences(pdf1):
 def differences(pdf1, pdf2):
     return pdf1.compare(pdf2).details
 
-@pytest.mark.skipif(tool_missing('pdftk') or tool_missing('pdftotext'),
-                    reason='missing pdftk or pdftotext')
+@skip_unless_tool_exists('pdftk', 'pdftotext')
 def test_text_diff(differences):
     expected_diff = open(data('pdf_text_expected_diff')).read()
     assert differences[0].unified_diff == expected_diff
 
-@pytest.mark.skipif(tool_missing('pdftk') or tool_missing('pdftotext'),
-                    reason='missing pdftk or pdftotext')
+@skip_unless_tool_exists('pdftk', 'pdftotext')
 def test_internal_diff(differences):
     expected_diff = open(data('pdf_internal_expected_diff')).read()
     assert differences[1].unified_diff == expected_diff
 
-@pytest.mark.skipif(tool_missing('pdftk') or tool_missing('pdftotext'),
-                    reason='missing pdftk or pdftotext')
+@skip_unless_tool_exists('pdftk', 'pdftotext')
 def test_compare_non_existing(monkeypatch, pdf1):
     monkeypatch.setattr(Config, 'new_file', True)
     difference = pdf1.compare(NonExistingFile('/nonexisting', pdf1))

@@ -26,7 +26,7 @@ from diffoscope.comparators import specialize
 from diffoscope.comparators.utils import Command
 from diffoscope.comparators.binary import FilesystemFile
 
-from conftest import tool_missing, data
+from conftest import skip_unless_tool_exists, data
 
 try:
     import tlsh # noqa
@@ -86,7 +86,7 @@ def test_no_fuzzy_matching_new_file(monkeypatch, fuzzy_tar_in_tar1, fuzzy_tar_in
     assert difference.details[1].source2 == '/dev/null'
     assert difference.details[2].source1 == '/dev/null'
 
-@pytest.mark.skipif(tool_missing('tee'), reason='missing tee')
+@skip_unless_tool_exists('tee')
 def test_trim_stderr_in_command():
     class FillStderr(Command):
         def cmdline(self):

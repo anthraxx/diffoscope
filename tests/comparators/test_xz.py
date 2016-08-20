@@ -25,7 +25,7 @@ from diffoscope.comparators import specialize
 from diffoscope.comparators.xz import XzFile
 from diffoscope.comparators.binary import FilesystemFile, NonExistingFile
 
-from conftest import tool_missing, data
+from conftest import skip_unless_tool_exists, data
 
 TEST_FILE1_PATH = data('test1.xz')
 TEST_FILE2_PATH = data('test2.xz')
@@ -49,12 +49,12 @@ def test_no_differences(xz1):
 def differences(xz1, xz2):
     return xz1.compare(xz2).details
 
-@pytest.mark.skipif(tool_missing('xz'), reason='missing xz')
+@skip_unless_tool_exists('xz')
 def test_content_source(differences):
     assert differences[0].source1 == 'test1'
     assert differences[0].source2 == 'test2'
 
-@pytest.mark.skipif(tool_missing('xz'), reason='missing xz')
+@skip_unless_tool_exists('xz')
 def test_content_source_without_extension(tmpdir):
     path1 = str(tmpdir.join('test1'))
     path2 = str(tmpdir.join('test2'))
@@ -66,12 +66,12 @@ def test_content_source_without_extension(tmpdir):
     assert difference[0].source1 == 'test1-content'
     assert difference[0].source2 == 'test2-content'
 
-@pytest.mark.skipif(tool_missing('xz'), reason='missing xz')
+@skip_unless_tool_exists('xz')
 def test_content_diff(differences):
     expected_diff = open(data('text_ascii_expected_diff')).read()
     assert differences[0].unified_diff == expected_diff
 
-@pytest.mark.skipif(tool_missing('xz'), reason='missing xz')
+@skip_unless_tool_exists('xz')
 def test_compare_non_existing(monkeypatch, xz1):
     monkeypatch.setattr(Config.general, 'new_file', True)
     difference = xz1.compare(NonExistingFile('/nonexisting', xz1))

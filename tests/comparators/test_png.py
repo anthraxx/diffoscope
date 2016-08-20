@@ -24,7 +24,7 @@ from diffoscope.comparators import specialize
 from diffoscope.comparators.png import PngFile
 from diffoscope.comparators.binary import FilesystemFile, NonExistingFile
 
-from conftest import tool_missing, data
+from conftest import skip_unless_tool_exists, data
 
 TEST_FILE1_PATH = data('test1.png')
 TEST_FILE2_PATH = data('test2.png')
@@ -48,12 +48,12 @@ def test_no_differences(png1):
 def differences(png1, png2):
     return png1.compare(png2).details
 
-@pytest.mark.skipif(tool_missing('sng'), reason='missing sng')
+@skip_unless_tool_exists('sng')
 def test_diff(differences):
     expected_diff = open(data('png_expected_diff')).read()
     assert differences[0].unified_diff == expected_diff
 
-@pytest.mark.skipif(tool_missing('sng'), reason='missing sng')
+@skip_unless_tool_exists('sng')
 def test_compare_non_existing(monkeypatch, png1):
     monkeypatch.setattr(Config, 'new_file', True)
     difference = png1.compare(NonExistingFile('/nonexisting', png1))

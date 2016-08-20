@@ -24,7 +24,7 @@ from diffoscope.comparators import specialize
 from diffoscope.comparators.ps import PsFile
 from diffoscope.comparators.binary import FilesystemFile, NonExistingFile
 
-from conftest import tool_missing, data
+from conftest import skip_unless_tool_exists, data
 
 TEST_FILE1_PATH = data('test1.ps')
 TEST_FILE2_PATH = data('test2.ps')
@@ -48,17 +48,17 @@ def test_no_differences(ps1):
 def differences(ps1, ps2):
     return ps1.compare(ps2)
 
-@pytest.mark.skipif(tool_missing('ps2ascii'), reason='missing ps2ascii')
+@skip_unless_tool_exists('ps2ascii')
 def test_internal_diff(differences):
     expected_diff = open(data('ps_internal_expected_diff')).read()
     assert differences.unified_diff == expected_diff
 
-@pytest.mark.skipif(tool_missing('ps2ascii'), reason='missing ps2ascii')
+@skip_unless_tool_exists('ps2ascii')
 def test_text_diff(differences):
     expected_diff = open(data('ps_text_expected_diff')).read()
     assert differences.details[0].unified_diff == expected_diff
 
-@pytest.mark.skipif(tool_missing('ps2ascii'), reason='missing ps2ascii')
+@skip_unless_tool_exists('ps2ascii')
 def test_compare_non_existing(monkeypatch, ps1):
     monkeypatch.setattr(Config, 'new_file', True)
     difference = ps1.compare(NonExistingFile('/nonexisting', ps1))

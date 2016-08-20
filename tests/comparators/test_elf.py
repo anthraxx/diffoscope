@@ -27,7 +27,7 @@ from diffoscope.comparators.elf import ElfFile, StaticLibFile
 from diffoscope.comparators.binary import FilesystemFile, NonExistingFile
 from diffoscope.comparators.directory import FilesystemDirectory
 
-from utils import skip_unless_tool_exists, data
+from utils import skip_unless_tool_exists, data, load_fixture
 
 try:
     import diffoscope.comparators.debian # noqa
@@ -35,16 +35,8 @@ try:
 except ImportError:
     miss_debian_module = True
 
-TEST_OBJ1_PATH = data('test1.o')
-TEST_OBJ2_PATH = data('test2.o')
-
-@pytest.fixture
-def obj1():
-    return specialize(FilesystemFile(TEST_OBJ1_PATH))
-
-@pytest.fixture
-def obj2():
-    return specialize(FilesystemFile(TEST_OBJ2_PATH))
+obj1 = load_fixture(data('test1.o'))
+obj2 = load_fixture(data('test2.o'))
 
 def test_obj_identification(obj1):
     assert isinstance(obj1, ElfFile)

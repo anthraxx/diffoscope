@@ -20,22 +20,13 @@
 import pytest
 
 from diffoscope.config import Config
-from diffoscope.comparators import specialize
 from diffoscope.comparators.ipk import IpkFile
-from diffoscope.comparators.binary import FilesystemFile, NonExistingFile
+from diffoscope.comparators.binary import NonExistingFile
 
-from utils import data
+from utils import data, load_fixture
 
-TEST_FILE1_PATH = data('base-files_157-r45695_ar71xx.ipk')
-TEST_FILE2_PATH = data('base-files_157-r45918_ar71xx.ipk')
-
-@pytest.fixture
-def ipk1():
-    return specialize(FilesystemFile(TEST_FILE1_PATH))
-
-@pytest.fixture
-def ipk2():
-    return specialize(FilesystemFile(TEST_FILE2_PATH))
+ipk1 = load_fixture(data('base-files_157-r45695_ar71xx.ipk'))
+ipk2 = load_fixture(data('base-files_157-r45918_ar71xx.ipk'))
 
 def test_identification(ipk1):
     assert isinstance(ipk1, IpkFile)

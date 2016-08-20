@@ -24,18 +24,10 @@ from diffoscope.comparators import specialize
 from diffoscope.comparators.zip import ZipFile, MozillaZipFile
 from diffoscope.comparators.binary import FilesystemFile, NonExistingFile
 
-from utils import skip_unless_tool_exists, data
+from utils import skip_unless_tool_exists, data, load_fixture
 
-TEST_FILE1_PATH = data('test1.zip')
-TEST_FILE2_PATH = data('test2.zip')
-
-@pytest.fixture
-def zip1():
-    return specialize(FilesystemFile(TEST_FILE1_PATH))
-
-@pytest.fixture
-def zip2():
-    return specialize(FilesystemFile(TEST_FILE2_PATH))
+zip1 = load_fixture(data('test1.zip'))
+zip2 = load_fixture(data('test2.zip'))
 
 def test_identification(zip1):
     assert isinstance(zip1, ZipFile)
@@ -70,13 +62,8 @@ def test_compare_non_existing(monkeypatch, zip1):
 TEST_MOZZIP1_PATH = data('test1.mozzip')
 TEST_MOZZIP2_PATH = data('test2.mozzip')
 
-@pytest.fixture
-def mozzip1():
-    return specialize(FilesystemFile(TEST_MOZZIP1_PATH))
-
-@pytest.fixture
-def mozzip2():
-    return specialize(FilesystemFile(TEST_MOZZIP2_PATH))
+mozzip1 = load_fixture(TEST_MOZZIP1_PATH)
+mozzip2 = load_fixture(TEST_MOZZIP2_PATH)
 
 def test_mozzip_identification(mozzip1):
     assert isinstance(mozzip1, MozillaZipFile)

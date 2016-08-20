@@ -25,18 +25,14 @@ from diffoscope.comparators import specialize
 from diffoscope.comparators.gzip import GzipFile
 from diffoscope.comparators.binary import FilesystemFile, NonExistingFile
 
-from utils import data
+from utils import data, load_fixture
 
 TEST_FILE1_PATH = data('test1.gz')
 TEST_FILE2_PATH = data('test2.gz')
 
-@pytest.fixture
-def gzip1():
-    return specialize(FilesystemFile(TEST_FILE1_PATH))
 
-@pytest.fixture
-def gzip2():
-    return specialize(FilesystemFile(TEST_FILE2_PATH))
+gzip1 = load_fixture(TEST_FILE1_PATH)
+gzip2 = load_fixture(TEST_FILE2_PATH)
 
 def test_identification(gzip1):
     assert isinstance(gzip1, GzipFile)

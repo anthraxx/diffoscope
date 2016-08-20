@@ -24,15 +24,10 @@ from diffoscope.config import Config
 from diffoscope.comparators import specialize
 from diffoscope.comparators.binary import FilesystemFile, NonExistingFile
 
-from utils import data
+from utils import data, load_fixture
 
-@pytest.fixture
-def ascii1():
-    return specialize(FilesystemFile(data('text_ascii1')))
-
-@pytest.fixture
-def ascii2():
-    return specialize(FilesystemFile(data('text_ascii2')))
+ascii1 = load_fixture(data('text_ascii1'))
+ascii2 = load_fixture(data('text_ascii2'))
 
 def test_no_differences(ascii1):
     difference = ascii1.compare(ascii1)
@@ -46,22 +41,15 @@ def test_difference_in_ascii(ascii1, ascii2):
     assert not difference.comments
     assert len(difference.details) == 0
 
-@pytest.fixture
-def unicode1():
-    return specialize(FilesystemFile(data('text_unicode1')))
-
-@pytest.fixture
-def unicode2():
-    return specialize(FilesystemFile(data('text_unicode2')))
+unicode1 = load_fixture(data('text_unicode1'))
+unicode2 = load_fixture(data('text_unicode2'))
 
 def test_difference_in_unicode(unicode1, unicode2):
     difference = unicode1.compare(unicode2)
     expected_diff = codecs.open(data('text_unicode_expected_diff'), encoding='utf-8').read()
     assert difference.unified_diff == expected_diff
 
-@pytest.fixture
-def iso8859():
-    return specialize(FilesystemFile(data('text_iso8859')))
+iso8859 = load_fixture(data('text_iso8859'))
 
 def test_difference_between_iso88591_and_unicode(iso8859, unicode1):
     difference = iso8859.compare(unicode1)

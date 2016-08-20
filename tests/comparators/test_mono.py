@@ -20,27 +20,18 @@
 import pytest
 
 from diffoscope.config import Config
-from diffoscope.comparators import specialize
 from diffoscope.comparators.mono import MonoExeFile
-from diffoscope.comparators.binary import FilesystemFile, NonExistingFile
+from diffoscope.comparators.binary import NonExistingFile
 
-from utils import skip_unless_tool_exists, data
+from utils import skip_unless_tool_exists, data, load_fixture
 
 # these were generated with:
 
 # echo 'public class Test { static public void Main () {} }' > test.cs
 # mcs -out:test1.exe test.cs ; sleep 2; mcs -out:test2.exe test.cs
 
-TEST_FILE1_PATH = data('test1.exe')
-TEST_FILE2_PATH = data('test2.exe')
-
-@pytest.fixture
-def exe1():
-    return specialize(FilesystemFile(TEST_FILE1_PATH))
-
-@pytest.fixture
-def exe2():
-    return specialize(FilesystemFile(TEST_FILE2_PATH))
+exe1 = load_fixture(data('test1.exe'))
+exe2 = load_fixture(data('test2.exe'))
 
 def test_identification(exe1):
     assert isinstance(exe1, MonoExeFile)

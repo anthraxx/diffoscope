@@ -22,11 +22,9 @@ import pytest
 
 from diffoscope.config import Config
 from diffoscope.difference import Difference
-from diffoscope.comparators import specialize
 from diffoscope.comparators.utils import Command
-from diffoscope.comparators.binary import FilesystemFile
 
-from utils import skip_unless_tool_exists, data
+from utils import skip_unless_tool_exists, data, load_fixture
 
 try:
     import tlsh # noqa
@@ -34,18 +32,9 @@ try:
 except ImportError:
     miss_tlsh = True
 
-
-@pytest.fixture
-def fuzzy_tar1():
-    return specialize(FilesystemFile(data('fuzzy1.tar')))
-
-@pytest.fixture
-def fuzzy_tar2():
-    return specialize(FilesystemFile(data('fuzzy2.tar')))
-
-@pytest.fixture
-def fuzzy_tar3():
-    return specialize(FilesystemFile(data('fuzzy3.tar')))
+fuzzy_tar1 = load_fixture(data('fuzzy1.tar'))
+fuzzy_tar2 = load_fixture(data('fuzzy2.tar'))
+fuzzy_tar3 = load_fixture(data('fuzzy3.tar'))
 
 @pytest.mark.skipif(miss_tlsh, reason='tlsh is missing')
 def test_fuzzy_matching(fuzzy_tar1, fuzzy_tar2):
@@ -62,13 +51,8 @@ def test_fuzzy_matching_only_once(fuzzy_tar1, fuzzy_tar3):
     assert len(differences) == 2
     expected_diff = codecs.open(data('text_iso8859_expected_diff'), encoding='utf-8').read()
 
-@pytest.fixture
-def fuzzy_tar_in_tar1():
-    return specialize(FilesystemFile(data('fuzzy-tar-in-tar1.tar')))
-
-@pytest.fixture
-def fuzzy_tar_in_tar2():
-    return specialize(FilesystemFile(data('fuzzy-tar-in-tar2.tar')))
+fuzzy_tar_in_tar1 = load_fixture(data('fuzzy-tar-in-tar1.tar'))
+fuzzy_tar_in_tar2 = load_fixture(data('fuzzy-tar-in-tar2.tar'))
 
 @pytest.mark.skipif(miss_tlsh, reason='tlsh is missing')
 def test_no_fuzzy_matching(monkeypatch, fuzzy_tar_in_tar1, fuzzy_tar_in_tar2):

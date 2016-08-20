@@ -20,22 +20,13 @@
 import pytest
 
 from diffoscope.config import Config
-from diffoscope.comparators import specialize
-from diffoscope.comparators.binary import FilesystemFile, NonExistingFile
+from diffoscope.comparators.binary import NonExistingFile
 from diffoscope.comparators.sqlite import Sqlite3Database
 
-from utils import skip_unless_tool_exists, data
+from utils import skip_unless_tool_exists, data, load_fixture
 
-TEST_FILE1_PATH = data('test1.sqlite3')
-TEST_FILE2_PATH = data('test2.sqlite3')
-
-@pytest.fixture
-def sqlite3db1():
-    return specialize(FilesystemFile(TEST_FILE1_PATH))
-
-@pytest.fixture
-def sqlite3db2():
-    return specialize(FilesystemFile(TEST_FILE2_PATH))
+sqlite3db1 = load_fixture(data('test1.sqlite3'))
+sqlite3db2 = load_fixture(data('test2.sqlite3'))
 
 def test_identification(sqlite3db1):
     assert isinstance(sqlite3db1, Sqlite3Database)

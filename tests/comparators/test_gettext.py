@@ -21,22 +21,13 @@ import codecs
 import pytest
 
 from diffoscope.config import Config
-from diffoscope.comparators import specialize
-from diffoscope.comparators.binary import FilesystemFile, NonExistingFile
+from diffoscope.comparators.binary import NonExistingFile
 from diffoscope.comparators.gettext import MoFile
 
-from utils import skip_unless_tool_exists, data
+from utils import skip_unless_tool_exists, data, load_fixture
 
-TEST_FILE1_PATH = data('test1.mo')
-TEST_FILE2_PATH = data('test2.mo')
-
-@pytest.fixture
-def mo1():
-    return specialize(FilesystemFile(TEST_FILE1_PATH))
-
-@pytest.fixture
-def mo2():
-    return specialize(FilesystemFile(TEST_FILE2_PATH))
+mo1 = load_fixture(data('test1.mo'))
+mo2 = load_fixture(data('test2.mo'))
 
 def test_identification(mo1):
     assert isinstance(mo1, MoFile)
@@ -54,13 +45,8 @@ def test_diff(differences):
     expected_diff = open(data('mo_expected_diff')).read()
     assert differences[0].unified_diff == expected_diff
 
-@pytest.fixture
-def mo_no_charset():
-    return specialize(FilesystemFile(data('test_no_charset.mo')))
-
-@pytest.fixture
-def mo_iso8859_1():
-    return specialize(FilesystemFile(data('test_iso8859-1.mo')))
+mo_no_charset = load_fixture(data('test_no_charset.mo'))
+mo_iso8859_1 = load_fixture(data('test_iso8859-1.mo'))
 
 @skip_unless_tool_exists('msgunfmt')
 def test_charsets(mo_no_charset, mo_iso8859_1):

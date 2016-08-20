@@ -25,6 +25,9 @@ import subprocess
 from distutils.spawn import find_executable
 from distutils.version import StrictVersion
 
+from diffoscope.comparators import specialize
+from diffoscope.comparators.binary import FilesystemFile
+
 
 @pytest.fixture(autouse=True)
 def set_locale():
@@ -34,6 +37,11 @@ def skip_unless_tool_exists(*alternatives):
     return pytest.mark.skipif(
         not any(find_executable(x) for x in alternatives),
         reason="missing {}".format(" or ".join(alternatives)),
+    )
+
+def load_fixture(filename):
+    return pytest.fixture(
+        lambda: specialize(FilesystemFile(filename))
     )
 
 def data(filename):

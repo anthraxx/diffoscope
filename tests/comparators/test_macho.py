@@ -22,22 +22,13 @@ import pytest
 import os.path
 
 from diffoscope.config import Config
-from diffoscope.comparators import specialize
 from diffoscope.comparators.macho import MachoFile
-from diffoscope.comparators.binary import FilesystemFile, NonExistingFile
+from diffoscope.comparators.binary import NonExistingFile
 
-from utils import skip_unless_tool_exists, data
+from utils import skip_unless_tool_exists, data, load_fixture
 
-TEST_OBJ1_PATH = data('test1.macho')
-TEST_OBJ2_PATH = data('test2.macho')
-
-@pytest.fixture
-def obj1():
-    return specialize(FilesystemFile(TEST_OBJ1_PATH))
-
-@pytest.fixture
-def obj2():
-    return specialize(FilesystemFile(TEST_OBJ2_PATH))
+obj1 = load_fixture(data('test1.macho'))
+obj2 = load_fixture(data('test2.macho'))
 
 def test_obj_identification(obj1):
     assert isinstance(obj1, MachoFile)

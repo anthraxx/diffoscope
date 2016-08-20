@@ -20,22 +20,13 @@
 import pytest
 
 from diffoscope.config import Config
-from diffoscope.comparators import specialize
 from diffoscope.comparators.zip import ZipFile
-from diffoscope.comparators.binary import FilesystemFile, NonExistingFile
+from diffoscope.comparators.binary import NonExistingFile
 
-from utils import skip_unless_tool_exists, data
+from utils import skip_unless_tool_exists, data, load_fixture
 
-TEST_FILE1_PATH = data('test1.epub')
-TEST_FILE2_PATH = data('test2.epub')
-
-@pytest.fixture
-def epub1():
-    return specialize(FilesystemFile(TEST_FILE1_PATH))
-
-@pytest.fixture
-def epub2():
-    return specialize(FilesystemFile(TEST_FILE2_PATH))
+epub1 = load_fixture(data('test1.epub'))
+epub2 = load_fixture(data('test2.epub'))
 
 def test_identification(epub1):
     assert isinstance(epub1, ZipFile)

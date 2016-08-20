@@ -20,22 +20,14 @@
 import pytest
 
 from diffoscope.config import Config
-from diffoscope.comparators import specialize
 from diffoscope.comparators.fonts import TtfFile
-from diffoscope.comparators.binary import FilesystemFile, NonExistingFile
+from diffoscope.comparators.binary import NonExistingFile
 
-from utils import skip_unless_tool_exists, data
+from utils import skip_unless_tool_exists, data, load_fixture
 
-TEST_FILE1_PATH = data('Samyak-Malayalam1.ttf')
-TEST_FILE2_PATH = data('Samyak-Malayalam2.ttf')
 
-@pytest.fixture
-def ttf1():
-    return specialize(FilesystemFile(TEST_FILE1_PATH))
-
-@pytest.fixture
-def ttf2():
-    return specialize(FilesystemFile(TEST_FILE2_PATH))
+ttf1 = load_fixture(data('Samyak-Malayalam1.ttf'))
+ttf2 = load_fixture(data('Samyak-Malayalam2.ttf'))
 
 def test_identification(ttf1):
     assert isinstance(ttf1, TtfFile)

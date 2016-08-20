@@ -20,11 +20,10 @@
 import pytest
 
 from diffoscope.config import Config
-from diffoscope.comparators import specialize
-from diffoscope.comparators.binary import FilesystemFile, NonExistingFile
+from diffoscope.comparators.binary import NonExistingFile
 from diffoscope.comparators.fsimage import FsImageFile
 
-from utils import skip_unless_tool_exists, data
+from utils import skip_unless_tool_exists, data, load_fixture
 
 try:
     import guestfs
@@ -32,8 +31,8 @@ try:
 except ImportError:
     miss_guestfs = True
 
-TEST_FILE1_PATH = data('test1.ext4')
-TEST_FILE2_PATH = data('test2.ext4')
+img1 = load_fixture(data('test1.ext4'))
+img2 = load_fixture(data('test2.ext4'))
 
 def guestfs_working():
     if miss_guestfs:
@@ -45,14 +44,6 @@ def guestfs_working():
     except RuntimeError:
         return False
     return True
-
-@pytest.fixture
-def img1():
-    return specialize(FilesystemFile(TEST_FILE1_PATH))
-
-@pytest.fixture
-def img2():
-    return specialize(FilesystemFile(TEST_FILE2_PATH))
 
 def test_identification(img1):
     assert isinstance(img1, FsImageFile)

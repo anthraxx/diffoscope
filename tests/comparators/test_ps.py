@@ -22,20 +22,12 @@ import pytest
 from diffoscope.config import Config
 from diffoscope.comparators import specialize
 from diffoscope.comparators.ps import PsFile
-from diffoscope.comparators.binary import FilesystemFile, NonExistingFile
+from diffoscope.comparators.binary import NonExistingFile
 
-from utils import skip_unless_tool_exists, data
+from utils import skip_unless_tool_exists, data, load_fixture
 
-TEST_FILE1_PATH = data('test1.ps')
-TEST_FILE2_PATH = data('test2.ps')
-
-@pytest.fixture
-def ps1():
-    return specialize(FilesystemFile(TEST_FILE1_PATH))
-
-@pytest.fixture
-def ps2():
-    return specialize(FilesystemFile(TEST_FILE2_PATH))
+ps1 = load_fixture(data('test1.ps'))
+ps2 = load_fixture(data('test2.ps'))
 
 def test_identification(ps1):
     assert isinstance(ps1, PsFile)

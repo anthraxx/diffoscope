@@ -26,18 +26,10 @@ from diffoscope.comparators.ar import ArFile
 from diffoscope.comparators.utils import diff_ignore_line_numbers
 from diffoscope.comparators.binary import FilesystemFile, NonExistingFile
 
-from utils import skip_unless_tool_exists, tool_older_than, data
+from utils import skip_unless_tool_exists, tool_older_than, data, load_fixture
 
-TEST_FILE1_PATH = data('test1.rlib')
-TEST_FILE2_PATH = data('test2.rlib')
-
-@pytest.fixture
-def rlib1():
-    return specialize(FilesystemFile(TEST_FILE1_PATH))
-
-@pytest.fixture
-def rlib2():
-    return specialize(FilesystemFile(TEST_FILE2_PATH))
+rlib1 = load_fixture(data('test1.rlib'))
+rlib2 = load_fixture(data('test2.rlib'))
 
 def test_identification(rlib1):
     assert isinstance(rlib1, ArFile)

@@ -20,22 +20,13 @@
 import pytest
 
 from diffoscope.config import Config
-from diffoscope.comparators import specialize
-from diffoscope.comparators.binary import FilesystemFile, NonExistingFile
+from diffoscope.comparators.binary import NonExistingFile
 from diffoscope.comparators.squashfs import SquashfsFile
 
-from utils import skip_unless_tool_exists, data
+from utils import skip_unless_tool_exists, data, load_fixture
 
-TEST_FILE1_PATH = data('test1.squashfs')
-TEST_FILE2_PATH = data('test2.squashfs')
-
-@pytest.fixture
-def squashfs1():
-    return specialize(FilesystemFile(TEST_FILE1_PATH))
-
-@pytest.fixture
-def squashfs2():
-    return specialize(FilesystemFile(TEST_FILE2_PATH))
+squashfs1 = load_fixture(data('test1.squashfs'))
+squashfs2 = load_fixture(data('test2.squashfs'))
 
 def test_identification(squashfs1):
     assert isinstance(squashfs1, SquashfsFile)

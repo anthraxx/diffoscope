@@ -21,11 +21,10 @@
 import pytest
 
 from diffoscope.config import Config
-from diffoscope.comparators import specialize
 from diffoscope.comparators.ppu import PpuFile
-from diffoscope.comparators.binary import FilesystemFile, NonExistingFile
+from diffoscope.comparators.binary import NonExistingFile
 
-from utils import skip_unless_tool_exists, data
+from utils import skip_unless_tool_exists, data, load_fixture
 
 # These test files were taken from two different builds of the Debian package
 # fp-units-castle-game-engine (version 5.1.1-2 on amd64) on the Debian
@@ -33,16 +32,8 @@ from utils import skip_unless_tool_exists, data
 # castletexturefont_dejavusans_10.ppu which are generated during package
 # building of the cge package from dejavusans font in the fonts-dejavu package.
 
-TEST_FILE1_PATH = data('test1.ppu')
-TEST_FILE2_PATH = data('test2.ppu')
-
-@pytest.fixture
-def file1():
-    return specialize(FilesystemFile(TEST_FILE1_PATH))
-
-@pytest.fixture
-def file2():
-    return specialize(FilesystemFile(TEST_FILE2_PATH))
+file1 = load_fixture(data('test1.ppu'))
+file2 = load_fixture(data('test2.ppu'))
 
 @skip_unless_tool_exists('ppudump')
 def test_identification(file1):

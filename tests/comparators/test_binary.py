@@ -25,10 +25,9 @@ import diffoscope.comparators.binary
 from diffoscope import tool_required
 from diffoscope.exc import RequiredToolNotFound
 from diffoscope.difference import Difference
-from diffoscope.comparators import specialize
 from diffoscope.comparators.binary import File, FilesystemFile, NonExistingFile
 
-from utils import skip_unless_tool_exists, data
+from utils import skip_unless_tool_exists, data, load_fixture
 
 TEST_FILE1_PATH = data('binary1')
 TEST_FILE2_PATH = data('binary2')
@@ -36,13 +35,9 @@ TEST_ASCII_PATH = data('text_ascii1')
 TEST_UNICODE_PATH = data('text_unicode1')
 TEST_ISO8859_PATH = data('text_iso8859')
 
-@pytest.fixture
-def binary1():
-    return specialize(FilesystemFile(TEST_FILE1_PATH))
 
-@pytest.fixture
-def binary2():
-    return specialize(FilesystemFile(TEST_FILE2_PATH))
+binary1 = load_fixture(TEST_FILE1_PATH)
+binary2 = load_fixture(TEST_FILE2_PATH)
 
 def test_same_content(binary1):
     assert binary1.has_same_content_as(binary1) is True

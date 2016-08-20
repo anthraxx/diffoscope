@@ -21,20 +21,11 @@ import pytest
 
 from diffoscope.comparators import specialize
 from diffoscope.comparators.json import JSONFile
-from diffoscope.comparators.binary import FilesystemFile
 
-from utils import data
+from utils import data, load_fixture
 
-TEST_FILE1_PATH = data('test1.json')
-TEST_FILE2_PATH = data('test2.json')
-
-@pytest.fixture
-def json1():
-    return specialize(FilesystemFile(TEST_FILE1_PATH))
-
-@pytest.fixture
-def json2():
-    return specialize(FilesystemFile(TEST_FILE2_PATH))
+json1 = load_fixture(data('test1.json'))
+json2 = load_fixture(data('test2.json'))
 
 def test_identification(json1):
     assert isinstance(json1, JSONFile)

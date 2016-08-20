@@ -20,10 +20,9 @@
 import pytest
 
 from diffoscope.config import Config
-from diffoscope.comparators import specialize
-from diffoscope.comparators.binary import FilesystemFile, NonExistingFile
+from diffoscope.comparators.binary import NonExistingFile
 
-from utils import skip_unless_tool_exists, data
+from utils import skip_unless_tool_exists, data, load_fixture
 
 try:
     from diffoscope.comparators.rpm import RpmFile
@@ -32,16 +31,8 @@ except ImportError:
     from diffoscope.comparators.rpm_fallback import RpmFile
     miss_rpm_module = True
 
-TEST_FILE1_PATH = data('test1.rpm')
-TEST_FILE2_PATH = data('test2.rpm')
-
-@pytest.fixture
-def rpm1():
-    return specialize(FilesystemFile(TEST_FILE1_PATH))
-
-@pytest.fixture
-def rpm2():
-    return specialize(FilesystemFile(TEST_FILE2_PATH))
+rpm1 = load_fixture(data('test1.rpm'))
+rpm2 = load_fixture(data('test2.rpm'))
 
 def test_identification(rpm1):
     assert isinstance(rpm1, RpmFile)

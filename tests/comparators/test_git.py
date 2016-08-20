@@ -19,22 +19,13 @@
 
 import pytest
 
-from diffoscope.comparators import specialize
 from diffoscope.comparators.git import GitIndexFile
 from diffoscope.comparators.binary import FilesystemFile
 
-from utils import data
+from utils import data, load_fixture
 
-TEST_FILE1_PATH = data('test1.git-index')
-TEST_FILE2_PATH = data('test2.git-index')
-
-@pytest.fixture
-def git1():
-    return specialize(FilesystemFile(TEST_FILE1_PATH))
-
-@pytest.fixture
-def git2():
-    return specialize(FilesystemFile(TEST_FILE2_PATH))
+git1 = load_fixture(data('test1.git-index'))
+git2 = load_fixture(data('test2.git-index'))
 
 def test_identification(git1):
     assert isinstance(git1, GitIndexFile)

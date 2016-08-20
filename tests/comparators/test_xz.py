@@ -25,18 +25,13 @@ from diffoscope.comparators import specialize
 from diffoscope.comparators.xz import XzFile
 from diffoscope.comparators.binary import FilesystemFile, NonExistingFile
 
-from utils import skip_unless_tool_exists, data
+from utils import skip_unless_tool_exists, data, load_fixture
 
 TEST_FILE1_PATH = data('test1.xz')
 TEST_FILE2_PATH = data('test2.xz')
 
-@pytest.fixture
-def xz1():
-    return specialize(FilesystemFile(TEST_FILE1_PATH))
-
-@pytest.fixture
-def xz2():
-    return specialize(FilesystemFile(TEST_FILE2_PATH))
+xz1 = load_fixture(TEST_FILE1_PATH)
+xz2 = load_fixture(TEST_FILE2_PATH)
 
 def test_identification(xz1):
     assert isinstance(xz1, XzFile)

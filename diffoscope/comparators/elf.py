@@ -297,7 +297,7 @@ class ElfStringSection(ElfSection):
 @tool_required('readelf')
 def get_build_id(path):
     try:
-        output = subprocess.check_output(['readelf', '--notes', path])
+        output = subprocess.check_output(['readelf', '--notes', path], stderr=subprocess.DEVNULL)
     except subprocess.CalledProcessError as e:
         logger.debug('Unable to get Build Id for %s: %s', path, e)
         return None
@@ -310,7 +310,7 @@ def get_build_id(path):
 @tool_required('readelf')
 def get_debug_link(path):
     try:
-        output = subprocess.check_output(['readelf', '--string-dump=.gnu_debuglink', path])
+        output = subprocess.check_output(['readelf', '--string-dump=.gnu_debuglink', path], stderr=subprocess.DEVNULL)
     except subprocess.CalledProcessError as e:
         logger.debug('Unable to get Build Id for %s: %s', path, e)
         return None
@@ -328,7 +328,7 @@ class ElfContainer(Container):
         super().__init__(*args, **kwargs)
         logger.debug('creating ElfContainer for file %s', self.source.path)
         cmd = ['readelf', '--wide', '--section-headers', self.source.path]
-        output = subprocess.check_output(cmd, shell=False)
+        output = subprocess.check_output(cmd, shell=False, stderr=subprocess.DEVNULL)
         has_debug_symbols = False
         try:
             output = output.decode('utf-8').split('\n')

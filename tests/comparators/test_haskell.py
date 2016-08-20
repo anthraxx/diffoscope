@@ -23,7 +23,7 @@ from diffoscope.comparators import specialize
 from diffoscope.comparators.binary import FilesystemFile
 from diffoscope.comparators.haskell import HiFile
 
-from conftest import data
+from conftest import data, tool_missing
 
 TEST_FILE1_PATH = data('test1.hi')
 TEST_FILE2_PATH = data('test2.hi')
@@ -36,6 +36,7 @@ def haskell1():
 def haskell2():
     return specialize(FilesystemFile(TEST_FILE2_PATH))
 
+@pytest.mark.skipif(tool_missing('ghc'), reason='missing ghc')
 def test_identification(haskell1):
     assert isinstance(haskell1, HiFile)
 
@@ -46,6 +47,7 @@ def test_no_differences(haskell1):
 def differences(haskell1, haskell2):
     return haskell1.compare(haskell2).details
 
+@pytest.mark.skipif(tool_missing('ghc'), reason='missing ghc')
 def test_diff(differences):
     with open(data('haskell_expected_diff')) as f:
         expected_diff = f.read()

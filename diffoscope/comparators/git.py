@@ -37,8 +37,8 @@ class GitIndexFile(File):
         return [Difference.from_text(
             describe_index(self.path),
             describe_index(other.path),
-            self,
-            other,
+            self.path,
+            other.path,
         )]
 
 def parse_index(f):

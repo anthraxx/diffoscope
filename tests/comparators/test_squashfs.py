@@ -19,11 +19,10 @@
 
 import pytest
 
-from diffoscope.config import Config
-from diffoscope.comparators.binary import NonExistingFile
 from diffoscope.comparators.squashfs import SquashfsFile
 
-from utils import skip_unless_tool_exists, data, load_fixture
+from utils import skip_unless_tool_exists, data, load_fixture, \
+    assert_non_existing
 
 squashfs1 = load_fixture(data('test1.squashfs'))
 squashfs2 = load_fixture(data('test2.squashfs'))
@@ -64,7 +63,4 @@ def test_compressed_files(differences):
 
 @skip_unless_tool_exists('unsquashfs')
 def test_compare_non_existing(monkeypatch, squashfs1):
-    monkeypatch.setattr(Config.general, 'new_file', True)
-    difference = squashfs1.compare(NonExistingFile('/nonexisting', squashfs1))
-    assert difference.source2 == '/nonexisting'
-    assert difference.details[-1].source2 == '/dev/null'
+    assert_non_existing(monkeypatch, squashfs1)

@@ -20,16 +20,16 @@
 import shutil
 import pytest
 
-from diffoscope.config import Config
 from diffoscope.comparators import specialize
 from diffoscope.comparators.bzip2 import Bzip2File
-from diffoscope.comparators.binary import FilesystemFile, NonExistingFile
+from diffoscope.comparators.binary import FilesystemFile
 
-from utils import skip_unless_tool_exists, data, load_fixture
+from utils import skip_unless_tool_exists, data, load_fixture, \
+    assert_non_existing
+
 
 TEST_FILE1_PATH = data('test1.bz2')
 TEST_FILE2_PATH = data('test2.bz2')
-
 
 bzip1 = load_fixture(TEST_FILE1_PATH)
 bzip2 = load_fixture(TEST_FILE2_PATH)
@@ -69,7 +69,4 @@ def test_content_diff(differences):
 
 @skip_unless_tool_exists('bzip2')
 def test_compare_non_existing(monkeypatch, bzip1):
-    monkeypatch.setattr(Config, 'new_file', True)
-    difference = bzip1.compare(NonExistingFile('/nonexisting', bzip1))
-    assert difference.source2 == '/nonexisting'
-    assert difference.details[-1].source2 == '/dev/null'
+    assert_non_existing(monkeypatch, bzip1)

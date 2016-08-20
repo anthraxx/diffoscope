@@ -20,7 +20,6 @@
 import pytest
 
 from diffoscope.comparators.git import GitIndexFile
-from diffoscope.comparators.binary import FilesystemFile
 
 from utils import data, load_fixture
 

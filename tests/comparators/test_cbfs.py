@@ -21,13 +21,12 @@ import struct
 import pytest
 import subprocess
 
-from diffoscope.config import Config
 from diffoscope.comparators import specialize
 from diffoscope.presenters.text import output_text
 from diffoscope.comparators.cbfs import CbfsFile
-from diffoscope.comparators.binary import FilesystemFile, NonExistingFile
+from diffoscope.comparators.binary import FilesystemFile
 
-from utils import skip_unless_tool_exists, data
+from utils import skip_unless_tool_exists, data, assert_non_existing
 
 TEST_FILE1_PATH = data('text_ascii1')
 TEST_FILE2_PATH = data('text_ascii2')
@@ -88,7 +87,4 @@ def test_content(differences):
 
 @skip_unless_tool_exists('cbfstool')
 def test_compare_non_existing(monkeypatch, rom1):
-    monkeypatch.setattr(Config.general, 'new_file', True)
-    difference = rom1.compare(NonExistingFile('/nonexisting', rom1))
-    assert difference.source2 == '/nonexisting'
-    assert difference.details[-1].source2 == '/dev/null'
+    assert_non_existing(monkeypatch, rom1)

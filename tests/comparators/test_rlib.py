@@ -20,13 +20,11 @@
 
 import pytest
 
-from diffoscope.config import Config
-from diffoscope.comparators import specialize
 from diffoscope.comparators.ar import ArFile
 from diffoscope.comparators.utils import diff_ignore_line_numbers
-from diffoscope.comparators.binary import FilesystemFile, NonExistingFile
 
-from utils import skip_unless_tool_exists, tool_older_than, data, load_fixture
+from utils import skip_unless_tool_exists, tool_older_than, data, \
+    load_fixture, assert_non_existing
 
 rlib1 = load_fixture(data('test1.rlib'))
 rlib2 = load_fixture(data('test2.rlib'))
@@ -71,7 +69,4 @@ def test_item3_deflate_llvm_bitcode(differences):
     assert diff_ignore_line_numbers(actual_diff) == diff_ignore_line_numbers(expected_diff)
 
 def test_compare_non_existing(monkeypatch, rlib1):
-    monkeypatch.setattr(Config.general, 'new_file', True)
-    difference = rlib1.compare(NonExistingFile('/nonexisting', rlib1))
-    assert difference.source2 == '/nonexisting'
-    assert difference.details[-1].source2 == '/dev/null'
+    assert_non_existing(monkeypatch, rlib1)

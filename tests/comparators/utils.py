@@ -25,8 +25,9 @@ import subprocess
 from distutils.spawn import find_executable
 from distutils.version import StrictVersion
 
+from diffoscope.config import Config
 from diffoscope.comparators import specialize
-from diffoscope.comparators.binary import FilesystemFile
+from diffoscope.comparators.binary import FilesystemFile, NonExistingFile
 
 
 @pytest.fixture(autouse=True)
@@ -56,3 +57,12 @@ def tool_older_than(cmdline, min_ver, vcls=StrictVersion):
         return True
     actual_ver = subprocess.check_output(cmdline).decode("utf-8").strip()
     return vcls(actual_ver) < vcls(min_ver)
+
+def assert_non_existing(monkeypatch, fixture, has_null_source=True, has_details=True):
+    monkeypatch.setattr(Config.general, 'new_file', True)
+
+    difference = fixture.compare(NonExistingFile('/nonexisting', fixture))
+
+    assert difference.source2 == '/nonexisting'
+    assert not has_details or len(difference.details) > 0
+    assert not has_null_source or difference.details[-1].source2 == '/dev/null'

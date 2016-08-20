@@ -25,7 +25,7 @@ from diffoscope.comparators import specialize
 from diffoscope.presenters.text import output_text
 from diffoscope.comparators.binary import FilesystemFile, NonExistingFile
 
-from utils import data
+from utils import data, assert_non_existing
 
 try:
     from diffoscope.comparators.debian import DotChangesFile, DotDscFile, \
@@ -200,8 +200,4 @@ def test_dot_buildinfo_internal_diff(dot_buildinfo_differences):
 
 @pytest.mark.skipif(miss_debian_module, reason='debian module is not installed')
 def test_dot_buildinfo_compare_non_existing(monkeypatch, dot_buildinfo1):
-    monkeypatch.setattr(Config.general, 'new_file', True)
-    difference = dot_buildinfo1.compare(NonExistingFile('/nonexisting', dot_buildinfo1))
-    output_text(difference, print_func=print)
-    assert difference.source2 == '/nonexisting'
-    assert difference.details[-1].source2 == '/dev/null'
+    assert_non_existing(monkeypatch, dot_buildinfo1)

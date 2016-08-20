@@ -19,12 +19,10 @@
 
 import pytest
 
-from diffoscope.config import Config
-from diffoscope.comparators import specialize
 from diffoscope.comparators.ps import PsFile
-from diffoscope.comparators.binary import NonExistingFile
 
-from utils import skip_unless_tool_exists, data, load_fixture
+from utils import skip_unless_tool_exists, data, load_fixture, \
+    assert_non_existing
 
 ps1 = load_fixture(data('test1.ps'))
 ps2 = load_fixture(data('test2.ps'))
@@ -52,7 +50,4 @@ def test_text_diff(differences):
 
 @skip_unless_tool_exists('ps2ascii')
 def test_compare_non_existing(monkeypatch, ps1):
-    monkeypatch.setattr(Config, 'new_file', True)
-    difference = ps1.compare(NonExistingFile('/nonexisting', ps1))
-    assert difference.source2 == '/nonexisting'
-    assert len(difference.details) > 0
+    assert_non_existing(monkeypatch, ps1, has_null_source=False)

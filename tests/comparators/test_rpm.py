@@ -19,10 +19,8 @@
 
 import pytest
 
-from diffoscope.config import Config
-from diffoscope.comparators.binary import NonExistingFile
-
-from utils import skip_unless_tool_exists, data, load_fixture
+from utils import skip_unless_tool_exists, data, load_fixture, \
+    assert_non_existing
 
 try:
     from diffoscope.comparators.rpm import RpmFile
@@ -72,7 +70,4 @@ def test_content(differences):
 @pytest.mark.skipif(miss_rpm_module, reason='rpm module is not installed')
 @skip_unless_tool_exists('rpm2cpio')
 def test_compare_non_existing(monkeypatch, rpm1):
-    monkeypatch.setattr(Config.general, 'new_file', True)
-    difference = rpm1.compare(NonExistingFile('/nonexisting', rpm1))
-    assert difference.source2 == '/nonexisting'
-    assert difference.details[-1].source2 == '/dev/null'
+    assert_non_existing(monkeypatch, rpm1)

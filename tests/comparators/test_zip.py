@@ -19,12 +19,10 @@
 
 import pytest
 
-from diffoscope.config import Config
-from diffoscope.comparators import specialize
 from diffoscope.comparators.zip import ZipFile, MozillaZipFile
-from diffoscope.comparators.binary import FilesystemFile, NonExistingFile
 
-from utils import skip_unless_tool_exists, data, load_fixture
+from utils import skip_unless_tool_exists, data, load_fixture, \
+    assert_non_existing
 
 zip1 = load_fixture(data('test1.zip'))
 zip2 = load_fixture(data('test2.zip'))
@@ -54,10 +52,7 @@ def test_compressed_files(differences):
 
 @skip_unless_tool_exists('zipinfo')
 def test_compare_non_existing(monkeypatch, zip1):
-    monkeypatch.setattr(Config.general, 'new_file', True)
-    difference = zip1.compare(NonExistingFile('/nonexisting', zip1))
-    assert difference.source2 == '/nonexisting'
-    assert difference.details[-1].source2 == '/dev/null'
+    assert_non_existing(monkeypatch, zip1)
 
 TEST_MOZZIP1_PATH = data('test1.mozzip')
 TEST_MOZZIP2_PATH = data('test2.mozzip')
@@ -92,7 +87,4 @@ def test_mozzip_compressed_files(mozzip_differences):
 
 @skip_unless_tool_exists('zipinfo')
 def test_mozzip_compare_non_existing(monkeypatch, mozzip1):
-    monkeypatch.setattr(Config.general, 'new_file', True)
-    difference = mozzip1.compare(NonExistingFile('/nonexisting', mozzip1))
-    assert difference.source2 == '/nonexisting'
-    assert difference.details[-1].source2 == '/dev/null'
+    assert_non_existing(monkeypatch, mozzip1)

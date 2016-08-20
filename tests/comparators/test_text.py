@@ -20,11 +20,10 @@
 import codecs
 import pytest
 
-from diffoscope.config import Config
 from diffoscope.comparators import specialize
-from diffoscope.comparators.binary import FilesystemFile, NonExistingFile
+from diffoscope.comparators.binary import FilesystemFile
 
-from utils import data, load_fixture
+from utils import data, load_fixture, assert_non_existing
 
 ascii1 = load_fixture(data('text_ascii1'))
 ascii2 = load_fixture(data('text_ascii2'))
@@ -66,6 +65,4 @@ def test_difference_between_iso88591_and_unicode_only(iso8859, tmpdir):
     assert difference.details[0].source1 == 'encoding'
 
 def test_compare_non_existing(monkeypatch, ascii1):
-    monkeypatch.setattr(Config.general, 'new_file', True)
-    difference = ascii1.compare(NonExistingFile('/nonexisting', ascii1))
-    assert difference.source2 == '/nonexisting'
+    assert_non_existing(monkeypatch, ascii1, has_null_source=False, has_details=False)

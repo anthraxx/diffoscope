@@ -19,11 +19,10 @@
 
 import pytest
 
-from diffoscope.config import Config
 from diffoscope.comparators.png import PngFile
-from diffoscope.comparators.binary import FilesystemFile, NonExistingFile
 
-from utils import skip_unless_tool_exists, data, load_fixture
+from utils import skip_unless_tool_exists, data, load_fixture, \
+    assert_non_existing
 
 png1 = load_fixture(data('test1.png'))
 png2 = load_fixture(data('test2.png'))
@@ -46,7 +45,4 @@ def test_diff(differences):
 
 @skip_unless_tool_exists('sng')
 def test_compare_non_existing(monkeypatch, png1):
-    monkeypatch.setattr(Config, 'new_file', True)
-    difference = png1.compare(NonExistingFile('/nonexisting', png1))
-    assert difference.source2 == '/nonexisting'
-    assert len(difference.details) > 0
+    assert_non_existing(monkeypatch, png1, has_null_source=False)

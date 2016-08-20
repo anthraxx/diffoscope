@@ -19,11 +19,10 @@
 
 import pytest
 
-from diffoscope.config import Config
-from diffoscope.comparators.binary import NonExistingFile
 from diffoscope.comparators.sqlite import Sqlite3Database
 
-from utils import skip_unless_tool_exists, data, load_fixture
+from utils import skip_unless_tool_exists, data, load_fixture, \
+    assert_non_existing
 
 sqlite3db1 = load_fixture(data('test1.sqlite3'))
 sqlite3db2 = load_fixture(data('test2.sqlite3'))
@@ -46,7 +45,4 @@ def test_diff(differences):
 
 @skip_unless_tool_exists('sqlite3')
 def test_compare_non_existing(monkeypatch, sqlite3db1):
-    monkeypatch.setattr(Config.general, 'new_file', True)
-    difference = sqlite3db1.compare(NonExistingFile('/nonexisting', sqlite3db1))
-    assert difference.source2 == '/nonexisting'
-    assert len(difference.details) > 0
+    assert_non_existing(monkeypatch, sqlite3db1, has_null_source=False)

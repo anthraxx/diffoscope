@@ -21,9 +21,9 @@ import pytest
 
 from diffoscope.config import Config
 from diffoscope.comparators.tar import TarFile
-from diffoscope.comparators.binary import FilesystemFile, NonExistingFile
+from diffoscope.comparators.binary import NonExistingFile
 
-from utils import data, load_fixture
+from utils import data, load_fixture, assert_non_existing
 
 tar1 = load_fixture(data('test1.tar'))
 tar2 = load_fixture(data('test2.tar'))
@@ -57,10 +57,7 @@ def test_text_file(differences):
     assert differences[1].unified_diff == expected_diff
 
 def test_compare_non_existing(monkeypatch, tar1):
-    monkeypatch.setattr(Config.general, 'new_file', True)
-    difference = tar1.compare(NonExistingFile('/nonexisting', tar1))
-    assert difference.source2 == '/nonexisting'
-    assert difference.details[-1].source2 == '/dev/null'
+    assert_non_existing(monkeypatch, tar1)
 
 no_permissions_tar = load_fixture(data('no-perms.tar'))
 

@@ -1,0 +1,181 @@
+@@ -1,77 +1,135 @@
+ Magic: Wanted 33214052,
+        got    33214052
+ Version: Wanted [7, 1, 0, 3],
+          got    [7, 1, 0, 3]
+ Way: Wanted [],
+      got    []
+-interface System.Posix.Time 7103
+-  interface hash: d277a5ad8c17d6ae1ed9652a143dbb64
+-  ABI hash: 13ab064601c4c4f5ef1423fc8da18233
+-  export-list hash: 711bb4876d9099f1eb143e3fe66a16d2
++interface System.Posix.Process 7103
++  interface hash: 12bdcfb475053d7990b35af5de46f442
++  ABI hash: 3ef685f2eaa6d914f7f52f5538f2b09e
++  export-list hash: 55a2086a7d715fcf53cf370ff0da63f4
+   orphan hash: 693e9af84d3dfcc71e640e005bdc5e2e
+   flag hash: c886dac040eafa7084dbafe2ad7f03ec
+   sig of: Nothing
+   used TH splices: False
+   where
+ exports:
+-  epochTime
+-module dependencies:
++  executeFile
++  createProcessGroup
++  createProcessGroupFor
++  createSession
++  exitImmediately
++  forkProcess
++  forkProcessWithUnmask
++  getAnyProcessStatus
++  getGroupProcessStatus
++  getParentProcessID
++  getProcessGroupID
++  getProcessGroupIDOf
++  getProcessGroupPriority
++  getProcessID
++  getProcessPriority
++  getProcessStatus
++  getProcessTimes
++  getUserPriority
++  joinProcessGroup
++  nice
++  setProcessGroupID
++  setProcessGroupIDOf
++  setProcessGroupPriority
++  setProcessPriority
++  setUserPriority
++  ProcessTimes{ProcessTimes childSystemTime childUserTime elapsedTime systemTime userTime}
++  ProcessStatus{Exited Stopped Terminated}
++module dependencies: System.Posix.Process.Common
++                     System.Posix.Process.Internals
+ package dependencies: base-4.8.2.0* ghc-prim-0.4.0.0
+                       integer-gmp-1.0.0.0
+ orphans: GHC.Base GHC.Float
+ family instance modules: Control.Applicative Data.Either
+                          Data.Monoid Data.Type.Equality GHC.Generics
+ import safe Foreign ec20bd347d2cd5725d5d866b512c9fb0
+ import safe Foreign.C 94ca73eb88de01f99c0b5a7bfe575488
+ import safe Foreign.C.Error 30f6841363b6a395e68f1f8f5c074fc3
++import safe Foreign.C.String 5d9a06e6c99f36441c51b94bd49862b7
+ import safe Foreign.C.Types cbaa8f9d467b53c6af805ebf0a4c7eb3
++import safe Foreign.Marshal.Array 1d9c05d79e8226dd1629eeb79158d672
++import safe Foreign.Marshal.Utils a37afcea3b518608682246f82a22fad5
++import safe GHC.Base 1db77db5dae73d8c424c85b09fbadb89
++import safe GHC.IO bb5b81adcea33b14bd4abe16d7dde45f
+ import safe GHC.Ptr 074805932cc34cfdd9b02e273ecf4865
+ import safe Prelude 694dcaf039efe62df1c44834e2dbd2fb
+-import safe System.Posix.Types 82bc96cd72c2198e5a253a284d9e5cb4
++import safe System.Posix.Internals 2130838032da18bb25d7ac6703b445f6
+ import safe GHC.Types 6b27fb3fdbd0e3f0925a4496c66513bb
+-addDependentFile "libraries/unix/System/Posix/Time.hsc"
+-6ddb10c43e99ec0380af937ecb3f7577
+-  epochTime :: IO EpochTime
+-  {- Arity: 1, Strictness: <L,U>,
++import safe System.Posix.Process.Common ce7ec74b1b8650ae9bdcb5e03d762c9b
++  exports: c92acddcb4c2ba39986b2fd65a8586a9
++  ProcessTimes 6665d630382c9df3a2bddb55acba57f6
++  ProcessTimes 0affaf17820c7989e4fba99138693a34
++  childSystemTime 7b827631c75bbf3704503c30f83a7d16
++  childUserTime e1848915ccf901eb68bd2c46e25e3f6b
++  createProcessGroup b77f0351cd04f6695e5bf190d0b1e67a
++  createProcessGroupFor a656d59082f34cb00969abac835f980f
++  createSession 1bf503de2f16bbb1304ca9c8347a3b08
++  elapsedTime 0715fb8b97b2f5fd587848ec6399f5d9
++  exitImmediately 0f8691faa9f84ccf882fb6079e1bc850
++  forkProcess db5d51b57623764bab5da8f014173cf4
++  forkProcessWithUnmask 976efef4b00b423f8a916c215fa165a5
++  getAnyProcessStatus 0386a1d3c375952be95e02440c8f86dc
++  getGroupProcessStatus 88721422a74c25678e972e4dac06a553
++  getParentProcessID 8b871550c09619a6e993e747811a2e83
++  getProcessGroupID 8ba3467f585e7b39081c3560ffc47c77
++  getProcessGroupIDOf 8f9efba1b85e9df890346eec81966b29
++  getProcessGroupPriority 1cacc3fd060b7bb8b5483365b2dd7316
++  getProcessID 0d065906d3ef0c51cd4144874e04aa08
++  getProcessPriority 624a9baf17a03efd404c221f7ad0b6d8
++  getProcessStatus f1886057db898fc9aa9b661115506c3a
++  getProcessTimes cb7995302a9dc8decdfa53a6ddd22ebe
++  getUserPriority 3b5a32b477f76e6caca4962dd33fcc55
++  joinProcessGroup 599dcad0a84e1e962bc51b9d9f8034ca
++  nice 47d566f51f452178f6fb2d1e3e724a54
++  setProcessGroupID 99298359206b47288608069138fab01b
++  setProcessGroupIDOf d071d0d21fa81a37acbc5955783b20f5
++  setProcessGroupPriority d1786a3f48425010f3c35b13c1083388
++  setProcessPriority 920bba167a1618c559d966c758f472ec
++  setUserPriority 43a20bbee13c5785dc5b68e81c1525a9
++  systemTime a64003e6f309fa174eb209e13b0cf3cf
++  userTime 3fd77ea502b8ea667fd8473d5e592b0a
++import safe System.Posix.Process.Internals 89980088b0580c85034dcf05a1c28195
++  exports: a947870f47cfaa814e25a47ccbc4c4af
++  Exited 6462140fbe8a1636892378ee4774479b
++  ProcessStatus abba513cfdd5271d4a520226b3ea6109
++  Stopped abbb13b3e4b1d370cf4a3b8b7949b0c3
++  Terminated 7e4e9d8bfe554643c117eb30f7f73044
++  c_execvpe a35ec4d084a8d7d52c1d4d56474ee246
++  pPrPr_disableITimers 14838874a1ab1825e67e0a659b78f851
++addDependentFile "libraries/unix/System/Posix/Process.hsc"
++f60be828eaf7936fa01f9df5cf498e72
++  executeFile ::
++    FilePath -> Bool -> [String] -> Maybe [(String, String)] -> IO a
++  {- Arity: 5, Strictness: <L,U><L,U><L,U><S,1*U><L,U>,
+      Unfolding: InlineRule (0, True, True)
+-                epochTime1 `cast` (Sym (NTCo:IO[0] <EpochTime>_R)) -}
+-b7206f53d490687980de9bd50659f4e2
+-  epochTime1 :: State# RealWorld -> (# State# RealWorld, EpochTime #)
+-  {- Arity: 1, Strictness: <L,U>,
+-     Unfolding: (\ eta :: State# RealWorld[OneShot] ->
+-                 case {__pkg_ccall unix-2.7.1.0 __hsunix_time Addr#
+-                                                              -> State# RealWorld
+-                                                              -> (# State# RealWorld, Int# #)}
+-                        __NULL
+-                        eta of wild { (#,#) ds ds1 ->
+-                 case ds1 of wild1 {
+-                   DEFAULT -> (# ds, (I64# wild1) `cast` (Sym (NTCo:CTime[0])) #)
+-                   (-1)
+-                   -> case {__pkg_ccall base-4.8.2.0 __hscore_get_errno State#
+-                                                                          RealWorld
+-                                                                        -> (# State# RealWorld,
+-                                                                              Int# #)}
+-                             ds of wild2 { (#,#) ds2 ds3 ->
+-                      raiseIO#
+-                        @ SomeException
+-                        @ EpochTime
+-                        ($fExceptionIOException_$ctoException
+-                           (errnoToIOError
+-                              epochTime2
+-                              (I32# (narrow32Int# ds3))
+-                                `cast`
+-                              (Trans (Sym (NTCo:CInt[0])) (Sym (NTCo:Errno[0])))
+-                              (Nothing @ Handle)
+-                              (Nothing @ String)))
+-                        ds2 } } }) -}
+-3c1c936b8c572f826419b0241c2bba67
+-  epochTime2 :: [Char]
+-  {- Unfolding: (unpackCString# "epochTime"#) -}
++                executeFile1
++                  `cast`
++                (forall a.
++                 <FilePath>_R
++                 ->_R <Bool>_R
++                 ->_R <[String]>_R
++                 ->_R <Maybe [(String, String)]>_R
++                 ->_R Sym (NTCo:IO[0] <a>_R)) -}
++90cd8a8e523c652c15601eadd256f810
++  executeFile1 ::
++    FilePath
++    -> Bool
++    -> [String]
++    -> Maybe [(String, String)]
++    -> State# RealWorld
++    -> (# State# RealWorld, a #)
++  {- Arity: 5, Strictness: <L,U><L,U><L,U><S,1*U><L,U> -}
+ vectorised variables:
+ vectorised tycons:
+ vectorised reused tycons:
+ parallel variables:
+ parallel tycons:
+ trusted: safe
+-require own pkg trusted: False
++require own pkg trusted: True
+ 

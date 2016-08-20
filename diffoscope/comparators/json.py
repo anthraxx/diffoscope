@@ -41,9 +41,11 @@ class JSONFile(File):
         return True
 
     def compare_details(self, other, source=None):
-        return [Difference.from_text(
-            json.dumps(self.parsed, indent=4, sort_keys=True),
-            json.dumps(other.parsed, indent=4, sort_keys=True),
-            self.path,
-            other.path,
-        )]
+        return [Difference.from_text(self.dumps(self), self.dumps(other),
+            self.path, other.path)]
+
+    @staticmethod
+    def dumps(file):
+        if not hasattr(file, 'parsed'):
+            return ""
+        return json.dumps(file.parsed, indent=4, sort_keys=True)

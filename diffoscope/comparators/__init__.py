@@ -21,73 +21,94 @@
 import re
 import sys
 import magic
-import operator
 import os.path
+import operator
+import importlib
 
 from diffoscope import logger, tool_required
 from diffoscope.config import Config
 from diffoscope.difference import Difference
-from diffoscope.comparators.ar import ArFile
-from diffoscope.comparators.ps import PsFile
-from diffoscope.comparators.xz import XzFile
-from diffoscope.comparators.deb import DebFile, Md5sumsFile, DebDataTarFile
-from diffoscope.comparators.zip import ZipFile, MozillaZipFile
-from diffoscope.comparators.dex import DexFile
-from diffoscope.comparators.tar import TarFile
-from diffoscope.comparators.ipk import IpkFile
-from diffoscope.comparators.png import PngFile
-from diffoscope.comparators.ppu import PpuFile
-from diffoscope.comparators.elf import ElfFile, ElfSection, StaticLibFile
-from diffoscope.comparators.icc import IccFile
-from diffoscope.comparators.git import GitIndexFile
-from diffoscope.comparators.pdf import PdfFile
-from diffoscope.comparators.rust import RustObjectFile
-from diffoscope.comparators.cpio import CpioFile
-from diffoscope.comparators.text import TextFile
-from diffoscope.comparators.gzip import GzipFile
-from diffoscope.comparators.java import ClassFile
-from diffoscope.comparators.json import JSONFile
-from diffoscope.comparators.llvm import LlvmBitCodeFile
-from diffoscope.comparators.mono import MonoExeFile
-from diffoscope.comparators.cbfs import CbfsFile
-from diffoscope.comparators.image import ImageFile
-from diffoscope.comparators.fonts import TtfFile
-from diffoscope.comparators.macho import MachoFile
-from diffoscope.comparators.bzip2 import Bzip2File
-from diffoscope.comparators.sqlite import Sqlite3Database
-from diffoscope.comparators.binary import File, FilesystemFile, NonExistingFile, \
-    compare_binary_files
-from diffoscope.comparators.device import Device
-from diffoscope.comparators.symlink import Symlink
-from diffoscope.comparators.fsimage import FsImageFile
-from diffoscope.comparators.gettext import MoFile
-from diffoscope.comparators.iso9660 import Iso9660File
-from diffoscope.comparators.haskell import HiFile
-from diffoscope.comparators.squashfs import SquashfsFile
-from diffoscope.comparators.directory import FilesystemDirectory, Directory, \
-    compare_directories
+
+from .binary import NonExistingFile
+from .directory import FilesystemDirectory, FilesystemFile, compare_directories
 
 try:
     import tlsh
 except ImportError:
     tlsh = None
 
-try:
-    from diffoscope.comparators.debian import DotChangesFile, DotDscFile, \
-        DotBuildinfoFile
-except ImportError as ex:
-    if hasattr(ex, 'msg') and not ex.msg.startswith("No module named 'debian"):
-        raise
-    from diffoscope.comparators.debian_fallback import DotChangesFile, \
-        DotDscFile, DotBuildinfoFile
+COMPARATORS = (
+    ('directory.Directory',),
+    ('binary.NonExistingFile',),
+    ('symlink.Symlink',),
+    ('device.Device',),
+    ('debian.DotChangesFile', 'debian_fallback.DotChangesFile'),
+    ('debian.DotDscFile', 'debian_fallback.DotDscFile'),
+    ('debian.DotBuildinfoFile', 'debian.DotBuildinfoFile'),
+    ('deb.Md5sumsFile',),
+    ('deb.DebDataTarFile',),
+    ('elf.ElfSection',),
+    ('ps.PsFile',),
+    ('json.JSONFile',),
+    ('text.TextFile',),
+    ('bzip2.Bzip2File',),
+    ('cpio.CpioFile',),
+    ('deb.DebFile',),
+    ('dex.DexFile',),
+    ('elf.ElfFile',),
+    ('macho.MachoFile',),
+    ('fsimage.FsImageFile',),
+    ('elf.StaticLibFile',),
+    ('llvm.LlvmBitCodeFile',),
+    ('sqlite.Sqlite3Database',),
+    ('fonts.TtfFile',),
+    ('gettext.MoFile',),
+    ('ipk.IpkFile',),
+    ('rust.RustObjectFile',),
+    ('gzip.GzipFile',),
+    ('haskell.HiFile',),
+    ('icc.IccFile',),
+    ('iso9660.Iso9660File',),
+    ('java.ClassFile',),
+    ('mono.MonoExeFile',),
+    ('pdf.PdfFile',),
+    ('png.PngFile',),
+    ('ppu.PpuFile',),
+    ('rpm.RpmFile', 'rpm_fallback.RpmFile'),
+    ('squashfs.SquashfsFile',),
+    ('ar.ArFile',),
+    ('tar.TarFile',),
+    ('xz.XzFile',),
+    ('zip.ZipFile',),
+    ('zip.MozillaZipFile',),
+    ('image.ImageFile',),
+    ('cbfs.CbfsFile',),
+    ('git.GitIndexFile',),
+)
 
-try:
-    from diffoscope.comparators.rpm import RpmFile
-except ImportError as ex:
-    if hasattr(ex, 'msg') and ex.msg != "No module named 'rpm'":
-        raise
-    from diffoscope.comparators.rpm_fallback import RpmFile
 
+def import_comparators(comparators):
+    result = []
+
+    for xs in comparators:
+        for x in xs:
+            package, klass_name = x.rsplit('.', 1)
+
+            try:
+                mod = importlib.import_module(
+                    'diffoscope.comparators.{}'.format(package)
+                )
+            except ImportError:
+                continue
+
+            result.append(getattr(mod, klass_name))
+            break
+        else:
+            raise ImportError(
+                "Could not import any of {}".format(', '.join(xs))
+            )
+
+    return result
 
 def bail_if_non_existing(*paths):
     if not all(map(os.path.lexists, paths)):
@@ -95,7 +116,6 @@ def bail_if_non_existing(*paths):
             if not os.path.lexists(path):
                 sys.stderr.write('%s: %s: No such file or directory\n' % (sys.argv[0], path))
         sys.exit(2)
-
 
 def compare_root_paths(path1, path2):
     if not Config.general.new_file:
@@ -107,7 +127,6 @@ def compare_root_paths(path1, path2):
     container2 = FilesystemDirectory(os.path.dirname(path2)).as_container
     file2 = specialize(FilesystemFile(path2, container=container2))
     return compare_files(file1, file2)
-
 
 def compare_files(file1, file2, source=None):
     logger.debug('compare files %s and %s', file1, file2)
@@ -131,58 +150,6 @@ def compare_commented_files(file1, file2, comment=None, source=None):
             difference = Difference(None, file1.name, file2.name)
         difference.add_comment(comment)
     return difference
-
-
-# The order matters! They will be tried in turns.
-FILE_CLASSES = (
-    Directory,
-    NonExistingFile,
-    Symlink,
-    Device,
-    DotChangesFile,
-    DotDscFile,
-    DotBuildinfoFile,
-    Md5sumsFile,
-    DebDataTarFile,
-    ElfSection,
-    PsFile,
-    JSONFile,
-    TextFile,
-    Bzip2File,
-    CpioFile,
-    DebFile,
-    DexFile,
-    ElfFile,
-    MachoFile,
-    FsImageFile,
-    StaticLibFile,
-    LlvmBitCodeFile,
-    Sqlite3Database,
-    TtfFile,
-    MoFile,
-    IpkFile,
-    RustObjectFile,
-    GzipFile,
-    HiFile,
-    IccFile,
-    Iso9660File,
-    ClassFile,
-    MonoExeFile,
-    PdfFile,
-    PngFile,
-    PpuFile,
-    RpmFile,
-    SquashfsFile,
-    ArFile,
-    TarFile,
-    XzFile,
-    ZipFile,
-    MozillaZipFile,
-    ImageFile,
-    CbfsFile,
-    GitIndexFile,
-    )
-
 
 def specialize(file):
     for cls in FILE_CLASSES:
@@ -220,3 +187,5 @@ def perform_fuzzy_matching(members1, members2):
             if score < Config.general.fuzzy_threshold:
                 yield name1, name2, score
                 already_compared.add(name2)
+
+FILE_CLASSES = import_comparators(COMPARATORS)

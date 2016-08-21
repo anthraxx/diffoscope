@@ -1,4 +1,4 @@
-#, reason='missing zipinfo') -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 #
 # diffoscope: in-depth comparison of files, archives, and directories
 #

@@ -36,6 +36,14 @@ fuzzy_tar1 = load_fixture(data('fuzzy1.tar'))
 fuzzy_tar2 = load_fixture(data('fuzzy2.tar'))
 fuzzy_tar3 = load_fixture(data('fuzzy3.tar'))
 
+@skip_unless_tool_exists()
+def test_skip_unless_tool_exists_empty():
+    assert False, "Test should always be skipped"
+
+@skip_unless_tool_exists('/missing')
+def test_skip_unless_tool_exists_missing():
+    assert False, "Test should always be skipped"
+
 @pytest.mark.skipif(miss_tlsh, reason='tlsh is missing')
 def test_fuzzy_matching(fuzzy_tar1, fuzzy_tar2):
     differences = fuzzy_tar1.compare(fuzzy_tar2).details

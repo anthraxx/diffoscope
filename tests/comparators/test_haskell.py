@@ -21,12 +21,12 @@ import pytest
 
 from diffoscope.comparators.haskell import HiFile
 
-from utils import skip_unless_tool_exists, data, load_fixture
+from utils import skip_unless_tools_exist, data, load_fixture
 
 haskell1 = load_fixture(data('test1.hi'))
 haskell2 = load_fixture(data('test2.hi'))
 
-@skip_unless_tool_exists('ghc')
+@skip_unless_tools_exist('ghc')
 def test_identification(haskell1):
     assert isinstance(haskell1, HiFile)
 
@@ -37,7 +37,7 @@ def test_no_differences(haskell1):
 def differences(haskell1, haskell2):
     return haskell1.compare(haskell2).details
 
-@skip_unless_tool_exists('ghc')
+@skip_unless_tools_exist('ghc')
 def test_diff(differences):
     with open(data('haskell_expected_diff')) as f:
         expected_diff = f.read()

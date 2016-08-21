@@ -22,7 +22,7 @@ import pytest
 
 from diffoscope.comparators.ppu import PpuFile
 
-from utils import skip_unless_tool_exists, data, load_fixture, \
+from utils import skip_unless_tools_exist, data, load_fixture, \
     assert_non_existing
 
 # These test files were taken from two different builds of the Debian package
@@ -34,7 +34,7 @@ from utils import skip_unless_tool_exists, data, load_fixture, \
 file1 = load_fixture(data('test1.ppu'))
 file2 = load_fixture(data('test2.ppu'))
 
-@skip_unless_tool_exists('ppudump')
+@skip_unless_tools_exist('ppudump')
 def test_identification(file1):
     assert isinstance(file1, PpuFile)
 
@@ -46,12 +46,12 @@ def test_no_differences(file1):
 def differences(file1, file2):
     return file1.compare(file2).details
 
-@skip_unless_tool_exists('ppudump')
+@skip_unless_tools_exist('ppudump')
 def test_diff(differences):
     print(differences[0].unified_diff)
     expected_diff = open(data('ppu_expected_diff')).read()
     assert differences[0].unified_diff == expected_diff
 
-@skip_unless_tool_exists('ppudump')
+@skip_unless_tools_exist('ppudump')
 def test_compare_non_existing(monkeypatch, file1):
     assert_non_existing(monkeypatch, file1, has_null_source=False)

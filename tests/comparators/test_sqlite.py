@@ -21,7 +21,7 @@ import pytest
 
 from diffoscope.comparators.sqlite import Sqlite3Database
 
-from utils import skip_unless_tool_exists, data, load_fixture, \
+from utils import skip_unless_tools_exist, data, load_fixture, \
     assert_non_existing
 
 sqlite3db1 = load_fixture(data('test1.sqlite3'))
@@ -38,11 +38,11 @@ def test_no_differences(sqlite3db1):
 def differences(sqlite3db1, sqlite3db2):
     return sqlite3db1.compare(sqlite3db2).details
 
-@skip_unless_tool_exists('sqlite3')
+@skip_unless_tools_exist('sqlite3')
 def test_diff(differences):
     expected_diff = open(data('sqlite3_expected_diff')).read()
     assert differences[0].unified_diff == expected_diff
 
-@skip_unless_tool_exists('sqlite3')
+@skip_unless_tools_exist('sqlite3')
 def test_compare_non_existing(monkeypatch, sqlite3db1):
     assert_non_existing(monkeypatch, sqlite3db1, has_null_source=False)

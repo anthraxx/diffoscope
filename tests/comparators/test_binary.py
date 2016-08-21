@@ -27,7 +27,7 @@ from diffoscope.exc import RequiredToolNotFound
 from diffoscope.difference import Difference
 from diffoscope.comparators.binary import File, FilesystemFile, NonExistingFile
 
-from utils import skip_unless_tool_exists, data, load_fixture
+from utils import skip_unless_tools_exist, data, load_fixture
 
 TEST_FILE1_PATH = data('binary1')
 TEST_FILE2_PATH = data('binary2')
@@ -64,7 +64,7 @@ def test_no_differences_with_xxd(binary1):
     difference = binary1.compare_bytes(binary1)
     assert difference is None
 
-@skip_unless_tool_exists('xxd')
+@skip_unless_tools_exist('xxd')
 def test_compare_with_xxd(binary1, binary2):
     difference = binary1.compare_bytes(binary2)
     expected_diff = open(data('binary_expected_diff')).read()
@@ -97,7 +97,7 @@ def test_with_compare_details():
     difference = MockFile(TEST_FILE1_PATH).compare(MockFile(TEST_FILE2_PATH), source='source')
     assert difference.details[0] == d
 
-@skip_unless_tool_exists('xxd')
+@skip_unless_tools_exist('xxd')
 def test_with_compare_details_and_fallback():
     class MockFile(FilesystemFile):
         def compare_details(self, other, source=None):
@@ -114,7 +114,7 @@ def test_with_compare_details_and_no_actual_differences():
     difference = MockFile(TEST_FILE1_PATH).compare(MockFile(TEST_FILE1_PATH))
     assert difference is None
 
-@skip_unless_tool_exists('xxd')
+@skip_unless_tools_exist('xxd')
 def test_with_compare_details_and_failed_process():
     output = 'Free Jeremy Hammond'
     class MockFile(FilesystemFile):
@@ -127,7 +127,7 @@ def test_with_compare_details_and_failed_process():
     assert '42' in difference.comment
     assert difference.unified_diff == expected_diff
 
-@skip_unless_tool_exists('xxd')
+@skip_unless_tools_exist('xxd')
 def test_with_compare_details_and_tool_not_found(monkeypatch):
     monkeypatch.setattr('diffoscope.exc.RequiredToolNotFound.get_package', lambda _: 'some-package')
     class MockFile(FilesystemFile):

@@ -21,7 +21,7 @@ import pytest
 
 from diffoscope.comparators.squashfs import SquashfsFile
 
-from utils import skip_unless_tool_exists, data, load_fixture, \
+from utils import skip_unless_tools_exist, data, load_fixture, \
     assert_non_existing
 
 squashfs1 = load_fixture(data('test1.squashfs'))
@@ -43,24 +43,24 @@ def test_no_warnings(capfd, squashfs1, squashfs2):
 def differences(squashfs1, squashfs2):
     return squashfs1.compare(squashfs2).details
 
-@skip_unless_tool_exists('unsquashfs')
+@skip_unless_tools_exist('unsquashfs')
 def test_superblock(differences):
     expected_diff = open(data('squashfs_superblock_expected_diff')).read()
     assert differences[0].unified_diff == expected_diff
 
-@skip_unless_tool_exists('unsquashfs')
+@skip_unless_tools_exist('unsquashfs')
 def test_symlink(differences):
     assert differences[2].comment == 'symlink'
     expected_diff = open(data('symlink_expected_diff')).read()
     assert differences[2].unified_diff == expected_diff
 
-@skip_unless_tool_exists('unsquashfs')
+@skip_unless_tools_exist('unsquashfs')
 def test_compressed_files(differences):
     assert differences[3].source1 == '/text'
     assert differences[3].source2 == '/text'
     expected_diff = open(data('text_ascii_expected_diff')).read()
     assert differences[3].unified_diff == expected_diff
 
-@skip_unless_tool_exists('unsquashfs')
+@skip_unless_tools_exist('unsquashfs')
 def test_compare_non_existing(monkeypatch, squashfs1):
     assert_non_existing(monkeypatch, squashfs1)

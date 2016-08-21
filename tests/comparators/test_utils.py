@@ -24,7 +24,7 @@ from diffoscope.config import Config
 from diffoscope.difference import Difference
 from diffoscope.comparators.utils import Command
 
-from utils import skip_unless_tool_exists, data, load_fixture
+from utils import skip_unless_tools_exist, data, load_fixture
 
 try:
     import tlsh # noqa
@@ -36,12 +36,12 @@ fuzzy_tar1 = load_fixture(data('fuzzy1.tar'))
 fuzzy_tar2 = load_fixture(data('fuzzy2.tar'))
 fuzzy_tar3 = load_fixture(data('fuzzy3.tar'))
 
-@skip_unless_tool_exists()
-def test_skip_unless_tool_exists_empty():
+@skip_unless_tools_exist()
+def test_skip_unless_tools_exist_empty():
     assert False, "Test should always be skipped"
 
-@skip_unless_tool_exists('/missing')
-def test_skip_unless_tool_exists_missing():
+@skip_unless_tools_exist('/missing')
+def test_skip_unless_tools_exist_missing():
     assert False, "Test should always be skipped"
 
 @pytest.mark.skipif(miss_tlsh, reason='tlsh is missing')
@@ -78,7 +78,7 @@ def test_no_fuzzy_matching_new_file(monkeypatch, fuzzy_tar_in_tar1, fuzzy_tar_in
     assert difference.details[1].source2 == '/dev/null'
     assert difference.details[2].source1 == '/dev/null'
 
-@skip_unless_tool_exists('tee')
+@skip_unless_tools_exist('tee')
 def test_trim_stderr_in_command():
     class FillStderr(Command):
         def cmdline(self):

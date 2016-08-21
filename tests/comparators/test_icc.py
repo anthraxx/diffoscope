@@ -23,7 +23,7 @@ from diffoscope.config import Config
 from diffoscope.comparators.icc import IccFile
 from diffoscope.comparators.binary import NonExistingFile
 
-from utils import skip_unless_tool_exists, data, load_fixture
+from utils import skip_unless_tools_exist, data, load_fixture
 
 icc1 = load_fixture(data('test1.icc'))
 icc2 = load_fixture(data('test2.icc'))
@@ -39,12 +39,12 @@ def test_no_differences(icc1):
 def differences(icc1, icc2):
     return icc1.compare(icc2).details
 
-@skip_unless_tool_exists('cd-iccdump')
+@skip_unless_tools_exist('cd-iccdump')
 def test_diff(differences):
     expected_diff = open(data('icc_expected_diff')).read()
     assert differences[0].unified_diff == expected_diff
 
-@skip_unless_tool_exists('cd-iccdump')
+@skip_unless_tools_exist('cd-iccdump')
 def test_compare_non_existing(monkeypatch, icc1):
     monkeypatch.setattr(Config, 'new_file', True)
     difference = icc1.compare(NonExistingFile('/nonexisting', icc1))

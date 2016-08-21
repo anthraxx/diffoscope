@@ -21,7 +21,7 @@ import pytest
 
 from diffoscope.comparators.ps import PsFile
 
-from utils import skip_unless_tool_exists, data, load_fixture, \
+from utils import skip_unless_tools_exist, data, load_fixture, \
     assert_non_existing
 
 ps1 = load_fixture(data('test1.ps'))
@@ -38,16 +38,16 @@ def test_no_differences(ps1):
 def differences(ps1, ps2):
     return ps1.compare(ps2)
 
-@skip_unless_tool_exists('ps2ascii')
+@skip_unless_tools_exist('ps2ascii')
 def test_internal_diff(differences):
     expected_diff = open(data('ps_internal_expected_diff')).read()
     assert differences.unified_diff == expected_diff
 
-@skip_unless_tool_exists('ps2ascii')
+@skip_unless_tools_exist('ps2ascii')
 def test_text_diff(differences):
     expected_diff = open(data('ps_text_expected_diff')).read()
     assert differences.details[0].unified_diff == expected_diff
 
-@skip_unless_tool_exists('ps2ascii')
+@skip_unless_tools_exist('ps2ascii')
 def test_compare_non_existing(monkeypatch, ps1):
     assert_non_existing(monkeypatch, ps1, has_null_source=False)

@@ -23,7 +23,7 @@ from diffoscope.config import Config
 from diffoscope.comparators.dex import DexFile
 from diffoscope.comparators.binary import NonExistingFile
 
-from utils import skip_unless_tool_exists, data, load_fixture
+from utils import skip_unless_tools_exist, data, load_fixture
 
 
 dex1 = load_fixture(data('test1.dex'))
@@ -40,9 +40,7 @@ def test_no_differences(dex1):
 def differences(dex1, dex2):
     return dex1.compare(dex2).details
 
-@skip_unless_tool_exists('enjarify')
-@skip_unless_tool_exists('zipinfo')
-@skip_unless_tool_exists('javap')
+@skip_unless_tools_exist('enjarify', 'zipinfo', 'javap')
 def test_differences(differences):
     assert differences[0].source1 == 'test1.jar'
     assert differences[0].source2 == 'test2.jar'
@@ -56,9 +54,7 @@ def test_differences(differences):
     found_diff = zipinfo.unified_diff + classdiff.details[0].unified_diff
     assert expected_diff == found_diff
 
-@skip_unless_tool_exists('enjarify')
-@skip_unless_tool_exists('zipinfo')
-@skip_unless_tool_exists('javap')
+@skip_unless_tools_exist('enjarify', 'zipinfo', 'javap')
 def test_compare_non_existing(monkeypatch, dex1):
     monkeypatch.setattr(Config.general, 'new_file', True)
     difference = dex1.compare(NonExistingFile('/nonexisting', dex1))

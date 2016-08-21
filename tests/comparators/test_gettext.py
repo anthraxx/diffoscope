@@ -24,7 +24,7 @@ from diffoscope.config import Config
 from diffoscope.comparators.binary import NonExistingFile
 from diffoscope.comparators.gettext import MoFile
 
-from utils import skip_unless_tool_exists, data, load_fixture
+from utils import skip_unless_tools_exist, data, load_fixture
 
 mo1 = load_fixture(data('test1.mo'))
 mo2 = load_fixture(data('test2.mo'))
@@ -40,7 +40,7 @@ def test_no_differences(mo1):
 def differences(mo1, mo2):
     return mo1.compare(mo2).details
 
-@skip_unless_tool_exists('msgunfmt')
+@skip_unless_tools_exist('msgunfmt')
 def test_diff(differences):
     expected_diff = open(data('mo_expected_diff')).read()
     assert differences[0].unified_diff == expected_diff
@@ -48,13 +48,13 @@ def test_diff(differences):
 mo_no_charset = load_fixture(data('test_no_charset.mo'))
 mo_iso8859_1 = load_fixture(data('test_iso8859-1.mo'))
 
-@skip_unless_tool_exists('msgunfmt')
+@skip_unless_tools_exist('msgunfmt')
 def test_charsets(mo_no_charset, mo_iso8859_1):
     difference = mo_no_charset.compare(mo_iso8859_1)
     expected_diff = codecs.open(data('mo_charsets_expected_diff'), encoding='utf-8').read()
     assert difference.details[0].unified_diff == expected_diff
 
-@skip_unless_tool_exists('msgunfmt')
+@skip_unless_tools_exist('msgunfmt')
 def test_compare_non_existing(monkeypatch, mo1):
     monkeypatch.setattr(Config, 'new_file', True)
     difference = mo1.compare(NonExistingFile('/nonexisting', mo1))

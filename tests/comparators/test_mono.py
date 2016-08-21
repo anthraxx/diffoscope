@@ -23,7 +23,7 @@ from diffoscope.config import Config
 from diffoscope.comparators.mono import MonoExeFile
 from diffoscope.comparators.binary import NonExistingFile
 
-from utils import skip_unless_tool_exists, data, load_fixture
+from utils import skip_unless_tools_exist, data, load_fixture
 
 # these were generated with:
 
@@ -44,12 +44,12 @@ def test_no_differences(exe1):
 def differences(exe1, exe2):
     return exe1.compare(exe2).details
 
-@skip_unless_tool_exists('pedump')
+@skip_unless_tools_exist('pedump')
 def test_diff(differences):
     expected_diff = open(data('pe_expected_diff')).read()
     assert differences[0].unified_diff == expected_diff
 
-@skip_unless_tool_exists('pedump')
+@skip_unless_tools_exist('pedump')
 def test_compare_non_existing(monkeypatch, exe1):
     monkeypatch.setattr(Config, 'new_file', True)
     difference = exe1.compare(NonExistingFile('/nonexisting', exe1))

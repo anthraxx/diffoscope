@@ -23,7 +23,7 @@ from diffoscope.config import Config
 from diffoscope.comparators.fonts import TtfFile
 from diffoscope.comparators.binary import NonExistingFile
 
-from utils import skip_unless_tool_exists, data, load_fixture
+from utils import skip_unless_tools_exist, data, load_fixture
 
 
 ttf1 = load_fixture(data('Samyak-Malayalam1.ttf'))
@@ -40,12 +40,12 @@ def test_no_differences(ttf1):
 def differences(ttf1, ttf2):
     return ttf1.compare(ttf2).details
 
-@skip_unless_tool_exists('showttf')
+@skip_unless_tools_exist('showttf')
 def test_diff(differences):
     expected_diff = open(data('ttf_expected_diff')).read()
     assert differences[0].unified_diff == expected_diff
 
-@skip_unless_tool_exists('showttf')
+@skip_unless_tools_exist('showttf')
 def test_compare_non_existing(monkeypatch, ttf1):
     monkeypatch.setattr(Config, 'new_file', True)
     difference = ttf1.compare(NonExistingFile('/nonexisting', ttf1))

@@ -21,7 +21,7 @@ import pytest
 
 from diffoscope.comparators.png import PngFile
 
-from utils import skip_unless_tool_exists, data, load_fixture, \
+from utils import skip_unless_tools_exist, data, load_fixture, \
     assert_non_existing
 
 png1 = load_fixture(data('test1.png'))
@@ -38,11 +38,11 @@ def test_no_differences(png1):
 def differences(png1, png2):
     return png1.compare(png2).details
 
-@skip_unless_tool_exists('sng')
+@skip_unless_tools_exist('sng')
 def test_diff(differences):
     expected_diff = open(data('png_expected_diff')).read()
     assert differences[0].unified_diff == expected_diff
 
-@skip_unless_tool_exists('sng')
+@skip_unless_tools_exist('sng')
 def test_compare_non_existing(monkeypatch, png1):
     assert_non_existing(monkeypatch, png1, has_null_source=False)

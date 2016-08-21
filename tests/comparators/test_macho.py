@@ -25,7 +25,7 @@ from diffoscope.config import Config
 from diffoscope.comparators.macho import MachoFile
 from diffoscope.comparators.binary import NonExistingFile
 
-from utils import skip_unless_tool_exists, data, load_fixture
+from utils import skip_unless_tools_exist, data, load_fixture
 
 obj1 = load_fixture(data('test1.macho'))
 obj2 = load_fixture(data('test2.macho'))
@@ -41,14 +41,14 @@ def test_obj_no_differences(obj1):
 def obj_differences(obj1, obj2):
     return obj1.compare(obj2).details
 
-@skip_unless_tool_exists('otool', 'lipo')
+@skip_unless_tools_exist('otool', 'lipo')
 def test_obj_compare_non_existing(monkeypatch, obj1):
     monkeypatch.setattr(Config, 'new_file', True)
     difference = obj1.compare(NonExistingFile('/nonexisting', obj1))
     assert difference.source2 == '/nonexisting'
     assert len(difference.details) > 0
 
-@skip_unless_tool_exists('otool', 'lipo')
+@skip_unless_tools_exist('otool', 'lipo')
 def test_diff(obj_differences):
     assert len(obj_differences) == 4
     l = ['macho_expected_diff_arch', 'macho_expected_diff_headers', 'macho_expected_diff_loadcommands', 'macho_expected_diff_disassembly']

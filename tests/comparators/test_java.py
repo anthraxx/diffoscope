@@ -23,7 +23,7 @@ from diffoscope.config import Config
 from diffoscope.comparators.java import ClassFile
 from diffoscope.comparators.binary import  NonExistingFile
 
-from utils import skip_unless_tool_exists, data, load_fixture
+from utils import skip_unless_tools_exist, data, load_fixture
 
 class1 = load_fixture(data('Test1.class'))
 class2 = load_fixture(data('Test2.class'))
@@ -39,12 +39,12 @@ def test_no_differences(class1):
 def differences(class1, class2):
     return class1.compare(class2).details
 
-@skip_unless_tool_exists('javap')
+@skip_unless_tools_exist('javap')
 def test_diff(differences):
     expected_diff = open(data('class_expected_diff')).read()
     assert differences[0].unified_diff == expected_diff
 
-@skip_unless_tool_exists('javap')
+@skip_unless_tools_exist('javap')
 def test_compare_non_existing(monkeypatch, class1):
     monkeypatch.setattr(Config, 'new_file', True)
     difference = class1.compare(NonExistingFile('/nonexisting', class1))

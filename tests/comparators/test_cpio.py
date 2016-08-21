@@ -21,7 +21,7 @@ import pytest
 
 from diffoscope.comparators.cpio import CpioFile
 
-from utils import skip_unless_tool_exists, data, load_fixture, \
+from utils import skip_unless_tools_exist, data, load_fixture, \
     assert_non_existing
 
 
@@ -39,25 +39,25 @@ def test_no_differences(cpio1):
 def differences(cpio1, cpio2):
     return cpio1.compare(cpio2).details
 
-@skip_unless_tool_exists('cpio')
+@skip_unless_tools_exist('cpio')
 def test_listing(differences):
     expected_diff = open(data('cpio_listing_expected_diff')).read()
     assert differences[0].unified_diff == expected_diff
 
-@skip_unless_tool_exists('cpio')
+@skip_unless_tools_exist('cpio')
 def test_symlink(differences):
     assert differences[1].source1 == 'dir/link'
     assert differences[1].comment == 'symlink'
     expected_diff = open(data('symlink_expected_diff')).read()
     assert differences[1].unified_diff == expected_diff
 
-@skip_unless_tool_exists('cpio')
+@skip_unless_tools_exist('cpio')
 def test_compressed_files(differences):
     assert differences[2].source1 == 'dir/text'
     assert differences[2].source2 == 'dir/text'
     expected_diff = open(data('text_ascii_expected_diff')).read()
     assert differences[2].unified_diff == expected_diff
 
-@skip_unless_tool_exists('cpio')
+@skip_unless_tools_exist('cpio')
 def test_compare_non_existing(monkeypatch, cpio1):
     assert_non_existing(monkeypatch, cpio1)

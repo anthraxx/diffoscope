@@ -24,7 +24,7 @@ from diffoscope.comparators import specialize
 from diffoscope.comparators.bzip2 import Bzip2File
 from diffoscope.comparators.binary import FilesystemFile
 
-from utils import skip_unless_tool_exists, data, load_fixture, \
+from utils import skip_unless_tools_exist, data, load_fixture, \
     assert_non_existing
 
 
@@ -45,12 +45,12 @@ def test_no_differences(bzip1):
 def differences(bzip1, bzip2):
     return bzip1.compare(bzip2).details
 
-@skip_unless_tool_exists('bzip2')
+@skip_unless_tools_exist('bzip2')
 def test_content_source(differences):
     assert differences[0].source1 == 'test1'
     assert differences[0].source2 == 'test2'
 
-@skip_unless_tool_exists('bzip2')
+@skip_unless_tools_exist('bzip2')
 def test_content_source_without_extension(tmpdir):
     path1 = str(tmpdir.join('test1'))
     path2 = str(tmpdir.join('test2'))
@@ -62,11 +62,11 @@ def test_content_source_without_extension(tmpdir):
     assert differences[0].source1 == 'test1-content'
     assert differences[0].source2 == 'test2-content'
 
-@skip_unless_tool_exists('bzip2')
+@skip_unless_tools_exist('bzip2')
 def test_content_diff(differences):
     expected_diff = open(data('text_ascii_expected_diff')).read()
     assert differences[0].unified_diff == expected_diff
 
-@skip_unless_tool_exists('bzip2')
+@skip_unless_tools_exist('bzip2')
 def test_compare_non_existing(monkeypatch, bzip1):
     assert_non_existing(monkeypatch, bzip1)

@@ -38,11 +38,11 @@ fuzzy_tar3 = load_fixture(data('fuzzy3.tar'))
 
 @skip_unless_tools_exist()
 def test_skip_unless_tools_exist_empty():
-    assert False, "Test should always be skipped"
+    pytest.xfail("Test should always be skipped")
 
 @skip_unless_tools_exist('/missing')
 def test_skip_unless_tools_exist_missing():
-    assert False, "Test should always be skipped"
+    pytest.xfail("Test should always be skipped")
 
 @pytest.mark.skipif(miss_tlsh, reason='tlsh is missing')
 def test_fuzzy_matching(fuzzy_tar1, fuzzy_tar2):

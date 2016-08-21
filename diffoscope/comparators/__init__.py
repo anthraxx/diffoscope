@@ -44,7 +44,7 @@ COMPARATORS = (
     ('device.Device',),
     ('debian.DotChangesFile', 'debian_fallback.DotChangesFile'),
     ('debian.DotDscFile', 'debian_fallback.DotDscFile'),
-    ('debian.DotBuildinfoFile', 'debian.DotBuildinfoFile'),
+    ('debian.DotBuildinfoFile', 'debian_fallback.DotBuildinfoFile'),
     ('deb.Md5sumsFile',),
     ('deb.DebDataTarFile',),
     ('elf.ElfSection',),

@@ -20,10 +20,9 @@
 import os
 import pytest
 import diffoscope
-import subprocess
 
 from distutils.spawn import find_executable
-from distutils.version import StrictVersion
+from distutils.version import LooseVersion
 
 from diffoscope.config import Config
 from diffoscope.comparators import specialize
@@ -45,6 +44,16 @@ def skip_unless_tools_exist(*required):
         reason="requires {}".format(" and ".join(required)),
     )
 
+def skip_unless_tool_is_older_than(tool, actual_ver, min_ver, vcls=LooseVersion):
+    if tools_missing(tool):
+        return pytest.mark.skip(reason="requires {}".format(tool))
+    if callable(actual_ver):
+        actual_ver = actual_ver()
+    return pytest.mark.skipif(
+        vcls(str(actual_ver)) < vcls(str(min_ver)),
+        reason="requires {} >= {}".format(tool, min_ver)
+    )
+
 def load_fixture(filename):
     return pytest.fixture(
         lambda: specialize(FilesystemFile(filename))
@@ -56,12 +65,6 @@ def data(filename):
         'data',
         filename,
     )
-
-def tool_older_than(cmdline, min_ver, vcls=StrictVersion):
-    if find_executable(cmdline[0]) is None:
-        return True
-    actual_ver = subprocess.check_output(cmdline).decode("utf-8").strip()
-    return vcls(actual_ver) < vcls(min_ver)
 
 def assert_non_existing(monkeypatch, fixture, has_null_source=True, has_details=True):
     monkeypatch.setattr(Config.general, 'new_file', True)

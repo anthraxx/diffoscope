@@ -19,15 +19,19 @@
 # along with diffoscope.  If not, see <http://www.gnu.org/licenses/>.
 
 import pytest
+import subprocess
 
 from diffoscope.comparators.ar import ArFile
 from diffoscope.comparators.utils import diff_ignore_line_numbers
 
-from utils import skip_unless_tools_exist, tool_older_than, data, \
-    load_fixture, assert_non_existing
+from utils import skip_unless_tools_exist, skip_unless_tool_is_older_than, \
+    data, load_fixture, assert_non_existing
 
 rlib1 = load_fixture(data('test1.rlib'))
 rlib2 = load_fixture(data('test2.rlib'))
+
+def llvm_version():
+    return subprocess.check_output(['llvm-config', '--version']).decode("utf-8").strip()
 
 def test_identification(rlib1):
     assert isinstance(rlib1, ArFile)
@@ -60,7 +64,7 @@ def test_item2_rust_metadata_bin(differences):
     assert differences[2].source2 == 'rust.metadata.bin'
 
 @skip_unless_tools_exist('llvm-dis')
-@pytest.mark.skipif(tool_older_than(['llvm-config', '--version'], '3.8'), reason='llvm version too low')
+@skip_unless_tool_is_older_than('llvm-config', llvm_version, '3.8')
 def test_item3_deflate_llvm_bitcode(differences):
     assert differences[3].source1 == 'alloc_system-d16b8f0e.0.bytecode.deflate'
     assert differences[3].source2 == 'alloc_system-d16b8f0e.0.bytecode.deflate'

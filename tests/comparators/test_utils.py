@@ -24,7 +24,8 @@ from diffoscope.config import Config
 from diffoscope.difference import Difference
 from diffoscope.comparators.utils import Command
 
-from utils import tools_missing, skip_unless_tools_exist, data, load_fixture
+from utils import tools_missing, skip_unless_tools_exist, data, load_fixture, \
+    skip_unless_tool_is_older_than
 
 try:
     import tlsh # noqa
@@ -49,6 +50,16 @@ def test_skip_unless_tools_exist_empty():
 @skip_unless_tools_exist('/missing')
 def test_skip_unless_tools_exist_missing():
     pytest.xfail("Test should always be skipped")
+
+def skip_unless_tool_is_older_than():
+    func = skip_unless_tool_is_older_than
+    assert func('/missing', 1, 1).name is 'skip'
+    # pytest.skipif().args[0] contains the evaluated statement
+    assert func('cat', 1, 1).args[0] is False
+    assert func('cat', 1, '1.2d.45+b8').args[0] is True
+    def version():
+        return '4.3-git'
+    assert func('cat', version, '4.3').args[0] is False
 
 @pytest.mark.skipif(miss_tlsh, reason='tlsh is missing')
 def test_fuzzy_matching(fuzzy_tar1, fuzzy_tar2):

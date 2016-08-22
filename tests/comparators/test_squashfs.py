@@ -18,11 +18,21 @@
 # along with diffoscope.  If not, see <http://www.gnu.org/licenses/>.
 
 import pytest
+import subprocess
 
 from diffoscope.comparators.squashfs import SquashfsFile
 
 from utils import skip_unless_tools_exist, data, load_fixture, \
-    assert_non_existing
+    assert_non_existing, skip_unless_tool_is_older_than
+
+def unsquashfs_version():
+    # first line of 'unsquashfs -version' looks like:
+    #   unsquashfs version 4.2-git (2013/03/13)
+    try:
+        out = subprocess.check_output(['unsquashfs', '-version'])
+    except subprocess.CalledProcessError as e:
+        out = e.output
+    return out.decode('UTF-8').splitlines()[0].split()[2].strip()
 
 squashfs1 = load_fixture(data('test1.squashfs'))
 squashfs2 = load_fixture(data('test2.squashfs'))
@@ -43,7 +53,7 @@ def test_no_warnings(capfd, squashfs1, squashfs2):
 def differences(squashfs1, squashfs2):
     return squashfs1.compare(squashfs2).details
 
-@skip_unless_tools_exist('unsquashfs')
+@skip_unless_tool_is_older_than('unsquashfs', unsquashfs_version, '4.3')
 def test_superblock(differences):
     expected_diff = open(data('squashfs_superblock_expected_diff')).read()
     assert differences[0].unified_diff == expected_diff

@@ -24,7 +24,7 @@ from diffoscope.config import Config
 from diffoscope.difference import Difference
 from diffoscope.comparators.utils import Command
 
-from utils import skip_unless_tools_exist, data, load_fixture
+from utils import tools_missing, skip_unless_tools_exist, data, load_fixture
 
 try:
     import tlsh # noqa
@@ -35,6 +35,12 @@ except ImportError:
 fuzzy_tar1 = load_fixture(data('fuzzy1.tar'))
 fuzzy_tar2 = load_fixture(data('fuzzy2.tar'))
 fuzzy_tar3 = load_fixture(data('fuzzy3.tar'))
+
+def test_tools_missing():
+    assert tools_missing() is True
+    assert tools_missing('/missing') is True
+    for x in ['cat', 'sh']:
+        assert tools_missing(x) is False
 
 @skip_unless_tools_exist()
 def test_skip_unless_tools_exist_empty():

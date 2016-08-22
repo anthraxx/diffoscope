@@ -36,9 +36,12 @@ from diffoscope.comparators.binary import FilesystemFile, NonExistingFile
 def set_locale():
     diffoscope.set_locale()
 
+def tools_missing(*required):
+    return not required or any(find_executable(x) is None for x in required)
+
 def skip_unless_tools_exist(*required):
     return pytest.mark.skipif(
-        not required or any(find_executable(x) is None for x in required),
+        tools_missing(*required),
         reason="requires {}".format(" and ".join(required)),
     )
 

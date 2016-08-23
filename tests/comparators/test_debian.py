@@ -138,9 +138,11 @@ def dot_changes_differences_different_contents_and_identical_files(dot_changes2,
     output_text(difference, print_func=print)
     return difference.details
 
+@pytest.mark.skipif(miss_debian_module, reason='debian module is not installed')
 def test_dot_changes_no_differences_exclude_buildinfo(dot_changes1, dot_changes3):
     difference = dot_changes1.compare(dot_changes3)
     assert difference is None
+
 @pytest.mark.skipif(miss_debian_module, reason='debian module is not installed')
 def test_dot_changes_identical_contents_and_different_files(dot_changes_differences_identical_contents_and_different_files):
     assert dot_changes_differences_identical_contents_and_different_files[0]

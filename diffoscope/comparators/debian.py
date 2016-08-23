@@ -29,6 +29,7 @@ from diffoscope.changes import Changes
 from diffoscope.difference import Difference
 from diffoscope.comparators.utils import Container
 from diffoscope.comparators.binary import File
+from diffoscope import logger
 
 
 DOT_CHANGES_FIELDS = [
@@ -144,6 +145,17 @@ class DotChangesFile(DebControlFile):
             return False
         file._deb822 = changes
         return True
+
+    def compare(self, other, source=None):
+        differences = super().compare(other, source)
+        if differences is None:
+            return None
+        files_identical = all([x == y for x, y in zip(self.deb822.get('Files'), other.deb822.get('Files')) if not x['name'].endswith('.buildinfo')])
+        if files_identical and len(differences.details) == 1 and differences.details[0].source1 == 'Files':
+            logger.warning('Ignoring buildinfo file differences')
+            return None
+        else:
+            return differences
 
 
 class DotDscFile(DebControlFile):

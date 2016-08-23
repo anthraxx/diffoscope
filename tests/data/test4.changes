@@ -9,17 +9,17 @@ Urgency: low
 Maintainer: Someone Else <user@example.org>
 Changed-By: Someone Else <user@example.org>
 Description:
- test - just a simple test package
+ test - just a test package
 Changes:
  test (1) unstable; urgency=low
  .
    * Test package.
 Checksums-Sha1:
  70982664db2015334bff6441b429d7e3c58dbecb 2388 test_1_all.deb
- 91d2cc6aadddb4a24b0c2f8f24d558ce0e07f9cd 3765 test_2.buildinfo
+ e1cafb5f8db51f4ec477807d105b1e3cccf9a767 3780 test_2.buildinfo
 Checksums-Sha256:
  2f2e45ee3a5fdacd9b30133ec728121588bf9b97af3b947b3882b2b28a0555da 2388 test_1_all.deb
- 917d8b5c3ade2bde26fe2b7476481537f32a0c07f10e5e44c0ca7a02c8bfa9d8 3765 test_2.buildinfo
+ 167d989223978a45a69af30dcd488baa00aec2045b66d0f74d7f03b08fd22365 3780 test_2.buildinfo
 Files:
  d323c454462407fe3bfde31a74b23eba 2388 devel optional test_1_all.deb
- 9972d7c394228311ba92cbcbfe2d6cd9 3765 web optional test_2.buildinfo
+ 40756b7e8aae2c1fcbcac099670b6db8 3780 web optional test_2.buildinfo

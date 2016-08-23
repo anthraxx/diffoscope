@@ -37,6 +37,10 @@ except ImportError:
 
 TEST_DOT_CHANGES_FILE1_PATH = data('test1.changes')
 TEST_DOT_CHANGES_FILE2_PATH = data('test2.changes')
+TEST_DOT_CHANGES_FILE3_PATH = data('test3.changes')
+TEST_DOT_CHANGES_FILE4_PATH = data('test4.changes')
+TEST_DOT_BUILDINFO_FILE1_PATH = data('test1.buildinfo')
+TEST_DOT_BUILDINFO_FILE2_PATH = data('test2.buildinfo')
 TEST_DEB_FILE1_PATH = data('test1.deb')
 TEST_DEB_FILE2_PATH = data('test2.deb')
 
@@ -46,6 +50,7 @@ def dot_changes1(tmpdir):
     dot_changes_path = str(tmpdir.join('a/test_1.changes'))
     shutil.copy(TEST_DOT_CHANGES_FILE1_PATH, dot_changes_path)
     shutil.copy(TEST_DEB_FILE1_PATH, str(tmpdir.join('a/test_1_all.deb')))
+    shutil.copy(TEST_DOT_BUILDINFO_FILE1_PATH, str(tmpdir.join('a/test_1.buildinfo')))
     return specialize(FilesystemFile(dot_changes_path))
 
 @pytest.fixture
@@ -54,6 +59,25 @@ def dot_changes2(tmpdir):
     dot_changes_path = str(tmpdir.join('b/test_1.changes'))
     shutil.copy(TEST_DOT_CHANGES_FILE2_PATH, dot_changes_path)
     shutil.copy(TEST_DEB_FILE2_PATH, str(tmpdir.join('b/test_1_all.deb')))
+    shutil.copy(TEST_DOT_BUILDINFO_FILE2_PATH, str(tmpdir.join('b/test_2.buildinfo')))
+    return specialize(FilesystemFile(dot_changes_path))
+
+@pytest.fixture
+def dot_changes3(tmpdir):
+    tmpdir.mkdir('c')
+    dot_changes_path = str(tmpdir.join('c/test_3.changes'))
+    shutil.copy(TEST_DOT_CHANGES_FILE3_PATH, dot_changes_path)
+    shutil.copy(TEST_DEB_FILE1_PATH, str(tmpdir.join('c/test_1_all.deb')))
+    shutil.copy(TEST_DOT_BUILDINFO_FILE2_PATH, str(tmpdir.join('c/test_2.buildinfo')))
+    return specialize(FilesystemFile(dot_changes_path))
+
+@pytest.fixture
+def dot_changes4(tmpdir):
+    tmpdir.mkdir('d')
+    dot_changes_path = str(tmpdir.join('d/test_4.changes'))
+    shutil.copy(TEST_DOT_CHANGES_FILE4_PATH, dot_changes_path)
+    shutil.copy(TEST_DEB_FILE2_PATH, str(tmpdir.join('d/test_1_all.deb')))
+    shutil.copy(TEST_DOT_BUILDINFO_FILE1_PATH, str(tmpdir.join('d/test_2.buildinfo')))
     return specialize(FilesystemFile(dot_changes_path))
 
 def test_dot_changes_identification(dot_changes1):
@@ -95,6 +119,43 @@ def test_dot_changes_compare_non_existing(monkeypatch, dot_changes1):
     output_text(difference, print_func=print)
     assert difference.source2 == '/nonexisting'
     assert difference.details[-1].source2 == '/dev/null'
+
+@pytest.fixture
+def dot_changes_differences_identical_contents_and_identical_files(dot_changes1, dot_changes3):
+    difference = dot_changes1.compare(dot_changes3)
+    output_text(difference, print_func=print)
+    return difference.details
+
+@pytest.fixture
+def dot_changes_differences_identical_contents_and_different_files(dot_changes1, dot_changes4):
+    difference = dot_changes1.compare(dot_changes4)
+    output_text(difference, print_func=print)
+    return difference.details
+
+@pytest.fixture
+def dot_changes_differences_different_contents_and_identical_files(dot_changes2, dot_changes4):
+    difference = dot_changes4.compare(dot_changes2)
+    output_text(difference, print_func=print)
+    return difference.details
+
+def test_dot_changes_no_differences_exclude_buildinfo(dot_changes1, dot_changes3):
+    difference = dot_changes1.compare(dot_changes3)
+    assert difference is None
+@pytest.mark.skipif(miss_debian_module, reason='debian module is not installed')
+def test_dot_changes_identical_contents_and_different_files(dot_changes_differences_identical_contents_and_different_files):
+    assert dot_changes_differences_identical_contents_and_different_files[0]
+    expected_diff = open(data('dot_changes_identical_contents_and_different_files_expected_diff')).read()
+    assert dot_changes_differences_identical_contents_and_different_files[0].unified_diff == expected_diff
+
+@pytest.mark.skipif(miss_debian_module, reason='debian module is not installed')
+def test_dot_changes_different_contents_and_identical_files(dot_changes_differences_different_contents_and_identical_files):
+    assert dot_changes_differences_different_contents_and_identical_files[0]
+    assert dot_changes_differences_different_contents_and_identical_files[1]
+    expected_diff_contents = open(data('dot_changes_description_expected_diff')).read()
+    expected_diff_files = open(data('dot_changes_different_contents_and_identical_files_expected_diff')).read()
+    assert dot_changes_differences_different_contents_and_identical_files[0].unified_diff == expected_diff_contents
+    assert dot_changes_differences_different_contents_and_identical_files[1].unified_diff == expected_diff_files
+
 
 TEST_DOT_DSC_FILE1_PATH = data('test1.dsc')
 TEST_DOT_DSC_FILE2_PATH = data('test2.dsc')
@@ -151,8 +212,6 @@ def test_dot_dsc_compare_non_existing(monkeypatch, dot_dsc1):
     assert difference.source2 == '/nonexisting'
     assert difference.details[-1].source2 == '/dev/null'
 
-TEST_DOT_BUILDINFO_FILE1_PATH = data('test1.buildinfo')
-TEST_DOT_BUILDINFO_FILE2_PATH = data('test2.buildinfo')
 
 @pytest.fixture
 def dot_buildinfo1(tmpdir):

@@ -66,27 +66,28 @@ def create_parser():
                         help='write multi-file HTML report to given directory')
     parser.add_argument('--text', metavar='output', dest='text_output',
                         help='write plain text output to given file (use - for stdout)')
+    parser.add_argument('--no-max-limits', action='store_true', default=False,
+                        help='Disable all default limits.')
     parser.add_argument('--max-report-size', metavar='BYTES',
                         dest='max_report_size', type=int,
-                        help='maximum bytes written in report (default: %d)' %
+                        help='maximum bytes written in report (default: %d, 0 to disable)' %
                         Config.general.max_report_size,
-                        default=Config.general.max_report_size).completer=RangeCompleter(0,
+                        default=None).completer=RangeCompleter(0,
                         Config.general.max_report_size, 200000)
     parser.add_argument('--separate-file-diff-size', metavar='BYTES',
                         dest='separate_file_diff_size', type=int,
-                        help='diff size to load diff on demand, with --html-dir (default: %d)' %
-                        Config.general.separate_file_diff_size,
+                        help='diff size to load diff on demand, with --html-dir (default: %(default)s)',
                         default=Config.general.separate_file_diff_size).completer=RangeCompleter(0,
                         Config.general.separate_file_diff_size, 20000)
     parser.add_argument('--max-diff-block-lines', dest='max_diff_block_lines', type=int,
-                        help='maximum number of lines per diff block (default: %d)' %
+                        help='maximum number of lines per diff block (default: %d, 0 to disable)' %
                         Config.general.max_diff_block_lines,
-                        default=Config.general.max_diff_block_lines).completer=RangeCompleter(0,
+                        default=None).completer=RangeCompleter(0,
                         Config.general.max_diff_block_lines, 5)
     parser.add_argument('--max-diff-input-lines', dest='max_diff_input_lines', type=int,
-                        help='maximum number of lines fed to diff (default: %d)' %
+                        help='maximum number of lines fed to diff (default: %d, 0 to disable)' %
                         Config.general.max_diff_input_lines,
-                        default=Config.general.max_diff_input_lines).completer=RangeCompleter(0,
+                        default=None).completer=RangeCompleter(0,
                         Config.general.max_diff_input_lines, 5000)
     parser.add_argument('--fuzzy-threshold', dest='fuzzy_threshold', type=int,
                         help='threshold for fuzzy-matching '
@@ -161,13 +162,21 @@ class ListToolsAction(argparse.Action):
         sys.exit(0)
 
 
+def maybe_set_limit(config, parsed_args, key):
+    v = getattr(parsed_args, key)
+    if v is not None:
+        setattr(config, key, v)
+    elif parsed_args.no_max_limits:
+        setattr(config, key, 0)
+
+
 def run_diffoscope(parsed_args):
     if not tlsh and Config.general.fuzzy_threshold != parsed_args.fuzzy_threshold:
         logger.warning('Fuzzy-matching is currently disabled as the “tlsh” module is unavailable.')
-    Config.general.max_diff_block_lines = parsed_args.max_diff_block_lines
-    Config.general.max_diff_input_lines = parsed_args.max_diff_input_lines
-    Config.general.max_report_size = parsed_args.max_report_size
+    maybe_set_limit(Config.general, parsed_args, "max_report_size")
     Config.general.separate_file_diff_size = parsed_args.separate_file_diff_size
+    maybe_set_limit(Config.general, parsed_args, "max_diff_block_lines")
+    maybe_set_limit(Config.general, parsed_args, "max_diff_input_lines")
     Config.general.fuzzy_threshold = parsed_args.fuzzy_threshold
     Config.general.new_file = parsed_args.new_file
     if parsed_args.debug:

@@ -32,7 +32,8 @@ try:
         DotBuildinfoFile
     miss_debian_module = False
 except ImportError:
-    from diffoscope.comparators.debian_fallback import DotChangesFile, DotDscFile, DotBuildinfoFile
+    from diffoscope.comparators.debian_fallback import DotChangesFile, DotDscFile, \
+        DotBuildinfoFile
     miss_debian_module = True
 
 TEST_DOT_CHANGES_FILE1_PATH = data('test1.changes')

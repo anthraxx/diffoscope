@@ -33,7 +33,7 @@ logger.setLevel(logging.WARNING)
 ch = logging.StreamHandler()
 ch.setLevel(logging.DEBUG)
 logger.addHandler(ch)
-formatter = logging.Formatter('%(levelname)8s %(message)s')
+formatter = logging.Formatter('%(created)f %(levelname)8s %(message)s')
 ch.setFormatter(formatter)
 
 OS_NAMES = {

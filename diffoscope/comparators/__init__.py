@@ -153,6 +153,8 @@ def compare_commented_files(file1, file2, comment=None, source=None):
 
 def specialize(file):
     for cls in FILE_CLASSES:
+        # Uncomment the below to see which comparisons take ages to run "identify"
+        #logger.debug("testing for %s", cls)
         if isinstance(file, cls):
             logger.debug("%s is already specialized", file.name)
             return file

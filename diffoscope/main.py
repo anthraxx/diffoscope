@@ -173,6 +173,7 @@ def run_diffoscope(parsed_args):
     if parsed_args.debug:
         logger.setLevel(logging.DEBUG)
     set_locale()
+    logger.debug('Starting comparison')
     difference = diffoscope.comparators.compare_root_paths(
         parsed_args.path1, parsed_args.path2)
     if difference:

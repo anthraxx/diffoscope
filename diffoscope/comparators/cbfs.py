@@ -112,10 +112,10 @@ class CbfsFile(File):
                 logger.debug('looking for header at offset: %x', f.tell())
                 if is_header_valid(f.read(CBFS_HEADER_SIZE), size):
                     return True
-                elif not file.name.endswith('.rom'):
-                    return False
-                else:
-                    logger.debug('CBFS relative offset seems wrong, scanning whole image')
+            elif not file.name.endswith('.rom'):
+                return False
+            else:
+                logger.debug('CBFS relative offset seems wrong, scanning whole image')
             f.seek(0, io.SEEK_SET)
             offset = 0
             buf = f.read(CBFS_HEADER_SIZE)

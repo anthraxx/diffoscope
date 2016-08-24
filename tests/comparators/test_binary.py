@@ -39,6 +39,10 @@ TEST_ISO8859_PATH = data('text_iso8859')
 binary1 = load_fixture(TEST_FILE1_PATH)
 binary2 = load_fixture(TEST_FILE2_PATH)
 
+def normalize_zeros(s):
+    # older xxd had one zero less.  Make sure there are always 8.
+    return s.replace('-0000000:', '-00000000:').replace('+0000000:', '+00000000:')
+
 def test_same_content(binary1):
     assert binary1.has_same_content_as(binary1) is True
 
@@ -68,7 +72,7 @@ def test_no_differences_with_xxd(binary1):
 def test_compare_with_xxd(binary1, binary2):
     difference = binary1.compare_bytes(binary2)
     expected_diff = open(data('binary_expected_diff')).read()
-    assert difference.unified_diff == expected_diff
+    assert normalize_zeros(difference.unified_diff) == expected_diff
 
 def test_compare_non_existing_with_xxd(binary1):
     difference = binary1.compare_bytes(NonExistingFile('/nonexisting', binary1))
@@ -105,7 +109,7 @@ def test_with_compare_details_and_fallback():
     difference = MockFile(TEST_FILE1_PATH).compare(MockFile(TEST_FILE2_PATH))
     expected_diff = open(data('binary_expected_diff')).read()
     assert 'yet data differs' in difference.comment
-    assert difference.unified_diff == expected_diff
+    assert normalize_zeros(difference.unified_diff) == expected_diff
 
 def test_with_compare_details_and_no_actual_differences():
     class MockFile(FilesystemFile):
@@ -125,7 +129,7 @@ def test_with_compare_details_and_failed_process():
     expected_diff = open(data('../data/binary_expected_diff')).read()
     assert output in difference.comment
     assert '42' in difference.comment
-    assert difference.unified_diff == expected_diff
+    assert normalize_zeros(difference.unified_diff) == expected_diff
 
 @skip_unless_tools_exist('xxd')
 def test_with_compare_details_and_tool_not_found(monkeypatch):
@@ -138,7 +142,7 @@ def test_with_compare_details_and_tool_not_found(monkeypatch):
     expected_diff = open(data('binary_expected_diff')).read()
     assert 'nonexistent' in difference.comment
     assert 'some-package' in difference.comment
-    assert difference.unified_diff == expected_diff
+    assert normalize_zeros(difference.unified_diff) == expected_diff
 
 def test_compare_two_nonexisting_files():
     file1 = NonExistingFile('/nonexisting1')

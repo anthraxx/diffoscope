@@ -27,10 +27,11 @@ class classproperty(property):
 
 class Config(object):
     def __init__(self):
-        self._max_diff_block_lines = 50
+        self._max_diff_block_lines = 1024
+        self._max_diff_block_lines_parent = 50
         self._max_diff_input_lines = 2 ** 20 # GNU diff cannot process arbitrary large files :(
         self._max_report_size = 2000 * 2 ** 10 # 2000 kB
-        self._separate_file_diff_size = 200 * 2 ** 10 # 200kB
+        self._max_report_child_size = 500 * 2 ** 10
         self._fuzzy_threshold = 60
         self._new_file = False
 
@@ -40,6 +41,11 @@ class Config(object):
             cls._general_config = Config()
         return cls._general_config
 
+    def _check_constraints(self):
+        if self._max_diff_block_lines < self._max_diff_block_lines_parent:
+            raise ValueError("max_diff_block_lines (%s) cannot be smaller than max_diff_block_lines_parent (%s)" %
+                (self._max_diff_block_lines, self._max_diff_block_lines_parent))
+
     @property
     def max_diff_block_lines(self):
         return self._max_diff_block_lines
@@ -47,6 +53,16 @@ class Config(object):
     @max_diff_block_lines.setter
     def max_diff_block_lines(self, value):
         self._max_diff_block_lines = value
+        self._check_constraints()
+
+    @property
+    def max_diff_block_lines_parent(self):
+        return self._max_diff_block_lines_parent
+
+    @max_diff_block_lines_parent.setter
+    def max_diff_block_lines_parent(self, value):
+        self._max_diff_block_lines_parent = value
+        self._check_constraints()
 
     @property
     def max_diff_input_lines(self):
@@ -65,12 +81,12 @@ class Config(object):
         self._max_report_size = value
 
     @property
-    def separate_file_diff_size(self):
-        return self._separate_file_diff_size
+    def max_report_child_size(self):
+        return self._max_report_child_size
 
-    @separate_file_diff_size.setter
-    def separate_file_diff_size(self, value):
-        self._separate_file_diff_size = value
+    @max_report_child_size.setter
+    def max_report_child_size(self, value):
+        self._max_report_child_size = value
 
     @property
     def fuzzy_threshold(self):

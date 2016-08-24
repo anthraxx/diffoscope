@@ -147,8 +147,14 @@ HEADER = """<!DOCTYPE html>
     .diffheader:hover .anchor {
       display: inline;
     }
-    .ondemand {
+    table.diff tr.ondemand td {
+      background: #f99;
       text-align: center;
+      padding: 0.5em 0;
+    }
+    table.diff tr.ondemand:hover td {
+      background: #faa;
+      cursor: pointer;
     }
   </style>
   %(css_link)s
@@ -166,21 +172,45 @@ SCRIPTS = """
 <script src="%(jquery_url)s"></script>
 <script type="text/javascript">
 $(function() {
-  $("div.ondemand a").on('click', function (){
-    var filename = $(this).attr('href');
-    var div = $(this).parent();
-    div.text('... loading ...');
-    div.load(filename + " table", function() {
+  var load_cont = function() {
+    var a = $(this).find("a");
+    var textparts = /^(.*)\((\d+) pieces?(.*)\)$/.exec(a.text());
+    var numleft = Number.parseInt(textparts[2]) - 1;
+    var noun = numleft == 1 ? "piece" : "pieces";
+    var newtext = textparts[1] + "(" + numleft + " " + noun + textparts[3] + ")";
+    var filename = a.attr('href');
+    var td = a.parent();
+    td.text('... loading ...');
+    td.parent().load(filename + " tr", function() {
         // http://stackoverflow.com/a/8452751/946226
-        $(this).children(':first').unwrap();
+        var elems = $(this).children(':first').unwrap();
+        // set this behaviour for the next link too
+        var td = elems.parent().find(".ondemand td");
+        td.find("a").text(newtext);
+        td.on('click', load_cont);
     });
     return false;
-  });
+  };
+  $(".ondemand td").on('click', load_cont);
 });
 </script>
 """
 
+UD_TABLE_HEADER = u"""<table class="diff">
+<colgroup><col style="width: 3em;"/><col style="99%"/>
+<col style="width: 3em;"/><col style="99%"/></colgroup>
+"""
+
+UD_TABLE_FOOTER = u"""<tr class="ondemand"><td colspan="4">
+... <a href="%(filename)s">%(text)s</a> ...
+</td></tr>
+</table>
+"""
+
 class PrintLimitReached(Exception):
+    pass
+
+class DiffBlockLimitReached(Exception):
     pass
 
 
@@ -195,10 +225,24 @@ def create_limited_print_func(print_func, max_page_size):
     return limited_print_func
 
 
-buf = []
-add_cpt, del_cpt = 0, 0
+buf, add_cpt, del_cpt = [], 0, 0
 line1, line2, has_internal_linenos = 0, 0, True
 hunk_off1, hunk_size1, hunk_off2, hunk_size2 = 0, 0, 0, 0
+spl_rows, spl_current_page = 0, 0
+spl_print_func, spl_print_ctrl = None, None
+
+
+def new_unified_diff():
+    global buf, add_cpt, del_cpt
+    global line1, line2, has_internal_linenos
+    global hunk_off1, hunk_size1, hunk_off2, hunk_size2
+    global spl_rows, spl_current_page
+    global spl_print_func, spl_print_ctrl
+    buf, add_cpt, del_cpt = [], 0, 0
+    line1, line2, has_internal_linenos = 0, 0, True
+    hunk_off1, hunk_size1, hunk_off2, hunk_size2 = 0, 0, 0, 0
+    spl_rows, spl_current_page = 0, 0
+    spl_print_func, spl_print_ctrl = None, None
 
 
 def sane(x):
@@ -315,12 +359,13 @@ def convert(s, ponct=0, tag=''):
     return t.getvalue()
 
 
-def output_hunk(print_func):
-    print_func(u'<tr class="diffhunk"><td colspan="2">Offset %d, %d lines modified</td>'%(hunk_off1, hunk_size1))
-    print_func(u'<td colspan="2">Offset %d, %d lines modified</td></tr>\n'%(hunk_off2, hunk_size2))
+def output_hunk():
+    spl_print_func(u'<tr class="diffhunk"><td colspan="2">Offset %d, %d lines modified</td>'%(hunk_off1, hunk_size1))
+    spl_print_func(u'<td colspan="2">Offset %d, %d lines modified</td></tr>\n'%(hunk_off2, hunk_size2))
+    row_was_output()
 
 
-def output_line(print_func, s1, s2):
+def output_line(s1, s2):
     global line1, line2, has_internal_linenos
 
     orig1 = s1
@@ -345,31 +390,32 @@ def output_line(print_func, s1, s2):
         type_name = "changed"
         s1, s2 = linediff(s1, s2)
 
-    print_func(u'<tr class="diff%s">' % type_name)
+    spl_print_func(u'<tr class="diff%s">' % type_name)
     try:
         if s1:
             if has_internal_linenos:
-                print_func(u'<td colspan="2" class="diffpresent">')
+                spl_print_func(u'<td colspan="2" class="diffpresent">')
             else:
-                print_func(u'<td class="diffline">%d </td>' % line1)
-                print_func(u'<td class="diffpresent">')
-            print_func(convert(s1, ponct=1, tag='del'))
-            print_func(u'</td>')
+                spl_print_func(u'<td class="diffline">%d </td>' % line1)
+                spl_print_func(u'<td class="diffpresent">')
+            spl_print_func(convert(s1, ponct=1, tag='del'))
+            spl_print_func(u'</td>')
         else:
-            print_func(u'<td colspan="2">\xa0</td>')
+            spl_print_func(u'<td colspan="2">\xa0</td>')
 
         if s2:
             if has_internal_linenos:
-                print_func(u'<td colspan="2" class="diffpresent">')
+                spl_print_func(u'<td colspan="2" class="diffpresent">')
             else:
-                print_func(u'<td class="diffline">%d </td>' % line2)
-                print_func(u'<td class="diffpresent">')
-            print_func(convert(s2, ponct=1, tag='ins'))
-            print_func(u'</td>')
+                spl_print_func(u'<td class="diffline">%d </td>' % line2)
+                spl_print_func(u'<td class="diffpresent">')
+            spl_print_func(convert(s2, ponct=1, tag='ins'))
+            spl_print_func(u'</td>')
         else:
-            print_func(u'<td colspan="2">\xa0</td>')
+            spl_print_func(u'<td colspan="2">\xa0</td>')
     finally:
-        print_func(u"</tr>\n", force=True)
+        spl_print_func(u"</tr>\n", force=True)
+        row_was_output()
 
     m = orig1 and re.match(r"^\[ (\d+) lines removed \]$", orig1)
     if m:
@@ -383,14 +429,14 @@ def output_line(print_func, s1, s2):
         line2 += 1
 
 
-def empty_buffer(print_func):
+def empty_buffer():
     global buf
     global add_cpt
     global del_cpt
 
     if del_cpt == 0 or add_cpt == 0:
         for l in buf:
-            output_line(print_func, l[0], l[1])
+            output_line(l[0], l[1])
 
     elif del_cpt != 0 and add_cpt != 0:
         l0, l1 = [], []
@@ -406,45 +452,116 @@ def empty_buffer(print_func):
                 s0 = l0[i]
             if i < len(l1):
                 s1 = l1[i]
-            output_line(print_func, s0, s1)
+            output_line(s0, s1)
 
     add_cpt, del_cpt = 0, 0
     buf = []
 
 
-def output_unified_diff_table(print_func, unified_diff, _has_internal_linenos):
+def spl_print_enter(print_context, rotation_params):
+    # Takes ownership of print_context
+    global spl_print_func, spl_print_ctrl
+    spl_print_ctrl = print_context.__exit__, rotation_params
+    spl_print_func = print_context.__enter__()
+    _, _, css_url = rotation_params
+    # Print file and table headers
+    output_header(css_url, spl_print_func)
+
+def spl_had_entered_child():
+    global spl_print_ctrl, spl_current_page
+    return spl_print_ctrl and spl_print_ctrl[1] and spl_current_page > 0
+
+def spl_print_exit(*exc_info):
+    global spl_print_func, spl_print_ctrl
+    if not spl_had_entered_child(): return False
+    output_footer(spl_print_func)
+    _exit, _ = spl_print_ctrl
+    spl_print_func, spl_print_ctrl = None, None
+    return _exit(*exc_info)
+
+@contextlib.contextmanager
+def spl_file_printer(directory, filename):
+    with codecs.open(os.path.join(directory,filename), 'w', encoding='utf-8') as f:
+        print_func = f.write
+        def recording_print_func(s, force=False):
+            print_func(s)
+            recording_print_func.bytes_written += len(s)
+        recording_print_func.bytes_written = 0
+        yield recording_print_func
+
+def row_was_output():
+    global spl_print_func, spl_print_ctrl, spl_rows, spl_current_page
+    spl_rows += 1
+    _, rotation_params = spl_print_ctrl
+    max_lines = Config.general.max_diff_block_lines
+    max_lines_parent = Config.general.max_diff_block_lines_parent
+    max_report_child_size = Config.general.max_report_child_size
+    if not rotation_params:
+        # html-dir single output, don't need to rotate
+        if spl_rows >= max_lines:
+            raise DiffBlockLimitReached()
+        return
+    else:
+        # html-dir output, perhaps need to rotate
+        directory, mainname, css_url = rotation_params
+        if spl_rows >= max_lines:
+            raise DiffBlockLimitReached()
+
+        if spl_current_page == 0: # on parent page
+            if spl_rows < max_lines_parent:
+                return
+        else: # on child page
+            # TODO: make this stay below the max, instead of going 1 row over the max
+            # will require some backtracking...
+            if spl_print_func.bytes_written < max_report_child_size:
+                return
+
+    spl_current_page += 1
+    filename = "%s-%s.html" % (mainname, spl_current_page)
+
+    if spl_current_page > 1:
+        # previous page was a child, close it
+        spl_print_func(UD_TABLE_FOOTER % {"filename": html.escape(filename), "text": "load diff"}, force=True)
+        spl_print_exit(None, None, None)
+
+    # rotate to the next child page
+    context = spl_file_printer(directory, filename)
+    spl_print_enter(context, rotation_params)
+    spl_print_func(UD_TABLE_HEADER)
+
+
+def output_unified_diff_table(unified_diff, _has_internal_linenos):
     global add_cpt, del_cpt
     global line1, line2, has_internal_linenos
     global hunk_off1, hunk_size1, hunk_off2, hunk_size2
 
     has_internal_linenos = _has_internal_linenos
-    print_func(u'<table class="diff">\n')
+    spl_print_func(UD_TABLE_HEADER)
     try:
-        print_func(u'<colgroup><col style="width: 3em;"/><col style="99%"/>\n')
-        print_func(u'<col style="width: 3em;"/><col style="99%"/></colgroup>\n')
-
+        bytes_processed = 0
         for l in unified_diff.splitlines():
+            bytes_processed += len(l) + 1
             m = re.match(r'^--- ([^\s]*)', l)
             if m:
-                empty_buffer(print_func)
+                empty_buffer()
                 continue
             m = re.match(r'^\+\+\+ ([^\s]*)', l)
             if m:
-                empty_buffer(print_func)
+                empty_buffer()
                 continue
 
             m = re.match(r"@@ -(\d+),?(\d*) \+(\d+),?(\d*)", l)
             if m:
-                empty_buffer(print_func)
+                empty_buffer()
                 hunk_data = map(lambda x:x=="" and 1 or int(x), m.groups())
                 hunk_off1, hunk_size1, hunk_off2, hunk_size2 = hunk_data
                 line1, line2 = hunk_off1, hunk_off2
-                output_hunk(print_func)
+                output_hunk()
                 continue
 
             if re.match(r'^\[', l):
-                empty_buffer(print_func)
-                print_func(u'<td colspan="2">%s</td>\n' % l)
+                empty_buffer()
+                spl_print_func(u'<td colspan="2">%s</td>\n' % l)
 
             if re.match(r"^\\ No newline", l):
                 if hunk_size2 == 0:
@@ -454,7 +571,7 @@ def output_unified_diff_table(print_func, unified_diff, _has_internal_linenos):
                 continue
 
             if hunk_size1 <= 0 and hunk_size2 <= 0:
-                empty_buffer(print_func)
+                empty_buffer()
                 continue
 
             m = re.match(r"^\+\[ (\d+) lines removed \]$", l)
@@ -484,34 +601,57 @@ def output_unified_diff_table(print_func, unified_diff, _has_internal_linenos):
                 continue
 
             if re.match(r"^ ", l) and hunk_size1 and hunk_size2:
-                empty_buffer(print_func)
+                empty_buffer()
                 hunk_size1 -= 1
                 hunk_size2 -= 1
                 buf.append((l[1:], l[1:]))
                 continue
 
-            empty_buffer(print_func)
+            empty_buffer()
 
-        empty_buffer(print_func)
+        empty_buffer()
+        return True
+    except DiffBlockLimitReached:
+        total = len(unified_diff)
+        bytes_left = total - bytes_processed
+        frac = bytes_left / total
+        spl_print_func(
+            u"<tr class='error'>"
+            u"<td colspan='4'>Max diff block lines reached; %s/%s bytes (%.2f%%) of diff not shown."
+            u"</td></tr>" % (bytes_left, total, frac*100), force=True)
+        return False
+    except PrintLimitReached:
+        assert not spl_had_entered_child() # limit reached on the parent page
+        spl_print_func(u"<tr class='error'><td colspan='4'>Max output size reached.</td></tr>", force=True)
+        raise
     finally:
-        print_func(u"</table>", force=True)
+        spl_print_func(u"</table>", force=True)
+
 
 def output_unified_diff(print_func, css_url, directory, unified_diff, has_internal_linenos):
-    if directory and len(unified_diff) > Config.general.separate_file_diff_size:
-        # open a new file for this table
-        filename="%s.html" % hashlib.md5(unified_diff.encode('utf-8')).hexdigest()
-        logger.debug('separate html output for diff of size %d', len(unified_diff))
-        with file_printer(directory, filename) as new_print_func:
-            output_header(css_url, new_print_func)
-            output_unified_diff_table(new_print_func, unified_diff, has_internal_linenos)
-            output_footer(new_print_func)
-
-        print_func("<div class='ondemand'>\n")
-        print_func("... <a href='%s'>load diff</a> ...\n" % html.escape(filename))
-        print_func("</div>\n")
-
+    global spl_print_func, spl_print_ctrl, spl_current_page
+    new_unified_diff()
+    rotation_params = None
+    if directory:
+        mainname = hashlib.md5(unified_diff.encode('utf-8')).hexdigest()
+        rotation_params = directory, mainname, css_url
+    try:
+        spl_print_func = print_func
+        spl_print_ctrl = None, rotation_params
+        truncated = not output_unified_diff_table(unified_diff, has_internal_linenos)
+    except:
+        if not spl_print_exit(*sys.exc_info()): raise
     else:
-        output_unified_diff_table(print_func, unified_diff, has_internal_linenos)
+        spl_print_exit(None, None, None)
+    finally:
+        spl_print_ctrl = None
+        spl_print_func = None
+
+    if spl_current_page > 0:
+        noun = "pieces" if spl_current_page > 1 else "piece"
+        text = "load diff (%s %s%s)" % (spl_current_page, noun, (", truncated" if truncated else ""))
+        print_func(UD_TABLE_FOOTER % {"filename": html.escape("%s-1.html" % mainname), "text": text}, force=True)
+
 
 def output_difference(difference, print_func, css_url, directory, parents):
     logger.debug('html output for %s', difference.source1)
@@ -578,9 +718,7 @@ def output_html(difference, css_url=None, print_func=None):
 @contextlib.contextmanager
 def file_printer(directory, filename):
     with codecs.open(os.path.join(directory,filename), 'w', encoding='utf-8') as f:
-        print_func = f.write
-        print_func = create_limited_print_func(print_func, Config.general.max_report_size)
-        yield print_func
+        yield f.write
 
 JQUERY_SYSTEM_LOCATIONS = ['/usr/share/javascript/jquery/jquery.js']
 

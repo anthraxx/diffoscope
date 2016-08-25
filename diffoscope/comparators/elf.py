@@ -356,8 +356,8 @@ class ElfContainer(Container):
                 logger.debug('adding section %s (%s) as %s', name, type, elf_class)
         except Exception as e:
             command = ' '.join(cmd)
-            logger.debug('OutputParsingError in %s from `%s` output - %s:%s'
-                    % (self.__class__.__name__, command, e.__class__.__name__, e))
+            logger.debug('OutputParsingError in %s from `%s` output - %s:%s',
+                    self.__class__.__name__, command, e.__class__.__name__, e)
             raise OutputParsingError(command, self)
         if not has_debug_symbols:
             self._install_debug_symbols()

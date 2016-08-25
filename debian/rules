@@ -9,7 +9,7 @@ ifneq ($(VERSION_dch),$(VERSION_py))
 endif
 
 export PYBUILD_DESTDIR = debian/diffoscope
-export PYBUILD_TEST_ARGS = -v -r sxX --cov=diffoscope --cov-report=term-missing --cov-report=html
+export PYBUILD_TEST_ARGS = -vv -r sxX --cov=diffoscope --cov-report=term-missing --cov-report=html
 export PYBUILD_AFTER_INSTALL=rm -rvf '{destdir}/{install_dir}/htmlcov' '{destdir}/{install_dir}/.coverage'
 
 %:

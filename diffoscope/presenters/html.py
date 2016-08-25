@@ -34,8 +34,8 @@
 import io
 import os
 import re
-import cgi
 import sys
+import html
 import codecs
 import hashlib
 import contextlib
@@ -304,7 +304,7 @@ def convert(s, ponct=0, tag=''):
             t.write('<em>%s</em>' % conv)
             i += len(conv)
         else:
-            t.write(cgi.escape(c))
+            t.write(html.escape(c))
             i += 1
 
         if WORDBREAK.count(c) == 1:

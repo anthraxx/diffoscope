@@ -273,7 +273,7 @@ def diff(feeder1, feeder2):
 
 
 class Difference(object):
-    def __init__(self, unified_diff, path1, path2, source=None, comment=None):
+    def __init__(self, unified_diff, path1, path2, source=None, comment=None, has_internal_linenos=False):
         self._comments = []
         if comment:
             if type(comment) is list:
@@ -297,18 +297,20 @@ class Difference(object):
             raise TypeError("path1/source[0] is not a string")
         if not isinstance(self._source2, str):
             raise TypeError("path2/source[1] is not a string")
+        # Whether the unified_diff already contains line numbers inside itself
+        self._has_internal_linenos = has_internal_linenos
         self._details = []
 
     def __repr__(self):
         return '<Difference %s -- %s %s>' % (self._source1, self._source2, self._details)
 
     @staticmethod
-    def from_feeder(feeder1, feeder2, path1, path2, source=None, comment=None):
+    def from_feeder(feeder1, feeder2, path1, path2, source=None, comment=None, **kwargs):
         try:
             unified_diff = diff(feeder1, feeder2)
             if not unified_diff:
                 return None
-            return Difference(unified_diff, path1, path2, source, comment)
+            return Difference(unified_diff, path1, path2, source, comment, **kwargs)
         except RequiredToolNotFound:
             difference = Difference(None, path1, path2, source)
             difference.add_comment('diff is not available!')
@@ -389,6 +391,10 @@ class Difference(object):
     @property
     def unified_diff(self):
         return self._unified_diff
+
+    @property
+    def has_internal_linenos(self):
+        return self._has_internal_linenos
 
     @property
     def details(self):

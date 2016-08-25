@@ -197,7 +197,7 @@ def create_limited_print_func(print_func, max_page_size):
 
 buf = []
 add_cpt, del_cpt = 0, 0
-line1, line2 = 0, 0
+line1, line2, has_internal_linenos = 0, 0, True
 hunk_off1, hunk_size1, hunk_off2, hunk_size2 = 0, 0, 0, 0
 
 
@@ -321,8 +321,7 @@ def output_hunk(print_func):
 
 
 def output_line(print_func, s1, s2):
-    global line1
-    global line2
+    global line1, line2, has_internal_linenos
 
     orig1 = s1
     orig2 = s2
@@ -349,16 +348,22 @@ def output_line(print_func, s1, s2):
     print_func(u'<tr class="diff%s">' % type_name)
     try:
         if s1:
-            print_func(u'<td class="diffline">%d </td>' % line1)
-            print_func(u'<td class="diffpresent">')
+            if has_internal_linenos:
+                print_func(u'<td colspan="2" class="diffpresent">')
+            else:
+                print_func(u'<td class="diffline">%d </td>' % line1)
+                print_func(u'<td class="diffpresent">')
             print_func(convert(s1, ponct=1, tag='del'))
             print_func(u'</td>')
         else:
             print_func(u'<td colspan="2">\xa0</td>')
 
         if s2:
-            print_func(u'<td class="diffline">%d </td>' % line2)
-            print_func(u'<td class="diffpresent">')
+            if has_internal_linenos:
+                print_func(u'<td colspan="2" class="diffpresent">')
+            else:
+                print_func(u'<td class="diffline">%d </td>' % line2)
+                print_func(u'<td class="diffpresent">')
             print_func(convert(s2, ponct=1, tag='ins'))
             print_func(u'</td>')
         else:
@@ -407,11 +412,12 @@ def empty_buffer(print_func):
     buf = []
 
 
-def output_unified_diff_table(print_func, unified_diff):
+def output_unified_diff_table(print_func, unified_diff, _has_internal_linenos):
     global add_cpt, del_cpt
-    global line1, line2
+    global line1, line2, has_internal_linenos
     global hunk_off1, hunk_size1, hunk_off2, hunk_size2
 
+    has_internal_linenos = _has_internal_linenos
     print_func(u'<table class="diff">\n')
     try:
         print_func(u'<colgroup><col style="width: 3em;"/><col style="99%"/>\n')
@@ -490,14 +496,14 @@ def output_unified_diff_table(print_func, unified_diff):
     finally:
         print_func(u"</table>", force=True)
 
-def output_unified_diff(print_func, css_url, directory, unified_diff):
+def output_unified_diff(print_func, css_url, directory, unified_diff, has_internal_linenos):
     if directory and len(unified_diff) > Config.general.separate_file_diff_size:
         # open a new file for this table
         filename="%s.html" % hashlib.md5(unified_diff.encode('utf-8')).hexdigest()
         logger.debug('separate html output for diff of size %d', len(unified_diff))
         with file_printer(directory, filename) as new_print_func:
             output_header(css_url, new_print_func)
-            output_unified_diff_table(new_print_func, unified_diff)
+            output_unified_diff_table(new_print_func, unified_diff, has_internal_linenos)
             output_footer(new_print_func)
 
         print_func("<div class='ondemand'>\n")
@@ -505,7 +511,7 @@ def output_unified_diff(print_func, css_url, directory, unified_diff):
         print_func("</div>\n")
 
     else:
-        output_unified_diff_table(print_func, unified_diff)
+        output_unified_diff_table(print_func, unified_diff, has_internal_linenos)
 
 def output_difference(difference, print_func, css_url, directory, parents):
     logger.debug('html output for %s', difference.source1)
@@ -529,7 +535,7 @@ def output_difference(difference, print_func, css_url, directory, parents):
                        % u'<br />'.join(map(html.escape, difference.comments)))
         print_func(u"</div>")
         if difference.unified_diff:
-            output_unified_diff(print_func, css_url, directory, difference.unified_diff)
+            output_unified_diff(print_func, css_url, directory, difference.unified_diff, difference.has_internal_linenos)
         for detail in difference.details:
             output_difference(detail, print_func, css_url, directory, sources)
     except PrintLimitReached:

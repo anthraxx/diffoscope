@@ -40,8 +40,6 @@ import codecs
 import hashlib
 import contextlib
 
-from xml.sax.saxutils import escape
-
 from diffoscope import logger, VERSION
 from diffoscope.config import Config
 from diffoscope.presenters.icon import FAVICON_BASE64
@@ -503,7 +501,7 @@ def output_unified_diff(print_func, css_url, directory, unified_diff):
             output_footer(new_print_func)
 
         print_func("<div class='ondemand'>\n")
-        print_func("... <a href='%s'>load diff</a> ...\n" % escape(filename))
+        print_func("... <a href='%s'>load diff</a> ...\n" % html.escape(filename))
         print_func("</div>\n")
 
     else:
@@ -517,18 +515,18 @@ def output_difference(difference, print_func, css_url, directory, parents):
         print_func(u"<div class='diffheader'>")
         if difference.source1 == difference.source2:
             print_func(u"<div><span class='source'>%s<span>"
-                       % escape(difference.source1))
+                       % html.escape(difference.source1))
         else:
             print_func(u"<div><span class='source'>%s</span> vs.</div>"
-                       % escape(difference.source1))
+                       % html.escape(difference.source1))
             print_func(u"<div><span class='source'>%s</span>"
-                       % escape(difference.source2))
+                       % html.escape(difference.source2))
         anchor = '/'.join(sources[1:])
         print_func(u" <a class='anchor' href='#%s' name='%s'>\xb6</a>" % (anchor, anchor))
         print_func(u"</div>")
         if difference.comments:
             print_func(u"<div class='comment'>%s</div>"
-                       % u'<br />'.join(map(escape, difference.comments)))
+                       % u'<br />'.join(map(html.escape, difference.comments)))
         print_func(u"</div>")
         if difference.unified_diff:
             output_unified_diff(print_func, css_url, directory, difference.unified_diff)
@@ -546,7 +544,7 @@ def output_header(css_url, print_func):
         css_link = '<link href="%s" type="text/css" rel="stylesheet" />' % css_url
     else:
         css_link = ''
-    print_func(HEADER % {'title': escape(' '.join(sys.argv)),
+    print_func(HEADER % {'title': html.escape(' '.join(sys.argv)),
                          'favicon': FAVICON_BASE64,
                          'css_link': css_link,
                         })
@@ -620,5 +618,5 @@ def output_html_directory(directory, difference, css_url=None, jquery_url=None):
             print_func(u"<div class='error'>Max output size reached.</div>",
                        force=True)
         if jquery_url:
-            print_func(SCRIPTS % {'jquery_url': escape(jquery_url)}, force=True)
+            print_func(SCRIPTS % {'jquery_url': html.escape(jquery_url)}, force=True)
         output_footer(print_func)

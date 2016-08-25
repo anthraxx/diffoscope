@@ -69,7 +69,7 @@ class RequiredToolNotFound(Exception):
             'FreeBSD': 'cdrtools',
         },
         'javap': {
-            'debian': 'default-jdk-headless | java-sdk',
+            'debian': 'default-jdk-headless | default-jdk | java-sdk',
             'arch': 'java-environment',
         },
         'llvm-bcanalyzer': {

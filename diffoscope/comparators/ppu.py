@@ -64,25 +64,25 @@ class PpuFile(File):
             if magic != b"PPU":
                 return False
             ppu_version = f.read(3).decode('ascii', errors='ignore')
-            if not hasattr(PpuFile, 'ppu_version'):
+        if not hasattr(PpuFile, 'ppu_version'):
+            try:
+                subprocess.check_output(['ppudump', file.path], shell=False, stderr=subprocess.STDOUT)
+                PpuFile.ppu_version = ppu_version
+            except subprocess.CalledProcessError as e:
+                error = e.output.decode('utf-8', errors='ignore')
+                m = re.search('Expecting PPU version ([0-9]+)', error)
                 try:
-                    subprocess.check_output(['ppudump', file.path], shell=False, stderr=subprocess.STDOUT)
-                    PpuFile.ppu_version = ppu_version
-                except subprocess.CalledProcessError as e:
-                    error = e.output.decode('utf-8', errors='ignore')
-                    m = re.search('Expecting PPU version ([0-9]+)', error)
-                    try:
-                        PpuFile.ppu_version = m.group(1)
-                    except AttributeError:
-                        if m is None:
-                            PpuFile.ppu_version = None
-                            logger.debug('Unable to read PPU version')
-                        else:
-                            raise
-                except OSError:
-                    PpuFile.ppu_version = None
-                    logger.debug('Unable to read PPU version')
-            return PpuFile.ppu_version == ppu_version
+                    PpuFile.ppu_version = m.group(1)
+                except AttributeError:
+                    if m is None:
+                        PpuFile.ppu_version = None
+                        logger.debug('Unable to read PPU version')
+                    else:
+                        raise
+            except OSError:
+                PpuFile.ppu_version = None
+                logger.debug('Unable to read PPU version')
+        return PpuFile.ppu_version == ppu_version
 
     def compare_details(self, other, source=None):
         return [Difference.from_command(Ppudump, self.path, other.path)]

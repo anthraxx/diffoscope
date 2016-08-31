@@ -11,18 +11,21 @@ echo "a" > $ADTTMP/a
 echo "a" > $ADTTMP/a_
 echo "b" > $ADTTMP/b
 
+echo "Testing identical files..."
 diffoscope $ADTTMP/a $ADTTMP/a_
 if [ $? -ne 0 ]; then
 	echo "Exit code was different from 0 when comparing files with identical content." >&2
 	exit 1
 fi
 
+echo "Testing different files..."
 diffoscope $ADTTMP/a $ADTTMP/b
 if [ $? -ne 1 ]; then
 	echo "Exit code was different from 1 when comparing files with different content." >&2
 	exit 1
 fi
 
+echo "Testing invalid command line flag..."
 diffoscope --thisflagdoesntexistandwontexist
 if [ $? -ne 2 ]; then
 	echo "Exit code was different from 2 when passing a non-existent flag." >&2

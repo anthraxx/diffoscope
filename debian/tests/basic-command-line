@@ -3,8 +3,8 @@
 # not set -e: we are testing exit codes
 
 if ! [ -d "$ADTTMP" ]; then
-	echo "ADTTMP not set." >&2
-	exit 1
+	ADTTMP=`mktemp -d`
+	TEMP=true
 fi
 
 echo "a" > $ADTTMP/a
@@ -21,4 +21,8 @@ diffoscope $ADTTMP/a $ADTTMP/b
 if [ $? -ne 1 ]; then
 	echo "Exit code was different from 1 when comparing files with different content." >&2
 	exit 1
+fi
+
+if [ -n "${TEMP:-}" ]; then
+	rm -rf "$ADTTMP"
 fi

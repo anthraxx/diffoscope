@@ -8,8 +8,10 @@ ifneq ($(VERSION_dch),$(VERSION_py))
  $(error "Version in debian/changelog doesn't match diffoscope version")
 endif
 
+export PATH := $(PATH):$(CURDIR)/bin
 export PYBUILD_DESTDIR = debian/diffoscope
 export PYBUILD_TEST_ARGS = -vv -r sxX --cov=diffoscope --cov-report=term-missing --cov-report=html
+export PYBUILD_AFTER_TEST = debian/tests/basic-command-line
 export PYBUILD_AFTER_INSTALL=rm -rvf '{destdir}/{install_dir}/htmlcov' '{destdir}/{install_dir}/.coverage'
 
 %:

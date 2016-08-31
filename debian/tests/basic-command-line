@@ -32,3 +32,5 @@ fi
 if [ -n "${TEMP:-}" ]; then
 	rm -rf "$ADTTMP"
 fi
+
+echo "All good!"

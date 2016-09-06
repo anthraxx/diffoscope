@@ -28,7 +28,7 @@ class classproperty(property):
 class Config(object):
     def __init__(self):
         self._max_diff_block_lines = 50
-        self._max_diff_input_lines = 100000 # GNU diff cannot process arbitrary large files :(
+        self._max_diff_input_lines = 2 ** 20 # GNU diff cannot process arbitrary large files :(
         self._max_report_size = 2000 * 2 ** 10 # 2000 kB
         self._separate_file_diff_size = 200 * 2 ** 10 # 200kB
         self._fuzzy_threshold = 60

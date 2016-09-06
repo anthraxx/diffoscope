@@ -20,7 +20,6 @@
 
 import pytest
 
-from diffoscope.comparators import FilesystemFile
 from diffoscope.comparators.ppu import PpuFile
 
 from utils import skip_unless_tools_exist, data, load_fixture, \
@@ -37,11 +36,6 @@ file2 = load_fixture(data('test2.ppu'))
 
 @skip_unless_tools_exist('ppudump')
 def test_identification(file1):
-    # If the recognition had failed due to mismatching ppu version it'll be a
-    # FilesystemFile.
-    if isinstance(file1, FilesystemFile):
-        pytest.xfail(reason="mismatch between system ppu and fixture")
-
     assert isinstance(file1, PpuFile)
 
 def test_no_differences(file1):

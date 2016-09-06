@@ -107,8 +107,12 @@ class DiffParser(object):
         else:
             raise ValueError('Unable to parse diff hunk: %s' % repr(line))
         self._diff.write(line)
-        if line[0] in ('-', '+') and line[0] == self._direction:
-            self._block_len += 1
+        if line[0] in ('-', '+'):
+            if line[0] == self._direction:
+                self._block_len += 1
+            else:
+                self._block_len = 1
+                self._direction = line[0]
             max_lines = Config.general.max_diff_block_lines
             if self._block_len >= max_lines:
                 return self.skip_block
@@ -119,7 +123,9 @@ class DiffParser(object):
 
     def skip_block(self, line):
         if self._remaining_hunk_lines == 0 or line[0] != self._direction:
-            self._diff.write('%s[ %d lines removed ]\n' % (self._direction, self._block_len - Config.general.max_diff_block_lines))
+            removed = self._block_len - Config.general.max_diff_block_lines
+            if removed:
+                self._diff.write('%s[ %d lines removed ]\n' % (self._direction, removed))
             return self.read_hunk(line)
         self._block_len += 1
         self._remaining_hunk_lines -= 1

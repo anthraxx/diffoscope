@@ -27,7 +27,6 @@ class classproperty(property):
 
 class Config(object):
     def __init__(self):
-        # 0 to disable max
         self._max_diff_block_lines = 50
         self._max_diff_input_lines = 100000 # GNU diff cannot process arbitrary large files :(
         self._max_report_size = 2000 * 2 ** 10 # 2000 kB

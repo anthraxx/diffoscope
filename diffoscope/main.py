@@ -165,9 +165,9 @@ class ListToolsAction(argparse.Action):
 def maybe_set_limit(config, parsed_args, key):
     v = getattr(parsed_args, key)
     if v is not None:
-        setattr(config, key, v)
+        setattr(config, key, float("inf") if v == 0 else v)
     elif parsed_args.no_max_limits:
-        setattr(config, key, 0)
+        setattr(config, key, float("inf"))
 
 
 def run_diffoscope(parsed_args):

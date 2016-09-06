@@ -190,7 +190,7 @@ def create_limited_print_func(print_func, max_page_size):
             limited_print_func.char_count = 0
         print_func(s)
         limited_print_func.char_count += len(s)
-        if not force and max_page_size > 0 and limited_print_func.char_count >= max_page_size:
+        if not force and limited_print_func.char_count >= max_page_size:
             raise PrintLimitReached()
     return limited_print_func
 

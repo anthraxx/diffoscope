@@ -110,7 +110,7 @@ class DiffParser(object):
         if line[0] in ('-', '+') and line[0] == self._direction:
             self._block_len += 1
             max_lines = Config.general.max_diff_block_lines
-            if max_lines > 0 and self._block_len >= max_lines:
+            if self._block_len >= max_lines:
                 return self.skip_block
         else:
             self._block_len = 1
@@ -229,14 +229,14 @@ def make_feeder_from_raw_reader(in_file, filter=lambda buf: buf):
         line_count = 0
         end_nl = False
         h = None
-        if max_lines > 0:
+        if max_lines < float("inf"):
             h = hashlib.sha1()
         for buf in in_file:
             line_count += 1
             out = filter(buf)
             if h:
                 h.update(out)
-            if max_lines == 0 or line_count < max_lines:
+            if line_count < max_lines:
                 out_file.write(out)
             end_nl = buf[-1] == '\n'
         if h and line_count >= max_lines:

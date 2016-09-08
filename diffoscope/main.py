@@ -86,9 +86,11 @@ def create_parser():
                         Config.general.max_report_child_size, 50000)
     parser.add_argument('--max-diff-block-lines', dest='max_diff_block_lines',
                         metavar='LINES', type=int,
-                        help='Maximum number of lines output per diff block, '
-                        'across the whole report. (0 to disable, default: %d)' %
-                        Config.general.max_diff_block_lines,
+                        help='Maximum number of lines output per diff block. '
+                        'In html-dir output, we use %d * this number instead, '
+                        'taken over all pages. (0 to disable, default: %d)' %
+                        (Config.general.max_diff_block_lines_html_dir_ratio,
+                        Config.general.max_diff_block_lines),
                         default=None).completer=RangeCompleter(0,
                         Config.general.max_diff_block_lines, 5)
     parser.add_argument('--max-diff-block-lines-parent', dest='max_diff_block_lines_parent',

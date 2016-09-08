@@ -495,6 +495,7 @@ def row_was_output():
     _, rotation_params = spl_print_ctrl
     max_lines = Config.general.max_diff_block_lines
     max_lines_parent = Config.general.max_diff_block_lines_parent
+    max_lines_ratio = Config.general.max_diff_block_lines_html_dir_ratio
     max_report_child_size = Config.general.max_report_child_size
     if not rotation_params:
         # html-dir single output, don't need to rotate
@@ -504,7 +505,7 @@ def row_was_output():
     else:
         # html-dir output, perhaps need to rotate
         directory, mainname, css_url = rotation_params
-        if spl_rows >= max_lines:
+        if spl_rows >= max_lines_ratio * max_lines:
             raise DiffBlockLimitReached()
 
         if spl_current_page == 0: # on parent page

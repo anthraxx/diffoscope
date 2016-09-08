@@ -66,7 +66,7 @@ def create_parser():
                         help='write multi-file HTML report to given directory')
     parser.add_argument('--text', metavar='output', dest='text_output',
                         help='write plain text output to given file (use - for stdout)')
-    parser.add_argument('--no-max-limits', action='store_true', default=False,
+    parser.add_argument('--no-default-limits', action='store_true', default=False,
                         help='Disable all default limits.')
     parser.add_argument('--max-report-size', metavar='BYTES',
                         dest='max_report_size', type=int,
@@ -166,7 +166,7 @@ def maybe_set_limit(config, parsed_args, key):
     v = getattr(parsed_args, key)
     if v is not None:
         setattr(config, key, float("inf") if v == 0 else v)
-    elif parsed_args.no_max_limits:
+    elif parsed_args.no_default_limits:
         setattr(config, key, float("inf"))
 
 

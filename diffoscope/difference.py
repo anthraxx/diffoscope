@@ -113,7 +113,7 @@ class DiffParser(object):
             else:
                 self._block_len = 1
                 self._direction = line[0]
-            max_lines = Config.general.max_diff_block_lines
+            max_lines = Config.general.max_diff_block_lines_saved
             if self._block_len >= max_lines:
                 return self.skip_block
         else:
@@ -123,7 +123,7 @@ class DiffParser(object):
 
     def skip_block(self, line):
         if self._remaining_hunk_lines == 0 or line[0] != self._direction:
-            removed = self._block_len - Config.general.max_diff_block_lines
+            removed = self._block_len - Config.general.max_diff_block_lines_saved
             if removed:
                 self._diff.write('%s[ %d lines removed ]\n' % (self._direction, removed))
             return self.read_hunk(line)

@@ -100,6 +100,14 @@ def create_parser():
                         '--no-default-limits)',
                         default=Config.general.max_diff_block_lines_parent).completer=RangeCompleter(0,
                         Config.general.max_diff_block_lines_parent, 200)
+    parser.add_argument('--max-diff-block-lines-saved', dest='max_diff_block_lines_saved',
+                        metavar='LINES', type=int,
+                        help='Maximum number of lines saved per diff block. '
+                        'Most users should not need this, unless you run out '
+                        'of memory. This truncates diff(1) output before even '
+                        'trying to emit it in a report; also affects --text '
+                        'output. (0 to disable, default: 0)',
+                        default=0).completer=RangeCompleter(0, 0, 200)
     parser.add_argument('--max-diff-input-lines', dest='max_diff_input_lines',
                         metavar='LINES', type=int,
                         help='Maximum number of lines fed to diff(1). '
@@ -193,6 +201,7 @@ def run_diffoscope(parsed_args):
     maybe_set_limit(Config.general, parsed_args, "max_report_size")
     maybe_set_limit(Config.general, parsed_args, "max_report_child_size")
     # need to set them in this order due to Config._check_constraints
+    maybe_set_limit(Config.general, parsed_args, "max_diff_block_lines_saved")
     maybe_set_limit(Config.general, parsed_args, "max_diff_block_lines_parent")
     maybe_set_limit(Config.general, parsed_args, "max_diff_block_lines")
     maybe_set_limit(Config.general, parsed_args, "max_diff_input_lines")

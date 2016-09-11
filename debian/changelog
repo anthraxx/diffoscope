@@ -50,9 +50,9 @@ diffoscope (60) UNRELEASED; urgency=medium
     + Add more nocheck build profiles.
     + Bump dependencies on debhelper and dpkg-dev to assure build profile
       support is available.
-    + Add Build-Dependency on fontforge-extras to have shottf (run during tests)
-    + Alternate build-dependency on default-jdk-headless|default-jdk, to ease
-      backporting to older debian releases.
+    + Add Build-Dependency on fontforge-extras for showttf (run during tests)
+    + Alternate Build-Dependency on default-jdk-headless|default-jdk, to ease
+      backporting to older Debian releases.
   * debian/rules:
     + Don't install '/usr/lib/python3/dist-packages/.coverage'.
     + Run the basic-command-line test during package build.
@@ -65,9 +65,9 @@ diffoscope (60) UNRELEASED; urgency=medium
       - Put code out of the context manager, it doesn't need to be within.
   * trydiffoscope: add copyright/license header.
   * autopkgtest/basic-command-line:
-    + Make possible to run basic-command-line test without ADTTMP being set.
+    + Enable running basic-command-line test without ADTTMP being set.
     + Be a bit more verbose about what is being tested.
-    + Also test return code when passing a invalid command line flag.
+    + Also test return code when passing an invalid command line flag.
     + Force LC_ALL=C.UTF-8, so that diffoscope can always output something.
   * test:
     + Factor out a tools_missing() function.
@@ -93,7 +93,7 @@ diffoscope (60) UNRELEASED; urgency=medium
   * Comparators:
     + cbfs: only scan whole file when the filename ends with ".rom".
     + binary: Suppress decimal line numbers for xxd output.
-  * Increase default --max_diff_input_lines to 2^20 (1048576) from 100000.
+  * Increase default --max-diff-input-lines to 2^20 (1048576) from 100000.
   * Rename --no-max-limits to --no-default-limits, a more accurate name.
   * presenters/html: html-dir output:
     + Split large diffs across several child pages.

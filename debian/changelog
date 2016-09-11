@@ -1,4 +1,4 @@
-diffoscope (60) UNRELEASED; urgency=medium
+diffoscope (60) unstable; urgency=medium
 
   [ Chris Lamb ]
   * debian/rules:
@@ -106,7 +106,7 @@ diffoscope (60) UNRELEASED; urgency=medium
     + Don't truncate diff output by default, instead add a separate flag
       --max-diff-block-lines-saved (infinite by default) to do so.
 
- -- Mattia Rizzolo <mattia@debian.org>  Sun, 11 Sep 2016 09:29:03 +0000
+ -- Mattia Rizzolo <mattia@debian.org>  Sun, 11 Sep 2016 16:14:33 +0000
 
 diffoscope (59) unstable; urgency=medium
 

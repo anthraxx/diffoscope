@@ -57,6 +57,8 @@ diffoscope (60) UNRELEASED; urgency=medium
     + Don't install '/usr/lib/python3/dist-packages/.coverage'.
     + Run the basic-command-line test during package build.
     + Be even more verbose about failing tests.
+    + Allow to build a mismatching version between diffoscope and the debian
+      changelog if the target distribution is UNRELEASED.
   * Comparators
     + ppu:
       - Unbreak ppu_version detection.

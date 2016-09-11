@@ -5,7 +5,9 @@ VERSION_dch := $(shell dpkg-parsechangelog --show-field Version)
 VERSION_py := $(shell awk '/^VERSION = / {gsub(/"/, "", $$3); print $$3}' diffoscope/__init__.py )
 
 ifneq ($(VERSION_dch),$(VERSION_py))
- $(error "Version in debian/changelog doesn't match diffoscope version")
+ ifneq ($(shell dpkg-parsechangelog --show-field Distribution),UNRELEASED)
+  $(error "Version in debian/changelog doesn't match diffoscope version")
+ endif
 endif
 
 export PATH := $(CURDIR)/bin:$(PATH)

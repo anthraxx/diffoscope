@@ -1,3 +1,113 @@
+diffoscope (60) UNRELEASED; urgency=medium
+
+  [ Chris Lamb ]
+  * debian/rules:
+    +  Run tests with python3-coverage and generate reports post-build.
+  * CONTRIBUTING: Add PyPI reference.
+  * Comparators:
+    + Avoid ugly DRY violations in diffoscope.comparators.__init__ by
+      dynamically importing classes via a single list.
+    + git: Specify paths as strings as required since b7830b5cb.
+    + elf:
+      - Mask more warnings (eg. "readelf: Error: the dynamic segment offset" or
+        "size exceeds the size of the file").
+      - Specify string format arguments as logging function parameters, not
+        using interpolation.
+    + json: Correct behaviour of JSON comparator when file does not exist.
+  * Presenters:
+    + html:
+      - Use html.escape over xml.sax.saxutils.escape.
+      - Don't use unsafe cgi.escape method as its ``quote`` kwarg — which
+        enables escaping of quotation marks — is False by default.
+  * Code clean-up:
+    + Tidy imports.
+    + Split exceptions out into dedicated diffoscope.exc module.
+    + Use try-except idiom instead of ``if`` in RequiredToolNotFound.get_package
+    + Prefer kwargs[x] = kwargs.pop(x, 'default') idiom over ``if`` statements.
+  * tests:
+    + Factor out ugly os.path.join to a utility method.
+    + Drop unused try_except in tests/conftest.
+    + Add GitIndex tests to bring coverage of comparators/git.py to 100%.
+    + Add tests for Haskell comparator.
+      - Skip Haskell tests if GHC is not installed.
+      - Skip Haskell tests if GHC version does not match.  Closes: #835055
+    + Add test in JSON comparator for non-existing files.
+    + Rewrite lenghy "[..] skipIf [..] tool_missing" with a
+      @skip_unless_tools_exist decorator.
+    + Add tests for skip_unless_tools_exist helper.
+    + Rename tests/comparators/conftest.py -> tests/comparators/utils.py.
+    + Avoid Don't-Repeat-Yourself violations by factoring out fixture loading.
+    + Avoid more DRY violations by factoring-out non-existing file tests.
+    + Remove some other unused imports from comparator tests.
+    + Check rendering of text and HTML presenters when checking non-existing
+      files.
+    + Use `pytest.xfail` over `assert False`.
+
+  [ Mattia Rizzolo ]
+  * debian/control:
+    + Reinstated build profiles, now that dh-python is fixed (see #834238).
+    + Version the build-dependency on dh-python, so it supports build profiles.
+    + Add more nocheck build profiles.
+    + Bump dependencies on debhelper and dpkg-dev to assure build profile
+      support is available.
+    + Add Build-Dependency on fontforge-extras to have shottf (run during tests)
+    + Alternate build-dependency on default-jdk-headless|default-jdk, to ease
+      backporting to older debian releases.
+  * debian/rules:
+    + Don't install '/usr/lib/python3/dist-packages/.coverage'.
+    + Run the basic-command-line test during package build.
+    + Be even more verbose about failing tests.
+  * Comparators
+    + ppu:
+      - Unbreak ppu_version detection.
+      - Put code out of the context manager, it doesn't need to be within.
+  * trydiffoscope: add copyright/license header.
+  * autopkgtest/basic-command-line:
+    + Make possible to run basic-command-line test without ADTTMP being set.
+    + Be a bit more verbose about what is being tested.
+    + Also test return code when passing a invalid command line flag.
+    + Force LC_ALL=C.UTF-8, so that diffoscope can always output something.
+  * test:
+    + Factor out a tools_missing() function.
+    + Rewrite tool_older_than() into skip_unless_tool_is_older_than().
+    + Skip test_squashfs.py.test_superblock if squashfs is too old.
+    + Normalize xxd's output so that we can compare jessie's xxd with stretch's.
+  * add default-jdk to the alternate packages for javap for Debian;
+    default-jdk-headless is not available in older Debian releases.
+
+  [ Satyam Zode ]
+  * Improve diffoscope behaviour for .changes.
+    Ignore .buildinfo differences if all the files except .buildinfo referenced
+    in .changes are identical.
+    In the particular context of comparing .changes, we know that if all files
+    listed are identical except the .buildinfo file, the differences in the
+    .buildinfo files are irrelevant.
+
+  [ Jérémy Bobbio ]
+  * Properly skip tests requiring python-debian when unavailable.
+
+  [ Ximin Luo ]
+  * Show the timestamp when logging, to detect which steps take longer.
+  * Actually only scan whole file when filename ends in ".rom".
+  * Add a --no-max flag to disable all limits.
+  * Have --max-report-size honour 0 to mean "no limit".
+  * Comparators:
+    + binary: Suppress decimal line numbers for xxd output.
+  * Increase default --max_diff_input_lines to 2^20 (1048576) from 100000.
+  * Rename --no-max-limits to --no-default-limits, a more accurate name.
+  * presenters/html: html-dir output:
+    + Split large diffs across several child pages.
+      Also add some flags so html-dir behaviour is easier to reason about.
+    + Use 4 times the given --max-diff-block-lines.
+      This way, '--html x.html --html-dir y' gives reasonable output for both.
+  * difference:
+    + Fix behaviour for max-diff-block-limit=1 and don't report when 0 lines
+      are removed.
+    + Don't truncate diff output by default, instead add a separate flag
+      --max-diff-block-lines-saved (infinite by default) to do so.
+
+ -- Mattia Rizzolo <mattia@debian.org>  Sun, 11 Sep 2016 09:29:03 +0000
+
 diffoscope (59) unstable; urgency=medium
 
   [ Chris Lamb ]
@@ -98,8 +208,8 @@ diffoscope (57) unstable; urgency=medium
   [Mattia Rizzolo]
   * autopkgtest: be more verbose when running the tests
   * debian/control:
-    - Mark build-dependency needed only for tests with a <build profile
-      (reverted as they break dh-python)
+    - Mark build-dependency needed only for tests with a <!nocheck> build
+      profile (reverted as they break dh-python)
     - add more build-dependencies to be able to run more tests at build time
     - default-jdk-headless is enough to have javap, instead of all of
       default-jdk

@@ -32,7 +32,7 @@ diffoscope (60) UNRELEASED; urgency=medium
       - Skip Haskell tests if GHC is not installed.
       - Skip Haskell tests if GHC version does not match.  Closes: #835055
     + Add test in JSON comparator for non-existing files.
-    + Rewrite lenghy "[..] skipIf [..] tool_missing" with a
+    + Rewrite lengthy "[..] skipIf [..] tool_missing" with a
       @skip_unless_tools_exist decorator.
     + Add tests for skip_unless_tools_exist helper.
     + Rename tests/comparators/conftest.py -> tests/comparators/utils.py.

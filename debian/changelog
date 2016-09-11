@@ -76,22 +76,20 @@ diffoscope (60) UNRELEASED; urgency=medium
     default-jdk-headless is not available in older Debian releases.
 
   [ Satyam Zode ]
-  * Improve diffoscope behaviour for .changes.
-    Ignore .buildinfo differences if all the files except .buildinfo referenced
-    in .changes are identical.
-    In the particular context of comparing .changes, we know that if all files
-    listed are identical except the .buildinfo file, the differences in the
-    .buildinfo files are irrelevant.
+  * Ignore differences in .buildinfo if all the other files listed in .changes
+    are identical.  In those cases any differences in .buildinfo files are
+    irrelevant, and are actually a feature (as it indicates two reproducible
+    builds with different environment).
 
   [ Jérémy Bobbio ]
   * Properly skip tests requiring python-debian when unavailable.
 
   [ Ximin Luo ]
   * Show the timestamp when logging, to detect which steps take longer.
-  * Actually only scan whole file when filename ends in ".rom".
   * Add a --no-max flag to disable all limits.
   * Have --max-report-size honour 0 to mean "no limit".
   * Comparators:
+    + cbfs: only scan whole file when the filename ends with ".rom".
     + binary: Suppress decimal line numbers for xxd output.
   * Increase default --max_diff_input_lines to 2^20 (1048576) from 100000.
   * Rename --no-max-limits to --no-default-limits, a more accurate name.

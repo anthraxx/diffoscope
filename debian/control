@@ -47,7 +47,7 @@ Build-Depends:
  sqlite3 <!nocheck>,
  squashfs-tools <!nocheck>,
  unzip <!nocheck>,
- vim-common <!nocheck>,
+ xxd <!nocheck> | vim-common <!nocheck>,
 Standards-Version: 3.9.8
 Homepage: https://diffoscope.org/
 Vcs-Git: https://anonscm.debian.org/git/reproducible/diffoscope.git

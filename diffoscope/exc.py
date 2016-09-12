@@ -184,7 +184,7 @@ class RequiredToolNotFound(Exception):
             'FreeBSD': 'squashfs-tools',
         },
         'xxd': {
-            'debian': 'vim-common',
+            'debian': 'xxd | vim-common',
             'arch': 'vim',
             'FreeBSD': 'vim | vim-lite',
         },

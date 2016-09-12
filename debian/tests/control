@@ -8,4 +8,5 @@ Depends: diffoscope, python3-pytest
 
 Tests: basic-command-line
 Depends: diffoscope
+Restrictions: allow-stderr
 # without Recommends

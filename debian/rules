@@ -3,10 +3,19 @@
 MANPAGES = $(patsubst %.1.rst,%.1,$(wildcard debian/*.1.rst))
 VERSION_dch := $(shell dpkg-parsechangelog --show-field Version)
 VERSION_py := $(shell awk '/^VERSION = / {gsub(/"/, "", $$3); print $$3}' diffoscope/__init__.py )
+DIST := $(shell dpkg-parsechangelog --show-field Distribution)
 
 ifneq ($(VERSION_dch),$(VERSION_py))
- ifneq ($(shell dpkg-parsechangelog --show-field Distribution),UNRELEASED)
-  $(error "Version in debian/changelog doesn't match diffoscope version")
+ ifneq ($(DIST),UNRELEASED)
+  ifneq (,$(filter %-backports,$(DIST)))
+    ifeq ($(VERSION_dch:~bpo8+1=),$(VERSION_py))
+     $(info Building a Debian backport, accepting version mismatch $(VERSION_py) <-> $(VERSION_dch))
+    else
+     $(error Version in debian/changelog does not match diffoscope version or backport policy)
+    endif
+  else
+   $(error Version in debian/changelog does not match diffoscope version)
+  endif
  endif
 endif
 

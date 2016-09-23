@@ -28,8 +28,19 @@ if [ $? -ne 1 ]; then
 	exit 1
 fi
 
-echo "Testing LC_ALL=C works"
+echo "Testing LC_ALL=C works..."
+LC_ALL=C diffoscope --debug $ADTTMP/a $ADTTMP/a_ 2>/dev/null
+if [ $? -ne 0 ]; then
+	echo "diffoscope could not handle LC_ALL=C; make sure you're not unconditionally outputting non-ascii chars anywhere." >&2
+	exit 1
+fi
+
+echo "Testing LC_ALL=C works (--help)..."
 LC_ALL=C diffoscope --help >/dev/null
+if [ $? -ne 0 ]; then
+	echo "diffoscope could not handle LC_ALL=C; make sure you're not unconditionally outputting non-ascii chars anywhere." >&2
+	exit 1
+fi
 
 echo "Testing invalid command line flag..."
 diffoscope --thisflagdoesntexistandwontexist

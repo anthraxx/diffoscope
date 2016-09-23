@@ -53,5 +53,5 @@ def output_text(difference, print_func):
         print_difference(difference, print_func)
         print_details(difference, print_func)
     except UnicodeEncodeError:
-        logger.critical('Console is unable to print Unicode characters. Set e.g. LC_CTYPE=en_US.UTF-8')
+        logger.critical('Console is unable to print Unicode characters. Set e.g. PYTHONIOENCODING=utf-8')
         sys.exit(2)

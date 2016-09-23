@@ -28,6 +28,9 @@ if [ $? -ne 1 ]; then
 	exit 1
 fi
 
+echo "Testing LC_ALL=C works"
+LC_ALL=C diffoscope --help >/dev/null
+
 echo "Testing invalid command line flag..."
 diffoscope --thisflagdoesntexistandwontexist
 if [ $? -ne 2 ]; then

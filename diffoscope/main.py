@@ -127,11 +127,11 @@ def create_parser():
     parser.add_argument('--css', metavar='url', dest='css_url',
                         help='link to an extra CSS for the HTML report')
     parser.add_argument('--jquery', metavar='url', dest='jquery_url',
-                        help='link to the jquery url, with --html-dir. Specify “disable” to disable JavaScript. When omitted diffoscope will try to create a symlink to a system installation. Known locations: %s' % ', '.join(JQUERY_SYSTEM_LOCATIONS))
+                        help='link to the jquery url, with --html-dir. Specify "disable" to disable JavaScript. When omitted diffoscope will try to create a symlink to a system installation. Known locations: %s' % ', '.join(JQUERY_SYSTEM_LOCATIONS))
     parser.add_argument('path1', help='first file or directory to compare')
     parser.add_argument('path2', help='second file or directory to compare')
     if not tlsh:
-        parser.epilog = 'File renaming detection based on fuzzy-matching is currently disabled. It can be enabled by installing the “tlsh” module available at https://github.com/trendmicro/tlsh'
+        parser.epilog = 'File renaming detection based on fuzzy-matching is currently disabled. It can be enabled by installing the "tlsh" module available at https://github.com/trendmicro/tlsh'
     if argcomplete:
         argcomplete.autocomplete(parser)
     elif '_ARGCOMPLETE' in os.environ:
@@ -199,7 +199,7 @@ def maybe_set_limit(config, parsed_args, key):
 
 def run_diffoscope(parsed_args):
     if not tlsh and Config.general.fuzzy_threshold != parsed_args.fuzzy_threshold:
-        logger.warning('Fuzzy-matching is currently disabled as the “tlsh” module is unavailable.')
+        logger.warning('Fuzzy-matching is currently disabled as the "tlsh" module is unavailable.')
     maybe_set_limit(Config.general, parsed_args, "max_report_size")
     maybe_set_limit(Config.general, parsed_args, "max_report_child_size")
     # need to set them in this order due to Config._check_constraints

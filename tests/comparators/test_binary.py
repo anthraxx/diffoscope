@@ -34,6 +34,8 @@ TEST_FILE2_PATH = data('binary2')
 TEST_ASCII_PATH = data('text_ascii1')
 TEST_UNICODE_PATH = data('text_unicode1')
 TEST_ISO8859_PATH = data('text_iso8859')
+TEST_SYMLINK2DIR1_PATH = data('dir_and_symlink_a')
+TEST_SYMLINK2DIR2_PATH = data('dir_and_symlink_b')
 
 
 binary1 = load_fixture(TEST_FILE1_PATH)
@@ -149,3 +151,8 @@ def test_compare_two_nonexisting_files():
     file2 = NonExistingFile('/nonexisting2')
     difference = file1.compare(file2)
     assert 'non-existing' in difference.comment
+
+def test_symlink_to_dir():
+    file1 = FilesystemFile(TEST_SYMLINK2DIR1_PATH)
+    file2 = FilesystemFile(TEST_SYMLINK2DIR2_PATH)
+    assert file1.has_same_content_as(file2) is False

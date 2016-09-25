@@ -199,8 +199,13 @@ class File(object, metaclass=abc.ABCMeta):
             # just assume they are different
             return False
         if my_size == other_size and my_size <= SMALL_FILE_THRESHOLD:
-            if open(self.path, 'rb').read() == open(other.path, 'rb').read():
-                return True
+            try:
+                with open(self.path, 'rb') as file1, open(other.path, 'rb') as file2:
+                    return file1.read() == file2.read()
+            except OSError:
+                # one or both files could not be opened for some reason,
+                # assume they are different
+                return False
 
         return 0 == subprocess.call(['cmp', '-s', self.path, other.path],
                                     shell=False, close_fds=True)

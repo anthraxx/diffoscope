@@ -25,6 +25,7 @@ import diffoscope.comparators
 
 from diffoscope import logger, tool_required
 from diffoscope.exc import RequiredToolNotFound
+from diffoscope.progress import Progress
 from diffoscope.difference import Difference
 from diffoscope.comparators.utils import Container, Command
 from diffoscope.comparators.binary import FilesystemFile
@@ -152,7 +153,7 @@ class FilesystemDirectory(object):
         my_names = my_container.get_member_names()
         other_names = other_container.get_member_names()
         to_compare = set(my_names).intersection(other_names)
-        if True:
+        with Progress(len(to_compare)) as p:
             for name in sorted(to_compare):
                 my_file = my_container.get_member(name)
                 other_file = other_container.get_member(name)
@@ -164,6 +165,7 @@ class FilesystemDirectory(object):
                 if inner_difference:
                     inner_difference.add_details(meta_differences)
                     differences.append(inner_difference)
+                p.step()
         if not differences:
             return None
         difference = Difference(None, self.path, other.path, source)

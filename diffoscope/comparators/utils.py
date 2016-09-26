@@ -31,6 +31,7 @@ import diffoscope.comparators
 
 from diffoscope import logger, tool_required, get_temporary_directory
 from diffoscope.config import Config
+from diffoscope.progress import Progress
 from diffoscope.comparators.binary import File, NonExistingFile
 
 
@@ -202,24 +203,27 @@ class Container(object, metaclass=abc.ABCMeta):
         my_reminders = collections.OrderedDict()
         other_members = other.get_members()
 
-        if True:
+        with Progress(max(len(my_members), len(other_members))) as p:
             # keep it sorted like my members
             while my_members:
                 my_member_name, my_member = my_members.popitem(last=False)
                 if my_member_name in other_members:
                     yield my_member, other_members.pop(my_member_name), NO_COMMENT
+                    p.step()
                 else:
                     my_reminders[my_member_name] = my_member
             my_members = my_reminders
             for my_name, other_name, score in diffoscope.comparators.perform_fuzzy_matching(my_members, other_members):
                 comment = 'Files similar despite different names (difference score: %d)' % score
                 yield my_members.pop(my_name), other_members.pop(other_name), comment
+                p.step(2)
             if Config.general.new_file:
                 for my_member in my_members.values():
                     yield my_member, NonExistingFile('/dev/null', my_member), NO_COMMENT
                     p.step()
                 for other_member in other_members.values():
                     yield NonExistingFile('/dev/null', other_member), other_member, NO_COMMENT
+                    p.step()
 
     def compare(self, other, source=None):
         return itertools.starmap(diffoscope.comparators.compare_commented_files, self.comparisons(other))

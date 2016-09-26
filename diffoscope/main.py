@@ -72,6 +72,9 @@ def create_parser():
     group1 = parser.add_argument_group('output types')
     group1.add_argument('--text', metavar='OUTPUT_FILE', dest='text_output',
                         help='Write plain text output to given file (use - for stdout)')
+    group1.add_argument('--always-write-text', action='store_true',
+                        help='If --text is given and there was no difference, '
+                        'write an empty file to that location.')
     group1.add_argument('--html', metavar='OUTPUT_FILE', dest='html_output',
                         help='Write HTML report to given file (use - for stdout)')
     group1.add_argument('--html-dir', metavar='OUTPUT_DIR', dest='html_output_directory',
@@ -246,6 +249,8 @@ def run_diffoscope(parsed_args):
             with make_printer(parsed_args.text_output or '-') as print_func:
                 output_text(difference, print_func=print_func)
         return 1
+    if parsed_args.always_write_text and parsed_args.text_output:
+        open(parsed_args.text_output, 'w').close()
     return 0
 
 

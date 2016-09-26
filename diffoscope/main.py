@@ -33,6 +33,7 @@ import diffoscope.comparators
 from diffoscope import logger, VERSION, set_locale, clean_all_temp_files
 from diffoscope.exc import RequiredToolNotFound
 from diffoscope.config import Config
+from diffoscope.progress import ProgressManager
 from diffoscope.presenters.html import output_html, output_html_directory, \
     JQUERY_SYSTEM_LOCATIONS
 from diffoscope.presenters.text import output_text
@@ -213,8 +214,10 @@ def run_diffoscope(parsed_args):
         logger.setLevel(logging.DEBUG)
     set_locale()
     logger.debug('Starting comparison')
+    ProgressManager().setup(parsed_args)
     difference = diffoscope.comparators.compare_root_paths(
         parsed_args.path1, parsed_args.path2)
+    ProgressManager().finish()
     if difference:
         # no output desired? print text
         if not any((parsed_args.text_output, parsed_args.html_output, parsed_args.html_output_directory)):

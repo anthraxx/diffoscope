@@ -52,6 +52,8 @@ except ImportError:
 def create_parser():
     parser = argparse.ArgumentParser(
         description='Calculate differences between two files or directories.')
+    parser.add_argument('path1', help='First file or directory to compare')
+    parser.add_argument('path2', help='Second file or directory to compare')
     parser.add_argument('--version', action='version',
                         version='diffoscope %s' % VERSION)
     parser.add_argument('--list-tools', nargs='?', type=str, action=ListToolsAction,
@@ -60,16 +62,33 @@ def create_parser():
                         default=False, help='Display debug messages')
     parser.add_argument('--debugger', action='store_true',
                         help='Open the python debugger in case of crashes.')
-    parser.add_argument('--html', metavar='output', dest='html_output',
-                        help='Write HTML report to given file (use - for stdout)')
-    parser.add_argument('--html-dir', metavar='output', dest='html_output_directory',
-                        help='Write multi-file HTML report to given directory')
-    parser.add_argument('--text', metavar='output', dest='text_output',
+    parser.add_argument('--status-fd', dest='status_fd', metavar='N', type=int,
+                        help='Send machine-readable status to file descriptor N')
+    parser.add_argument('--progress', dest='progress', action='store_const',
+                        const=True, help='Show an (approximate) progress bar')
+    parser.add_argument('--no-progress', dest='progress', action='store_const',
+                        const=False, help='Do not show an (approximate) progress bar')
+
+    group1 = parser.add_argument_group('output types')
+    group1.add_argument('--text', metavar='OUTPUT_FILE', dest='text_output',
                         help='Write plain text output to given file (use - for stdout)')
-    parser.add_argument('--no-default-limits', action='store_true', default=False,
+    group1.add_argument('--html', metavar='OUTPUT_FILE', dest='html_output',
+                        help='Write HTML report to given file (use - for stdout)')
+    group1.add_argument('--html-dir', metavar='OUTPUT_DIR', dest='html_output_directory',
+                        help='Write multi-file HTML report to given directory')
+    group1.add_argument('--css', metavar='url', dest='css_url',
+                        help='Link to an extra CSS for the HTML report')
+    group1.add_argument('--jquery', metavar='url', dest='jquery_url',
+                        help='Link to the jquery url, with --html-dir. Specify '
+                        '"disable" to disable JavaScript. When omitted '
+                        'diffoscope will try to create a symlink to a system '
+                        'installation. Known locations: %s' % ', '.join(JQUERY_SYSTEM_LOCATIONS))
+
+    group2 = parser.add_argument_group('output limits')
+    group2.add_argument('--no-default-limits', action='store_true', default=False,
                         help='Disable most default limits. Note that text '
                         'output already ignores most of these.')
-    parser.add_argument('--max-report-size', metavar='BYTES',
+    group2.add_argument('--max-report-size', metavar='BYTES',
                         dest='max_report_size', type=int,
                         help='Maximum bytes written in report. In html-dir '
                         'output, this is the max bytes of the parent page. '
@@ -77,14 +96,14 @@ def create_parser():
                         Config.general.max_report_size,
                         default=None).completer=RangeCompleter(0,
                         Config.general.max_report_size, 200000)
-    parser.add_argument('--max-report-child-size', metavar='BYTES',
+    group2.add_argument('--max-report-child-size', metavar='BYTES',
                         dest='max_report_child_size', type=int,
                         help='In html-dir output, this is the max bytes of '
                         'each child page. (0 to disable, default: %(default)s, '
                         'remaining in effect even with --no-default-limits)',
                         default=Config.general.max_report_child_size).completer=RangeCompleter(0,
                         Config.general.max_report_child_size, 50000)
-    parser.add_argument('--max-diff-block-lines', dest='max_diff_block_lines',
+    group2.add_argument('--max-diff-block-lines', dest='max_diff_block_lines',
                         metavar='LINES', type=int,
                         help='Maximum number of lines output per diff block. '
                         'In html-dir output, we use %d * this number instead, '
@@ -93,7 +112,7 @@ def create_parser():
                         Config.general.max_diff_block_lines),
                         default=None).completer=RangeCompleter(0,
                         Config.general.max_diff_block_lines, 5)
-    parser.add_argument('--max-diff-block-lines-parent', dest='max_diff_block_lines_parent',
+    group2.add_argument('--max-diff-block-lines-parent', dest='max_diff_block_lines_parent',
                         metavar='LINES', type=int,
                         help='In --html-dir output, this is maximum number of '
                         'lines output per diff block on the parent page, '
@@ -102,7 +121,7 @@ def create_parser():
                         '--no-default-limits)',
                         default=Config.general.max_diff_block_lines_parent).completer=RangeCompleter(0,
                         Config.general.max_diff_block_lines_parent, 200)
-    parser.add_argument('--max-diff-block-lines-saved', dest='max_diff_block_lines_saved',
+    group2.add_argument('--max-diff-block-lines-saved', dest='max_diff_block_lines_saved',
                         metavar='LINES', type=int,
                         help='Maximum number of lines saved per diff block. '
                         'Most users should not need this, unless you run out '
@@ -110,32 +129,23 @@ def create_parser():
                         'trying to emit it in a report; also affects --text '
                         'output. (0 to disable, default: 0)',
                         default=0).completer=RangeCompleter(0, 0, 200)
-    parser.add_argument('--max-diff-input-lines', dest='max_diff_input_lines',
+
+    group3 = parser.add_argument_group('diff calculation')
+    group3.add_argument('--new-file', dest='new_file', action='store_true',
+                        help='Treat absent files as empty')
+    group3.add_argument('--fuzzy-threshold', dest='fuzzy_threshold', type=int,
+                        help='Threshold for fuzzy-matching '
+                        '(0 to disable, %(default)s is default, 400 is high fuzziness)',
+                        default=Config.general.fuzzy_threshold).completer=RangeCompleter(0,
+                        400, 20)
+    group3.add_argument('--max-diff-input-lines', dest='max_diff_input_lines',
                         metavar='LINES', type=int,
                         help='Maximum number of lines fed to diff(1). '
                         '(0 to disable, default: %d)' %
                         Config.general.max_diff_input_lines,
                         default=None).completer=RangeCompleter(0,
                         Config.general.max_diff_input_lines, 5000)
-    parser.add_argument('--fuzzy-threshold', dest='fuzzy_threshold', type=int,
-                        help='Threshold for fuzzy-matching '
-                        '(0 to disable, %(default)s is default, 400 is high fuzziness)',
-                        default=Config.general.fuzzy_threshold).completer=RangeCompleter(0,
-                        400, 20)
-    parser.add_argument('--new-file', dest='new_file', action='store_true',
-                        help='Treat absent files as empty')
-    parser.add_argument('--status-fd', dest='status_fd', metavar='N', type=int,
-                        help='Send machine-readable status to file descriptor N')
-    parser.add_argument('--progress', dest='progress', action='store_const',
-                        const=True, help='Show an (approximate) progress bar')
-    parser.add_argument('--no-progress', dest='progress', action='store_const',
-                        const=False, help='Do not show an (approximate) progress bar')
-    parser.add_argument('--css', metavar='url', dest='css_url',
-                        help='Link to an extra CSS for the HTML report')
-    parser.add_argument('--jquery', metavar='url', dest='jquery_url',
-                        help='Link to the jquery url, with --html-dir. Specify "disable" to disable JavaScript. When omitted diffoscope will try to create a symlink to a system installation. Known locations: %s' % ', '.join(JQUERY_SYSTEM_LOCATIONS))
-    parser.add_argument('path1', help='First file or directory to compare')
-    parser.add_argument('path2', help='Second file or directory to compare')
+
     if not tlsh:
         parser.epilog = 'File renaming detection based on fuzzy-matching is currently disabled. It can be enabled by installing the "tlsh" module available at https://github.com/trendmicro/tlsh'
     if argcomplete:

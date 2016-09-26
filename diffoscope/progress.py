@@ -17,6 +17,8 @@
 # You should have received a copy of the GNU General Public License
 # along with diffoscope.  If not, see <http://www.gnu.org/licenses/>.
 
+import os
+
 class ProgressManager(object):
     _singleton = {}
 
@@ -29,7 +31,8 @@ class ProgressManager(object):
             self.observers = []
 
     def setup(self, parsed_args):
-        pass
+        if parsed_args.status_fd:
+            self.register(StatusFD(parsed_args.status_fd))
 
     ##
 
@@ -74,3 +77,13 @@ class Progress(object):
 
         self.current += delta
         ProgressManager().step(delta)
+
+class StatusFD(object):
+    def __init__(self, fileno):
+        self.fileobj = os.fdopen(fileno, 'w')
+
+    def notify(self, current, total):
+        print('{}\t{}'.format(current, total, file=self.fileobj))
+
+    def finish(self):
+        pass

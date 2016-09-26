@@ -201,22 +201,25 @@ class Container(object, metaclass=abc.ABCMeta):
         my_members = self.get_members()
         my_reminders = collections.OrderedDict()
         other_members = other.get_members()
-        # keep it sorted like my members
-        while my_members:
-            my_member_name, my_member = my_members.popitem(last=False)
-            if my_member_name in other_members:
-                yield my_member, other_members.pop(my_member_name), NO_COMMENT
-            else:
-                my_reminders[my_member_name] = my_member
-        my_members = my_reminders
-        for my_name, other_name, score in diffoscope.comparators.perform_fuzzy_matching(my_members, other_members):
-            comment = 'Files similar despite different names (difference score: %d)' % score
-            yield my_members.pop(my_name), other_members.pop(other_name), comment
-        if Config.general.new_file:
-            for my_member in my_members.values():
-                yield my_member, NonExistingFile('/dev/null', my_member), NO_COMMENT
-            for other_member in other_members.values():
-                yield NonExistingFile('/dev/null', other_member), other_member, NO_COMMENT
+
+        if True:
+            # keep it sorted like my members
+            while my_members:
+                my_member_name, my_member = my_members.popitem(last=False)
+                if my_member_name in other_members:
+                    yield my_member, other_members.pop(my_member_name), NO_COMMENT
+                else:
+                    my_reminders[my_member_name] = my_member
+            my_members = my_reminders
+            for my_name, other_name, score in diffoscope.comparators.perform_fuzzy_matching(my_members, other_members):
+                comment = 'Files similar despite different names (difference score: %d)' % score
+                yield my_members.pop(my_name), other_members.pop(other_name), comment
+            if Config.general.new_file:
+                for my_member in my_members.values():
+                    yield my_member, NonExistingFile('/dev/null', my_member), NO_COMMENT
+                    p.step()
+                for other_member in other_members.values():
+                    yield NonExistingFile('/dev/null', other_member), other_member, NO_COMMENT
 
     def compare(self, other, source=None):
         return itertools.starmap(diffoscope.comparators.compare_commented_files, self.comparisons(other))

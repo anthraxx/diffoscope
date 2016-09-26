@@ -127,6 +127,10 @@ def create_parser():
                         help='treat absent files as empty')
     parser.add_argument('--status-fd', dest='status_fd', metavar='N', type=int,
                         help='Send machine-readable status to file descriptor N')
+    parser.add_argument('--progress', dest='progress', action='store_const',
+                        const=True, help='show an (approximate) progress bar')
+    parser.add_argument('--no-progress', dest='progress', action='store_const',
+                        const=False, help='do not show an (approximate) progress bar')
     parser.add_argument('--css', metavar='url', dest='css_url',
                         help='link to an extra CSS for the HTML report')
     parser.add_argument('--jquery', metavar='url', dest='jquery_url',

@@ -35,7 +35,8 @@ override_dh_python3:
 		--recommends=rpm-python \
 		--recommends=tlsh \
 		--recommends=guestfs \
-		--recommends=argcomplete
+		--recommends=argcomplete \
+		--recommends=progressbar
 
 override_dh_gencontrol:
 	TOOLS="$$(bin/diffoscope --list-tools=debian | awk -F': ' '/Available-in-Debian-packages/ { print $$2 }' | \

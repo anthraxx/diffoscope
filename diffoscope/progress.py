@@ -18,6 +18,7 @@
 # along with diffoscope.  If not, see <http://www.gnu.org/licenses/>.
 
 import os
+import sys
 
 class ProgressManager(object):
     _singleton = {}
@@ -31,6 +32,17 @@ class ProgressManager(object):
             self.observers = []
 
     def setup(self, parsed_args):
+        # Show progress bar if user explicitly asked for it, otherwise show if
+        # STDOUT is a tty.
+        if parsed_args.progress or \
+                (parsed_args.progress is None and sys.stdout.isatty()):
+            try:
+                self.register(ProgressBar())
+            except ImportError:
+                # User asked for bar, so show them the error
+                if parsed_args.progress:
+                    raise
+
         if parsed_args.status_fd:
             self.register(StatusFD(parsed_args.status_fd))
 
@@ -77,6 +89,27 @@ class Progress(object):
 
         self.current += delta
         ProgressManager().step(delta)
+
+class ProgressBar(object):
+    def __init__(self):
+        import progressbar
+
+        self.bar = progressbar.ProgressBar(widgets=(
+            progressbar.Bar(),
+            '  ',
+            progressbar.Percentage(),
+            '  ',
+            progressbar.ETA(),
+        ))
+        self.bar.start()
+
+    def notify(self, current, total):
+        self.bar.maxval = total
+        self.bar.currval = current
+        self.bar.update()
+
+    def finish(self):
+        self.bar.finish()
 
 class StatusFD(object):
     def __init__(self, fileno):

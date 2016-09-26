@@ -51,22 +51,21 @@ except ImportError:
 
 def create_parser():
     parser = argparse.ArgumentParser(
-        description='Highlight differences between two builds '
-                    'of Debian packages')
+        description='Calculate differences between two files or directories.')
     parser.add_argument('--version', action='version',
                         version='diffoscope %s' % VERSION)
     parser.add_argument('--list-tools', nargs='?', type=str, action=ListToolsAction,
-                        help='show external tools required and exit')
+                        help='Show external tools required and exit')
     parser.add_argument('--debug', dest='debug', action='store_true',
-                        default=False, help='display debug messages')
+                        default=False, help='Display debug messages')
     parser.add_argument('--debugger', action='store_true',
                         help='Open the python debugger in case of crashes.')
     parser.add_argument('--html', metavar='output', dest='html_output',
-                        help='write HTML report to given file (use - for stdout)')
+                        help='Write HTML report to given file (use - for stdout)')
     parser.add_argument('--html-dir', metavar='output', dest='html_output_directory',
-                        help='write multi-file HTML report to given directory')
+                        help='Write multi-file HTML report to given directory')
     parser.add_argument('--text', metavar='output', dest='text_output',
-                        help='write plain text output to given file (use - for stdout)')
+                        help='Write plain text output to given file (use - for stdout)')
     parser.add_argument('--no-default-limits', action='store_true', default=False,
                         help='Disable most default limits. Note that text '
                         'output already ignores most of these.')
@@ -119,24 +118,24 @@ def create_parser():
                         default=None).completer=RangeCompleter(0,
                         Config.general.max_diff_input_lines, 5000)
     parser.add_argument('--fuzzy-threshold', dest='fuzzy_threshold', type=int,
-                        help='threshold for fuzzy-matching '
+                        help='Threshold for fuzzy-matching '
                         '(0 to disable, %(default)s is default, 400 is high fuzziness)',
                         default=Config.general.fuzzy_threshold).completer=RangeCompleter(0,
                         400, 20)
     parser.add_argument('--new-file', dest='new_file', action='store_true',
-                        help='treat absent files as empty')
+                        help='Treat absent files as empty')
     parser.add_argument('--status-fd', dest='status_fd', metavar='N', type=int,
                         help='Send machine-readable status to file descriptor N')
     parser.add_argument('--progress', dest='progress', action='store_const',
-                        const=True, help='show an (approximate) progress bar')
+                        const=True, help='Show an (approximate) progress bar')
     parser.add_argument('--no-progress', dest='progress', action='store_const',
-                        const=False, help='do not show an (approximate) progress bar')
+                        const=False, help='Do not show an (approximate) progress bar')
     parser.add_argument('--css', metavar='url', dest='css_url',
-                        help='link to an extra CSS for the HTML report')
+                        help='Link to an extra CSS for the HTML report')
     parser.add_argument('--jquery', metavar='url', dest='jquery_url',
-                        help='link to the jquery url, with --html-dir. Specify "disable" to disable JavaScript. When omitted diffoscope will try to create a symlink to a system installation. Known locations: %s' % ', '.join(JQUERY_SYSTEM_LOCATIONS))
-    parser.add_argument('path1', help='first file or directory to compare')
-    parser.add_argument('path2', help='second file or directory to compare')
+                        help='Link to the jquery url, with --html-dir. Specify "disable" to disable JavaScript. When omitted diffoscope will try to create a symlink to a system installation. Known locations: %s' % ', '.join(JQUERY_SYSTEM_LOCATIONS))
+    parser.add_argument('path1', help='First file or directory to compare')
+    parser.add_argument('path2', help='Second file or directory to compare')
     if not tlsh:
         parser.epilog = 'File renaming detection based on fuzzy-matching is currently disabled. It can be enabled by installing the "tlsh" module available at https://github.com/trendmicro/tlsh'
     if argcomplete:

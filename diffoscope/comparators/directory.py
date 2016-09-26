@@ -151,8 +151,9 @@ class FilesystemDirectory(object):
         other_container = DirectoryContainer(other)
         my_names = my_container.get_member_names()
         other_names = other_container.get_member_names()
+        to_compare = set(my_names).intersection(other_names)
         if True:
-            for name in sorted(set(my_names).intersection(other_names)):
+            for name in sorted(to_compare):
                 my_file = my_container.get_member(name)
                 other_file = other_container.get_member(name)
                 inner_difference = diffoscope.comparators.compare_files(

@@ -33,6 +33,7 @@ import diffoscope.comparators
 from diffoscope import logger, VERSION, set_locale, clean_all_temp_files
 from diffoscope.exc import RequiredToolNotFound
 from diffoscope.config import Config
+from diffoscope.difference import Difference
 from diffoscope.progress import ProgressManager
 from diffoscope.presenters.html import output_html, output_html_directory, \
     JQUERY_SYSTEM_LOCATIONS
@@ -72,9 +73,10 @@ def create_parser():
     group1 = parser.add_argument_group('output types')
     group1.add_argument('--text', metavar='OUTPUT_FILE', dest='text_output',
                         help='Write plain text output to given file (use - for stdout)')
-    group1.add_argument('--always-write-text', action='store_true',
-                        help='If --text is given and there was no difference, '
-                        'write an empty file to that location.')
+    group1.add_argument('--output-empty', action='store_true',
+                        help='If there was no difference, then output an empty '
+                        'diff for each output type that was specified. (For '
+                        '--text, an empty file is written.)')
     group1.add_argument('--html', metavar='OUTPUT_FILE', dest='html_output',
                         help='Write HTML report to given file (use - for stdout)')
     group1.add_argument('--html-dir', metavar='OUTPUT_DIR', dest='html_output_directory',
@@ -239,20 +241,25 @@ def run_diffoscope(parsed_args):
     difference = diffoscope.comparators.compare_root_paths(
         parsed_args.path1, parsed_args.path2)
     ProgressManager().finish()
+    retcode = 1 if difference else 0
+    if not retcode and parsed_args.output_empty:
+        # dummy empty diff to write
+        difference = Difference(None, parsed_args.path1, parsed_args.path2)
     if difference:
         if parsed_args.text_output:
-            with make_printer(parsed_args.text_output or '-') as print_func:
-                output_text(difference, print_func=print_func)
+            if not retcode:
+                # special case for --text: write an empty file instead of an empty diff
+                open(parsed_args.text_output, 'w').close()
+            else:
+                with make_printer(parsed_args.text_output or '-') as print_func:
+                    output_text(difference, print_func=print_func)
         if parsed_args.html_output:
             with make_printer(parsed_args.html_output) as print_func:
                 output_html(difference, css_url=parsed_args.css_url, print_func=print_func)
         if parsed_args.html_output_directory:
             output_html_directory(parsed_args.html_output_directory, difference,
                 css_url=parsed_args.css_url, jquery_url=parsed_args.jquery_url)
-        return 1
-    if parsed_args.always_write_text and parsed_args.text_output:
-        open(parsed_args.text_output, 'w').close()
-    return 0
+    return retcode
 
 
 def sigterm_handler(signo, stack_frame):

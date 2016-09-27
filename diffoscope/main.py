@@ -231,23 +231,24 @@ def run_diffoscope(parsed_args):
     if parsed_args.debug:
         logger.setLevel(logging.DEBUG)
     set_locale()
+    # no output desired? print text to stdout
+    if not any((parsed_args.text_output, parsed_args.html_output, parsed_args.html_output_directory)):
+        parsed_args.text_output = "-"
     logger.debug('Starting comparison')
     ProgressManager().setup(parsed_args)
     difference = diffoscope.comparators.compare_root_paths(
         parsed_args.path1, parsed_args.path2)
     ProgressManager().finish()
     if difference:
-        # no output desired? print text
-        if not any((parsed_args.text_output, parsed_args.html_output, parsed_args.html_output_directory)):
-            parsed_args.text_output = "-"
+        if parsed_args.text_output:
+            with make_printer(parsed_args.text_output or '-') as print_func:
+                output_text(difference, print_func=print_func)
         if parsed_args.html_output:
             with make_printer(parsed_args.html_output) as print_func:
                 output_html(difference, css_url=parsed_args.css_url, print_func=print_func)
         if parsed_args.html_output_directory:
-            output_html_directory(parsed_args.html_output_directory, difference, css_url=parsed_args.css_url, jquery_url=parsed_args.jquery_url)
-        if parsed_args.text_output:
-            with make_printer(parsed_args.text_output or '-') as print_func:
-                output_text(difference, print_func=print_func)
+            output_html_directory(parsed_args.html_output_directory, difference,
+                css_url=parsed_args.css_url, jquery_url=parsed_args.jquery_url)
         return 1
     if parsed_args.always_write_text and parsed_args.text_output:
         open(parsed_args.text_output, 'w').close()

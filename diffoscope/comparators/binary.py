@@ -278,7 +278,7 @@ class NonExistingFile(File):
     @staticmethod
     def recognizes(file):
         if isinstance(file, FilesystemFile) and not os.path.lexists(file.name):
-            assert Config.general.new_file, '%s does not exist' % file.name
+            assert Config().new_file, '%s does not exist' % file.name
             return True
         return False
 

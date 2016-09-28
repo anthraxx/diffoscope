@@ -51,7 +51,7 @@ def obj_differences(obj1, obj2):
 
 @skip_unless_tools_exist('readelf')
 def test_obj_compare_non_existing(monkeypatch, obj1):
-    monkeypatch.setattr(Config, 'new_file', True)
+    monkeypatch.setattr(Config(), 'new_file', True)
     difference = obj1.compare(NonExistingFile('/nonexisting', obj1))
     assert difference.source2 == '/nonexisting'
     assert len(difference.details) > 0
@@ -96,7 +96,7 @@ def test_lib_differences(lib_differences):
 
 @skip_unless_tools_exist('readelf', 'objdump')
 def test_lib_compare_non_existing(monkeypatch, lib1):
-    monkeypatch.setattr(Config, 'new_file', True)
+    monkeypatch.setattr(Config(), 'new_file', True)
     difference = lib1.compare(NonExistingFile('/nonexisting', lib1))
     assert difference.source2 == '/nonexisting'
     assert len(difference.details) > 0

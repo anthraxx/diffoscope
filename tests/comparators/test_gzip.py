@@ -71,7 +71,7 @@ def test_content_diff(differences):
     assert differences[1].unified_diff == expected_diff
 
 def test_compare_non_existing(monkeypatch, gzip1):
-    monkeypatch.setattr(Config.general, 'new_file', True)
+    monkeypatch.setattr(Config(), 'new_file', True)
     difference = gzip1.compare(NonExistingFile('/nonexisting', gzip1))
     assert difference.source2 == '/nonexisting'
     assert difference.details[-1].source2 == '/dev/null'

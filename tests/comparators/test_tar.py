@@ -66,5 +66,5 @@ no_permissions_tar = load_fixture(data('no-perms.tar'))
 def test_no_permissions_dir_in_tarball(monkeypatch, no_permissions_tar):
     # We want to make sure OSError is not raised.
     # Comparing with non-existing file makes it easy to make sure all files are unpacked
-    monkeypatch.setattr(Config, 'new_file', True)
+    monkeypatch.setattr(Config(), 'new_file', True)
     no_permissions_tar.compare(NonExistingFile('/nonexistent', no_permissions_tar))

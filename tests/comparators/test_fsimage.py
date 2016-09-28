@@ -81,7 +81,7 @@ def test_differences(differences):
 @skip_unless_tools_exist('qemu-img')
 @pytest.mark.skipif(miss_guestfs, reason='guestfs is missing')
 def test_compare_non_existing(monkeypatch, img1):
-    monkeypatch.setattr(Config.general, 'new_file', True)
+    monkeypatch.setattr(Config(), 'new_file', True)
     difference = img1.compare(NonExistingFile('/nonexisting', img1))
     assert difference.source2 == '/nonexisting'
     assert difference.details[-1].source2 == '/dev/null'

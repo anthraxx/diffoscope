@@ -46,7 +46,7 @@ def test_diff(differences):
 
 @skip_unless_tools_exist('cd-iccdump')
 def test_compare_non_existing(monkeypatch, icc1):
-    monkeypatch.setattr(Config, 'new_file', True)
+    monkeypatch.setattr(Config(), 'new_file', True)
     difference = icc1.compare(NonExistingFile('/nonexisting', icc1))
     assert difference.source2 == '/nonexisting'
     assert len(difference.details) > 0

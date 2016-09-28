@@ -493,10 +493,10 @@ def row_was_output():
     global spl_print_func, spl_print_ctrl, spl_rows, spl_current_page
     spl_rows += 1
     _, rotation_params = spl_print_ctrl
-    max_lines = Config.general.max_diff_block_lines
-    max_lines_parent = Config.general.max_diff_block_lines_parent
-    max_lines_ratio = Config.general.max_diff_block_lines_html_dir_ratio
-    max_report_child_size = Config.general.max_report_child_size
+    max_lines = Config().max_diff_block_lines
+    max_lines_parent = Config().max_diff_block_lines_parent
+    max_lines_ratio = Config().max_diff_block_lines_html_dir_ratio
+    max_report_child_size = Config().max_report_child_size
     if not rotation_params:
         # html-dir single output, don't need to rotate
         if spl_rows >= max_lines:
@@ -706,7 +706,7 @@ def output_html(difference, css_url=None, print_func=None):
     """
     if print_func is None:
         print_func = print
-    print_func = create_limited_print_func(print_func, Config.general.max_report_size)
+    print_func = create_limited_print_func(print_func, Config().max_report_size)
     try:
         output_header(css_url, print_func)
         output_difference(difference, print_func, css_url, None, [])
@@ -754,7 +754,7 @@ def output_html_directory(directory, difference, css_url=None, jquery_url=None):
         jquery_url = None
 
     with file_printer(directory, "index.html") as print_func:
-        print_func = create_limited_print_func(print_func, Config.general.max_report_size)
+        print_func = create_limited_print_func(print_func, Config().max_report_size)
         try:
             output_header(css_url, print_func)
             output_difference(difference, print_func, css_url, directory, [])

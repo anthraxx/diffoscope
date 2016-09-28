@@ -67,7 +67,8 @@ def data(filename):
     )
 
 def assert_non_existing(monkeypatch, fixture, has_null_source=True, has_details=True):
-    monkeypatch.setattr(Config.general, 'new_file', True)
+    monkeypatch.setattr(Config(), 'new_file', True)
+    assert Config().new_file, "didnt get patched"
 
     difference = fixture.compare(NonExistingFile('/nonexisting', fixture))
 

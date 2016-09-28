@@ -64,7 +64,7 @@ def test_compressed_files(differences):
 
 @skip_unless_tools_exist('isoinfo')
 def test_compare_non_existing(monkeypatch, iso1):
-    monkeypatch.setattr(Config.general, 'new_file', True)
+    monkeypatch.setattr(Config(), 'new_file', True)
     difference = iso1.compare(NonExistingFile('/nonexisting', iso1))
     assert difference.source2 == '/nonexisting'
     assert difference.details[-1].source2 == '/dev/null'

@@ -81,15 +81,15 @@ fuzzy_tar_in_tar2 = load_fixture(data('fuzzy-tar-in-tar2.tar'))
 
 @pytest.mark.skipif(miss_tlsh, reason='tlsh is missing')
 def test_no_fuzzy_matching(monkeypatch, fuzzy_tar_in_tar1, fuzzy_tar_in_tar2):
-    monkeypatch.setattr(Config, 'fuzzy_threshold', 0)
+    monkeypatch.setattr(Config(), 'fuzzy_threshold', 0)
     difference = fuzzy_tar_in_tar1.compare(fuzzy_tar_in_tar2)
     assert len(difference.details) == 1
     assert difference.details[0].source1 == 'file list'
 
 @pytest.mark.skipif(miss_tlsh, reason='tlsh is missing')
 def test_no_fuzzy_matching_new_file(monkeypatch, fuzzy_tar_in_tar1, fuzzy_tar_in_tar2):
-    monkeypatch.setattr(Config, 'fuzzy_threshold', 0)
-    monkeypatch.setattr(Config, 'new_file', True)
+    monkeypatch.setattr(Config(), 'fuzzy_threshold', 0)
+    monkeypatch.setattr(Config(), 'new_file', True)
     difference = fuzzy_tar_in_tar1.compare(fuzzy_tar_in_tar2)
     assert len(difference.details) == 3
     assert difference.details[1].source2 == '/dev/null'

@@ -101,7 +101,7 @@ def test_skip_comparison_of_known_identical_files(deb1, deb2, monkeypatch):
     assert './usr/share/doc/test/README.Debian' not in compared
 
 def test_compare_non_existing(monkeypatch, deb1):
-    monkeypatch.setattr(Config.general, 'new_file', True)
+    monkeypatch.setattr(Config(), 'new_file', True)
     difference = deb1.compare(NonExistingFile('/nonexisting', deb1))
     assert difference.source2 == '/nonexisting'
     assert difference.details[-1].source2 == '/dev/null'

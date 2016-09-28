@@ -49,7 +49,7 @@ def test_compressed_files(differences):
     assert differences[1].details[2].source1 == './control.tar.gz'
 
 def test_compare_non_existing(monkeypatch, ipk1):
-    monkeypatch.setattr(Config.general, 'new_file', True)
+    monkeypatch.setattr(Config(), 'new_file', True)
     difference = ipk1.compare(NonExistingFile('/nonexisting', ipk1))
     assert difference.source2 == '/nonexisting'
     assert difference.details[-1].source2 == '/dev/null'

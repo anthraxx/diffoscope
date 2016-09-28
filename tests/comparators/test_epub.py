@@ -54,7 +54,7 @@ def test_differences(differences):
 
 @skip_unless_tools_exist('zipinfo')
 def test_compare_non_existing(monkeypatch, epub1):
-    monkeypatch.setattr(Config.general, 'new_file', True)
+    monkeypatch.setattr(Config(), 'new_file', True)
     difference = epub1.compare(NonExistingFile('/nonexisting', epub1))
     assert difference.source2 == '/nonexisting'
     assert difference.details[-1].source2 == '/dev/null'

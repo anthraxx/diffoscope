@@ -118,7 +118,7 @@ def bail_if_non_existing(*paths):
         sys.exit(2)
 
 def compare_root_paths(path1, path2):
-    if not Config.general.new_file:
+    if not Config().new_file:
         bail_if_non_existing(path1, path2)
     if os.path.isdir(path1) and os.path.isdir(path2):
         return compare_directories(path1, path2)
@@ -168,7 +168,7 @@ def specialize(file):
 
 
 def perform_fuzzy_matching(members1, members2):
-    if tlsh == None or Config.general.fuzzy_threshold == 0:
+    if tlsh == None or Config().fuzzy_threshold == 0:
         return
     already_compared = set()
     # Perform local copies because they will be modified by consumer
@@ -186,7 +186,7 @@ def perform_fuzzy_matching(members1, members2):
             comparisons.sort(key=operator.itemgetter(0))
             score, name2 = comparisons[0]
             logger.debug('fuzzy top match %s %s: %d difference score', name1, name2, score)
-            if score < Config.general.fuzzy_threshold:
+            if score < Config().fuzzy_threshold:
                 yield name1, name2, score
                 already_compared.add(name2)
 

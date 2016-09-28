@@ -217,7 +217,7 @@ class Container(object, metaclass=abc.ABCMeta):
                 comment = 'Files similar despite different names (difference score: %d)' % score
                 yield my_members.pop(my_name), other_members.pop(other_name), comment
                 p.step(2)
-            if Config.general.new_file:
+            if Config().new_file:
                 for my_member in my_members.values():
                     yield my_member, NonExistingFile('/dev/null', my_member), NO_COMMENT
                     p.step()

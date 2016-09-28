@@ -43,7 +43,7 @@ def obj_differences(obj1, obj2):
 
 @skip_unless_tools_exist('otool', 'lipo')
 def test_obj_compare_non_existing(monkeypatch, obj1):
-    monkeypatch.setattr(Config, 'new_file', True)
+    monkeypatch.setattr(Config(), 'new_file', True)
     difference = obj1.compare(NonExistingFile('/nonexisting', obj1))
     assert difference.source2 == '/nonexisting'
     assert len(difference.details) > 0

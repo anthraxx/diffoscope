@@ -1,3 +1,31 @@
+diffoscope (61) unstable; urgency=medium
+
+  [ Mattia Rizzolo ]
+  * Skip rlib tests if the "nm" tool is missing. (Closes: #837742)
+  * Use dedicated xxd binary package instead of vim-common.
+  * autopkgtest: Allow stderr for the basic-command-line test.
+  * d/rules: make it possible to backport without changing the "upstream" version.
+
+  [ Maria Glukhova ]
+  * Catch an error when we can't read files in has_same_content_as().
+    (Closes: #835642)
+
+  [ Chris Lamb ]
+  * Add the ability track the (approximate) progress throughout diffoscope run:
+    - Add a graphical progressbar and show by default if STDOUT is a TTY.
+    - Add a --status-fd argument to output machine-readable status to the
+      specified file descriptor.
+
+  [ Ximin Luo ]
+  * Add a --output-empty option, useful for batch scripts.
+  * Improve --help text and group the optional arguments based on topic.
+  * Add a script to check sizes of dependencies.
+  * tests/basic-command-line: check exit code and use a more complex example.
+  * Provide better advice about what environment variable to set to make the
+    console work.
+
+ -- Chris Lamb <lamby@debian.org>  Wed, 28 Sep 2016 11:44:25 +0100
+
 diffoscope (60) unstable; urgency=medium
 
   [ Chris Lamb ]

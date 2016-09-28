@@ -4,7 +4,8 @@ diffoscope (61) unstable; urgency=medium
   * Skip rlib tests if the "nm" tool is missing. (Closes: #837742)
   * Use dedicated xxd binary package instead of vim-common.
   * autopkgtest: Allow stderr for the basic-command-line test.
-  * d/rules: make it possible to backport without changing the "upstream" version.
+  * d/rules: make it possible to backport without changing the "upstream"
+    version.
 
   [ Maria Glukhova ]
   * Catch an error when we can't read files in has_same_content_as().

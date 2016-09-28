@@ -116,7 +116,7 @@ class StatusFD(object):
         self.fileobj = os.fdopen(fileno, 'w')
 
     def notify(self, current, total):
-        print('{}\t{}'.format(current, total, file=self.fileobj))
+        print('{}\t{}'.format(current, total), file=self.fileobj)
 
     def finish(self):
         pass

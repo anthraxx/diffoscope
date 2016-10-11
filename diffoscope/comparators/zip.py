@@ -102,7 +102,7 @@ class ZipContainer(Archive):
 
 class ZipFile(File):
     CONTAINER_CLASS = ZipContainer
-    RE_FILE_TYPE = re.compile(r'^(Zip archive|Java archive|EPUB document)\b')
+    RE_FILE_TYPE = re.compile(r'^(Zip archive|Java archive|EPUB document|OpenDocument (Text|Spreadsheet|Presentation|Drawing|Formula|Template|Text Template))\b')
 
     @staticmethod
     def recognizes(file):

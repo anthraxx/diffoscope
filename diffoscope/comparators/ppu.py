@@ -47,7 +47,7 @@ class Ppudump(Command):
         return env
 
     def filter(self, line):
-        if re.match(r'^Analyzing %s \(v[0-9]+\)$' % re.escape(self.path), line.decode('utf-8')):
+        if re.match(r'^Analyzing %s \(v[0-9]+\)$' % re.escape(self.path), line.decode('utf-8', errors='ignore')):
             return b''
         return line
 

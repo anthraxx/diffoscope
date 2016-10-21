@@ -12,7 +12,7 @@ Build-Depends:
  binutils-multiarch <!nocheck>,
  caca-utils <!nocheck>,
  colord <!nocheck>,
- debhelper (>= 9.20141010),
+ debhelper (>= 10),
  default-jdk-headless <!nocheck> | default-jdk <!nocheck>,
  dh-python (>= 2.20160818~),
  dpkg-dev (>= 1.17.14),

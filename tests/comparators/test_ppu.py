@@ -19,11 +19,12 @@
 # along with diffoscope.  If not, see <http://www.gnu.org/licenses/>.
 
 import pytest
+import subprocess
 
 from diffoscope.comparators.ppu import PpuFile
 
 from utils import skip_unless_tools_exist, data, load_fixture, \
-    assert_non_existing
+    assert_non_existing, skip_unless_tool_is_older_than
 
 # These test files were taken from two different builds of the Debian package
 # fp-units-castle-game-engine (version 5.1.1-2 on amd64) on the Debian
@@ -33,6 +34,12 @@ from utils import skip_unless_tools_exist, data, load_fixture, \
 
 file1 = load_fixture(data('test1.ppu'))
 file2 = load_fixture(data('test2.ppu'))
+
+def ppudump_version():
+    # first line of `PPU-Analyser Version 3.0.0` looks like:
+    #   PPU-Analyser Version 3.0.0
+    out = subprocess.check_output(['ppudump', '-h'])
+    return out.decode('utf-8').splitlines()[0].split()[2].strip()
 
 @skip_unless_tools_exist('ppudump')
 def test_identification(file1):
@@ -46,12 +53,12 @@ def test_no_differences(file1):
 def differences(file1, file2):
     return file1.compare(file2).details
 
-@skip_unless_tools_exist('ppudump')
+@skip_unless_tool_is_older_than('ppudump', ppudump_version, '3.0.0')
 def test_diff(differences):
     print(differences[0].unified_diff)
     expected_diff = open(data('ppu_expected_diff')).read()
     assert differences[0].unified_diff == expected_diff
 
-@skip_unless_tools_exist('ppudump')
+@skip_unless_tool_is_older_than('ppudump', ppudump_version, '3.0.0')
 def test_compare_non_existing(monkeypatch, file1):
     assert_non_existing(monkeypatch, file1, has_null_source=False)

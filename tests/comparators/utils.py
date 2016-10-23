@@ -46,7 +46,7 @@ def skip_unless_tools_exist(*required):
 
 def skip_unless_tool_is_older_than(tool, actual_ver, min_ver, vcls=LooseVersion):
     if tools_missing(tool):
-        return pytest.mark.skip(reason="requires {}".format(tool))
+        return pytest.mark.skipif(True, reason="requires {}".format(tool))
     if callable(actual_ver):
         actual_ver = actual_ver()
     return pytest.mark.skipif(

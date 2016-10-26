@@ -17,6 +17,7 @@
 # You should have received a copy of the GNU General Public License
 # along with diffoscope.  If not, see <http://www.gnu.org/licenses/>.
 
+from collections import OrderedDict
 import re
 import json
 
@@ -34,18 +35,26 @@ class JSONFile(File):
 
         with open(file.path) as f:
             try:
-                file.parsed = json.load(f)
+                file.parsed = json.load(f, object_pairs_hook=OrderedDict)
             except json.JSONDecodeError:
                 return False
 
         return True
 
     def compare_details(self, other, source=None):
-        return [Difference.from_text(self.dumps(self), self.dumps(other),
-            self.path, other.path)]
+        difference = Difference.from_text(self.dumps(self), self.dumps(other),
+            self.path, other.path)
+        if difference:
+            return [difference]
+
+        difference = Difference.from_text(self.dumps(self, sort_keys=False),
+                                          self.dumps(other, sort_keys=False),
+                                          self.path, other.path,
+                                          comment="ordering differences only")
+        return [difference]
 
     @staticmethod
-    def dumps(file):
+    def dumps(file, sort_keys=True):
         if not hasattr(file, 'parsed'):
             return ""
-        return json.dumps(file.parsed, indent=4, sort_keys=True)
+        return json.dumps(file.parsed, indent=4, sort_keys=sort_keys)

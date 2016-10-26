@@ -25,6 +25,8 @@ from utils import data, load_fixture, assert_non_existing
 
 json1 = load_fixture(data('test1.json'))
 json2 = load_fixture(data('test2.json'))
+json3a = load_fixture(data('order1a.json'))
+json3b = load_fixture(data('order1b.json'))
 
 def test_identification(json1):
     assert isinstance(json1, JSONFile)
@@ -43,3 +45,8 @@ def test_diff(differences):
 
 def test_compare_non_existing(monkeypatch, json1):
     assert_non_existing(monkeypatch, json1)
+
+def test_ordering_differences(json3a, json3b):
+    diff = json3a.compare(json3b)
+    assert diff.details[0]._comments == ['ordering differences only']
+    assert diff.details[0].unified_diff == open(data('order1.diff')).read()

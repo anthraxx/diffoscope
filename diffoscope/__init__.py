@@ -26,7 +26,7 @@ import functools
 
 from distutils.spawn import find_executable
 
-VERSION = "61"
+VERSION = "62"
 
 logger = logging.getLogger("diffoscope")
 logger.setLevel(logging.WARNING)

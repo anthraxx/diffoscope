@@ -1,3 +1,31 @@
+diffoscope (62) unstable; urgency=medium
+
+  [ Chris Lamb ]
+  * progress: Pass the fileobj to the print(..) function, not str.format.
+    Thanks to Marius Gedminas <marius@gedmin.as>.
+  * Move diffoscope.Config to a more-standard and simpler singleton pattern
+    and validate constraints on every __setattr__.
+
+  [ Maria Glukhova ]
+  * tests/{dex,java}: Skip the java tests if javap is older than 1.8.
+    This fixes test_java and test_dex failing in jessie-backports.  See #838984
+
+  [ Michel Messerschmidt ]
+  * zip: Add rudimentary support for OpenDocumentFormat files.
+
+  [ Mattia Rizzolo ]
+  * debian: bump debhelper compat level to 10, no changes needed.
+  * ppu:
+    + don't do run a full ppudump while only looking for PPU file version.
+    + ignore decoding errors from ppudump while filtering the output.
+  * tests/ppu: skip some PPU tests if ppudump is < 3.0.0.  Closes: #838984
+  * tests: skip test using a format accepted by older pytest.  Closes: #841146
+
+  [ Daniel Shahaf ]
+  * json: detect order-only differences and print them nicely.  Closes: #839538
+
+ -- Mattia Rizzolo <mattia@debian.org>  Tue, 01 Nov 2016 15:33:45 +0000
+
 diffoscope (61) unstable; urgency=medium
 
   [ Mattia Rizzolo ]

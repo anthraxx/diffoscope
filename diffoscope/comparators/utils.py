@@ -172,7 +172,7 @@ class Container(object, metaclass=abc.ABCMeta):
 
     def get_members(self):
         """Returns a directory. The key is what is used to match when comparing containers."""
-        return collections.OrderedDict([(name, self.get_member(name)) for name in self.get_member_names()])
+        return collections.OrderedDict(self.get_all_members())
 
     def lookup_file(self, *names):
         """Try to fetch a specific file by digging in containers."""
@@ -197,6 +197,12 @@ class Container(object, metaclass=abc.ABCMeta):
     @abc.abstractmethod
     def get_member(self, member_name):
         raise NotImplementedError()
+
+    def get_all_members(self):
+        # If your get_member implementation is O(n) then this will be O(n^2) cost
+        # In such cases it is HIGHLY RECOMMENDED to override this as well
+        for name in self.get_member_names():
+            yield name, self.get_member(name)
 
     def comparisons(self, other):
         my_members = self.get_members()

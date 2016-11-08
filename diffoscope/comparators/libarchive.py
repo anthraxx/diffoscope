@@ -195,3 +195,16 @@ class LibarchiveContainer(Archive):
                     else:
                         return LibarchiveMember(self, entry)
         raise KeyError('%s not found in archive', member_name)
+
+    def get_all_members(self):
+        with libarchive.file_reader(self.source.path) as archive:
+            for entry in archive:
+                p = entry.pathname
+                if entry.isdir:
+                    yield p, LibarchiveDirectory(self, entry)
+                elif entry.issym:
+                    yield p, LibarchiveSymlink(self, entry)
+                elif entry.isblk or entry.ischr:
+                    yield p, LibarchiveDevice(self, entry)
+                else:
+                    yield p, LibarchiveMember(self, entry)

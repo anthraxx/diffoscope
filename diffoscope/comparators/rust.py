@@ -45,7 +45,6 @@ class RustObjectContainer(Archive):
     def get_member_names(self):
         return [get_compressed_content_name(self.source.path, '.deflate')]
 
-    @tool_required('gzip')
     def extract(self, member_name, dest_dir):
         dest_path = os.path.join(dest_dir, member_name)
         logger.debug('rust-object extracting to %s', dest_path)

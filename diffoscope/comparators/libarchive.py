@@ -173,6 +173,8 @@ class LibarchiveContainer(Archive):
         dest_path = os.path.join(dest_dir, dest_name)
         logger.debug('libarchive extracting %s to %s', member_name, dest_path)
         with libarchive.file_reader(self.source.path) as archive:
+            # FIXME: another O(n^2) lookup here, this will hit quite badly
+            # for large archives with a lot of small files.
             for entry in archive:
                 if entry.pathname == member_name:
                     logger.debug('entry found, writing %s', dest_path)

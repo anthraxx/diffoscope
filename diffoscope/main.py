@@ -30,7 +30,7 @@ import contextlib
 
 import diffoscope.comparators
 
-from diffoscope import logger, VERSION, set_locale, clean_all_temp_files
+from diffoscope import logger, VERSION, set_locale, clean_all_temp_files, tool_required
 from diffoscope.exc import RequiredToolNotFound
 from diffoscope.config import Config
 from diffoscope.difference import Difference
@@ -73,6 +73,11 @@ def create_parser():
     group1 = parser.add_argument_group('output types')
     group1.add_argument('--text', metavar='OUTPUT_FILE', dest='text_output',
                         help='Write plain text output to given file (use - for stdout)')
+    group1.add_argument('--text-color', metavar='WHEN', default='auto',
+                        choices=['never', 'auto', 'always'],
+                        help='When to output color diff, using colordiff(1). '
+                        'WHEN is one of {%(choices)s}. Default: auto, meaning '
+                        'yes if the output is a terminal, otherwise no.')
     group1.add_argument('--output-empty', action='store_true',
                         help='If there was no difference, then output an empty '
                         'diff for each output type that was specified. (For '
@@ -171,6 +176,7 @@ def make_printer(path):
     def print_func(*args, **kwargs):
         kwargs['file'] = output
         print(*args, **kwargs)
+    print_func.output = output
     yield print_func
     if path != '-':
         output.close()
@@ -218,6 +224,7 @@ def maybe_set_limit(config, parsed_args, key):
         setattr(config, key, float("inf"))
 
 
+@tool_required('colordiff')
 def run_diffoscope(parsed_args):
     if not tlsh and Config().fuzzy_threshold != parsed_args.fuzzy_threshold:
         logger.warning('Fuzzy-matching is currently disabled as the "tlsh" module is unavailable.')
@@ -252,7 +259,14 @@ def run_diffoscope(parsed_args):
                 open(parsed_args.text_output, 'w').close()
             else:
                 with make_printer(parsed_args.text_output or '-') as print_func:
-                    output_text(difference, print_func=print_func)
+                    text_color = parsed_args.text_color
+                    if text_color == 'auto':
+                        color = print_func.output.isatty()
+                    elif text_color == 'always':
+                        color = True
+                    elif text_color == 'never':
+                        color = False
+                    output_text(difference, print_func=print_func, color=color)
         if parsed_args.html_output:
             with make_printer(parsed_args.html_output) as print_func:
                 output_html(difference, css_url=parsed_args.css_url, print_func=print_func)

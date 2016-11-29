@@ -30,7 +30,7 @@ import contextlib
 
 import diffoscope.comparators
 
-from diffoscope import logger, VERSION, set_locale, clean_all_temp_files, tool_required
+from diffoscope import logger, VERSION, set_locale, clean_all_temp_files
 from diffoscope.exc import RequiredToolNotFound
 from diffoscope.config import Config
 from diffoscope.difference import Difference
@@ -224,7 +224,6 @@ def maybe_set_limit(config, parsed_args, key):
         setattr(config, key, float("inf"))
 
 
-@tool_required('colordiff')
 def run_diffoscope(parsed_args):
     if not tlsh and Config().fuzzy_threshold != parsed_args.fuzzy_threshold:
         logger.warning('Fuzzy-matching is currently disabled as the "tlsh" module is unavailable.')

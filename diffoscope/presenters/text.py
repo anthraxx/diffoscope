@@ -21,9 +21,10 @@
 import subprocess
 import sys
 
-from diffoscope import logger
+from diffoscope import logger, tool_required
 
 
+@tool_required('colordiff')
 def print_difference(difference, print_func, color=False):
     if difference.comments:
         for comment in difference.comments:

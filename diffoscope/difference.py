@@ -449,3 +449,14 @@ def reverse_unified_diff(diff):
         else:
             res.append(line)
     return ''.join(res)
+
+
+@tool_required('colordiff')
+def color_unified_diff(diff):
+    with subprocess.Popen(["colordiff"],
+                          stdin=subprocess.PIPE,
+                          stdout=subprocess.PIPE,
+                          universal_newlines=True) as proc:
+        diff_output, _ = proc.communicate(diff)
+        return diff_output
+

@@ -22,20 +22,16 @@ import subprocess
 import sys
 
 from diffoscope import logger, tool_required
+from diffoscope.difference import color_unified_diff
 
 
-@tool_required('colordiff')
 def print_difference(difference, print_func, color=False):
     if difference.comments:
         for comment in difference.comments:
             print_func(u"│┄ %s" % comment)
     if difference.unified_diff:
         if color:
-            with subprocess.Popen(["colordiff"],
-                                  stdin=subprocess.PIPE,
-                                  stdout=subprocess.PIPE,
-                                  universal_newlines=True) as proc:
-                diff_output, _ = proc.communicate(difference.unified_diff)
+            diff_output = color_unified_diff(difference.unified_diff)
         else:
             diff_output = difference.unified_diff
         for line in diff_output.splitlines():

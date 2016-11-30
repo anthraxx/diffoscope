@@ -23,7 +23,7 @@ import subprocess
 from diffoscope.comparators.squashfs import SquashfsFile
 
 from utils import skip_unless_tools_exist, data, load_fixture, \
-    assert_non_existing, skip_unless_tool_is_older_than
+    assert_non_existing, skip_unless_tool_is_at_least
 
 def unsquashfs_version():
     # first line of 'unsquashfs -version' looks like:
@@ -53,7 +53,7 @@ def test_no_warnings(capfd, squashfs1, squashfs2):
 def differences(squashfs1, squashfs2):
     return squashfs1.compare(squashfs2).details
 
-@skip_unless_tool_is_older_than('unsquashfs', unsquashfs_version, '4.3')
+@skip_unless_tool_is_at_least('unsquashfs', unsquashfs_version, '4.3')
 def test_superblock(differences):
     expected_diff = open(data('squashfs_superblock_expected_diff')).read()
     assert differences[0].unified_diff == expected_diff

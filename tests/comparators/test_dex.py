@@ -23,7 +23,7 @@ from diffoscope.config import Config
 from diffoscope.comparators.dex import DexFile
 from diffoscope.comparators.binary import NonExistingFile
 
-from utils import skip_unless_tools_exist, data, load_fixture, skip_unless_tool_is_older_than
+from utils import skip_unless_tools_exist, data, load_fixture, skip_unless_tool_is_at_least
 from test_java import javap_version
 
 
@@ -42,7 +42,7 @@ def differences(dex1, dex2):
     return dex1.compare(dex2).details
 
 @skip_unless_tools_exist('enjarify', 'zipinfo', 'javap')
-@skip_unless_tool_is_older_than('javap', javap_version, '1.8')
+@skip_unless_tool_is_at_least('javap', javap_version, '1.8')
 def test_differences(differences):
     assert differences[0].source1 == 'test1.jar'
     assert differences[0].source2 == 'test2.jar'

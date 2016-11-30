@@ -25,7 +25,7 @@ from diffoscope.difference import Difference
 from diffoscope.comparators.utils import Command
 
 from utils import tools_missing, skip_unless_tools_exist, data, load_fixture, \
-    skip_unless_tool_is_older_than
+    skip_unless_tool_is_at_least
 
 try:
     import tlsh # noqa
@@ -51,8 +51,8 @@ def test_skip_unless_tools_exist_empty():
 def test_skip_unless_tools_exist_missing():
     pytest.xfail("Test should always be skipped")
 
-def skip_unless_tool_is_older_than():
-    func = skip_unless_tool_is_older_than
+def skip_unless_tool_is_at_least():
+    func = skip_unless_tool_is_at_least
     assert func('/missing', 1, 1).name is 'skip'
     # pytest.skipif().args[0] contains the evaluated statement
     assert func('cat', 1, 1).args[0] is False

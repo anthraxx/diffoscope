@@ -1,4 +1,4 @@
-diffoscope (63) UNRELEASED; urgency=medium
+diffoscope (63) unstable; urgency=medium
 
   * Add myself to Uploaders.
   * Greatly improve speed for large archives by fixing O(n^2) complexity for
@@ -11,7 +11,7 @@ diffoscope (63) UNRELEASED; urgency=medium
     visibility) as well as the whole diff itself. As with similar features in
     other programs, the effect affects all descendants if you shift-click.
 
- -- Ximin Luo <infinity0@debian.org>  Fri, 02 Dec 2016 11:59:36 +0100
+ -- Ximin Luo <infinity0@debian.org>  Fri, 02 Dec 2016 12:10:04 +0100
 
 diffoscope (62) unstable; urgency=medium
 

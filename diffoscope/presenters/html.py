@@ -201,7 +201,7 @@ $(function() {
     return false;
   };
   $(".ondemand td").on('click', load_cont);
-  var diffcontrols = $(".diffcontrol")
+  var diffcontrols = $(".diffcontrol");
   diffcontrols.on('click', function(evt) {
     var control = $(this);
     var target = control.parent().siblings('table.diff, div.difference');

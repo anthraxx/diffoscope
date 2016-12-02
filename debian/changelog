@@ -1,3 +1,18 @@
+diffoscope (63) UNRELEASED; urgency=medium
+
+  * Add myself to Uploaders.
+  * Greatly improve speed for large archives by fixing O(n^2) complexity for
+    archive member lookup.
+    - There is still O(n^2) complexity for archive member extraction, but this
+      is less noticeable for various reasons and would require more complexity
+      to fix, so for now is left as a task for the future.
+  * Text output: add coloured diff support via colordiff(1).
+  * Html-dir output: add +/- buttons to fold sub-diffs (i.e. toggle their
+    visibility) as well as the whole diff itself. As with similar features in
+    other programs, the effect affects all descendants if you shift-click.
+
+ -- Ximin Luo <infinity0@debian.org>  Fri, 02 Dec 2016 11:59:36 +0100
+
 diffoscope (62) unstable; urgency=medium
 
   [ Chris Lamb ]

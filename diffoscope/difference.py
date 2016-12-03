@@ -450,13 +450,17 @@ def reverse_unified_diff(diff):
             res.append(line)
     return ''.join(res)
 
+re_diff_change = re.compile(r'^([+-@]).*', re.MULTILINE)
 
-@tool_required('colordiff')
 def color_unified_diff(diff):
-    with subprocess.Popen(["colordiff"],
-                          stdin=subprocess.PIPE,
-                          stdout=subprocess.PIPE,
-                          universal_newlines=True) as proc:
-        diff_output, _ = proc.communicate(diff)
-        return diff_output
+    RESET = '\033[0m'
+    RED, GREEN, CYAN = '\033[31m', '\033[32m', '\033[0;36m'
 
+    def repl(m):
+        return '{}{}{}'.format({
+            '-': RED,
+            '@': CYAN,
+            '+': GREEN,
+        }[m.group(1)], m.group(0), RESET)
+
+    return re_diff_change.sub(repl, diff)

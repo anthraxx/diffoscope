@@ -75,9 +75,8 @@ def create_parser():
                         help='Write plain text output to given file (use - for stdout)')
     group1.add_argument('--text-color', metavar='WHEN', default='auto',
                         choices=['never', 'auto', 'always'],
-                        help='When to output color diff, using colordiff(1). '
-                        'WHEN is one of {%(choices)s}. Default: auto, meaning '
-                        'yes if the output is a terminal, otherwise no.')
+                        help='When to output color diff. WHEN is one of {%(choices)s}. '
+                        'Default: auto, meaning yes if the output is a terminal, otherwise no.')
     group1.add_argument('--output-empty', action='store_true',
                         help='If there was no difference, then output an empty '
                         'diff for each output type that was specified. (For '

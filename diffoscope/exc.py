@@ -40,10 +40,6 @@ class RequiredToolNotFound(Exception):
             'debian': 'diffutils',
             'arch': 'diffutils',
         },
-        'colordiff': {
-            'debian': 'colordiff',
-            'arch': 'colordiff',
-        },
         'cpio': {
             'debian': 'cpio',
             'arch': 'cpio',

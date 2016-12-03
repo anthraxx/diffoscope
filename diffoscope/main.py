@@ -258,13 +258,11 @@ def run_diffoscope(parsed_args):
                 open(parsed_args.text_output, 'w').close()
             else:
                 with make_printer(parsed_args.text_output or '-') as print_func:
-                    text_color = parsed_args.text_color
-                    if text_color == 'auto':
-                        color = print_func.output.isatty()
-                    elif text_color == 'always':
-                        color = True
-                    elif text_color == 'never':
-                        color = False
+                    color = {
+                        'auto': print_func.output.isatty(),
+                        'never': False,
+                        'always': True,
+                    }[parsed_args.text_color]
                     output_text(difference, print_func=print_func, color=color)
         if parsed_args.html_output:
             with make_printer(parsed_args.html_output) as print_func:

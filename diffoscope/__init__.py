@@ -52,8 +52,10 @@ def get_current_os():
     return system
 
 
-# decorator that checks if the specified tool is installed
 def tool_required(command):
+    """
+    Decorator that checks if the specified tool is installed
+    """
     if not hasattr(tool_required, 'all'):
         tool_required.all = set()
     tool_required.all.add(command)

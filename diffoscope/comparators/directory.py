@@ -92,7 +92,7 @@ def compare_meta(path1, path2):
         lsattr1 = lsattr(path1)
         lsattr2 = lsattr(path2)
         differences.append(Difference.from_text(
-                               lsattr1, lsattr2, path1, path2, source="lattr"))
+                               lsattr1, lsattr2, path1, path2, source="lsattr"))
     except RequiredToolNotFound:
         logger.info("Unable to find 'lsattr'.")
     try:

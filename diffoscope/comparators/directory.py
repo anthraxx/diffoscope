@@ -64,6 +64,11 @@ class Stat(Command):
 
 @tool_required('lsattr')
 def lsattr(path):
+    """
+    NB. Difficult to replace with in-Python version. See
+    <http://stackoverflow.com/questions/35501249/python-get-linux-file-immutable-attribute/38092961#38092961>
+    """
+
     try:
         output = subprocess.check_output(['lsattr', '-d', path], shell=False, stderr=subprocess.STDOUT).decode('utf-8')
         return output.split()[0]

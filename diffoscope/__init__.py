@@ -52,6 +52,10 @@ def get_current_os():
     return system
 
 
+# Memoize calls to ``distutils.spawn.find_executable`` to avoid excessive stat
+# calls
+find_executable = functools.lru_cache()(find_executable)
+
 def tool_required(command):
     """
     Decorator that checks if the specified tool is installed

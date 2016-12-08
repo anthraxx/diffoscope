@@ -104,6 +104,9 @@ class ProgressBar(object):
         self.bar.start()
 
     def notify(self, current, total):
+        if not total:
+            total = 1
+            current = 1
         self.bar.maxval = total
         self.bar.currval = current
         self.bar.update()

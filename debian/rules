@@ -29,7 +29,6 @@ export PYBUILD_AFTER_INSTALL=rm -rvf '{destdir}/{install_dir}/htmlcov' '{destdir
 	dh $@ --with python3 --with bash-completion --buildsystem=pybuild
 
 override_dh_python3:
-	dh_python3 -p trydiffoscope
 	dh_python3 -p diffoscope \
 		--recommends=python-debian \
 		--recommends=rpm-python \

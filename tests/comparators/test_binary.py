@@ -28,14 +28,15 @@ from diffoscope.difference import Difference
 from diffoscope.comparators.binary import File, FilesystemFile, NonExistingFile
 
 from utils import skip_unless_tools_exist, data, load_fixture
+from os import mkdir, symlink
+from tempfile import TemporaryDirectory
+import os.path
 
 TEST_FILE1_PATH = data('binary1')
 TEST_FILE2_PATH = data('binary2')
 TEST_ASCII_PATH = data('text_ascii1')
 TEST_UNICODE_PATH = data('text_unicode1')
 TEST_ISO8859_PATH = data('text_iso8859')
-TEST_SYMLINK2DIR1_PATH = data('dir_and_symlink_a')
-TEST_SYMLINK2DIR2_PATH = data('dir_and_symlink_b')
 
 
 binary1 = load_fixture(TEST_FILE1_PATH)
@@ -153,6 +154,19 @@ def test_compare_two_nonexisting_files():
     assert 'non-existing' in difference.comment
 
 def test_symlink_to_dir():
-    file1 = FilesystemFile(TEST_SYMLINK2DIR1_PATH)
-    file2 = FilesystemFile(TEST_SYMLINK2DIR2_PATH)
-    assert file1.has_same_content_as(file2) is False
+    # Create 2 directories, each containing sub-directory src and symbolic link dst-->src.
+    with TemporaryDirectory() as basepath1:
+        with TemporaryDirectory() as basepath2:
+            src1path = os.path.join(basepath1, 'src')
+            dst1path = os.path.join(basepath1, 'lnk')
+            src2path = os.path.join(basepath2, 'src')
+            dst2path = os.path.join(basepath2, 'lnk')
+            mkdir(src1path)
+            mkdir(src2path)
+            symlink(src1path, dst1path)
+            symlink(src2path, dst2path)
+
+            # Compare these directories' content.
+            file1 = FilesystemFile(basepath1)
+            file2 = FilesystemFile(basepath2)
+            assert file1.has_same_content_as(file2) is False

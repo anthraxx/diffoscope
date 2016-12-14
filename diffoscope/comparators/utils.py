@@ -171,7 +171,7 @@ class Container(object, metaclass=abc.ABCMeta):
         return self._source
 
     def get_members(self):
-        """Returns a directory. The key is what is used to match when comparing containers."""
+        """Returns a dictionary. The key is what is used to match when comparing containers."""
         return collections.OrderedDict(self.get_all_members())
 
     def lookup_file(self, *names):

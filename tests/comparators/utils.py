@@ -31,10 +31,6 @@ from diffoscope.presenters.text import output_text
 from diffoscope.comparators.binary import FilesystemFile, NonExistingFile
 
 
-@pytest.fixture(autouse=True)
-def set_locale():
-    diffoscope.set_locale()
-
 def tools_missing(*required):
     return not required or any(find_executable(x) is None for x in required)
 

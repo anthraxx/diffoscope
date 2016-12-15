@@ -79,6 +79,7 @@ COMPARATORS = (
     ('ar.ArFile',),
     ('tar.TarFile',),
     ('xz.XzFile',),
+    ('apk.ApkFile',),
     ('zip.ZipFile',),
     ('zip.MozillaZipFile',),
     ('image.ImageFile',),

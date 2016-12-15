@@ -25,6 +25,9 @@ class OutputParsingError(Exception):
 
 class RequiredToolNotFound(Exception):
     PROVIDERS = {
+        'apktool': {
+            'debian': 'apktool',
+        },
         'bzip2': {
             'debian': 'bzip2',
             'arch': 'bzip2',

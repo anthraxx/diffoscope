@@ -23,6 +23,7 @@ import logging
 import platform
 import tempfile
 import functools
+import time
 
 from distutils.spawn import find_executable
 
@@ -90,6 +91,7 @@ def set_locale():
         os.environ[var] = 'C'
     os.environ['LC_CTYPE'] = 'C.UTF-8'
     os.environ['TZ'] = 'UTC'
+    time.tzset()
 
 
 temp_files = []

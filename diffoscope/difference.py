@@ -25,6 +25,7 @@ import hashlib
 import threading
 import contextlib
 import subprocess
+import tempfile
 
 from multiprocessing.dummy import Queue
 
@@ -138,20 +139,15 @@ DIFF_CHUNK = 4096
 
 
 @tool_required('diff')
-def run_diff(fd1, fd2, end_nl_q1, end_nl_q2):
-    cmd = ['diff', '-aU7', '/dev/fd/%d' % fd1, '/dev/fd/%d' % fd2]
+def run_diff(fifo1, fifo2, end_nl_q1, end_nl_q2):
+    cmd = ['diff', '-aU7', fifo1, fifo2]
     logger.debug('running %s', cmd)
-    if hasattr(os, 'set_inheritable'): # new in Python 3.4
-        os.set_inheritable(fd1, True)
-        os.set_inheritable(fd2, True)
     p = subprocess.Popen(cmd, shell=False, bufsize=1,
                          stdin=subprocess.PIPE,
                          stdout=subprocess.PIPE,
                          stderr=subprocess.STDOUT,
-                         pass_fds=(fd1, fd2))
+    )
     p.stdin.close()
-    os.close(fd1)
-    os.close(fd2)
     parser = DiffParser(p.stdout, end_nl_q1, end_nl_q2)
     t_read = threading.Thread(target=parser.parse)
     t_read.daemon = True
@@ -202,13 +198,11 @@ def feed(feeder, f, end_nl_q):
 
 
 @contextlib.contextmanager
-def fd_from_feeder(feeder, end_nl_q):
-    pipe_r, pipe_w = os.pipe()
-    outf = os.fdopen(pipe_w, 'wb')
+def fd_from_feeder(feeder, end_nl_q, fifo):
+    outf = open(fifo, 'wb')
     t = ExThread(target=feed, args=(feeder, outf, end_nl_q))
     t.daemon = True
     t.start()
-    yield pipe_r
     try:
         t.join()
     finally:
@@ -273,9 +267,12 @@ def make_feeder_from_command(command):
 def diff(feeder1, feeder2):
     end_nl_q1 = Queue()
     end_nl_q2 = Queue()
-    with fd_from_feeder(feeder1, end_nl_q1) as fd1:
-        with fd_from_feeder(feeder2, end_nl_q2) as fd2:
-            return run_diff(fd1, fd2, end_nl_q1, end_nl_q2)
+    with tempfile.TemporaryDirectory() as tmpdir:
+        fifo1 = '{}/f1'.format(tmpdir)
+        fifo2 = '{}/f2'.format(tmpdir)
+        fd_from_feeder(feeder1, end_nl_q1, fifo1)
+        fd_from_feeder(feeder2, end_nl_q2, fifo2)
+        return run_diff(fifo1, fifo2, end_nl_q1, end_nl_q2)
 
 
 class Difference(object):

@@ -65,110 +65,110 @@ HEADER = """<!DOCTYPE html>
   <link rel="icon" type="image/png" href="data:image/png;base64,%(favicon)s" />
   <title>%(title)s</title>
   <style>
-    body {
+    body.diffoscope {
       background: white;
       color: black;
     }
-    .footer {
+    .diffoscope .footer {
       font-size: small;
     }
-    .difference {
+    .diffoscope .difference {
       border: outset #888 1px;
       background-color:rgba(0,0,0,.1);
       padding: 0.5em;
       margin: 0.5em 0;
     }
-    .difference table {
+    .diffoscope .difference table {
       table-layout: fixed;
       width: 100%%;
       border: 0;
     }
-    .difference th,
-    .difference td {
+    .diffoscope .difference th,
+    .diffoscope .difference td {
       border: 0;
     }
-    table.diff {
+    .diffoscope table.diff {
       border: 0px;
       border-collapse:collapse;
       font-size:0.75em;
       font-family: Lucida Console, monospace;
     }
-    table.diff tr:hover td {
+    .diffoscope table.diff tr:hover td {
       background: #FFFF00;
     }
-    td.line {
+    .diffoscope td.line {
       color:#8080a0
     }
-    th {
+    .diffoscope th {
       background: black;
       color: white
     }
-    tr.diffunmodified td {
+    .diffoscope tr.diffunmodified td {
       background: #D0D0E0
     }
-    tr.diffhunk td {
+    .diffoscope tr.diffhunk td {
       background: #A0A0A0
     }
-    tr.diffadded td {
+    .diffoscope tr.diffadded td {
       background: #CCFFCC
     }
-    tr.diffdeleted td {
+    .diffoscope tr.diffdeleted td {
       background: #FFCCCC
     }
-    tr.diffchanged td {
+    .diffoscope tr.diffchanged td {
       background: #FFFFA0
     }
-    ins, del {
+    .diffoscope ins, del {
       background: #E0C880;
       text-decoration: none
     }
-    span.diffponct {
+    .diffoscope span.diffponct {
       color: #B08080
     }
-    .comment {
+    .diffoscope .comment {
       font-style: italic;
     }
-    .source {
+    .diffoscope .source {
       font-weight: bold;
     }
-    .error {
+    .diffoscope .error {
       border: solid black 1px;
       background: red;
       color: white;
       padding: 0.2em;
     }
-    .anchor {
+    .diffoscope .anchor {
       margin-left: 0.5em;
       font-size: 80%%;
       color: #333;
       text-decoration: none;
       display: none;
     }
-    .diffheader:hover .anchor {
+    .diffoscope .diffheader:hover .anchor {
       display: inline;
     }
-    table.diff tr.ondemand td {
+    .diffoscope table.diff tr.ondemand td {
       background: #f99;
       text-align: center;
       padding: 0.5em 0;
     }
-    table.diff tr.ondemand:hover td {
+    .diffoscope table.diff tr.ondemand:hover td {
       background: #faa;
       cursor: pointer;
     }
-    .diffcontrol {
+    .diffoscope .diffcontrol {
       float: left;
       margin-right: 0.3em;
       cursor: pointer;
       display: none; /* currently, only available in html-dir output where jquery is enabled */
     }
-    .diffcontrol-double {
+    .diffoscope .diffcontrol-double {
       line-height: 200%%;
     }
   </style>
   %(css_link)s
 </head>
-<body>
+<body class="diffoscope">
 """
 
 FOOTER = """

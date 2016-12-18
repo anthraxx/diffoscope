@@ -49,6 +49,7 @@ COMPARATORS = (
     ('deb.DebDataTarFile',),
     ('elf.ElfSection',),
     ('ps.PsFile',),
+    ('javascript.JavaScriptFile',),
     ('json.JSONFile',),
     ('text.TextFile',),
     ('bzip2.Bzip2File',),

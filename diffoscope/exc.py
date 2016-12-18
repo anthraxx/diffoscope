@@ -95,6 +95,9 @@ class RequiredToolNotFound(Exception):
             'debian': 'default-jdk-headless | default-jdk | java-sdk',
             'arch': 'java-environment',
         },
+        'js-beautify': {
+            'debian': 'python-jsbeautifier',
+        },
         'llvm-bcanalyzer': {
             'debian': 'llvm',
             'arch': 'llvm',

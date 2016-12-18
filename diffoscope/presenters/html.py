@@ -646,13 +646,13 @@ def output_unified_diff_table(unified_diff, _has_internal_linenos):
         bytes_left = total - bytes_processed
         frac = bytes_left / total
         spl_print_func(
-            u"<tr class='error'>"
-            u"<td colspan='4'>Max diff block lines reached; %s/%s bytes (%.2f%%) of diff not shown."
+            u'<tr class="error">'
+            u'<td colspan="4">Max diff block lines reached; %s/%s bytes (%.2f%%) of diff not shown.'
             u"</td></tr>" % (bytes_left, total, frac*100), force=True)
         return False
     except PrintLimitReached:
         assert not spl_had_entered_child() # limit reached on the parent page
-        spl_print_func(u"<tr class='error'><td colspan='4'>Max output size reached.</td></tr>", force=True)
+        spl_print_func(u'<tr class="error"><td colspan="4">Max output size reached.</td></tr>', force=True)
         raise
     finally:
         spl_print_func(u"</table>", force=True)
@@ -686,24 +686,24 @@ def output_unified_diff(print_func, css_url, directory, unified_diff, has_intern
 def output_difference(difference, print_func, css_url, directory, parents):
     logger.debug('html output for %s', difference.source1)
     sources = parents + [difference.source1]
-    print_func(u"<div class='difference'>")
+    print_func(u'<div class="difference">')
     try:
-        print_func(u"<div class='diffheader'>")
+        print_func(u'<div class="diffheader">')
         if difference.source1 == difference.source2:
-            print_func(u"<div class='diffcontrol'>[−]</div>")
-            print_func(u"<div><span class='source'>%s<span>"
+            print_func(u'<div class="diffcontrol">[−]</div>')
+            print_func(u'<div><span class="source">%s<span>'
                        % html.escape(difference.source1))
         else:
-            print_func(u"<div class='diffcontrol diffcontrol-double'>[−]</div>")
-            print_func(u"<div><span class='source'>%s</span> vs.</div>"
+            print_func(u'<div class="diffcontrol diffcontrol-double">[−]</div>')
+            print_func(u'<div><span class="source">%s</span> vs.</div>'
                        % html.escape(difference.source1))
-            print_func(u"<div><span class='source'>%s</span>"
+            print_func(u'<div><span class="source">%s</span>'
                        % html.escape(difference.source2))
         anchor = '/'.join(sources[1:])
-        print_func(u" <a class='anchor' href='#%s' name='%s'>\xb6</a>" % (anchor, anchor))
+        print_func(u' <a class="anchor" href="#%s" name="%s">\xb6</a>' % (anchor, anchor))
         print_func(u"</div>")
         if difference.comments:
-            print_func(u"<div class='comment'>%s</div>"
+            print_func(u'<div class="comment">%s</div>'
                        % u'<br />'.join(map(html.escape, difference.comments)))
         print_func(u"</div>")
         if difference.unified_diff:
@@ -743,7 +743,7 @@ def output_html(difference, css_url=None, print_func=None):
         output_difference(difference, print_func, css_url, None, [])
     except PrintLimitReached:
         logger.debug('print limit reached')
-        print_func(u"<div class='error'>Max output size reached.</div>",
+        print_func(u'<div class="error">Max output size reached.</div>',
                    force=True)
     output_footer(print_func)
 
@@ -791,7 +791,7 @@ def output_html_directory(directory, difference, css_url=None, jquery_url=None):
             output_difference(difference, print_func, css_url, directory, [])
         except PrintLimitReached:
             logger.debug('print limit reached')
-            print_func(u"<div class='error'>Max output size reached.</div>",
+            print_func(u'<div class="error">Max output size reached.</div>',
                        force=True)
         if jquery_url:
             print_func(SCRIPTS % {'jquery_url': html.escape(jquery_url)}, force=True)

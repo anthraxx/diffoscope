@@ -21,7 +21,7 @@
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with diffoscope.  If not, see <http://www.gnu.org/licenses/>.
+# along with diffoscope.  If not, see <https://www.gnu.org/licenses/>.
 #
 #
 # Most of the code is borrowed from diff2html.py available at:
@@ -191,7 +191,7 @@ $(function() {
     var td = a.parent();
     td.text('... loading ...');
     td.parent().load(filename + " tr", function() {
-        // http://stackoverflow.com/a/8452751/946226
+        // https://stackoverflow.com/a/8452751/946226
         var elems = $(this).children(':first').unwrap();
         // set this behaviour for the next link too
         var td = elems.parent().find(".ondemand td");

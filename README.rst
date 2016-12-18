@@ -57,7 +57,7 @@ Optionally, the following modules will enhance it:
   Available on Debian and Fedora as ``python3-rpm``.
 * ``Magic-file-extension`` can be used instead of
   ``python-magic``. It is built from `file
-  <http://www.darwinsys.com/file/>`_.
+  <https://www.darwinsys.com/file/>`_.
   Available on Debian and Fedora as ``python3-magic``.
 * ``argcomplete`` is used for argument completion.
   Available on Debian as ``python3-argcomplete``.
@@ -103,4 +103,4 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with diffoscope.  If not, see <http://www.gnu.org/licenses/>.
+along with diffoscope.  If not, see <https://www.gnu.org/licenses/>.

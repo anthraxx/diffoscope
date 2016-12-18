@@ -15,7 +15,7 @@
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with diffoscope.  If not, see <http://www.gnu.org/licenses/>.
+# along with diffoscope.  If not, see <https://www.gnu.org/licenses/>.
 
 import os
 import re
@@ -66,7 +66,7 @@ class Stat(Command):
 def lsattr(path):
     """
     NB. Difficult to replace with in-Python version. See
-    <http://stackoverflow.com/questions/35501249/python-get-linux-file-immutable-attribute/38092961#38092961>
+    <https://stackoverflow.com/questions/35501249/python-get-linux-file-immutable-attribute/38092961#38092961>
     """
 
     try:

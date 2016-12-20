@@ -61,6 +61,7 @@ HEADER = """<!DOCTYPE html>
 <html>
 <head>
   <meta charset="utf-8" />
+  <meta http-equiv="x-ua-compatible" content="IE=edge">
   <meta name="referrer" content="no-referrer" />
   <meta name="generator" content="diffoscope" />
   <link rel="icon" type="image/png" href="data:image/png;base64,%(favicon)s" />

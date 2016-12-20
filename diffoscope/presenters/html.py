@@ -66,7 +66,7 @@ HEADER = """<!DOCTYPE html>
   <meta name="generator" content="diffoscope" />
   <link rel="icon" type="image/png" href="data:image/png;base64,%(favicon)s" />
   <title>%(title)s</title>
-  <style>
+  <style type="text/css">
     body.diffoscope {
       background: white;
       color: black;
@@ -94,7 +94,7 @@ HEADER = """<!DOCTYPE html>
       border: 0;
       border-collapse:collapse;
       font-size:0.75em;
-      font-family: Lucida Console, monospace;
+      font-family: 'Lucida Console', monospace;
     }
     .diffoscope table.diff tr:hover td {
       background: #FFFF00;

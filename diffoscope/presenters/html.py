@@ -88,7 +88,7 @@ HEADER = """<!DOCTYPE html>
       border: 0;
     }
     .diffoscope table.diff {
-      border: 0px;
+      border: 0;
       border-collapse:collapse;
       font-size:0.75em;
       font-family: Lucida Console, monospace;
@@ -96,33 +96,33 @@ HEADER = """<!DOCTYPE html>
     .diffoscope table.diff tr:hover td {
       background: #FFFF00;
     }
-    .diffoscope td.line {
+    .diffoscope .line {
       color:#8080a0
     }
     .diffoscope th {
       background: black;
       color: white
     }
-    .diffoscope tr.diffunmodified td {
+    .diffoscope .diffunmodified td {
       background: #D0D0E0
     }
-    .diffoscope tr.diffhunk td {
+    .diffoscope .diffhunk td {
       background: #A0A0A0
     }
-    .diffoscope tr.diffadded td {
+    .diffoscope .diffadded td {
       background: #CCFFCC
     }
-    .diffoscope tr.diffdeleted td {
+    .diffoscope .diffdeleted td {
       background: #FFCCCC
     }
-    .diffoscope tr.diffchanged td {
+    .diffoscope .diffchanged td {
       background: #FFFFA0
     }
     .diffoscope ins, del {
       background: #E0C880;
       text-decoration: none
     }
-    .diffoscope span.diffponct {
+    .diffoscope .diffponct {
       color: #B08080
     }
     .diffoscope .comment {

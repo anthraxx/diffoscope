@@ -691,7 +691,7 @@ def output_difference(difference, print_func, css_url, directory, parents):
         print_func(u'<div class="diffheader">')
         if difference.source1 == difference.source2:
             print_func(u'<div class="diffcontrol">[−]</div>')
-            print_func(u'<div><span class="source">%s<span>'
+            print_func(u'<div><span class="source">%s</span>'
                        % html.escape(difference.source1))
         else:
             print_func(u'<div class="diffcontrol diffcontrol-double">[−]</div>')

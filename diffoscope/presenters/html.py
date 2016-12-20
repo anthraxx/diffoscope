@@ -76,7 +76,8 @@ HEADER = """<!DOCTYPE html>
     }
     .diffoscope .difference {
       border: outset #888 1px;
-      background-color:rgba(0,0,0,.1);
+      background: #E8E8E8;
+      background: rgba(0,0,0,.1);
       padding: 0.5em;
       margin: 0.5em 0;
     }

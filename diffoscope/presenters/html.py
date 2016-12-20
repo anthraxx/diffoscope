@@ -83,7 +83,7 @@ HEADER = """<!DOCTYPE html>
     }
     .diffoscope .difference table {
       table-layout: fixed;
-      width: 100%%;
+      width: 100%;
       border: 0;
     }
     .diffoscope .difference th,
@@ -142,7 +142,7 @@ HEADER = """<!DOCTYPE html>
     }
     .diffoscope .anchor {
       margin-left: 0.5em;
-      font-size: 80%%;
+      font-size: 80%;
       color: #333;
       text-decoration: none;
       display: none;
@@ -166,7 +166,7 @@ HEADER = """<!DOCTYPE html>
       display: none; /* currently, only available in html-dir output where jquery is enabled */
     }
     .diffoscope .diffcontrol-double {
-      line-height: 200%%;
+      line-height: 200%;
     }
   </style>
   %(css_link)s

@@ -192,18 +192,18 @@ class DotBuildinfoFile(DebControlFile):
         with open(file.path, 'rb') as f:
             # We can parse .buildinfo just like .dsc
             buildinfo = Dsc(f)
-            if not 'Checksums-Sha256' in buildinfo:
+        if not 'Checksums-Sha256' in buildinfo:
+            return False
+        for d in buildinfo.get('Checksums-Sha256'):
+            sha256 = hashlib.sha256()
+            # XXX: this will not work for containers
+            in_buildinfo_path = os.path.join(os.path.dirname(file.path), d['Name'])
+            if not os.path.exists(in_buildinfo_path):
                 return False
-            for d in buildinfo.get('Checksums-Sha256'):
-                sha256 = hashlib.sha256()
-                # XXX: this will not work for containers
-                in_buildinfo_path = os.path.join(os.path.dirname(file.path), d['Name'])
-                if not os.path.exists(in_buildinfo_path):
-                    return False
-                with open(in_buildinfo_path, 'rb') as f:
-                    for buf in iter(functools.partial(f.read, 32768), b''):
-                        sha256.update(buf)
-                if sha256.hexdigest() != d['sha256']:
-                    return False
-            file._deb822 = buildinfo
+            with open(in_buildinfo_path, 'rb') as f:
+                for buf in iter(functools.partial(f.read, 32768), b''):
+                    sha256.update(buf)
+            if sha256.hexdigest() != d['sha256']:
+                return False
+        file._deb822 = buildinfo
         return True

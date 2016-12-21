@@ -32,7 +32,7 @@ class Iccdump(Command):
 
 
 class IccFile(File):
-    RE_FILE_EXTENSION = re.compile(r'\bICC Profile$')
+    RE_FILE_EXTENSION = re.compile(r'\bColorSync (ICC|color) [Pp]rofile')
 
     @staticmethod
     def recognizes(file):

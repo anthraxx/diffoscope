@@ -181,8 +181,26 @@ class DotDscFile(DebControlFile):
             file._deb822 = dsc
         return True
 
+class DotBuildinfoContainer(DebControlContainer):
+    def get_member_names(self):
+        result = super(DotBuildinfoContainer, self).get_member_names()
+
+        # As a special-case, if the parent container of this .buildinfo is a
+        # .changes file, ignore members here that are referenced in both. This
+        # avoids recursing into files twice where a .buildinfo references a
+        # file that is also listed in that member's parent .changes file:
+        #
+        #    foo.changes → foo.deb
+        #    foo.changes → foo.buildinfo → foo.deb
+        #
+        ignore = set()
+        if isinstance(self.source.container, DebControlContainer):
+            ignore.update(self.source.container.get_member_names())
+
+        return [x for x in result if x not in ignore]
 
 class DotBuildinfoFile(DebControlFile):
+    CONTAINER_CLASS = DotBuildinfoContainer
     RE_FILE_EXTENSION = re.compile(r'\.buildinfo$')
 
     @staticmethod

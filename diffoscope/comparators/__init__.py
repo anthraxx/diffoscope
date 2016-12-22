@@ -132,7 +132,7 @@ def compare_root_paths(path1, path2):
     return compare_files(file1, file2)
 
 def compare_files(file1, file2, source=None):
-    logger.debug('compare files %s and %s', file1, file2)
+    logger.debug("Comparing files %s and %s", file1, file2)
     if file1.has_same_content_as(file2):
         logger.debug('same content, skipping')
         return None

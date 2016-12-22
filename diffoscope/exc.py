@@ -173,6 +173,7 @@ class RequiredToolNotFound(Exception):
         },
         'ssh-keygen': {
             'debian': 'openssh-client',
+            'arch': 'openssh',
         },
         'stat': {
             'debian': 'coreutils',

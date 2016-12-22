@@ -168,6 +168,12 @@ HEADER = """<!DOCTYPE html>
     .diffoscope .diffcontrol-double {
       line-height: 200%%;
     }
+    .diffoscope .colines {
+      width: 3em;
+    }
+    .diffoscope .coldiff {
+      width: 99%%;
+    }
   </style>
   %(css_link)s
 </head>
@@ -229,8 +235,8 @@ $(function() {
 """
 
 UD_TABLE_HEADER = u"""<table class="diff">
-<colgroup><col style="width: 3em;"/><col style="99%"/>
-<col style="width: 3em;"/><col style="99%"/></colgroup>
+<colgroup><col class="colines"/><col class="coldiff"/>
+<col class="colines"/><col class="coldiff"/></colgroup>
 """
 
 UD_TABLE_FOOTER = u"""<tr class="ondemand"><td colspan="4">

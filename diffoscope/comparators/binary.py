@@ -189,7 +189,7 @@ class File(object, metaclass=abc.ABCMeta):
 
     @tool_required('cmp')
     def has_same_content_as(self, other):
-        logger.debug('%s has_same_content %s', self, other)
+        logger.debug('Binary.has_same_content: %s %s', self, other)
         # try comparing small files directly first
         try:
             my_size = os.path.getsize(self.path)

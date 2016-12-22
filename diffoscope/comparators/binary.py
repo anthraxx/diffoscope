@@ -133,7 +133,7 @@ class File(object, metaclass=abc.ABCMeta):
                 return self._other_file.__class__.CONTAINER_CLASS(self)
             return None
         if not hasattr(self, '_as_container'):
-            logger.debug('instanciating %s for %s', self.__class__.CONTAINER_CLASS, self)
+            logger.debug('instantiating %s for %s', self.__class__.CONTAINER_CLASS, self)
             self._as_container = self.__class__.CONTAINER_CLASS(self)
         logger.debug('returning a %s for %s', self._as_container.__class__, self)
         return self._as_container

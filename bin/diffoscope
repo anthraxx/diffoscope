@@ -24,7 +24,7 @@ import sys
 
 for root in ['.', '..']:
     if os.path.exists(os.path.join(root, 'diffoscope', '__init__.py')):
-        sys.path = [root] + sys.path
+        sys.path.insert(0, root)
         break
 
 from diffoscope.main import main

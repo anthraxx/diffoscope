@@ -1,3 +1,61 @@
+diffoscope (64) unstable; urgency=medium
+
+  [ Chris Lamb ]
+  * Avoid shelling out to colordiff by implementing highlighting in Python
+    directly.
+  * Split out trydiffoscope client and binary package from main diffoscope
+    repository so that it can be more-easily released on PyPI.
+  * Memoize calls to ``distutils.spawn.find_executable`` to avoid excessive
+    stat(1) syscalls.
+  * Remove temporary profiling file introduced in 97bddd18a.
+  * comparators.directory:
+    - Correct `source` attribute of lsattr-based Difference instances.
+    - Add comment regarding why difficult to optimise calls to lsattr
+  * Internally guarantee to all progress observers that we will be processing
+    something.
+  * bin/diffoscope:
+    - Ensure that running from Git always uses that checkout's modules.
+    - Use os.path.join "properly" as we are already using it.
+    - Use typical sys.path.insert(0, ...) method to modify sys.path.
+    - Use immutable tuple over mutable list for clarity.
+  * comparators.debian: No need to keep .buildinfo file descriptor open.
+  * Suggest command-line for signing of PyPI uploads.
+  * Improve documentation of new tests/conftest.py file.
+
+  [ Maria Glukhova ]
+  * Remove test data causing problems during build with Python 3.4.
+  * Change icc-recognizing regexp to reflect changes in file type description.
+    (Closes: #848814)
+
+  [ Brett Smith ]
+  * set_locale should call tzset. (Closes: #848249)
+  * Ensure set_locale fixture runs before all tests.
+
+  [ Emanuel Bronshtein ]
+  * Use js-beautify as JavaScript code beautifier for .js files (with tests).
+  * CSS & HTML changes:
+    - Disable referrer and window.opener leakage.
+    - Disable compatibility mode usage in IE.
+    - Use double quotes for HTML attributes.
+    - Fix unclosed element span.
+    - CSS optimizations.
+    - Add fallback color to rgba usage.
+    - Fix CSS markup warnings.
+  * Change all HTTP URLs to HTTPS where applicable.
+
+  [ Baptiste Daroussin ]
+  * comparators/directory: add compatibily with FreeBSD's getfacl.
+  * Improve portability by not relying on /dev/fd.
+
+  [ Reiner Herrmann ]
+  * Improved support for Android apk files.
+  * Fix wording in Comparators.get_members comment.
+
+  [ Mattia Rizzolo ]
+  * presenters/html: Namespace the diffoscope CSS class.
+
+ -- Chris Lamb <lamby@debian.org>  Thu, 22 Dec 2016 10:37:36 +0000
+
 diffoscope (63) unstable; urgency=medium
 
   * Add myself to Uploaders.

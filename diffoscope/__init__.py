@@ -27,7 +27,7 @@ import time
 
 from distutils.spawn import find_executable
 
-VERSION = "63"
+VERSION = "64"
 
 logger = logging.getLogger("diffoscope")
 logger.setLevel(logging.WARNING)

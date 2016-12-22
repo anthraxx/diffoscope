@@ -30,6 +30,7 @@ Build-Depends:
  libjs-jquery-throttle-debounce <!nocheck>,
  llvm <!nocheck>,
  mono-utils <!nocheck>,
+ openssh-client <!nocheck>,
  pdftk <!nocheck>,
  poppler-utils <!nocheck>,
  python-argcomplete,

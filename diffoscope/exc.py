@@ -171,6 +171,9 @@ class RequiredToolNotFound(Exception):
         'sng': {
             'debian': 'sng',
         },
+        'ssh-keygen': {
+            'debian': 'openssh-client',
+        },
         'stat': {
             'debian': 'coreutils',
             'arch': 'coreutils',

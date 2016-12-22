@@ -86,6 +86,7 @@ COMPARATORS = (
     ('image.ImageFile',),
     ('cbfs.CbfsFile',),
     ('git.GitIndexFile',),
+    ('openssh.PublicKeyFile',),
 )
 
 

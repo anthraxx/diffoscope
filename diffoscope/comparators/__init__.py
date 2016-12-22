@@ -134,7 +134,7 @@ def compare_root_paths(path1, path2):
 def compare_files(file1, file2, source=None):
     logger.debug("Comparing files %s and %s", file1, file2)
     if file1.has_same_content_as(file2):
-        logger.debug('same content, skipping')
+        logger.debug("has_same_content_as returned True; skipping further comparisons")
         return None
     specialize(file1)
     specialize(file2)

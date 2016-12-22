@@ -22,10 +22,13 @@
 import os
 import sys
 
-for root in ('.', '..'):
-    if os.path.exists(os.path.join(root, 'diffoscope', '__init__.py')):
-        sys.path.insert(0, root)
-        break
+
+# Prefer local modules over any system-installed ones to ensure that running a
+# Git version from any current working directory does not have unexpected
+# behaviour.
+parent = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if os.path.exists(os.path.join(parent, 'diffoscope', '__init__.py')):
+    sys.path.insert(0, parent)
 
 from diffoscope.main import main
 

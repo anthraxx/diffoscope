@@ -27,6 +27,8 @@ import time
 
 from distutils.spawn import find_executable
 
+from diffoscope.profiling import profile
+
 VERSION = "64"
 
 logger = logging.getLogger("diffoscope")
@@ -68,7 +70,8 @@ def tool_required(command):
         if find_executable(command):
             @functools.wraps(original_function)
             def tool_check(*args, **kwargs):
-                return original_function(*args, **kwargs)
+                with profile('command', command):
+                    return original_function(*args, **kwargs)
         else:
             @functools.wraps(original_function)
             def tool_check(*args, **kwargs):

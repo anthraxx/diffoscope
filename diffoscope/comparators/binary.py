@@ -29,6 +29,7 @@ import subprocess
 from diffoscope import tool_required, logger
 from diffoscope.exc import OutputParsingError, RequiredToolNotFound
 from diffoscope.config import Config
+from diffoscope.profiling import profile
 from diffoscope.difference import Difference
 
 try:
@@ -187,7 +188,6 @@ class File(object, metaclass=abc.ABCMeta):
         difference.add_details(details)
         return difference
 
-    @tool_required('cmp')
     def has_same_content_as(self, other):
         logger.debug('Binary.has_same_content: %s %s', self, other)
         # try comparing small files directly first
@@ -200,13 +200,18 @@ class File(object, metaclass=abc.ABCMeta):
             return False
         if my_size == other_size and my_size <= SMALL_FILE_THRESHOLD:
             try:
-                with open(self.path, 'rb') as file1, open(other.path, 'rb') as file2:
-                    return file1.read() == file2.read()
+                with profile('command', 'cmp (internal)'):
+                    with open(self.path, 'rb') as file1, open(other.path, 'rb') as file2:
+                        return file1.read() == file2.read()
             except OSError:
                 # one or both files could not be opened for some reason,
                 # assume they are different
                 return False
 
+        return self.cmp_external(other)
+
+    @tool_required('cmp')
+    def cmp_external(self, other):
         return 0 == subprocess.call(['cmp', '-s', self.path, other.path],
                                     shell=False, close_fds=True)
 

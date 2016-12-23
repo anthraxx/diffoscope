@@ -32,6 +32,7 @@ import diffoscope.comparators
 from diffoscope import logger, tool_required, get_temporary_directory
 from diffoscope.config import Config
 from diffoscope.progress import Progress
+from diffoscope.profiling import profile
 from diffoscope.comparators.binary import File, NonExistingFile
 
 
@@ -256,7 +257,8 @@ class ArchiveMember(File):
             logger.debug('unpacking %s', self._name)
             assert self._temp_dir is None
             self._temp_dir = get_temporary_directory()
-            self._path = self.container.extract(self._name, self._temp_dir.name)
+            with profile('container_extract', self.container):
+                self._path = self.container.extract(self._name, self._temp_dir.name)
         return self._path
 
     def cleanup(self):
@@ -286,10 +288,12 @@ class Archive(Container, metaclass=abc.ABCMeta):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self._archive = self.open_archive()
+        with profile('open_archive', self):
+            self._archive = self.open_archive()
 
     def __del__(self):
-        self.close_archive()
+        with profile('close_archive', self):
+            self.close_archive()
 
     @property
     def archive(self):

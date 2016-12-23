@@ -32,6 +32,7 @@ from multiprocessing.dummy import Queue
 from diffoscope import logger, tool_required
 from diffoscope.exc import RequiredToolNotFound
 from diffoscope.config import Config
+from diffoscope.profiling import profile
 
 
 class DiffParser(object):
@@ -254,10 +255,11 @@ def make_feeder_from_text_reader(in_file, filter=lambda text_buf: text_buf):
 
 def make_feeder_from_command(command):
     def feeder(out_file):
-        end_nl = make_feeder_from_raw_reader(command.stdout, command.filter)(out_file)
-        if command.poll() is None:
-            command.terminate()
-        returncode = command.wait()
+        with profile('command', command.cmdline()[0]):
+            end_nl = make_feeder_from_raw_reader(command.stdout, command.filter)(out_file)
+            if command.poll() is None:
+                command.terminate()
+            returncode = command.wait()
         if returncode not in (0, -signal.SIGTERM):
             raise subprocess.CalledProcessError(returncode, command.cmdline(), output=command.stderr.getvalue())
         return end_nl

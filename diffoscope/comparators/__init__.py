@@ -164,11 +164,12 @@ def specialize(file):
         if isinstance(file, cls):
             logger.debug("%s is already specialized", file.name)
             return file
-        if cls.recognizes(file):
-            logger.debug("Using %s for %s", cls.__name__, file.name)
-            new_cls = type(cls.__name__, (cls, type(file)), {})
-            file.__class__ = new_cls
-            return file
+        with profile('recognizes', file):
+            if cls.recognizes(file):
+                logger.debug("Using %s for %s", cls.__name__, file.name)
+                new_cls = type(cls.__name__, (cls, type(file)), {})
+                file.__class__ = new_cls
+                return file
     logger.debug('Unidentified file. Magic says: %s', file.magic_file_type)
     return file
 

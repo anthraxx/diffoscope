@@ -35,7 +35,7 @@ from diffoscope.exc import RequiredToolNotFound
 from diffoscope.config import Config
 from diffoscope.difference import Difference
 from diffoscope.progress import ProgressManager, Progress
-from diffoscope.profiling import ProfileManager
+from diffoscope.profiling import ProfileManager, profile
 from diffoscope.presenters.html import output_html, output_html_directory, \
     JQUERY_SYSTEM_LOCATIONS
 from diffoscope.presenters.text import output_text
@@ -256,23 +256,26 @@ def run_diffoscope(parsed_args):
         difference = Difference(None, parsed_args.path1, parsed_args.path2)
     if difference:
         if parsed_args.text_output:
-            if not retcode:
-                # special case for --text: write an empty file instead of an empty diff
-                open(parsed_args.text_output, 'w').close()
-            else:
-                with make_printer(parsed_args.text_output or '-') as print_func:
-                    color = {
-                        'auto': print_func.output.isatty(),
-                        'never': False,
-                        'always': True,
-                    }[parsed_args.text_color]
-                    output_text(difference, print_func=print_func, color=color)
+            with profile('output', 'text'):
+                if not retcode:
+                    # special case for --text: write an empty file instead of an empty diff
+                    open(parsed_args.text_output, 'w').close()
+                else:
+                    with make_printer(parsed_args.text_output or '-') as print_func:
+                        color = {
+                            'auto': print_func.output.isatty(),
+                            'never': False,
+                            'always': True,
+                        }[parsed_args.text_color]
+                        output_text(difference, print_func=print_func, color=color)
         if parsed_args.html_output:
-            with make_printer(parsed_args.html_output) as print_func:
-                output_html(difference, css_url=parsed_args.css_url, print_func=print_func)
+            with profile('output', 'html'):
+                with make_printer(parsed_args.html_output) as print_func:
+                        output_html(difference, css_url=parsed_args.css_url, print_func=print_func)
         if parsed_args.html_output_directory:
-            output_html_directory(parsed_args.html_output_directory, difference,
-                css_url=parsed_args.css_url, jquery_url=parsed_args.jquery_url)
+            with profile('output', 'html_directory'):
+                output_html_directory(parsed_args.html_output_directory, difference,
+                    css_url=parsed_args.css_url, jquery_url=parsed_args.jquery_url)
     if parsed_args.profile_output:
         with make_printer(parsed_args.profile_output) as print_func:
             ProfileManager().output(print_func)

@@ -35,6 +35,7 @@ from diffoscope.exc import RequiredToolNotFound
 from diffoscope.config import Config
 from diffoscope.difference import Difference
 from diffoscope.progress import ProgressManager, Progress
+from diffoscope.profiling import ProfileManager
 from diffoscope.presenters.html import output_html, output_html_directory, \
     JQUERY_SYSTEM_LOCATIONS
 from diffoscope.presenters.text import output_text
@@ -92,6 +93,8 @@ def create_parser():
                         '"disable" to disable JavaScript. When omitted '
                         'diffoscope will try to create a symlink to a system '
                         'installation. Known locations: %s' % ', '.join(JQUERY_SYSTEM_LOCATIONS))
+    group1.add_argument('--profile', metavar='OUTPUT_FILE', dest='profile_output',
+                        help='Write profiling info to given file (use - for stdout)')
 
     group2 = parser.add_argument_group('output limits')
     group2.add_argument('--no-default-limits', action='store_true', default=False,
@@ -270,6 +273,9 @@ def run_diffoscope(parsed_args):
         if parsed_args.html_output_directory:
             output_html_directory(parsed_args.html_output_directory, difference,
                 css_url=parsed_args.css_url, jquery_url=parsed_args.jquery_url)
+    if parsed_args.profile_output:
+        with make_printer(parsed_args.profile_output) as print_func:
+            ProfileManager().output(print_func)
     return retcode
 
 

@@ -23,6 +23,7 @@ import platform
 import subprocess
 
 from diffoscope import tool_required, logger
+from diffoscope.profiling import profile
 from diffoscope.difference import Difference
 from diffoscope.comparators.utils import Command
 from diffoscope.comparators.binary import File
@@ -50,7 +51,8 @@ class HiFile(File):
             return False
         if not hasattr(HiFile, 'hi_version'):
             try:
-                output = subprocess.check_output(['ghc', '--numeric-version'], shell=False)
+                with profile('command', 'ghc'):
+                    output = subprocess.check_output(['ghc', '--numeric-version'], shell=False)
                 major, minor, patch = map(int, output.decode('utf-8').strip().split('.'))
                 HiFile.hi_version = "%d%02d%d" % (major, minor, patch)
                 logger.debug('Found .hi version %s', HiFile.hi_version)

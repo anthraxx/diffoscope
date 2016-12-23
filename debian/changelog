@@ -1,3 +1,28 @@
+diffoscope (65) unstable; urgency=medium
+
+  [ Chris Lamb ]
+  * Avoid unpacking packages twice when comparing .changes. (Closes: #843531)
+  * Add a simple profiling framework (enabled via --profile) which tracks:
+    - Container extraction, opening and closing times.
+    - The "compare_files" top-level/recursive method.
+    - The time taken to produce the various output formats.
+    - All "has_same_content_as" and "recognizes" methods.
+    - External commands that wrap "@tool_required".
+    - External commands that use "make_feeder_from_command".
+    - The internal/external "cmp" methods.
+    - Some manual calls to subprocess.check_output().
+  * Tidy log messages:
+    * Clarify the meaning of the compare_files and Binary.has_same_content
+      debug messages.
+    * Skip low-value "X is already specialized" message.
+    * Correct "instantiating" typo.
+
+  [ Emanuel Bronshtein ]
+  * Use ssh-keygen for comparing OpenSSH public keys
+  * Remove inline styles from col elements
+
+ -- Chris Lamb <lamby@debian.org>  Fri, 23 Dec 2016 11:58:15 +0000
+
 diffoscope (64) unstable; urgency=medium
 
   [ Chris Lamb ]

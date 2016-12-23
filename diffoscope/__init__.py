@@ -29,7 +29,7 @@ from distutils.spawn import find_executable
 
 from diffoscope.profiling import profile
 
-VERSION = "64"
+VERSION = "65"
 
 logger = logging.getLogger("diffoscope")
 logger.setLevel(logging.WARNING)

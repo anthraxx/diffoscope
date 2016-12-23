@@ -160,7 +160,6 @@ def compare_commented_files(file1, file2, comment=None, source=None):
 def specialize(file):
     for cls in FILE_CLASSES:
         if isinstance(file, cls):
-            logger.debug("%s is already specialized", file.name)
             return file
         with profile('recognizes', file):
             if cls.recognizes(file):

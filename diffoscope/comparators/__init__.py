@@ -146,7 +146,8 @@ def compare_files(file1, file2, source=None):
         file2.other_file = file1
     elif file1.__class__.__name__ != file2.__class__.__name__:
         return file1.compare_bytes(file2, source)
-    return file1.compare(file2, source)
+    with profile('compare_files (cumulative)', file1):
+        return file1.compare(file2, source)
 
 def compare_commented_files(file1, file2, comment=None, source=None):
     difference = compare_files(file1, file2, source=source)

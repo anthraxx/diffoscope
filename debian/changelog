@@ -6,7 +6,8 @@ diffoscope (66) unstable; urgency=medium
   * Print the detected version in @skip_unless_tool_is_at_least test utility.
 
   [ Maria Glukhova ]
-  * Add detection of order-only difference in plain text format. (Closes: #848049)
+  * Add detection of order-only difference in plain text format.
+    (Closes: #848049)
 
   [ anthraxx ]
   * Add OpenSSH Arch package to Recommends.

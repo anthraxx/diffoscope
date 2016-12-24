@@ -1,3 +1,18 @@
+diffoscope (66) unstable; urgency=medium
+
+  [ Chris Lamb ]
+  * Update dex_expected_diffs and test requirement to ensure test compatibility
+    with enjarify >= 1.0.3. (Closes: #849142)
+  * Print the detected version in @skip_unless_tool_is_at_least test utility.
+
+  [ Maria Glukhova ]
+  * Add detection of order-only difference in plain text format. (Closes: #848049)
+
+  [ anthraxx ]
+  * Add OpenSSH Arch package to Recommends.
+
+ -- Chris Lamb <lamby@debian.org>  Sat, 24 Dec 2016 19:18:30 +0000
+
 diffoscope (65) unstable; urgency=medium
 
   [ Chris Lamb ]

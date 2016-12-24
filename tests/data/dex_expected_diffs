@@ -6,8 +6,8 @@
    file security status:                           not encrypted
    extended local header:                          no
    file last modified on (DOS date/time):          1980 Jan 1 00:00:00
--  32-bit CRC value (hex):                         fc227a58
-+  32-bit CRC value (hex):                         19c9f64e
+-  32-bit CRC value (hex):                         bc28236e
++  32-bit CRC value (hex):                         59c3af78
    compressed size:                                305 bytes
    uncompressed size:                              305 bytes
    length of filename:                             30 characters

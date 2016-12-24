@@ -18,6 +18,7 @@
 # along with diffoscope.  If not, see <https://www.gnu.org/licenses/>.
 
 import pytest
+import subprocess
 
 from diffoscope.config import Config
 from diffoscope.comparators.dex import DexFile
@@ -29,6 +30,17 @@ from test_java import javap_version
 
 dex1 = load_fixture(data('test1.dex'))
 dex2 = load_fixture(data('test2.dex'))
+
+def enjarify_version():
+    # Module enjarify.typeinference appeared in enjarify 1.0.3.  We use a call
+    # directly to the python3 binary over importing with this module to escape
+    # virtualenvs, etc.
+    if subprocess.call(
+        ('python3', '-c', 'import enjarify.typeinference'),
+        stderr=subprocess.PIPE,
+    ) == 0:
+        return '1.0.3'
+    return '1.0.2'
 
 def test_identification(dex1):
     assert isinstance(dex1, DexFile)
@@ -43,6 +55,7 @@ def differences(dex1, dex2):
 
 @skip_unless_tools_exist('enjarify', 'zipinfo', 'javap')
 @skip_unless_tool_is_at_least('javap', javap_version, '1.8')
+@skip_unless_tool_is_at_least('enjarify', enjarify_version, '1.0.3')
 def test_differences(differences):
     assert differences[0].source1 == 'test1.jar'
     assert differences[0].source2 == 'test2.jar'

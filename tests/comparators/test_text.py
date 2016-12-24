@@ -65,3 +65,11 @@ def test_difference_between_iso88591_and_unicode_only(iso8859, tmpdir):
 
 def test_compare_non_existing(monkeypatch, ascii1):
     assert_non_existing(monkeypatch, ascii1, has_null_source=False, has_details=False)
+
+text_order1 = load_fixture(data('text_order1'))
+text_order2 = load_fixture(data('text_order2'))
+
+def test_ordering_differences(text_order1, text_order2):
+    difference = text_order1.compare(text_order2)
+    assert difference.comments == ['ordering differences only']
+    assert difference.unified_diff == open(data('text_order_expected_diff')).read()

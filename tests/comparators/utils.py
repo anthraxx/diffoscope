@@ -47,7 +47,7 @@ def skip_unless_tool_is_at_least(tool, actual_ver, min_ver, vcls=LooseVersion):
         actual_ver = actual_ver()
     return pytest.mark.skipif(
         vcls(str(actual_ver)) < vcls(str(min_ver)),
-        reason="requires {} >= {}".format(tool, min_ver)
+        reason="requires {} >= {} ({} detected)".format(tool, min_ver, actual_ver)
     )
 
 def load_fixture(filename):

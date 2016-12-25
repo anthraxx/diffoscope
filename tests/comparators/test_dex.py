@@ -34,7 +34,8 @@ dex2 = load_fixture(data('test2.dex'))
 def enjarify_version():
     # Module enjarify.typeinference appeared in enjarify 1.0.3.  We use a call
     # directly to the python3 binary over importing with this module to escape
-    # virtualenvs, etc.
+    # virtualenvs and to match the behaviour of enjarify(1).
+/usr/bin/enjarify script does.
     if subprocess.call(
         ('python3', '-c', 'import enjarify.typeinference'),
         stderr=subprocess.PIPE,

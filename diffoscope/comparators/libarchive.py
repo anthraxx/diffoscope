@@ -23,7 +23,7 @@ import os.path
 import ctypes
 import libarchive
 
-from diffoscope import logger
+from diffoscope import logger, get_temporary_directory
 from diffoscope.comparators.utils import Archive, ArchiveMember
 from diffoscope.comparators.device import Device
 from diffoscope.comparators.symlink import Symlink
@@ -162,27 +162,12 @@ class LibarchiveContainer(Archive):
         return
 
     def get_member_names(self):
-        with libarchive.file_reader(self.source.path) as archive:
-            member_names = [entry.pathname for entry in archive]
-        return member_names
+        self.ensure_unpacked()
+        return self._member_names
 
     def extract(self, member_name, dest_dir):
-        dest_name = os.path.basename(member_name.rstrip("/"+os.sep))
-        if not dest_name:
-            raise ValueError('could not make safe name to extract member_name to: %s' % member_name)
-        dest_path = os.path.join(dest_dir, dest_name)
-        logger.debug('libarchive extracting %s to %s', member_name, dest_path)
-        with libarchive.file_reader(self.source.path) as archive:
-            # FIXME: another O(n^2) lookup here, this will hit quite badly
-            # for large archives with a lot of small files.
-            for entry in archive:
-                if entry.pathname == member_name:
-                    logger.debug('entry found, writing %s', dest_path)
-                    with open(dest_path, 'wb') as f:
-                        for buf in entry.get_blocks():
-                            f.write(buf)
-                    return dest_path
-        raise KeyError('%s not found in archive', member_name)
+        self.ensure_unpacked()
+        return os.path.join(self._unpacked, member_name)
 
     def get_member(self, member_name):
         with libarchive.file_reader(self.source.path) as archive:
@@ -205,3 +190,34 @@ class LibarchiveContainer(Archive):
             return LibarchiveDevice(self, entry)
 
         return LibarchiveMember(self, entry)
+
+    def ensure_unpacked(self):
+        if hasattr(self, '_unpacked'):
+            return
+
+        self._unpacked = get_temporary_directory().name
+        self._member_names = []
+
+        logger.debug("Extracting %s to %s", self.source.path, self._unpacked)
+
+        with libarchive.file_reader(self.source.path) as archive:
+            for entry in archive:
+                self._member_names.append(entry.pathname)
+
+                if entry.isdir:
+                    continue
+
+                if not os.path.basename(entry.pathname.rstrip('/' + os.sep)):
+                    continue
+
+                dst = os.path.join(self._unpacked, entry.pathname)
+                os.makedirs(os.path.dirname(dst), exist_ok=True)
+
+                with open(dst, 'wb') as f:
+                    for block in entry.get_blocks():
+                        f.write(block)
+
+        logger.debug(
+            "Extracted %d entries from %s to %s",
+            len(self._member_names), self.source.path, self._unpacked,
+        )

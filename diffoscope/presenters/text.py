@@ -36,7 +36,7 @@ def print_difference(difference, print_func, color=False):
             diff_output = difference.unified_diff
         # As an optimisation, output as much as possible in one go to avoid
         # unnecessary splitting, interpolating, etc.
-        print_func(diff_output.replace('\n', '│ \n'))
+        print_func(diff_output.replace('\n', '\n│ '))
 
 def print_details(difference, print_func, color=False):
     if not difference.details:

@@ -34,8 +34,9 @@ def print_difference(difference, print_func, color=False):
             diff_output = color_unified_diff(difference.unified_diff)
         else:
             diff_output = difference.unified_diff
-        for line in diff_output.splitlines():
-            print_func(u"│ %s" % line)
+        # As an optimisation, output as much as possible in one go to avoid
+        # unnecessary splitting, interpolating, etc.
+        print_func(diff_output.replace('\n', '│ \n'))
 
 def print_details(difference, print_func, color=False):
     if not difference.details:

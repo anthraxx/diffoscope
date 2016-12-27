@@ -22,7 +22,7 @@ import subprocess
 
 from diffoscope.config import Config
 from diffoscope.comparators.java import ClassFile
-from diffoscope.comparators.binary import  MissingFile
+from diffoscope.comparators.binary import MissingFile
 
 from utils import skip_unless_tools_exist, data, load_fixture, skip_unless_tool_is_at_least
 

@@ -122,13 +122,6 @@ class Command(object, metaclass=abc.ABCMeta):
         return self._process.stdout
 
 
-
-
-def format_symlink(destination):
-    return 'destination: %s\n' % destination
-
-
-
 def get_compressed_content_name(path, expected_extension):
     basename = os.path.basename(path)
     if basename.endswith(expected_extension):

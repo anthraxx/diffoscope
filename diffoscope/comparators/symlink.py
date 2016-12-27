@@ -23,7 +23,6 @@ from diffoscope import logger, get_named_temporary_file
 from diffoscope.difference import Difference
 
 from .binary import File
-from .utils import format_symlink
 
 
 class Symlink(File):
@@ -37,7 +36,7 @@ class Symlink(File):
 
     def create_placeholder(self):
         with get_named_temporary_file('w+', delete=False) as f:
-            f.write(format_symlink(self.symlink_destination))
+            f.write('destination: %s\n' % self.symlink_destination)
             f.flush()
             return f.name
 

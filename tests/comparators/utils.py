@@ -31,6 +31,8 @@ from diffoscope.presenters.html import output_html
 from diffoscope.presenters.text import output_text
 from diffoscope.comparators.binary import FilesystemFile, NonExistingFile
 
+re_diff_line_numbers = re.compile(r"(^|\n)@@ -(\d+),(\d+) \+(\d+),(\d+) @@(?=\n|$)")
+
 
 def tools_missing(*required):
     return not required or any(find_executable(x) is None for x in required)
@@ -76,7 +78,5 @@ def assert_non_existing(monkeypatch, fixture, has_null_source=True, has_details=
     assert not has_details or len(difference.details) > 0
     assert not has_null_source or difference.details[-1].source2 == '/dev/null'
 
-DIFF_LINE_NUMBERS_RE = re.compile(r"(^|\n)@@ -(\d+),(\d+) \+(\d+),(\d+) @@(?=\n|$)")
-
 def diff_ignore_line_numbers(diff):
-    return DIFF_LINE_NUMBERS_RE.sub(r"\1@@ -XX,XX +XX,XX @@", diff)
+    return re_diff_line_numbers.sub(r"\1@@ -XX,XX +XX,XX @@", diff)

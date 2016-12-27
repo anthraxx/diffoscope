@@ -23,7 +23,7 @@ import pytest
 from diffoscope.config import Config
 from diffoscope.comparators import specialize
 from diffoscope.presenters.text import output_text
-from diffoscope.comparators.binary import FilesystemFile, NonExistingFile
+from diffoscope.comparators.binary import FilesystemFile, MissingFile
 
 from utils import data, assert_non_existing
 
@@ -116,7 +116,7 @@ def test_dot_changes_internal_diff(dot_changes_differences):
 @pytest.mark.skipif(miss_debian_module, reason='debian module is not installed')
 def test_dot_changes_compare_non_existing(monkeypatch, dot_changes1):
     monkeypatch.setattr(Config(), 'new_file', True)
-    difference = dot_changes1.compare(NonExistingFile('/nonexisting', dot_changes1))
+    difference = dot_changes1.compare(MissingFile('/nonexisting', dot_changes1))
     output_text(difference, print_func=print)
     assert difference.source2 == '/nonexisting'
     assert difference.details[-1].source2 == '/dev/null'
@@ -210,7 +210,7 @@ def test_dot_dsc_internal_diff(dot_dsc_differences):
 @pytest.mark.skipif(miss_debian_module, reason='debian module is not installed')
 def test_dot_dsc_compare_non_existing(monkeypatch, dot_dsc1):
     monkeypatch.setattr(Config(), 'new_file', True)
-    difference = dot_dsc1.compare(NonExistingFile('/nonexisting', dot_dsc1))
+    difference = dot_dsc1.compare(MissingFile('/nonexisting', dot_dsc1))
     output_text(difference, print_func=print)
     assert difference.source2 == '/nonexisting'
     assert difference.details[-1].source2 == '/dev/null'

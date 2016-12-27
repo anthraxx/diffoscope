@@ -23,7 +23,7 @@ import os.path
 
 from diffoscope.config import Config
 from diffoscope.comparators.macho import MachoFile
-from diffoscope.comparators.binary import NonExistingFile
+from diffoscope.comparators.binary import MissingFile
 
 from utils import skip_unless_tools_exist, data, load_fixture
 
@@ -44,7 +44,7 @@ def obj_differences(obj1, obj2):
 @skip_unless_tools_exist('otool', 'lipo')
 def test_obj_compare_non_existing(monkeypatch, obj1):
     monkeypatch.setattr(Config(), 'new_file', True)
-    difference = obj1.compare(NonExistingFile('/nonexisting', obj1))
+    difference = obj1.compare(MissingFile('/nonexisting', obj1))
     assert difference.source2 == '/nonexisting'
     assert len(difference.details) > 0
 

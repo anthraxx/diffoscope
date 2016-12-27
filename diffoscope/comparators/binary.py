@@ -277,7 +277,7 @@ class FilesystemFile(File):
         return stat.S_ISCHR(mode) or stat.S_ISBLK(mode)
 
 
-class NonExistingFile(File):
+class MissingFile(File):
     """Represents a missing file when comparing containers"""
 
     @staticmethod
@@ -319,7 +319,7 @@ class NonExistingFile(File):
         # So now that comparators are all object-oriented, we don't have any clue on how to
         # perform a meaningful comparison right here. So we are good do the comparison backward
         # (where knowledge of the file format lies) and and then reverse it.
-        if isinstance(other, NonExistingFile):
+        if isinstance(other, MissingFile):
             return Difference(None, self.name, other.name, comment='Trying to compare two non-existing files.')
         logger.debug('Performing backward comparison')
         backward_diff = other.compare(self, source)

@@ -24,7 +24,7 @@ from diffoscope.config import Config
 from diffoscope.comparators import specialize
 from diffoscope.presenters.text import output_text
 from diffoscope.comparators.elf import ElfFile, StaticLibFile
-from diffoscope.comparators.binary import FilesystemFile, NonExistingFile
+from diffoscope.comparators.binary import FilesystemFile, MissingFile
 from diffoscope.comparators.directory import FilesystemDirectory
 
 from utils import skip_unless_tools_exist, data, load_fixture
@@ -52,7 +52,7 @@ def obj_differences(obj1, obj2):
 @skip_unless_tools_exist('readelf')
 def test_obj_compare_non_existing(monkeypatch, obj1):
     monkeypatch.setattr(Config(), 'new_file', True)
-    difference = obj1.compare(NonExistingFile('/nonexisting', obj1))
+    difference = obj1.compare(MissingFile('/nonexisting', obj1))
     assert difference.source2 == '/nonexisting'
     assert len(difference.details) > 0
 
@@ -97,7 +97,7 @@ def test_lib_differences(lib_differences):
 @skip_unless_tools_exist('readelf', 'objdump')
 def test_lib_compare_non_existing(monkeypatch, lib1):
     monkeypatch.setattr(Config(), 'new_file', True)
-    difference = lib1.compare(NonExistingFile('/nonexisting', lib1))
+    difference = lib1.compare(MissingFile('/nonexisting', lib1))
     assert difference.source2 == '/nonexisting'
     assert len(difference.details) > 0
 

@@ -21,7 +21,7 @@ import pytest
 
 from diffoscope.config import Config
 from diffoscope.comparators.mono import MonoExeFile
-from diffoscope.comparators.binary import NonExistingFile
+from diffoscope.comparators.binary import MissingFile
 
 from utils import skip_unless_tools_exist, data, load_fixture
 
@@ -52,6 +52,6 @@ def test_diff(differences):
 @skip_unless_tools_exist('pedump')
 def test_compare_non_existing(monkeypatch, exe1):
     monkeypatch.setattr(Config(), 'new_file', True)
-    difference = exe1.compare(NonExistingFile('/nonexisting', exe1))
+    difference = exe1.compare(MissingFile('/nonexisting', exe1))
     assert difference.source2 == '/nonexisting'
     assert len(difference.details) > 0

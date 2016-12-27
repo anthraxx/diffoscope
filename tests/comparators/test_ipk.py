@@ -21,7 +21,7 @@ import pytest
 
 from diffoscope.config import Config
 from diffoscope.comparators.ipk import IpkFile
-from diffoscope.comparators.binary import NonExistingFile
+from diffoscope.comparators.binary import MissingFile
 
 from utils import data, load_fixture
 
@@ -50,6 +50,6 @@ def test_compressed_files(differences):
 
 def test_compare_non_existing(monkeypatch, ipk1):
     monkeypatch.setattr(Config(), 'new_file', True)
-    difference = ipk1.compare(NonExistingFile('/nonexisting', ipk1))
+    difference = ipk1.compare(MissingFile('/nonexisting', ipk1))
     assert difference.source2 == '/nonexisting'
     assert difference.details[-1].source2 == '/dev/null'

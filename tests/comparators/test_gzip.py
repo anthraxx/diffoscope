@@ -23,7 +23,7 @@ import pytest
 from diffoscope.config import Config
 from diffoscope.comparators import specialize
 from diffoscope.comparators.gzip import GzipFile
-from diffoscope.comparators.binary import FilesystemFile, NonExistingFile
+from diffoscope.comparators.binary import FilesystemFile, MissingFile
 
 from utils import data, load_fixture
 
@@ -72,6 +72,6 @@ def test_content_diff(differences):
 
 def test_compare_non_existing(monkeypatch, gzip1):
     monkeypatch.setattr(Config(), 'new_file', True)
-    difference = gzip1.compare(NonExistingFile('/nonexisting', gzip1))
+    difference = gzip1.compare(MissingFile('/nonexisting', gzip1))
     assert difference.source2 == '/nonexisting'
     assert difference.details[-1].source2 == '/dev/null'

@@ -21,7 +21,7 @@ import pytest
 
 from diffoscope.config import Config
 from diffoscope.comparators.fonts import TtfFile
-from diffoscope.comparators.binary import NonExistingFile
+from diffoscope.comparators.binary import MissingFile
 
 from utils import skip_unless_tools_exist, data, load_fixture
 
@@ -48,6 +48,6 @@ def test_diff(differences):
 @skip_unless_tools_exist('showttf')
 def test_compare_non_existing(monkeypatch, ttf1):
     monkeypatch.setattr(Config(), 'new_file', True)
-    difference = ttf1.compare(NonExistingFile('/nonexisting', ttf1))
+    difference = ttf1.compare(MissingFile('/nonexisting', ttf1))
     assert difference.source2 == '/nonexisting'
     assert len(difference.details) > 0

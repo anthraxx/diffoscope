@@ -29,7 +29,7 @@ from diffoscope.config import Config
 from diffoscope.comparators import specialize
 from diffoscope.presenters.html import output_html
 from diffoscope.presenters.text import output_text
-from diffoscope.comparators.binary import FilesystemFile, NonExistingFile
+from diffoscope.comparators.binary import FilesystemFile, MissingFile
 
 re_diff_line_numbers = re.compile(r"(^|\n)@@ -(\d+),(\d+) \+(\d+),(\d+) @@(?=\n|$)")
 
@@ -69,7 +69,7 @@ def assert_non_existing(monkeypatch, fixture, has_null_source=True, has_details=
     monkeypatch.setattr(Config(), 'new_file', True)
     assert Config().new_file, "didnt get patched"
 
-    difference = fixture.compare(NonExistingFile('/nonexisting', fixture))
+    difference = fixture.compare(MissingFile('/nonexisting', fixture))
 
     output_html(difference, print_func=print)
     output_text(difference, print_func=print)

@@ -22,7 +22,7 @@ import subprocess
 
 from diffoscope.config import Config
 from diffoscope.comparators.dex import DexFile
-from diffoscope.comparators.binary import NonExistingFile
+from diffoscope.comparators.binary import MissingFile
 
 from utils import skip_unless_tools_exist, data, load_fixture, skip_unless_tool_is_at_least
 from test_java import javap_version
@@ -72,6 +72,6 @@ def test_differences(differences):
 @skip_unless_tools_exist('enjarify', 'zipinfo', 'javap')
 def test_compare_non_existing(monkeypatch, dex1):
     monkeypatch.setattr(Config(), 'new_file', True)
-    difference = dex1.compare(NonExistingFile('/nonexisting', dex1))
+    difference = dex1.compare(MissingFile('/nonexisting', dex1))
     assert difference.source2 == '/nonexisting'
     assert difference.details[-1].source2 == '/dev/null'

@@ -21,7 +21,7 @@ import codecs
 import pytest
 
 from diffoscope.config import Config
-from diffoscope.comparators.binary import NonExistingFile
+from diffoscope.comparators.binary import MissingFile
 from diffoscope.comparators.gettext import MoFile
 
 from utils import skip_unless_tools_exist, data, load_fixture
@@ -57,6 +57,6 @@ def test_charsets(mo_no_charset, mo_iso8859_1):
 @skip_unless_tools_exist('msgunfmt')
 def test_compare_non_existing(monkeypatch, mo1):
     monkeypatch.setattr(Config(), 'new_file', True)
-    difference = mo1.compare(NonExistingFile('/nonexisting', mo1))
+    difference = mo1.compare(MissingFile('/nonexisting', mo1))
     assert difference.source2 == '/nonexisting'
     assert len(difference.details) > 0

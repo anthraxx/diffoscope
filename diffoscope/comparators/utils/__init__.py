@@ -35,7 +35,7 @@ from .fuzzy import perform_fuzzy_matching
 from .compare import compare_commented_files
 
 from .. import specialize
-from ..binary import File, NonExistingFile
+from ..binary import File, MissingFile
 
 class Command(object, metaclass=abc.ABCMeta):
     def __init__(self, path):
@@ -137,8 +137,8 @@ NO_COMMENT = None
 
 class Container(object, metaclass=abc.ABCMeta):
     def __new__(cls, source):
-        if isinstance(source, NonExistingFile):
-            new = super(Container, NonExistingContainer).__new__(NonExistingContainer)
+        if isinstance(source, MissingFile):
+            new = super(Container, MissingContainer).__new__(MissingContainer)
             new.__init__(source)
             return new
         else:
@@ -206,22 +206,22 @@ class Container(object, metaclass=abc.ABCMeta):
                 p.step(2)
             if Config().new_file:
                 for my_member in my_members.values():
-                    yield my_member, NonExistingFile('/dev/null', my_member), NO_COMMENT
+                    yield my_member, MissingFile('/dev/null', my_member), NO_COMMENT
                     p.step()
                 for other_member in other_members.values():
-                    yield NonExistingFile('/dev/null', other_member), other_member, NO_COMMENT
+                    yield MissingFile('/dev/null', other_member), other_member, NO_COMMENT
                     p.step()
 
     def compare(self, other, source=None):
         return itertools.starmap(compare_commented_files, self.comparisons(other))
 
 
-class NonExistingContainer(Container):
+class MissingContainer(Container):
     def get_member_names(self):
         return self.source.other_file.as_container.get_member_names()
 
     def get_member(self, member_name):
-        return NonExistingFile('/dev/null')
+        return MissingFile('/dev/null')
 
 
 class ArchiveMember(File):
@@ -261,8 +261,8 @@ class ArchiveMember(File):
 
 class Archive(Container, metaclass=abc.ABCMeta):
     def __new__(cls, source, *args, **kwargs):
-        if isinstance(source, NonExistingFile):
-            return super(Container, NonExistingArchive).__new__(NonExistingArchive)
+        if isinstance(source, MissingFile):
+            return super(Container, MissingArchive).__new__(MissingArchive)
         else:
             return super(Container, cls).__new__(cls)
 
@@ -299,7 +299,7 @@ class Archive(Container, metaclass=abc.ABCMeta):
         return ArchiveMember(self, member_name)
 
 
-class NonExistingArchiveLikeObject(object):
+class MissingArchiveLikeObject(object):
     def getnames(self):
         return []
 
@@ -310,13 +310,13 @@ class NonExistingArchiveLikeObject(object):
         pass
 
 
-class NonExistingArchive(Archive):
+class MissingArchive(Archive):
     @property
     def source(self):
         return None
 
     def open_archive(self):
-        return NonExistingArchiveLikeObject()
+        return MissingArchiveLikeObject()
 
     def close_archive(self):
         pass
@@ -329,7 +329,7 @@ class NonExistingArchive(Archive):
         raise NotImplementedError()
 
     def get_member(self, member_name):
-        return NonExistingFile('/dev/null')
+        return MissingFile('/dev/null')
 
     # Be nice to gzip and the likes
     @property

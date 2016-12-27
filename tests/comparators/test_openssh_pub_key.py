@@ -21,7 +21,7 @@ import pytest
 
 from diffoscope.config import Config
 from diffoscope.comparators.openssh import PublicKeyFile
-from diffoscope.comparators.binary import NonExistingFile
+from diffoscope.comparators.binary import MissingFile
 
 from utils import skip_unless_tools_exist, data, load_fixture
 
@@ -49,6 +49,6 @@ def test_diff(differences):
 @skip_unless_tools_exist('ssh-keygen')
 def test_compare_non_existing(monkeypatch, opensshpubkey1):
     monkeypatch.setattr(Config(), 'new_file', True)
-    difference = opensshpubkey1.compare(NonExistingFile('/nonexisting', opensshpubkey1))
+    difference = opensshpubkey1.compare(MissingFile('/nonexisting', opensshpubkey1))
     assert difference.source2 == '/nonexisting'
     assert len(difference.details) > 0

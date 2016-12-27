@@ -20,7 +20,7 @@
 import pytest
 
 from diffoscope.config import Config
-from diffoscope.comparators.binary import NonExistingFile
+from diffoscope.comparators.binary import MissingFile
 from diffoscope.comparators.fsimage import FsImageFile
 
 from utils import skip_unless_tools_exist, data, load_fixture
@@ -82,6 +82,6 @@ def test_differences(differences):
 @pytest.mark.skipif(miss_guestfs, reason='guestfs is missing')
 def test_compare_non_existing(monkeypatch, img1):
     monkeypatch.setattr(Config(), 'new_file', True)
-    difference = img1.compare(NonExistingFile('/nonexisting', img1))
+    difference = img1.compare(MissingFile('/nonexisting', img1))
     assert difference.source2 == '/nonexisting'
     assert difference.details[-1].source2 == '/dev/null'

@@ -30,12 +30,12 @@ from diffoscope.config import Config
 from diffoscope.profiling import profile
 from diffoscope.difference import Difference
 
-from .binary import NonExistingFile
+from .binary import MissingFile
 
 
 COMPARATORS = (
     ('directory.Directory',),
-    ('binary.NonExistingFile',),
+    ('binary.MissingFile',),
     ('symlink.Symlink',),
     ('device.Device',),
     ('debian.DotChangesFile', 'debian_fallback.DotChangesFile'),

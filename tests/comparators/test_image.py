@@ -21,7 +21,7 @@ import pytest
 
 from diffoscope.config import Config
 from diffoscope.comparators.image import ImageFile
-from diffoscope.comparators.binary import NonExistingFile
+from diffoscope.comparators.binary import MissingFile
 
 from utils import skip_unless_tools_exist, data, load_fixture
 
@@ -47,6 +47,6 @@ def test_diff(differences):
 @skip_unless_tools_exist('img2txt')
 def test_compare_non_existing(monkeypatch, image1):
     monkeypatch.setattr(Config(), 'new_file', True)
-    difference = image1.compare(NonExistingFile('/nonexisting', image1))
+    difference = image1.compare(MissingFile('/nonexisting', image1))
     assert difference.source2 == '/nonexisting'
     assert len(difference.details) > 0

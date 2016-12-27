@@ -24,7 +24,7 @@ import diffoscope.comparators
 from diffoscope.config import Config
 from diffoscope.comparators import specialize
 from diffoscope.comparators.deb import DebFile, Md5sumsFile, DebDataTarFile
-from diffoscope.comparators.binary import FilesystemFile, NonExistingFile
+from diffoscope.comparators.binary import FilesystemFile, MissingFile
 
 from utils import data, load_fixture
 
@@ -102,6 +102,6 @@ def test_skip_comparison_of_known_identical_files(deb1, deb2, monkeypatch):
 
 def test_compare_non_existing(monkeypatch, deb1):
     monkeypatch.setattr(Config(), 'new_file', True)
-    difference = deb1.compare(NonExistingFile('/nonexisting', deb1))
+    difference = deb1.compare(MissingFile('/nonexisting', deb1))
     assert difference.source2 == '/nonexisting'
     assert difference.details[-1].source2 == '/dev/null'

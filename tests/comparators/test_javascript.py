@@ -21,7 +21,7 @@ import pytest
 
 from diffoscope.config import Config
 from diffoscope.comparators.javascript import JavaScriptFile
-from diffoscope.comparators.binary import NonExistingFile
+from diffoscope.comparators.binary import MissingFile
 
 from utils import skip_unless_tools_exist, data, load_fixture
 
@@ -47,6 +47,6 @@ def test_diff(differences):
 @skip_unless_tools_exist('js-beautify')
 def test_compare_non_existing(monkeypatch, javascript1):
     monkeypatch.setattr(Config(), 'new_file', True)
-    difference = javascript1.compare(NonExistingFile('/nonexisting', javascript1))
+    difference = javascript1.compare(MissingFile('/nonexisting', javascript1))
     assert difference.source2 == '/nonexisting'
     assert len(difference.details) > 0

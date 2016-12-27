@@ -7,7 +7,7 @@ from diffoscope.profiling import profile
 from diffoscope.difference import Difference
 
 from .. import specialize
-from ..binary import NonExistingFile
+from ..binary import MissingFile
 
 
 def compare_root_paths(path1, path2):
@@ -31,9 +31,9 @@ def compare_files(file1, file2, source=None):
             return None
     specialize(file1)
     specialize(file2)
-    if isinstance(file1, NonExistingFile):
+    if isinstance(file1, MissingFile):
         file1.other_file = file2
-    elif isinstance(file2, NonExistingFile):
+    elif isinstance(file2, MissingFile):
         file2.other_file = file1
     elif file1.__class__.__name__ != file2.__class__.__name__:
         return file1.compare_bytes(file2, source)

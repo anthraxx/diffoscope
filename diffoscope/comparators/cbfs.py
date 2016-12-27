@@ -25,8 +25,9 @@ import subprocess
 
 from diffoscope import logger, tool_required
 from diffoscope.difference import Difference
-from diffoscope.comparators.utils import Archive, Command
-from diffoscope.comparators.binary import File
+
+from .utils import Archive, Command
+from .binary import File
 
 
 class CbfsListing(Command):

@@ -25,11 +25,12 @@ import collections
 
 from diffoscope import logger, tool_required
 from diffoscope.difference import Difference
-from diffoscope.comparators.utils import Archive, ArchiveMember, Command
-from diffoscope.comparators.binary import File
-from diffoscope.comparators.device import Device
-from diffoscope.comparators.symlink import Symlink
-from diffoscope.comparators.directory import Directory
+
+from .utils import Archive, ArchiveMember, Command
+from .binary import File
+from .device import Device
+from .symlink import Symlink
+from .directory import Directory
 
 
 class SquashfsSuperblock(Command):

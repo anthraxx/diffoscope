@@ -25,8 +25,9 @@ from diffoscope import logger, tool_required
 from diffoscope.exc import RequiredToolNotFound
 from diffoscope.progress import Progress
 from diffoscope.difference import Difference
-from diffoscope.comparators.utils import Container, Command
-from diffoscope.comparators.binary import FilesystemFile
+
+from .utils import Container, Command
+from .binary import FilesystemFile
 from .compare import compare_files
 
 

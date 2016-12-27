@@ -19,8 +19,9 @@
 
 from diffoscope import tool_required
 from diffoscope.difference import Difference
-from diffoscope.comparators.binary import File
-from diffoscope.comparators.utils import Command
+
+from .utils import Command
+from .binary import File
 
 
 class Sqlite3Dump(Command):

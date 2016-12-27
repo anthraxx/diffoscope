@@ -22,8 +22,9 @@ import os.path
 import subprocess
 
 from diffoscope import logger, tool_required, get_temporary_directory
-from diffoscope.comparators.binary import File
-from diffoscope.comparators.utils import Archive, get_compressed_content_name
+
+from .binary import File
+from .utils import Archive, get_compressed_content_name
 
 class ApkContainer(Archive):
     @property

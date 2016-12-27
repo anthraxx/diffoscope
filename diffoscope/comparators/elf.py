@@ -25,10 +25,11 @@ import collections
 from diffoscope import tool_required, logger, get_named_temporary_file
 from diffoscope.exc import OutputParsingError
 from diffoscope.difference import Difference
-from diffoscope.comparators.deb import DebFile, get_build_id_map
-from diffoscope.comparators.utils import Command, Container
-from diffoscope.comparators.binary import File
-from diffoscope.comparators.libarchive import list_libarchive
+
+from .deb import DebFile, get_build_id_map
+from .utils import Command, Container
+from .binary import File
+from .libarchive import list_libarchive
 
 
 class Readelf(Command):

@@ -17,12 +17,13 @@
 # You should have received a copy of the GNU General Public License
 # along with diffoscope.  If not, see <https://www.gnu.org/licenses/>.
 
-from collections import OrderedDict
 import re
 import json
+import collections
 
 from diffoscope.difference import Difference
-from diffoscope.comparators.binary import File
+
+from .binary import File
 
 
 class JSONFile(File):
@@ -35,7 +36,7 @@ class JSONFile(File):
 
         with open(file.path) as f:
             try:
-                file.parsed = json.load(f, object_pairs_hook=OrderedDict)
+                file.parsed = json.load(f, object_pairs_hook=collections.OrderedDict)
             except json.JSONDecodeError:
                 return False
 

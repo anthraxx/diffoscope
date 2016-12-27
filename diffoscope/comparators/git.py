@@ -23,7 +23,8 @@ import struct
 import binascii
 
 from diffoscope.difference import Difference
-from diffoscope.comparators.binary import File
+
+from .binary import File
 
 
 class GitIndexFile(File):

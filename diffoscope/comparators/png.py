@@ -22,8 +22,9 @@ import functools
 
 from diffoscope import tool_required
 from diffoscope.difference import Difference
-from diffoscope.comparators.utils import Command
-from diffoscope.comparators.binary import File
+
+from .utils import Command
+from .binary import File
 
 
 class Sng(Command):

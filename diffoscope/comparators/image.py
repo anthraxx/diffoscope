@@ -21,10 +21,12 @@ import re
 
 from diffoscope import tool_required
 from diffoscope.difference import Difference
-from diffoscope.comparators.utils import Command
-from diffoscope.comparators.binary import File
+
+from .utils import Command
+from .binary import File
 
 re_ansi_escapes = re.compile(r'\x1b[^m]*m')
+
 
 class Img2Txt(Command):
     @tool_required('img2txt')

@@ -19,7 +19,7 @@
 
 import re
 
-from diffoscope.comparators.binary import File
+from .binary import File
 
 
 class AbstractRpmFile(File):

@@ -21,7 +21,8 @@ import re
 import codecs
 
 from diffoscope.difference import Difference
-from diffoscope.comparators.binary import File
+
+from .binary import File
 
 
 def order_only_difference(unified_diff):

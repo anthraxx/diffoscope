@@ -24,7 +24,8 @@ import collections
 
 from diffoscope import logger, tool_required
 from diffoscope.difference import Difference
-from diffoscope.comparators.utils import Archive, get_compressed_content_name
+
+from .utils import Archive, get_compressed_content_name
 
 
 class GzipContainer(Archive):

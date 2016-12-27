@@ -54,11 +54,11 @@ def hexdump_fallback(path):
 
 
 def compare_binary_files(file1, file2, source=None):
-    import diffoscope.comparators.utils
+    from diffoscope.comparators.utils import Xxd
 
     try:
         return Difference.from_command(
-            diffoscope.comparators.utils.Xxd, file1.path, file2.path,
+            Xxd, file1.path, file2.path,
             source=[file1.name, file2.name], has_internal_linenos=True)
     except RequiredToolNotFound:
         hexdump1 = hexdump_fallback(file1.path)

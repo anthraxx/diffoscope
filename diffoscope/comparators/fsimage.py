@@ -23,8 +23,9 @@ import collections
 
 from diffoscope import logger
 from diffoscope.difference import Difference
-from diffoscope.comparators.utils import Archive
-from diffoscope.comparators.binary import File
+
+from .utils import Archive
+from .binary import File
 
 try:
     import guestfs

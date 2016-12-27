@@ -28,8 +28,9 @@ from debian.deb822 import Dsc
 from diffoscope import logger
 from diffoscope.changes import Changes
 from diffoscope.difference import Difference
-from diffoscope.comparators.utils import Container
-from diffoscope.comparators.binary import File
+
+from .utils import Container
+from .binary import File
 
 
 DOT_CHANGES_FIELDS = [

@@ -20,9 +20,9 @@
 import re
 
 from diffoscope.difference import Difference
-from diffoscope.comparators.binary import File
-from diffoscope.comparators.libarchive import LibarchiveContainer, \
-    list_libarchive
+
+from .binary import File
+from .libarchive import LibarchiveContainer, list_libarchive
 
 class TarContainer(LibarchiveContainer):
     pass

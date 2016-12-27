@@ -21,8 +21,9 @@ import os
 
 from diffoscope import logger, get_named_temporary_file
 from diffoscope.difference import Difference
-from diffoscope.comparators.binary import File
-from diffoscope.comparators.utils import format_symlink
+
+from .binary import File
+from .utils import format_symlink
 
 
 class Symlink(File):

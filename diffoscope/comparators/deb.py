@@ -21,12 +21,12 @@ import re
 
 from diffoscope import logger
 from diffoscope.difference import Difference
-from diffoscope.comparators.tar import TarContainer
-from diffoscope.comparators.utils import ArchiveMember
-from diffoscope.comparators.binary import File
-from diffoscope.comparators.libarchive import LibarchiveContainer, list_libarchive
 
-import diffoscope.comparators
+from . import specialize
+from .tar import TarContainer
+from .utils import ArchiveMember
+from .binary import File
+from .libarchive import LibarchiveContainer, list_libarchive
 
 try:
     from debian import deb822
@@ -43,7 +43,7 @@ def get_build_id_map(container):
         # too many irrelevant files
         if not member_name.endswith('.deb'):
             continue
-        diffoscope.comparators.specialize(member)
+        specialize(member)
         if isinstance(member, DebFile) and member.control:
             build_ids = member.control.get('Build-Ids', None)
             if build_ids:
@@ -59,21 +59,21 @@ class DebContainer(LibarchiveContainer):
     def data_tar(self):
         for name, member in self.get_members().items():
             if DebContainer.RE_DATA_TAR.match(name):
-                diffoscope.comparators.specialize(member)
+                specialize(member)
                 if name.endswith('.tar'):
                     return member
                 else:
-                    return diffoscope.comparators.specialize(member.as_container.get_member('content'))
+                    return specialize(member.as_container.get_member('content'))
 
     @property
     def control_tar(self):
         for name, member in self.get_members().items():
             if DebContainer.RE_CONTROL_TAR.match(name):
-                diffoscope.comparators.specialize(member)
+                specialize(member)
                 if name.endswith('.tar'):
                     return member
                 else:
-                    return diffoscope.comparators.specialize(member.as_container.get_member('content'))
+                    return specialize(member.as_container.get_member('content'))
 
 
 class DebFile(File):

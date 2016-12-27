@@ -19,7 +19,7 @@
 
 import re
 
-from diffoscope.comparators.text import TextFile
+from .text import TextFile
 
 
 class DotChangesFile(TextFile):

@@ -23,8 +23,9 @@ import subprocess
 import collections
 
 from diffoscope import logger, tool_required
-from diffoscope.comparators.binary import File
-from diffoscope.comparators.utils import Archive, get_compressed_content_name
+
+from .binary import File
+from .utils import Archive, get_compressed_content_name
 
 
 class DexContainer(Archive):

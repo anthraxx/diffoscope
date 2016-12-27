@@ -20,7 +20,7 @@
 
 import re
 
-from diffoscope.comparators.gzip import GzipFile
+from .gzip import GzipFile
 
 
 class IpkFile(GzipFile):

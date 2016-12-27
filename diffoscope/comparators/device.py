@@ -21,8 +21,9 @@ import os
 
 from diffoscope import get_named_temporary_file
 from diffoscope.difference import Difference
-from diffoscope.comparators.utils import format_device
-from diffoscope.comparators.binary import File, FilesystemFile
+
+from .utils import format_device
+from .binary import File, FilesystemFile
 
 
 class Device(File):

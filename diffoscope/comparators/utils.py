@@ -31,8 +31,9 @@ from diffoscope import logger, tool_required, get_temporary_directory
 from diffoscope.config import Config
 from diffoscope.progress import Progress
 from diffoscope.profiling import profile
-from diffoscope.comparators.binary import File, NonExistingFile
 
+from . import specialize, perform_fuzzy_matching
+from .binary import File, NonExistingFile
 from .compare import compare_commented_files
 
 class Command(object, metaclass=abc.ABCMeta):
@@ -182,7 +183,7 @@ class Container(object, metaclass=abc.ABCMeta):
         except KeyError:
             return None
         logger.debug('lookup_file(%s) -> %s', names, file)
-        diffoscope.comparators.specialize(file)
+        specialize(file)
         if not remainings:
             return file
         container = file.as_container

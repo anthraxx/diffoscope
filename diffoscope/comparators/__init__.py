@@ -30,8 +30,6 @@ from diffoscope.config import Config
 from diffoscope.profiling import profile
 from diffoscope.difference import Difference
 
-from .binary import MissingFile
-
 
 COMPARATORS = (
     ('directory.Directory',),

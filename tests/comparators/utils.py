@@ -18,6 +18,7 @@
 # along with diffoscope.  If not, see <https://www.gnu.org/licenses/>.
 
 import os
+import re
 import pytest
 import diffoscope
 
@@ -74,3 +75,8 @@ def assert_non_existing(monkeypatch, fixture, has_null_source=True, has_details=
     assert difference.source2 == '/nonexisting'
     assert not has_details or len(difference.details) > 0
     assert not has_null_source or difference.details[-1].source2 == '/dev/null'
+
+DIFF_LINE_NUMBERS_RE = re.compile(r"(^|\n)@@ -(\d+),(\d+) \+(\d+),(\d+) @@(?=\n|$)")
+
+def diff_ignore_line_numbers(diff):
+    return DIFF_LINE_NUMBERS_RE.sub(r"\1@@ -XX,XX +XX,XX @@", diff)

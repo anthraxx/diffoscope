@@ -22,10 +22,10 @@ import pytest
 import subprocess
 
 from diffoscope.comparators.ar import ArFile
-from diffoscope.comparators.utils import diff_ignore_line_numbers
 
 from utils import skip_unless_tools_exist, skip_unless_tool_is_at_least, \
-    skip_unless_tools_exist, data, load_fixture, assert_non_existing
+    skip_unless_tools_exist, data, load_fixture, assert_non_existing, \
+    diff_ignore_line_numbers
 
 rlib1 = load_fixture(data('test1.rlib'))
 rlib2 = load_fixture(data('test2.rlib'))

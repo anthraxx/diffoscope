@@ -18,11 +18,11 @@
 # along with diffoscope.  If not, see <https://www.gnu.org/licenses/>.
 
 import os
+import stat
 
 from diffoscope import get_named_temporary_file
 from diffoscope.difference import Difference
 
-from .utils import format_device
 from .binary import File, FilesystemFile
 
 
@@ -61,3 +61,12 @@ class Device(File):
         with open(self.path) as my_content, \
              open(other.path) as other_content:
             return Difference.from_text_readers(my_content, other_content, self.name, other.name, source=source, comment="device")
+
+def format_device(mode, major, minor):
+    if stat.S_ISCHR(mode):
+        kind = 'character'
+    elif stat.S_ISBLK(mode):
+        kind = 'block'
+    else:
+        kind = 'weird'
+    return 'device:%s\nmajor: %d\nminor: %d\n' % (kind, major, minor)

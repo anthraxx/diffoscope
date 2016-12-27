@@ -21,7 +21,6 @@ import abc
 import os
 import re
 import io
-import stat
 import threading
 import itertools
 import subprocess
@@ -128,15 +127,6 @@ class Command(object, metaclass=abc.ABCMeta):
 def format_symlink(destination):
     return 'destination: %s\n' % destination
 
-
-def format_device(mode, major, minor):
-    if stat.S_ISCHR(mode):
-        kind = 'character'
-    elif stat.S_ISBLK(mode):
-        kind = 'block'
-    else:
-        kind = 'weird'
-    return 'device:%s\nmajor: %d\nminor: %d\n' % (kind, major, minor)
 
 
 def get_compressed_content_name(path, expected_extension):

@@ -23,7 +23,6 @@ import sys
 import magic
 import os.path
 import operator
-import importlib
 
 from diffoscope import logger, tool_required
 from diffoscope.config import Config
@@ -84,30 +83,6 @@ COMPARATORS = (
 )
 
 
-def import_comparators(comparators):
-    result = []
-
-    for xs in comparators:
-        for x in xs:
-            package, klass_name = x.rsplit('.', 1)
-
-            try:
-                mod = importlib.import_module(
-                    'diffoscope.comparators.{}'.format(package)
-                )
-            except ImportError:
-                continue
-
-            result.append(getattr(mod, klass_name))
-            break
-        else:
-            raise ImportError(
-                "Could not import any of {}".format(', '.join(xs))
-            )
-
-    return result
-
-
 def specialize(file):
     for cls in FILE_CLASSES:
         if isinstance(file, cls):
@@ -121,4 +96,5 @@ def specialize(file):
     logger.debug('Unidentified file. Magic says: %s', file.magic_file_type)
     return file
 
+from .utils.loading import import_comparators
 FILE_CLASSES = import_comparators(COMPARATORS)

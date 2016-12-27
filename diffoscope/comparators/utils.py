@@ -27,14 +27,13 @@ import itertools
 import subprocess
 import collections
 
-import diffoscope.comparators
-
 from diffoscope import logger, tool_required, get_temporary_directory
 from diffoscope.config import Config
 from diffoscope.progress import Progress
 from diffoscope.profiling import profile
 from diffoscope.comparators.binary import File, NonExistingFile
 
+from .compare import compare_commented_files
 
 class Command(object, metaclass=abc.ABCMeta):
     def __init__(self, path):
@@ -220,7 +219,7 @@ class Container(object, metaclass=abc.ABCMeta):
                 else:
                     my_reminders[my_member_name] = my_member
             my_members = my_reminders
-            for my_name, other_name, score in diffoscope.comparators.perform_fuzzy_matching(my_members, other_members):
+            for my_name, other_name, score in perform_fuzzy_matching(my_members, other_members):
                 comment = 'Files similar despite different names (difference score: %d)' % score
                 yield my_members.pop(my_name), other_members.pop(other_name), comment
                 p.step(2)
@@ -233,7 +232,7 @@ class Container(object, metaclass=abc.ABCMeta):
                     p.step()
 
     def compare(self, other, source=None):
-        return itertools.starmap(diffoscope.comparators.compare_commented_files, self.comparisons(other))
+        return itertools.starmap(compare_commented_files, self.comparisons(other))
 
 
 class NonExistingContainer(Container):

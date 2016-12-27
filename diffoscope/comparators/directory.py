@@ -21,14 +21,13 @@ import os
 import re
 import subprocess
 
-import diffoscope.comparators
-
 from diffoscope import logger, tool_required
 from diffoscope.exc import RequiredToolNotFound
 from diffoscope.progress import Progress
 from diffoscope.difference import Difference
 from diffoscope.comparators.utils import Container, Command
 from diffoscope.comparators.binary import FilesystemFile
+from .compare import compare_files
 
 
 def list_files(path):
@@ -166,7 +165,7 @@ class FilesystemDirectory(object):
             for name in sorted(to_compare):
                 my_file = my_container.get_member(name)
                 other_file = other_container.get_member(name)
-                inner_difference = diffoscope.comparators.compare_files(
+                inner_difference = compare_files(
                                        my_file, other_file, source=name)
                 meta_differences = compare_meta(my_file.name, other_file.name)
                 if meta_differences and not inner_difference:

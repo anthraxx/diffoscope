@@ -28,14 +28,13 @@ import argparse
 import traceback
 import contextlib
 
-import diffoscope.comparators
-
 from diffoscope import logger, VERSION, set_locale, clean_all_temp_files
 from diffoscope.exc import RequiredToolNotFound
 from diffoscope.config import Config
 from diffoscope.difference import Difference
 from diffoscope.progress import ProgressManager, Progress
 from diffoscope.profiling import ProfileManager, profile
+from diffoscope.comparators.compare import compare_root_paths
 from diffoscope.presenters.html import output_html, output_html_directory, \
     JQUERY_SYSTEM_LOCATIONS
 from diffoscope.presenters.text import output_text
@@ -247,7 +246,7 @@ def run_diffoscope(parsed_args):
     logger.debug('Starting comparison')
     ProgressManager().setup(parsed_args)
     with Progress(1):
-        difference = diffoscope.comparators.compare_root_paths(
+        difference = compare_root_paths(
             parsed_args.path1, parsed_args.path2)
     ProgressManager().finish()
     retcode = 1 if difference else 0

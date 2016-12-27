@@ -26,7 +26,7 @@ from . import specialize
 from .tar import TarContainer
 from .utils import ArchiveMember
 from .binary import File
-from .libarchive import LibarchiveContainer, list_libarchive
+from .utils.libarchive import LibarchiveContainer, list_libarchive
 
 try:
     from debian import deb822

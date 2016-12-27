@@ -25,7 +25,7 @@ from diffoscope.difference import Difference
 
 from .utils import Command
 from .binary import File
-from .libarchive import LibarchiveContainer, list_libarchive
+from .utils.libarchive import LibarchiveContainer, list_libarchive
 
 
 class CpioContent(Command):

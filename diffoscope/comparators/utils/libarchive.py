@@ -25,10 +25,11 @@ import libarchive
 
 from diffoscope import logger, get_temporary_directory
 
-from .utils import Archive, ArchiveMember
-from .device import Device
-from .symlink import Symlink
-from .directory import Directory
+from ..device import Device
+from ..symlink import Symlink
+from ..directory import Directory
+
+from . import Archive, ArchiveMember
 
 
 # Monkeypatch libarchive-c (<< 2.2)

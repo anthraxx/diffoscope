@@ -25,7 +25,7 @@ from diffoscope.difference import Difference
 
 from .utils import Command
 from .binary import File
-from .libarchive import LibarchiveContainer
+from .utils.libarchive import LibarchiveContainer
 
 
 @tool_required('isoinfo')

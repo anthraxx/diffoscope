@@ -29,7 +29,7 @@ from diffoscope.difference import Difference
 from .deb import DebFile, get_build_id_map
 from .utils import Command, Container
 from .binary import File
-from .libarchive import list_libarchive
+from .utils.libarchive import list_libarchive
 
 
 class Readelf(Command):

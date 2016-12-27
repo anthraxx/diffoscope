@@ -34,10 +34,10 @@ from diffoscope.config import Config
 from diffoscope.progress import ProgressManager, Progress
 from diffoscope.profiling import ProfileManager, profile
 from diffoscope.difference import Difference
-from diffoscope.comparators.compare import compare_root_paths
 from diffoscope.presenters.html import output_html, output_html_directory, \
     JQUERY_SYSTEM_LOCATIONS
 from diffoscope.presenters.text import output_text
+from diffoscope.comparators.utils.compare import compare_root_paths
 
 try:
     import tlsh

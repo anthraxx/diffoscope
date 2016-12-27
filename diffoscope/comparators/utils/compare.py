@@ -6,12 +6,12 @@ from diffoscope.config import Config
 from diffoscope.profiling import profile
 from diffoscope.difference import Difference
 
-from . import specialize
-from .binary import NonExistingFile
+from .. import specialize
+from ..binary import NonExistingFile
 
 
 def compare_root_paths(path1, path2):
-    from .directory import FilesystemDirectory, FilesystemFile, compare_directories
+    from ..directory import FilesystemDirectory, FilesystemFile, compare_directories
 
     if not Config().new_file:
         bail_if_non_existing(path1, path2)

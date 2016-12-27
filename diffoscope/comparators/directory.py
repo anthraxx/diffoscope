@@ -28,7 +28,7 @@ from diffoscope.difference import Difference
 
 from .utils import Container, Command
 from .binary import FilesystemFile
-from .compare import compare_files
+from .utils.compare import compare_files
 
 
 def list_files(path):

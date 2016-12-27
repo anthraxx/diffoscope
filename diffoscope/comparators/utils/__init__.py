@@ -32,8 +32,9 @@ from diffoscope.config import Config
 from diffoscope.progress import Progress
 from diffoscope.profiling import profile
 
-from . import specialize, perform_fuzzy_matching
-from .binary import File, NonExistingFile
+from .. import specialize, perform_fuzzy_matching
+from ..binary import File, NonExistingFile
+
 from .compare import compare_commented_files
 
 class Command(object, metaclass=abc.ABCMeta):

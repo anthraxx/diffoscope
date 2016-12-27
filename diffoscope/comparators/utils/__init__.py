@@ -32,10 +32,11 @@ from diffoscope.config import Config
 from diffoscope.progress import Progress
 from diffoscope.profiling import profile
 
-from .. import specialize, perform_fuzzy_matching
-from ..binary import File, NonExistingFile
-
+from .fuzzy import perform_fuzzy_matching
 from .compare import compare_commented_files
+
+from .. import specialize
+from ..binary import File, NonExistingFile
 
 class Command(object, metaclass=abc.ABCMeta):
     def __init__(self, path):

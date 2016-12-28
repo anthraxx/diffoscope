@@ -95,7 +95,7 @@ class Container(object, metaclass=abc.ABCMeta):
                 my_member_name, my_member = my_members.popitem(last=False)
                 if my_member_name in other_members:
                     yield my_member, other_members.pop(my_member_name), NO_COMMENT
-                    p.step(msg=my_member.name)
+                    p.step(msg=my_member.progress_name)
                 else:
                     my_reminders[my_member_name] = my_member
             my_members = my_reminders

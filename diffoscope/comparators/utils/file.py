@@ -108,6 +108,10 @@ class File(object, metaclass=abc.ABCMeta):
         return self._as_container
 
     @property
+    def progress_name(self):
+        return self._name
+
+    @property
     def magic_file_type(self):
         if not hasattr(self, '_magic_file_type'):
             self._magic_file_type = File.guess_file_type(self.path)

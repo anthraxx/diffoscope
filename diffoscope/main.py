@@ -28,10 +28,11 @@ import argparse
 import traceback
 import contextlib
 
-from diffoscope import logger, VERSION, set_locale, clean_all_temp_files
+from diffoscope import logger, VERSION, set_locale
 from diffoscope.exc import RequiredToolNotFound
 from diffoscope.config import Config
 from diffoscope.progress import ProgressManager, Progress
+from diffoscope.tempfiles import clean_all_temp_files
 from diffoscope.profiling import ProfileManager, profile
 from diffoscope.difference import Difference
 from diffoscope.presenters.html import output_html, output_html_directory, \

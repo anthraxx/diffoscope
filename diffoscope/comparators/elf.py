@@ -22,8 +22,9 @@ import os.path
 import subprocess
 import collections
 
-from diffoscope import tool_required, logger, get_named_temporary_file
+from diffoscope import tool_required, logger
 from diffoscope.exc import OutputParsingError
+from diffoscope.tempfiles import get_named_temporary_file
 from diffoscope.difference import Difference
 
 from .deb import DebFile, get_build_id_map

@@ -24,7 +24,8 @@ import os.path
 import binascii
 import subprocess
 
-from diffoscope import logger, tool_required, get_temporary_directory
+from diffoscope import logger, tool_required
+from diffoscope.tempfiles import get_temporary_directory
 from diffoscope.difference import Difference
 
 from .rpm_fallback import AbstractRpmFile

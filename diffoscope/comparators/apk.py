@@ -21,11 +21,11 @@ import re
 import os.path
 import subprocess
 
-from diffoscope import logger, tool_required, get_temporary_directory
+from diffoscope import logger, tool_required
+from diffoscope.tempfiles import get_temporary_directory
 
 from .binary import File
 from .utils.archive import Archive
-from .utils.filenames import get_compressed_content_name
 
 class ApkContainer(Archive):
     @property

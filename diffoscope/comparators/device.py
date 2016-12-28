@@ -20,7 +20,7 @@
 import os
 import stat
 
-from diffoscope import get_named_temporary_file
+from diffoscope.tempfiles import get_named_temporary_file
 from diffoscope.difference import Difference
 
 from .binary import File, FilesystemFile

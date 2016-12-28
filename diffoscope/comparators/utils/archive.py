@@ -19,8 +19,9 @@
 
 import abc
 
-from diffoscope import logger, get_temporary_directory
+from diffoscope import logger
 from diffoscope.profiling import profile
+from diffoscope.tempfiles import get_temporary_directory
 
 from ..missing_file import MissingFile
 

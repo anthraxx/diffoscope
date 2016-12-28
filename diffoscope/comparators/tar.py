@@ -21,7 +21,7 @@ import re
 
 from diffoscope.difference import Difference
 
-from .binary import File
+from .utils.file import File
 from .utils.libarchive import LibarchiveContainer, list_libarchive
 
 class TarContainer(LibarchiveContainer):

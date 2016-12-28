@@ -23,7 +23,7 @@ import collections
 
 from diffoscope.difference import Difference
 
-from .binary import File
+from .utils.file import File
 
 
 class JSONFile(File):

@@ -23,7 +23,8 @@ import stat
 from diffoscope.tempfiles import get_named_temporary_file
 from diffoscope.difference import Difference
 
-from .binary import File, FilesystemFile
+from .binary import FilesystemFile
+from .utils.file import File
 
 
 class Device(File):

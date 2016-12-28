@@ -24,7 +24,7 @@ import binascii
 
 from diffoscope.difference import Difference
 
-from .binary import File
+from .utils.file import File
 
 
 class GitIndexFile(File):

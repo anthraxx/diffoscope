@@ -22,7 +22,7 @@ import codecs
 
 from diffoscope.difference import Difference
 
-from .binary import File
+from .utils.file import File
 
 
 def order_only_difference(unified_diff):

@@ -19,7 +19,7 @@
 
 import re
 
-from .binary import File
+from .utils.file import File
 
 
 class AbstractRpmFile(File):

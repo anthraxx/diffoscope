@@ -29,7 +29,7 @@ from diffoscope.logging import logger
 from diffoscope.changes import Changes
 from diffoscope.difference import Difference
 
-from .binary import File
+from .utils.file import File
 from .utils.container import Container
 
 

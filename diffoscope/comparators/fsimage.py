@@ -24,7 +24,7 @@ import collections
 from diffoscope.logging import logger
 from diffoscope.difference import Difference
 
-from .binary import File
+from .utils.file import File
 from .utils.archive import Archive
 
 try:

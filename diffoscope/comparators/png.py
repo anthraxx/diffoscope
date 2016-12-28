@@ -23,7 +23,7 @@ import functools
 from diffoscope.tools import tool_required
 from diffoscope.difference import Difference
 
-from .binary import File
+from .utils.file import File
 from .utils.command import Command
 
 

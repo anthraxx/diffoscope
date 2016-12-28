@@ -23,7 +23,7 @@ from diffoscope.logging import logger
 from diffoscope.tempfiles import get_named_temporary_file
 from diffoscope.difference import Difference
 
-from .binary import File
+from .utils.file import File
 
 
 class Symlink(File):

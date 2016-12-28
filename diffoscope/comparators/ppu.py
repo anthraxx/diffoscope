@@ -28,7 +28,7 @@ from diffoscope.logging import logger
 from diffoscope.profiling import profile
 from diffoscope.difference import Difference
 
-from .binary import File
+from .utils.file import File
 from .utils.command import Command
 
 

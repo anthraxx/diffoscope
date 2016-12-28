@@ -29,7 +29,7 @@ from diffoscope.tempfiles import get_named_temporary_file
 from diffoscope.difference import Difference
 
 from .deb import DebFile, get_build_id_map
-from .binary import File
+from .utils.file import File
 from .utils.command import Command
 from .utils.container import  Container
 from .utils.libarchive import list_libarchive

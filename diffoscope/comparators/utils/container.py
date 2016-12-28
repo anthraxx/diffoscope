@@ -106,7 +106,7 @@ class Container(object, metaclass=abc.ABCMeta):
             if Config().new_file:
                 for my_member in my_members.values():
                     yield my_member, MissingFile('/dev/null', my_member), NO_COMMENT
-                    p.step(msg="bar")
+                    p.step(msg=my_member)
                 for other_member in other_members.values():
                     yield MissingFile('/dev/null', other_member), other_member, NO_COMMENT
                     p.step(msg=other_member)

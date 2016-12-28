@@ -22,34 +22,36 @@ import tempfile
 
 from diffoscope import logger
 
-temp_dirs = []
-temp_files = []
+_DIRS, _FILES = [], []
 
 
 def get_named_temporary_file(*args, **kwargs):
     kwargs['suffix'] = kwargs.pop('suffix', '_diffoscope')
-    f = tempfile.NamedTemporaryFile(*args, **kwargs)
-    temp_files.append(f.name)
-    return f
 
+    f = tempfile.NamedTemporaryFile(*args, **kwargs)
+    _FILES.append(f.name)
+
+    return f
 
 def get_temporary_directory(*args, **kwargs):
     kwargs['suffix'] = kwargs.pop('suffix', '_diffoscope')
+
     d = tempfile.TemporaryDirectory(*args, **kwargs)
-    temp_dirs.append(d)
+    _DIRS.append(d)
+
     return d
 
-
 def clean_all_temp_files():
-    for temp_file in temp_files:
+    for x in _FILES:
         try:
-            os.unlink(temp_file)
+            os.unlink(x)
         except FileNotFoundError:
             pass
         except:
-            logger.exception('Unable to delete %s', temp_file)
-    for temp_dir in temp_dirs:
+            logger.exception("Unable to delete %s", x)
+
+    for x in _DIRS:
         try:
-            temp_dir.cleanup()
+            x.cleanup()
         except:
-            logger.exception('Unable to delete %s', temp_dir)
+            logger.exception("Unable to delete %s", x)

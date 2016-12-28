@@ -109,7 +109,9 @@ class File(object, metaclass=abc.ABCMeta):
 
     @property
     def progress_name(self):
-        return self._name
+        x = self._name
+
+        return x[1:] if x.startswith('./') else x
 
     @property
     def magic_file_type(self):

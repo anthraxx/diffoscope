@@ -22,11 +22,11 @@ import re
 from diffoscope import logger
 from diffoscope.difference import Difference
 
-from . import specialize
 from .tar import TarContainer
-from .utils import ArchiveMember
-from .binary import File
+from .utils.file import File
+from .utils.archive import ArchiveMember
 from .utils.libarchive import LibarchiveContainer, list_libarchive
+from .utils.specialize import specialize
 
 try:
     from debian import deb822

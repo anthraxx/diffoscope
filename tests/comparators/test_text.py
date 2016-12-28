@@ -19,8 +19,8 @@
 
 import codecs
 
-from diffoscope.comparators import specialize
 from diffoscope.comparators.binary import FilesystemFile
+from diffoscope.comparators.utils.specialize import specialize
 
 from utils import data, load_fixture, assert_non_existing
 

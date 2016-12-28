@@ -18,21 +18,9 @@
 # You should have received a copy of the GNU General Public License
 # along with diffoscope.  If not, see <https://www.gnu.org/licenses/>.
 
-import re
-import sys
-import magic
-import os.path
-import operator
-
-from diffoscope import logger, tool_required
-from diffoscope.config import Config
-from diffoscope.profiling import profile
-from diffoscope.difference import Difference
-
-
 COMPARATORS = (
     ('directory.Directory',),
-    ('binary.MissingFile',),
+    ('missing_file.MissingFile',),
     ('symlink.Symlink',),
     ('device.Device',),
     ('debian.DotChangesFile', 'debian_fallback.DotChangesFile'),
@@ -81,20 +69,3 @@ COMPARATORS = (
     ('git.GitIndexFile',),
     ('openssh.PublicKeyFile',),
 )
-
-
-def specialize(file):
-    for cls in FILE_CLASSES:
-        if isinstance(file, cls):
-            return file
-        with profile('recognizes', file):
-            if cls.recognizes(file):
-                logger.debug("Using %s for %s", cls.__name__, file.name)
-                new_cls = type(cls.__name__, (cls, type(file)), {})
-                file.__class__ = new_cls
-                return file
-    logger.debug('Unidentified file. Magic says: %s', file.magic_file_type)
-    return file
-
-from .utils.loading import import_comparators
-FILE_CLASSES = import_comparators(COMPARATORS)

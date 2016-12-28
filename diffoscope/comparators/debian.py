@@ -29,8 +29,8 @@ from diffoscope import logger
 from diffoscope.changes import Changes
 from diffoscope.difference import Difference
 
-from .utils import Container
 from .binary import File
+from .utils.container import Container
 
 
 DOT_CHANGES_FIELDS = [

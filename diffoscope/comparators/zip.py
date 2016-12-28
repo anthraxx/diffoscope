@@ -27,9 +27,10 @@ import contextlib
 from diffoscope import tool_required
 from diffoscope.difference import Difference
 
-from .utils import Archive, ArchiveMember, Command
 from .binary import File
 from .directory import Directory
+from .utils.archive import Archive, ArchiveMember
+from .utils.command import Command
 
 
 class Zipinfo(Command):

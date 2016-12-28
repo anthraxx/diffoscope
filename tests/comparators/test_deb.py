@@ -22,9 +22,10 @@ import pytest
 import diffoscope.comparators
 
 from diffoscope.config import Config
-from diffoscope.comparators import specialize
 from diffoscope.comparators.deb import DebFile, Md5sumsFile, DebDataTarFile
-from diffoscope.comparators.binary import FilesystemFile, MissingFile
+from diffoscope.comparators.binary import FilesystemFile
+from diffoscope.comparators.missing_file import MissingFile
+from diffoscope.comparators.utils.specialize import specialize
 
 from utils import data, load_fixture
 

@@ -27,8 +27,8 @@ import subprocess
 from diffoscope import logger, tool_required, get_temporary_directory
 from diffoscope.difference import Difference
 
-from .utils import Archive
 from .rpm_fallback import AbstractRpmFile
+from .utils.archive import Archive
 
 
 def convert_header_field(io, header):

@@ -20,12 +20,13 @@
 import pytest
 import subprocess
 
-import diffoscope.comparators.binary
-
 from diffoscope import tool_required
 from diffoscope.exc import RequiredToolNotFound
 from diffoscope.difference import Difference
-from diffoscope.comparators.binary import File, FilesystemFile, MissingFile
+from diffoscope.comparators.binary import FilesystemFile
+from diffoscope.comparators.utils.file import File
+from diffoscope.comparators.missing_file import MissingFile
+from diffoscope.comparators.utils.compare import Xxd
 
 from utils import skip_unless_tools_exist, data, load_fixture
 from os import mkdir, symlink
@@ -85,7 +86,7 @@ def test_compare_non_existing_with_xxd(binary1):
 def xxd_not_found(monkeypatch):
     def mock_cmdline(self):
         raise RequiredToolNotFound('xxd')
-    monkeypatch.setattr(diffoscope.comparators.utils.Xxd, 'cmdline', mock_cmdline)
+    monkeypatch.setattr(Xxd, 'cmdline', mock_cmdline)
 
 def test_no_differences_without_xxd(xxd_not_found, binary1):
     difference = binary1.compare_bytes(binary1)

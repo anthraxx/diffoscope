@@ -17,27 +17,13 @@
 # You should have received a copy of the GNU General Public License
 # along with diffoscope.  If not, see <https://www.gnu.org/licenses/>.
 
-import importlib
+import os
 
-def import_comparators(comparators):
-    result = []
 
-    for xs in comparators:
-        for x in xs:
-            package, klass_name = x.rsplit('.', 1)
-
-            try:
-                mod = importlib.import_module(
-                    'diffoscope.comparators.{}'.format(package)
-                )
-            except ImportError:
-                continue
-
-            result.append(getattr(mod, klass_name))
-            break
-        else:
-            raise ImportError(
-                "Could not import any of {}".format(', '.join(xs))
-            )
-
-    return result
+def get_compressed_content_name(path, expected_extension):
+    basename = os.path.basename(path)
+    if basename.endswith(expected_extension):
+        name = basename[:-len(expected_extension)]
+    else:
+        name = "%s-content" % basename
+    return name

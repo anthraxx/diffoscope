@@ -21,11 +21,12 @@ import pytest
 import os.path
 
 from diffoscope.config import Config
-from diffoscope.comparators import specialize
 from diffoscope.presenters.text import output_text
 from diffoscope.comparators.elf import ElfFile, StaticLibFile
-from diffoscope.comparators.binary import FilesystemFile, MissingFile
+from diffoscope.comparators.binary import FilesystemFile
 from diffoscope.comparators.directory import FilesystemDirectory
+from diffoscope.comparators.missing_file import MissingFile
+from diffoscope.comparators.utils.specialize import specialize
 
 from utils import skip_unless_tools_exist, data, load_fixture
 

@@ -21,7 +21,7 @@ import pytest
 
 from diffoscope.config import Config
 from diffoscope.comparators.tar import TarFile
-from diffoscope.comparators.binary import MissingFile
+from diffoscope.comparators.missing_file import MissingFile
 
 from utils import data, load_fixture, assert_non_existing
 

@@ -24,7 +24,7 @@ from diffoscope.exc import RequiredToolNotFound
 from diffoscope.difference import Difference
 
 from .text import TextFile
-from .utils import Command
+from .utils.command import Command
 
 
 class Pstotext(Command):

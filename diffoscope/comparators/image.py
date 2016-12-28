@@ -22,8 +22,8 @@ import re
 from diffoscope import tool_required
 from diffoscope.difference import Difference
 
-from .utils import Command
 from .binary import File
+from .utils.command import Command
 
 re_ansi_escapes = re.compile(r'\x1b[^m]*m')
 

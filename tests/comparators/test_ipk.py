@@ -21,7 +21,7 @@ import pytest
 
 from diffoscope.config import Config
 from diffoscope.comparators.ipk import IpkFile
-from diffoscope.comparators.binary import MissingFile
+from diffoscope.comparators.missing_file import MissingFile
 
 from utils import data, load_fixture
 

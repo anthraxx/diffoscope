@@ -21,10 +21,10 @@ import struct
 import pytest
 import subprocess
 
-from diffoscope.comparators import specialize
 from diffoscope.presenters.text import output_text
 from diffoscope.comparators.cbfs import CbfsFile
 from diffoscope.comparators.binary import FilesystemFile
+from diffoscope.comparators.utils.specialize import specialize
 
 from utils import skip_unless_tools_exist, data, assert_non_existing
 

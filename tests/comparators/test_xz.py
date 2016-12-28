@@ -20,9 +20,9 @@
 import shutil
 import pytest
 
-from diffoscope.comparators import specialize
 from diffoscope.comparators.xz import XzFile
 from diffoscope.comparators.binary import FilesystemFile
+from diffoscope.comparators.utils.specialize import specialize
 
 from utils import skip_unless_tools_exist, data, load_fixture, \
     assert_non_existing

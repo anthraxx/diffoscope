@@ -21,9 +21,10 @@ import shutil
 import pytest
 
 from diffoscope.config import Config
-from diffoscope.comparators import specialize
 from diffoscope.presenters.text import output_text
-from diffoscope.comparators.binary import FilesystemFile, MissingFile
+from diffoscope.comparators.binary import FilesystemFile
+from diffoscope.comparators.missing_file import MissingFile
+from diffoscope.comparators.utils.specialize import specialize
 
 from utils import data, assert_non_existing
 

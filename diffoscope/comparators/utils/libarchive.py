@@ -29,7 +29,7 @@ from ..device import Device
 from ..symlink import Symlink
 from ..directory import Directory
 
-from . import Archive, ArchiveMember
+from .archive import Archive, ArchiveMember
 
 
 # Monkeypatch libarchive-c (<< 2.2)

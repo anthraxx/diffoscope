@@ -26,10 +26,11 @@ from distutils.spawn import find_executable
 from distutils.version import LooseVersion
 
 from diffoscope.config import Config
-from diffoscope.comparators import specialize
 from diffoscope.presenters.html import output_html
 from diffoscope.presenters.text import output_text
-from diffoscope.comparators.binary import FilesystemFile, MissingFile
+from diffoscope.comparators.binary import FilesystemFile
+from diffoscope.comparators.missing_file import MissingFile
+from diffoscope.comparators.utils.specialize import specialize
 
 re_diff_line_numbers = re.compile(r"(^|\n)@@ -(\d+),(\d+) \+(\d+),(\d+) @@(?=\n|$)")
 

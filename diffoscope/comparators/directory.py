@@ -26,9 +26,9 @@ from diffoscope.exc import RequiredToolNotFound
 from diffoscope.progress import Progress
 from diffoscope.difference import Difference
 
-from .utils import Container, Command
 from .binary import FilesystemFile
-from .utils.compare import compare_files
+from .utils.command import Command
+from .utils.container import Container
 
 
 def list_files(path):
@@ -147,6 +147,8 @@ class FilesystemDirectory(object):
         return False
 
     def compare(self, other, source=None):
+        from .utils.compare import compare_files
+
         differences = []
         try:
             listing_diff = Difference.from_text('\n'.join(list_files(self.path)),

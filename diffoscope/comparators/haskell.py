@@ -26,8 +26,8 @@ from diffoscope import tool_required, logger
 from diffoscope.profiling import profile
 from diffoscope.difference import Difference
 
-from .utils import Command
 from .binary import File
+from .utils.command import Command
 
 
 class ShowIface(Command):

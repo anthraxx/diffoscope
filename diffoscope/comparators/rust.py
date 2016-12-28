@@ -25,7 +25,8 @@ import collections
 from diffoscope import logger, tool_required
 from diffoscope.difference import Difference
 
-from .utils import Archive, get_compressed_content_name
+from .utils.archive import Archive
+from .utils.filenames import get_compressed_content_name
 
 RLIB_BYTECODE_OBJECT_V1_DATASIZE_OFFSET = 15
 RLIB_BYTECODE_OBJECT_V1_DATA_OFFSET = 23

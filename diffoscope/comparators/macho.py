@@ -24,8 +24,8 @@ import subprocess
 from diffoscope import tool_required
 from diffoscope.difference import Difference
 
-from .utils import Command
 from .binary import File
+from .utils.command import Command
 
 
 class Otool(Command):

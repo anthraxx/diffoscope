@@ -21,7 +21,7 @@ import pytest
 
 from diffoscope.config import Config
 from diffoscope.comparators.icc import IccFile
-from diffoscope.comparators.binary import MissingFile
+from diffoscope.comparators.missing_file import MissingFile
 
 from utils import skip_unless_tools_exist, data, load_fixture
 

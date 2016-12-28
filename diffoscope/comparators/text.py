@@ -32,8 +32,7 @@ def order_only_difference(unified_diff):
     # Faster check: does number of lines match?
     if len(added_lines) != len(removed_lines):
         return False
-    # Counter stores line and number of its occurrences.
-    return sorted(added_lines) == sorted(removed_lines)
+    return sorted(added_lines) == sorted(removed_lines) and added_lines != removed_lines
 
 
 class TextFile(File):

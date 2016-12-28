@@ -95,21 +95,21 @@ class Container(object, metaclass=abc.ABCMeta):
                 my_member_name, my_member = my_members.popitem(last=False)
                 if my_member_name in other_members:
                     yield my_member, other_members.pop(my_member_name), NO_COMMENT
-                    p.step()
+                    p.step(msg=my_member.name)
                 else:
                     my_reminders[my_member_name] = my_member
             my_members = my_reminders
             for my_name, other_name, score in perform_fuzzy_matching(my_members, other_members):
                 comment = 'Files similar despite different names (difference score: %d)' % score
                 yield my_members.pop(my_name), other_members.pop(other_name), comment
-                p.step(2)
+                p.step(2, msg=my_name)
             if Config().new_file:
                 for my_member in my_members.values():
                     yield my_member, MissingFile('/dev/null', my_member), NO_COMMENT
-                    p.step()
+                    p.step(msg="bar")
                 for other_member in other_members.values():
                     yield MissingFile('/dev/null', other_member), other_member, NO_COMMENT
-                    p.step()
+                    p.step(msg=other_member)
 
     def compare(self, other, source=None):
         from .compare import compare_commented_files

@@ -51,19 +51,19 @@ class ProgressManager(object):
     def register(self, observer):
         self.observers.append(observer)
 
-    def step(self, delta=1):
+    def step(self, delta=1, msg=""):
         delta = min(self.total - self.current, delta) # clamp
         if not delta:
             return
 
         self.current += delta
         for x in self.observers:
-            x.notify(self.current, self.total)
+            x.notify(self.current, self.total, msg)
 
-    def new_total(self, delta):
+    def new_total(self, delta, msg):
         self.total += delta
         for x in self.observers:
-            x.notify(self.current, self.total)
+            x.notify(self.current, self.total, msg)
 
     def finish(self):
         for x in self.observers:
@@ -74,7 +74,7 @@ class Progress(object):
         self.current = 0
         self.total = total
 
-        ProgressManager().new_total(total)
+        ProgressManager().new_total(total, "")
 
     def __enter__(self):
         return self
@@ -82,28 +82,47 @@ class Progress(object):
     def __exit__(self, exc_type, exc_value, exc_traceback):
         self.step(self.total - self.current)
 
-    def step(self, delta=1):
+    def step(self, delta=1, msg=""):
         delta = min(self.total - self.current, delta) # clamp
         if not delta:
             return
 
         self.current += delta
-        ProgressManager().step(delta)
+        ProgressManager().step(delta, msg)
 
 class ProgressBar(object):
     def __init__(self):
         import progressbar
 
+        self.msg = ""
+
+        class Message(progressbar.Widget):
+            def update(self, pbar, _observer=self):
+                msg = _observer.msg
+                width = 20
+
+                if len(msg) <= width:
+                    return msg.ljust(width)
+
+                # Print the last `width` characters with an ellipsis.
+                return '…{}'.format(msg[-width + 1:])
+
         self.bar = progressbar.ProgressBar(widgets=(
+            ' ',
             progressbar.Bar(),
             '  ',
             progressbar.Percentage(),
             '  ',
+            Message(),
+            ' ',
             progressbar.ETA(),
+            ' ',
         ))
         self.bar.start()
 
-    def notify(self, current, total):
+    def notify(self, current, total, msg):
+        self.msg = msg
+
         self.bar.maxval = total
         self.bar.currval = current
         self.bar.update()
@@ -115,7 +134,7 @@ class StatusFD(object):
     def __init__(self, fileno):
         self.fileobj = os.fdopen(fileno, 'w')
 
-    def notify(self, current, total):
+    def notify(self, current, total, msg):
         print('{}\t{}'.format(current, total), file=self.fileobj)
 
     def finish(self):

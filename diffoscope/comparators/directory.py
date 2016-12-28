@@ -177,7 +177,7 @@ class FilesystemDirectory(object):
                 if inner_difference:
                     inner_difference.add_details(meta_differences)
                     differences.append(inner_difference)
-                p.step()
+                p.step(msg=name)
         if not differences:
             return None
         difference = Difference(None, self.path, other.path, source)

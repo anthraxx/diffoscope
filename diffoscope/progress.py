@@ -117,7 +117,7 @@ class ProgressBar(object):
             progressbar.Percentage(),
             '  ',
             Message(),
-            ' ',
+            '  ',
             progressbar.ETA(),
             ' ',
         ))

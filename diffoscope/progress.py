@@ -19,6 +19,7 @@
 
 import os
 import sys
+import json
 
 class ProgressManager(object):
     _singleton = {}
@@ -135,7 +136,10 @@ class StatusFD(object):
         self.fileobj = os.fdopen(fileno, 'w')
 
     def notify(self, current, total, msg):
-        print('{}\t{}'.format(current, total), file=self.fileobj)
+        print(json.dumps({
+            'total': total,
+            'current': current,
+        }), file=self.fileobj)
 
     def finish(self):
         pass

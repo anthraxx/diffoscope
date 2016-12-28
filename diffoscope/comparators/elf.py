@@ -252,6 +252,13 @@ class ElfSection(File):
         return self._name
 
     @property
+    def progress_name(self):
+        return "{} [{}]".format(
+            self.container.source.progress_name,
+            super().progress_name,
+        )
+
+    @property
     def path(self):
         return self.container.source.path
 

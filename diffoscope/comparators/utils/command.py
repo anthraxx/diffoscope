@@ -28,7 +28,7 @@ from diffoscope.logging import logger
 class Command(object, metaclass=abc.ABCMeta):
     def __init__(self, path):
         self._path = path
-        logger.debug('running %s', self.cmdline())
+        logger.debug("Executing %s", ' '.join(self.cmdline()))
         self._process = subprocess.Popen(self.cmdline(),
                                          shell=False, close_fds=True,
                                          env=self.env(),
@@ -83,7 +83,11 @@ class Command(object, metaclass=abc.ABCMeta):
             self._stdin_feeder.join()
         self._stderr_reader.join()
         returncode = self._process.wait()
-        logger.debug('done with %s. exit code %d', self.cmdline()[0], returncode)
+        logger.debug(
+            "%s returned (exit code: %d)",
+            ' '.join(self.cmdline()),
+            returncode,
+        )
         return returncode
 
     MAX_STDERR_LINES = 50

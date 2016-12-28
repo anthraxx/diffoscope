@@ -69,11 +69,11 @@ class ProgressManager(object):
             x.finish()
 
 class Progress(object):
-    def __init__(self, total):
+    def __init__(self, total, msg=""):
         self.current = 0
         self.total = total
 
-        ProgressManager().new_total(total, "")
+        ProgressManager().new_total(total, msg)
 
     def __enter__(self):
         return self

@@ -54,8 +54,6 @@ class ProgressManager(object):
 
     def step(self, delta=1, msg=""):
         delta = min(self.total - self.current, delta) # clamp
-        if not delta:
-            return
 
         self.current += delta
         for x in self.observers:
@@ -108,7 +106,11 @@ class ProgressBar(object):
                 # Print the last `width` characters with an ellipsis.
                 return '…{}'.format(msg[-width + 1:])
 
-        self.bar = progressbar.ProgressBar(widgets=(
+        class OurProgressBar(progressbar.ProgressBar):
+            def _need_update(self):
+                return True
+
+        self.bar = OurProgressBar(widgets=(
             ' ',
             progressbar.Bar(),
             '  ',

@@ -137,6 +137,7 @@ class StatusFD(object):
 
     def notify(self, current, total, msg):
         print(json.dumps({
+            'msg': msg,
             'total': total,
             'current': current,
         }), file=self.fileobj)

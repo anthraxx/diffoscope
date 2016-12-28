@@ -19,7 +19,7 @@
 
 import importlib
 
-from diffoscope import logger
+from diffoscope.logging import logger
 from diffoscope.profiling import profile
 
 from .. import COMPARATORS

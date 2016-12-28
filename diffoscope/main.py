@@ -28,17 +28,20 @@ import argparse
 import traceback
 import contextlib
 
-from diffoscope import logger, VERSION, set_locale
-from diffoscope.exc import RequiredToolNotFound
-from diffoscope.config import Config
-from diffoscope.progress import ProgressManager, Progress
-from diffoscope.tempfiles import clean_all_temp_files
-from diffoscope.profiling import ProfileManager, profile
-from diffoscope.difference import Difference
-from diffoscope.presenters.html import output_html, output_html_directory, \
+from . import VERSION
+from .exc import RequiredToolNotFound
+from .tools import tool_required, OS_NAMES, get_current_os
+from .config import Config
+from .locale import set_locale
+from .logging import logger
+from .progress import ProgressManager, Progress
+from .tempfiles import clean_all_temp_files
+from .profiling import ProfileManager, profile
+from .difference import Difference
+from .presenters.html import output_html, output_html_directory, \
     JQUERY_SYSTEM_LOCATIONS
-from diffoscope.presenters.text import output_text
-from diffoscope.comparators.utils.compare import compare_root_paths
+from .presenters.text import output_text
+from .comparators.utils.compare import compare_root_paths
 
 try:
     import tlsh
@@ -192,8 +195,6 @@ class RangeCompleter(object):
 
 class ListToolsAction(argparse.Action):
     def __call__(self, parser, namespace, os_override, option_string=None):
-        from diffoscope import tool_required, OS_NAMES, get_current_os
-
         print("External-Tools-Required: ", end='')
         print(', '.join(sorted(tool_required.all)))
         if os_override:

@@ -19,7 +19,7 @@
 
 import abc
 
-from diffoscope import logger
+from diffoscope.logging import logger
 from diffoscope.profiling import profile
 from diffoscope.tempfiles import get_temporary_directory
 

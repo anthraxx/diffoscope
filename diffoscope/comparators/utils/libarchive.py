@@ -23,7 +23,7 @@ import os.path
 import ctypes
 import libarchive
 
-from diffoscope import logger
+from diffoscope.logging import logger
 from diffoscope.tempfiles import get_temporary_directory
 
 from ..device import Device

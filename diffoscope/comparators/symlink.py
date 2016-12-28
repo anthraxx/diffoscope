@@ -19,7 +19,7 @@
 
 import os
 
-from diffoscope import logger
+from diffoscope.logging import logger
 from diffoscope.tempfiles import get_named_temporary_file
 from diffoscope.difference import Difference
 

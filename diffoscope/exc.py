@@ -18,6 +18,9 @@
 # You should have received a copy of the GNU General Public License
 # along with diffoscope.  If not, see <https://www.gnu.org/licenses/>.
 
+from .tools import get_current_os
+
+
 class OutputParsingError(Exception):
     def __init__(self, command, object):
         self.command = command
@@ -213,7 +216,6 @@ class RequiredToolNotFound(Exception):
         self.command = command
 
     def get_package(self):
-        from . import get_current_os
 
         try:
             providers = RequiredToolNotFound.PROVIDERS[self.command]

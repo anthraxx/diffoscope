@@ -21,7 +21,8 @@ import re
 import os.path
 import subprocess
 
-from diffoscope import logger, tool_required
+from diffoscope.tools import tool_required
+from diffoscope.logging import logger
 from diffoscope.tempfiles import get_temporary_directory
 
 from .binary import File

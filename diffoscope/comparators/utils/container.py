@@ -21,8 +21,8 @@ import abc
 import itertools
 import collections
 
-from diffoscope import logger
 from diffoscope.config import Config
+from diffoscope.logging import logger
 from diffoscope.progress import Progress
 
 from ..missing_file import MissingFile

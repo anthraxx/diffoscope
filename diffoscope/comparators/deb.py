@@ -19,7 +19,7 @@
 
 import re
 
-from diffoscope import logger
+from diffoscope.logging import logger
 from diffoscope.difference import Difference
 
 from .tar import TarContainer

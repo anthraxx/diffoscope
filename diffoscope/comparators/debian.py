@@ -25,7 +25,7 @@ import collections
 
 from debian.deb822 import Dsc
 
-from diffoscope import logger
+from diffoscope.logging import logger
 from diffoscope.changes import Changes
 from diffoscope.difference import Difference
 

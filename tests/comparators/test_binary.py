@@ -20,7 +20,7 @@
 import pytest
 import subprocess
 
-from diffoscope import tool_required
+from diffoscope.tools import tool_required
 from diffoscope.exc import RequiredToolNotFound
 from diffoscope.difference import Difference
 from diffoscope.comparators.binary import FilesystemFile

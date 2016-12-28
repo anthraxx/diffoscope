@@ -22,7 +22,8 @@ import os
 import sys
 import binascii
 
-from diffoscope import logger, tool_required
+from diffoscope.tools import tool_required
+from diffoscope.logging import logger
 from diffoscope.exc import RequiredToolNotFound
 from diffoscope.config import Config
 from diffoscope.profiling import profile

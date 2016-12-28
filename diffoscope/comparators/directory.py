@@ -21,8 +21,9 @@ import os
 import re
 import subprocess
 
-from diffoscope import logger, tool_required
 from diffoscope.exc import RequiredToolNotFound
+from diffoscope.tools import tool_required
+from diffoscope.logging import logger
 from diffoscope.progress import Progress
 from diffoscope.difference import Difference
 

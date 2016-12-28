@@ -21,7 +21,8 @@
 import subprocess
 import sys
 
-from diffoscope import logger, tool_required
+from diffoscope.tools import tool_required
+from diffoscope.logging import logger
 from diffoscope.difference import color_unified_diff
 
 

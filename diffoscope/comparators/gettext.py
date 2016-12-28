@@ -20,8 +20,8 @@
 import io
 import re
 
-from diffoscope import logger
-from diffoscope import tool_required
+from diffoscope.tools import tool_required
+from diffoscope.logging import logger
 from diffoscope.difference import Difference
 
 from .binary import File

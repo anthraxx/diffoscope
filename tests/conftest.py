@@ -18,8 +18,9 @@
 # along with diffoscope.  If not, see <https://www.gnu.org/licenses/>.
 
 import pytest
-import diffoscope
+
+from diffoscope.locale import set_locale
 
 
 # Ensure set_locale fixture runs before all tests.
-set_locale = pytest.fixture(autouse=True, scope='session')(diffoscope.set_locale)
+set_locale = pytest.fixture(autouse=True, scope='session')(set_locale)

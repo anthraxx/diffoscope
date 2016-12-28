@@ -22,7 +22,7 @@ import abc
 import subprocess
 import threading
 
-from diffoscope import logger
+from diffoscope.logging import logger
 
 
 class Command(object, metaclass=abc.ABCMeta):

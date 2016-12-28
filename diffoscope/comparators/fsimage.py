@@ -21,7 +21,7 @@ import re
 import os.path
 import collections
 
-from diffoscope import logger
+from diffoscope.logging import logger
 from diffoscope.difference import Difference
 
 from .binary import File

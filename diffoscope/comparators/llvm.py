@@ -18,7 +18,7 @@
 # You should have received a copy of the GNU General Public License
 # along with diffoscope.  If not, see <https://www.gnu.org/licenses/>.
 
-from diffoscope import tool_required
+from diffoscope.tools import tool_required
 from diffoscope.difference import Difference
 
 from .binary import File

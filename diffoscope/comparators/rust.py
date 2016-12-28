@@ -22,7 +22,8 @@ import zlib
 import os.path
 import collections
 
-from diffoscope import logger, tool_required
+from diffoscope.tools import tool_required
+from diffoscope.logging import logger
 from diffoscope.difference import Difference
 
 from .utils.archive import Archive

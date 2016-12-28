@@ -19,8 +19,8 @@
 
 import operator
 
-from diffoscope import logger
 from diffoscope.config import Config
+from diffoscope.logging import logger
 
 try:
     import tlsh

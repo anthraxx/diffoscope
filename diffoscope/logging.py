@@ -2,7 +2,7 @@
 #
 # diffoscope: in-depth comparison of files, archives, and directories
 #
-# Copyright © 2016 Jérémy Bobbio <lunar@debian.org>
+# Copyright © 2016 Chris Lamb <lamby@debian.org>
 #
 # diffoscope is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -17,27 +17,14 @@
 # You should have received a copy of the GNU General Public License
 # along with diffoscope.  If not, see <https://www.gnu.org/licenses/>.
 
-import re
+import logging
 
-from diffoscope.tools import tool_required
-from diffoscope.difference import Difference
+logger = logging.getLogger("diffoscope")
+logger.setLevel(logging.WARNING)
 
-from .binary import File
-from .utils.command import Command
+ch = logging.StreamHandler()
+ch.setLevel(logging.DEBUG)
+logger.addHandler(ch)
 
-
-class Iccdump(Command):
-    @tool_required('cd-iccdump')
-    def cmdline(self):
-        return ['cd-iccdump', self.path]
-
-
-class IccFile(File):
-    RE_FILE_EXTENSION = re.compile(r'\bColorSync (ICC|color) [Pp]rofile')
-
-    @staticmethod
-    def recognizes(file):
-        return IccFile.RE_FILE_EXTENSION.search(file.magic_file_type)
-
-    def compare_details(self, other, source=None):
-        return [Difference.from_command(Iccdump, self.path, other.path)]
+formatter = logging.Formatter('%(created).3f %(levelname).1s: %(message)s')
+ch.setFormatter(formatter)

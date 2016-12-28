@@ -2,7 +2,7 @@
 #
 # diffoscope: in-depth comparison of files, archives, and directories
 #
-# Copyright © 2016 Jérémy Bobbio <lunar@debian.org>
+# Copyright © 2016 Chris Lamb <lamby@debian.org>
 #
 # diffoscope is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -17,27 +17,21 @@
 # You should have received a copy of the GNU General Public License
 # along with diffoscope.  If not, see <https://www.gnu.org/licenses/>.
 
-import re
-
-from diffoscope.tools import tool_required
-from diffoscope.difference import Difference
-
-from .binary import File
-from .utils.command import Command
+import os
+import time
 
 
-class Iccdump(Command):
-    @tool_required('cd-iccdump')
-    def cmdline(self):
-        return ['cd-iccdump', self.path]
+def set_locale():
+    """Normalize locale so external tool gives us stable and properly
+    encoded output"""
 
-
-class IccFile(File):
-    RE_FILE_EXTENSION = re.compile(r'\bColorSync (ICC|color) [Pp]rofile')
-
-    @staticmethod
-    def recognizes(file):
-        return IccFile.RE_FILE_EXTENSION.search(file.magic_file_type)
-
-    def compare_details(self, other, source=None):
-        return [Difference.from_command(Iccdump, self.path, other.path)]
+    for var in ['LANGUAGE', 'LC_ALL']:
+        if var in os.environ:
+            del os.environ[var]
+    for var in ['LANG', 'LC_NUMERIC', 'LC_TIME', 'LC_COLLATE', 'LC_MONETARY',
+                'LC_MESSAGES', 'LC_PAPER', 'LC_NAME', 'LC_ADDRESS',
+                'LC_TELEPHONE', 'LC_MEASUREMENT', 'LC_IDENTIFICATION']:
+        os.environ[var] = 'C'
+    os.environ['LC_CTYPE'] = 'C.UTF-8'
+    os.environ['TZ'] = 'UTC'
+    time.tzset()

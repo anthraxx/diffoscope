@@ -20,7 +20,7 @@
 import os
 import tempfile
 
-from diffoscope import logger
+from .logging import logger
 
 _DIRS, _FILES = [], []
 

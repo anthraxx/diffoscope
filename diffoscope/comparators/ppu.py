@@ -23,7 +23,8 @@ import os
 import re
 import subprocess
 
-from diffoscope import tool_required, logger
+from diffoscope.tools import tool_required
+from diffoscope.logging import logger
 from diffoscope.profiling import profile
 from diffoscope.difference import Difference
 

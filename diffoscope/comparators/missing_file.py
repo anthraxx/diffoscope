@@ -19,8 +19,8 @@
 
 import os
 
-from diffoscope import logger
 from diffoscope.config import Config
+from diffoscope.logging import logger
 from diffoscope.difference import Difference
 
 from .binary import FilesystemFile

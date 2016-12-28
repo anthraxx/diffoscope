@@ -29,10 +29,11 @@ import tempfile
 
 from multiprocessing.dummy import Queue
 
-from diffoscope import logger, tool_required
-from diffoscope.exc import RequiredToolNotFound
-from diffoscope.config import Config
-from diffoscope.profiling import profile
+from .exc import RequiredToolNotFound
+from .tools import tool_required
+from .config import Config
+from .logging import logger
+from .profiling import profile
 
 
 class DiffParser(object):

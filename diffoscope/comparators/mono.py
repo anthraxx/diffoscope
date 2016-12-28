@@ -20,7 +20,7 @@
 
 import re
 
-from diffoscope import tool_required
+from diffoscope.tools import tool_required
 from diffoscope.difference import Difference
 
 from .binary import File

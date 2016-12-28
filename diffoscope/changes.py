@@ -47,7 +47,8 @@ import subprocess
 
 from debian import deb822
 
-from diffoscope import logger, tool_required
+from .tools import tool_required
+from .logging import logger
 
 
 class ChangesFileException(Exception):

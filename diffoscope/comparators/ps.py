@@ -19,8 +19,9 @@
 
 import re
 
-from diffoscope import tool_required, logger
 from diffoscope.exc import RequiredToolNotFound
+from diffoscope.tools import tool_required
+from diffoscope.logging import logger
 from diffoscope.difference import Difference
 
 from .text import TextFile

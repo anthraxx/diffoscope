@@ -23,12 +23,14 @@ from diffoscope import logger
 from diffoscope.config import Config
 from diffoscope.difference import Difference
 
-from .utils.file import File
 from .binary import FilesystemFile
+from .utils.file import File
 
 
 class MissingFile(File):
-    """Represents a missing file when comparing containers"""
+    """
+    Represents a missing file when comparing containers.
+    """
 
     @staticmethod
     def recognizes(file):
@@ -66,15 +68,24 @@ class MissingFile(File):
         return False
 
     def compare(self, other, source=None):
-        # So now that comparators are all object-oriented, we don't have any clue on how to
-        # perform a meaningful comparison right here. So we are good do the comparison backward
-        # (where knowledge of the file format lies) and and then reverse it.
+        # So now that comparators are all object-oriented, we don't have any
+        # clue on how to perform a meaningful comparison right here. So we are
+        # good do the comparison backward (where knowledge of the file format
+        # lies) and and then reverse it.
         if isinstance(other, MissingFile):
-            return Difference(None, self.name, other.name, comment='Trying to compare two non-existing files.')
-        logger.debug('Performing backward comparison')
+            return Difference(
+                None,
+                self.name,
+                other.name,
+                comment="Trying to compare two non-existing files."
+            )
+
+        logger.debug("Performing backward comparison")
         backward_diff = other.compare(self, source)
+
         if not backward_diff:
             return None
+
         return backward_diff.get_reverse()
 
     # Be nice to text comparisons
@@ -97,4 +108,3 @@ class MissingFile(File):
         class DummyChanges(dict):
             get_as_string = lambda self, _: ''
         return DummyChanges(Files=[], Version='')
-

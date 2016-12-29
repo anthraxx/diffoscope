@@ -101,7 +101,7 @@ class ProgressBar(object):
                 width = 20
 
                 if len(msg) <= width:
-                    return msg.ljust(width)
+                    return msg.rjust(width)
 
                 # Print the last `width` characters with an ellipsis.
                 return '…{}'.format(msg[-width + 1:])

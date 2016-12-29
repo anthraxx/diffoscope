@@ -98,7 +98,7 @@ class ProgressBar(object):
         class Message(progressbar.Widget):
             def update(self, pbar, _observer=self):
                 msg = _observer.msg
-                width = 20
+                width = 25
 
                 if len(msg) <= width:
                     return msg.rjust(width)

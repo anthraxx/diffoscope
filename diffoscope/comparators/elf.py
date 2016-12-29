@@ -17,8 +17,8 @@
 # You should have received a copy of the GNU General Public License
 # along with diffoscope.  If not, see <https://www.gnu.org/licenses/>.
 
+import os
 import re
-import os.path
 import subprocess
 import collections
 
@@ -31,8 +31,25 @@ from diffoscope.difference import Difference
 from .deb import DebFile, get_build_id_map
 from .utils.file import File
 from .utils.command import Command
-from .utils.container import  Container
+from .utils.container import Container
 from .utils.libarchive import list_libarchive
+
+DEBUG_SECTION_GROUPS = (
+    'rawline',
+    'info',
+    'abbrev',
+    'pubnames',
+    'aranges',
+    'macro',
+    'frames',
+    'loc',
+    'ranges',
+    'pubtypes',
+    'trace_info',
+    'trace_abbrev',
+    'trace_aranges',
+    'gdb_index',
+)
 
 
 class Readelf(Command):
@@ -128,8 +145,7 @@ class ReadelfDebugDump(Readelf):
         debug_section_group = cls.__name__[len('ReadelfDebugDump_'):]
         if debug_section_group:
             return ReadelfDebugDump(debug_section_group, *args, **kwargs)
-        else:
-            return super(Readelf, cls).__new__(cls)
+        return super(Readelf, cls).__new__(cls)
 
     def __init__(self, debug_section_group, *args, **kwargs):
         self._debug_section_group = debug_section_group
@@ -139,26 +155,26 @@ class ReadelfDebugDump(Readelf):
         return ['--debug-dump=%s' % self._debug_section_group]
 
 
-DEBUG_SECTION_GROUPS = ['rawline', 'info', 'abbrev', 'pubnames', 'aranges',
-                        'macro', 'frames', 'loc', 'ranges', 'pubtypes',
-                        'trace_info', 'trace_abbrev', 'trace_aranges',
-                        'gdb_index']
-
-
-READELF_DEBUG_DUMP_COMMANDS = \
-    [ type('ReadelfDebugDump_%s' % section_group, (ReadelfDebugDump,), {})
-      for section_group in  DEBUG_SECTION_GROUPS ]
+READELF_DEBUG_DUMP_COMMANDS = [
+    type('ReadelfDebugDump_{}'.format(x), (ReadelfDebugDump,), {})
+    for x in DEBUG_SECTION_GROUPS
+]
 
 
 class ReadElfSection(Readelf):
     @staticmethod
     def base_options():
         if not hasattr(ReadElfSection, '_base_options'):
-            options = []
-            help_output = subprocess.check_output(['readelf', '--help'], shell=False, stderr=subprocess.DEVNULL).decode('us-ascii', errors='replace')
-            if '--decompress' in help_output:
-                options.append('--decompress')
-            ReadElfSection._base_options = options
+            output = subprocess.check_output(
+                ['readelf', '--help'],
+                shell=False,
+                stderr=subprocess.DEVNULL,
+            ).decode('us-ascii', errors='replace')
+
+            ReadElfSection._base_options = []
+            for x in ('--decompress',):
+                if x in output:
+                    ReadElfSection._base_options.append(x)
         return ReadElfSection._base_options
 
     def __init__(self, path, section_name, *args, **kwargs):
@@ -189,8 +205,12 @@ class ObjdumpSection(Command):
 
     @tool_required('objdump')
     def cmdline(self):
-        return ['objdump'] + self.objdump_options() + \
-            ['--section='+self._section_name, self.path]
+        return [
+            'objdump',
+        ] + self.objdump_options() + [
+            '--section={}'.format(self._section_name),
+            self.path,
+        ]
 
     def filter(self, line):
         # Remove the filename from the output
@@ -198,6 +218,7 @@ class ObjdumpSection(Command):
             return b''
         if line.startswith(b'In archive'):
             return b''
+
         return line
 
 class ObjdumpDisassembleSection(ObjdumpSection):
@@ -215,25 +236,28 @@ class ObjdumpDisassembleSection(ObjdumpSection):
         return ObjdumpDisassembleSection.RE_SYMBOL_COMMENT.sub(r'\1', line)
 
 
-READELF_COMMANDS = [ReadelfFileHeader,
-                    ReadelfProgramHeader,
-                    ReadelfSections,
-                    ReadelfSymbols,
-                    ReadelfRelocs,
-                    ReadelfDynamic,
-                    ReadelfNotes,
-                    RedaelfVersionInfo,
-                   ]
-
+READELF_COMMANDS = (
+    ReadelfFileHeader,
+    ReadelfProgramHeader,
+    ReadelfSections,
+    ReadelfSymbols,
+    ReadelfRelocs,
+    ReadelfDynamic,
+    ReadelfNotes,
+    RedaelfVersionInfo,
+)
 
 def _compare_elf_data(path1, path2):
-    return [Difference.from_command(cmd, path1, path2) for cmd in READELF_COMMANDS + READELF_DEBUG_DUMP_COMMANDS]
+    return [
+        Difference.from_command(x, path1, path2)
+        for x in list(READELF_COMMANDS) + READELF_DEBUG_DUMP_COMMANDS
+    ]
 
 
 def _should_skip_section(name, type):
-    for cmd in READELF_COMMANDS:
-        if cmd.should_skip_section(name, type):
-            logger.debug('skipping section %s, covered by %s', name, cmd)
+    for x in READELF_COMMANDS:
+        if x.should_skip_section(name, type):
+            logger.debug("Skipping section %s, covered by %s", name, x)
             return True
     if name.startswith('.debug') or name.startswith('.zdebug'):
         # section .debug_str looks much nicer with `readelf --string-dump`
@@ -288,88 +312,124 @@ class ElfSection(File):
         return False
 
     def compare(self, other, source=None):
-        return Difference.from_command(ReadElfSection,
-                self.path, other.path,
-                command_args=[self._name])
+        return Difference.from_command(
+            ReadElfSection,
+            self.path,
+            other.path,
+            command_args=[self._name],
+        )
 
 class ElfCodeSection(ElfSection):
     def compare(self, other, source=None):
-        return Difference.from_command(ObjdumpDisassembleSection,
-                self.path, other.path,
-                command_args=[self._name])
+        return Difference.from_command(
+            ObjdumpDisassembleSection,
+            self.path,
+            other.path,
+            command_args=[self._name],
+        )
 
 class ElfStringSection(ElfSection):
     def compare(self, other, source=None):
-        return Difference.from_command(ReadelfStringSection,
-                self.path, other.path,
-                command_args=[self._name])
+        return Difference.from_command(
+            ReadelfStringSection,
+            self.path,
+            other.path,
+            command_args=[self._name],
+        )
 
 
 @tool_required('readelf')
 def get_build_id(path):
     try:
-        output = subprocess.check_output(['readelf', '--notes', path], stderr=subprocess.DEVNULL)
+        output = subprocess.check_output(
+            ['readelf', '--notes', path],
+            stderr=subprocess.DEVNULL,
+        )
     except subprocess.CalledProcessError as e:
-        logger.debug('Unable to get Build Id for %s: %s', path, e)
+        logger.debug("Unable to get Build ID for %s: %s", path, e)
         return None
+
     m = re.search(r'^\s+Build ID: ([0-9a-f]+)$', output.decode('utf-8'), flags=re.MULTILINE)
     if not m:
         return None
+
     return m.group(1)
 
 
 @tool_required('readelf')
 def get_debug_link(path):
     try:
-        output = subprocess.check_output(['readelf', '--string-dump=.gnu_debuglink', path], stderr=subprocess.DEVNULL)
+        output = subprocess.check_output(
+            ['readelf', '--string-dump=.gnu_debuglink', path],
+            stderr=subprocess.DEVNULL,
+        )
     except subprocess.CalledProcessError as e:
-        logger.debug('Unable to get Build Id for %s: %s', path, e)
+        logger.debug("Unable to get Build Id for %s: %s", path, e)
         return None
+
     m = re.search(r'^\s+\[\s+0\]\s+(\S+)$', output.decode('utf-8', errors='replace'), flags=re.MULTILINE)
     if not m:
         return None
+
     return m.group(1)
 
 
 class ElfContainer(Container):
-    SECTION_FLAG_MAPPING = {'X': ElfCodeSection, 'S': ElfStringSection, '_': ElfSection}
+    SECTION_FLAG_MAPPING = {
+        'X': ElfCodeSection,
+        'S': ElfStringSection,
+        '_': ElfSection,
+    }
 
     @tool_required('readelf')
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        logger.debug('creating ElfContainer for file %s', self.source.path)
+        logger.debug("Creating ElfContainer for %s", self.source.path)
+
         cmd = ['readelf', '--wide', '--section-headers', self.source.path]
         output = subprocess.check_output(cmd, shell=False, stderr=subprocess.DEVNULL)
         has_debug_symbols = False
+
         try:
             output = output.decode('utf-8').split('\n')
             if output[1].startswith('File:'):
                 output = output[2:]
             output = output[5:]
 
-            self._sections = collections.OrderedDict()
             # Entires of readelf --section-headers have the following columns:
             # [Nr]  Name  Type  Address  Off  Size  ES  Flg  Lk  Inf  Al
+            self._sections = collections.OrderedDict()
             for line in output:
                 if line.startswith('Key to Flags'):
                     break
+
                 # Strip number column because there may be spaces in the brakets
                 line = line.split(']', 1)[1].split()
                 name, type, flags = line[0], line[1], line[6] + '_'
+
                 if name.startswith('.debug') or name.startswith('.zdebug'):
                     has_debug_symbols = True
+
                 if _should_skip_section(name, type):
                     continue
+
                 # Use first match, with last option being '_' as fallback
-                elf_class = [ElfContainer.SECTION_FLAG_MAPPING[flag] for flag in flags if \
-                             flag in ElfContainer.SECTION_FLAG_MAPPING][0]
+                elf_class = [
+                    ElfContainer.SECTION_FLAG_MAPPING[x]
+                    for x in flags if x in ElfContainer.SECTION_FLAG_MAPPING
+                ][0]
+
+                logger.debug("Adding section %s (%s) as %s", name, type, elf_class)
                 self._sections[name] = elf_class(self, name)
-                logger.debug('adding section %s (%s) as %s', name, type, elf_class)
+
         except Exception as e:
             command = ' '.join(cmd)
-            logger.debug('OutputParsingError in %s from `%s` output - %s:%s',
-                    self.__class__.__name__, command, e.__class__.__name__, e)
+            logger.debug(
+                "OutputParsingError in %s from `%s` output - %s:%s",
+                self.__class__.__name__, command, e.__class__.__name__, e,
+            )
             raise OutputParsingError(command, self)
+
         if not has_debug_symbols:
             self._install_debug_symbols()
 
@@ -380,51 +440,84 @@ class ElfContainer(Container):
             deb = self.source.container.source.container.source.container.source
         except AttributeError:
             return
+
         # It needs to be a .deb and we need access a to a -dbgsym package in
         # the same .changes, directory or archive
         if not isinstance(deb, DebFile) or not deb.container:
             return
-        # Retrieve the Build Id for the ELF file we are exhamining
+
+        # Retrieve the Build ID for the ELF file we are examining
         build_id = get_build_id(self.source.path)
         debuglink = get_debug_link(self.source.path)
         if not build_id or not debuglink:
             return
-        logger.debug('Looking for a dbgsym package for Build Id %s (debuglink: %s)', build_id, debuglink)
+
+        logger.debug(
+            "Looking for a dbgsym package for Build Id %s (debuglink: %s)",
+            build_id,
+            debuglink,
+        )
+
         # Build a map of Build-Ids if it doesn't exist yet
         if not hasattr(deb.container, 'dbgsym_build_id_map'):
             deb.container.dbgsym_build_id_map = get_build_id_map(deb.container)
+
         if not build_id in deb.container.dbgsym_build_id_map:
             logger.debug('Unable to find a matching debug package for Build Id %s', build_id)
             return
+
         dbgsym_package = deb.container.dbgsym_build_id_map[build_id]
-        debug_file_path = './usr/lib/debug/.build-id/{0}/{1}.debug'.format(build_id[0:2], build_id[2:])
+        debug_file_path = './usr/lib/debug/.build-id/{0}/{1}.debug'.format(
+            build_id[:2],
+            build_id[2:],
+        )
         debug_file = dbgsym_package.as_container.data_tar.as_container.lookup_file(debug_file_path)
         if not debug_file:
             logger.debug('Unable to find the matching debug file %s in %s', debug_file_path, dbgsym_package)
             return
-        # Create a .debug directory and link the debug symbols there with the right name
-        dest_path = os.path.join(os.path.dirname(self.source.path), '.debug', os.path.basename(debuglink))
+
+        # Create a .debug directory and link the debug symbols there with the
+        # right name
+        dest_path = os.path.join(
+            os.path.dirname(self.source.path),
+            '.debug',
+            os.path.basename(debuglink),
+        )
         os.mkdir(os.path.dirname(dest_path))
-        # If #812089 was fixed, we would just do:
-        #os.link(debug_file.path, dest_path)
-        # But for now, we need to do more complicated things…
-        # 1. Use objcopy to create a file with only the original .gnu_debuglink section
-        #    as we will have to update it to get the CRC right.
-        debuglink_path = get_named_temporary_file(prefix='{}.debuglink.'.format(self.source.path)).name
-        subprocess.check_call(['objcopy', '--only-section=.gnu_debuglink', self.source.path, debuglink_path], shell=False, stderr=subprocess.DEVNULL)
-        # 2. Monkey-patch the ElfSection object created for the .gnu_debuglink to
-        #    change the path to point to this new file
+
+        def objcopy(*args):
+            subprocess.check_call(
+                ('objcopy',) + args,
+                shell=False,
+                stderr=subprocess.DEVNULL,
+        )
+
+        # If #812089 was fixed, we would just do os.link(debug_file.path,
+        # dest_path) but for now, we need to do more complicated things…
+        # 1. Use objcopy to create a file with only the original .gnu_debuglink
+        # section as we will have to update it to get the CRC right.
+        debuglink_path = get_named_temporary_file(
+            prefix='{}.debuglink.'.format(self.source.path),
+        ).name
+
+        objcopy('--only-section=.gnu_debuglink', self.source.path, debuglink_path)
+
+        # 2. Monkey-patch the ElfSection object created for the .gnu_debuglink
+        # to change the path to point to this new file
         section = self._sections['.gnu_debuglink']
         class MonkeyPatchedElfSection(section.__class__):
             @property
             def path(self):
                 return debuglink_path
         section.__class__ = MonkeyPatchedElfSection
+
         # 3. Create a file with the debug symbols in uncompressed form
-        subprocess.check_call(['objcopy', '--decompress-debug-sections', debug_file.path, dest_path], shell=False, stderr=subprocess.DEVNULL)
+        objcopy('--decompress-debug-sections', debug_file.path, dest_path)
+
         # 4. Update the .gnu_debuglink to this new file so we get the CRC right
-        subprocess.check_call(['objcopy', '--remove-section=.gnu_debuglink', self.source.path], shell=False, stderr=subprocess.DEVNULL)
-        subprocess.check_call(['objcopy', '--add-gnu-debuglink=%s' % dest_path, self.source.path], shell=False, stderr=subprocess.DEVNULL)
+        objcopy('--remove-section=.gnu_debuglink', self.source.path)
+        objcopy('--add-gnu-debuglink={}'.format(dest_path), self.source.path)
+
         logger.debug('Installed debug symbols at %s', dest_path)
 
     def get_member_names(self):
@@ -451,12 +544,16 @@ class StaticLibFile(File):
 
     @staticmethod
     def recognizes(file):
-        return StaticLibFile.RE_FILE_TYPE.search(file.magic_file_type) and StaticLibFile.RE_FILE_EXTENSION.search(file.name)
+        return StaticLibFile.RE_FILE_TYPE.search(file.magic_file_type) and \
+            StaticLibFile.RE_FILE_EXTENSION.search(file.name)
 
     def compare_details(self, other, source=None):
-        differences = []
-        differences.append(Difference.from_text_readers(list_libarchive(self.path),
-                                                        list_libarchive(other.path),
-                                                        self.path, other.path, source="file list"))
+        differences = [Difference.from_text_readers(
+            list_libarchive(self.path),
+            list_libarchive(other.path),
+            self.path,
+            other.path,
+            source="file list",
+        )]
         differences.extend(_compare_elf_data(self.path, other.path))
         return differences

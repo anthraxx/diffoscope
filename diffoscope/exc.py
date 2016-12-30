@@ -99,7 +99,7 @@ class RequiredToolNotFound(Exception):
             'arch': 'java-environment',
         },
         'js-beautify': {
-            'debian': 'python-jsbeautifier',
+            'debian': 'jsbeautifier',
         },
         'llvm-bcanalyzer': {
             'debian': 'llvm',

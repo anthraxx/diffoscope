@@ -34,7 +34,7 @@ Build-Depends:
  pdftk <!nocheck>,
  poppler-utils <!nocheck>,
  python-argcomplete,
- python-jsbeautifier <!nocheck>,
+ jsbeautifier <!nocheck>,
  python3-all,
  python3-debian <!nocheck>,
  python3-docutils,

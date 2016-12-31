@@ -62,7 +62,11 @@ def create_parser():
     parser.add_argument('--version', action='version',
                         version='diffoscope %s' % VERSION)
     parser.add_argument('--list-tools', nargs='?', type=str, action=ListToolsAction,
-                        help='Show external tools required and exit')
+                        metavar='DISTRO', choices=sorted(OS_NAMES),
+                        help='Show external tools required and exit. '
+                        'DISTRO can be one of {%(choices)s}. '
+                        'If specified, the output will list packages in that '
+                        'distribution that satisfy these dependencies.')
     parser.add_argument('--debug', dest='debug', action='store_true',
                         default=False, help='Display debug messages')
     parser.add_argument('--debugger', action='store_true',
@@ -184,20 +188,12 @@ class ListToolsAction(argparse.Action):
         print("External-Tools-Required: ", end='')
         print(', '.join(sorted(tool_required.all)))
         if os_override:
-            if os_override in OS_NAMES.keys():
-                os_list = [os_override]
-            else:
-                print()
-                print("No package mapping found for: {} (possible values: {})".format(os_override, ", ".join(sorted(OS_NAMES.keys()))), file=sys.stderr)
-                sys.exit(1)
+            os_list = [os_override]
         else:
             current_os = get_current_os()
-            if current_os in OS_NAMES.keys():
-                os_list = [current_os]
-            else:
-                os_list = OS_NAMES.keys()
+            os_list = [current_os] if (current_os in OS_NAMES) else iter(OS_NAMES)
         for os in os_list:
-            print("Available-in-{}-packages: ".format(OS_NAMES.get(os, os)), end='')
+            print("Available-in-{}-packages: ".format(OS_NAMES[os]), end='')
             print(', '.join(sorted(filter(None, {
                 EXTERNAL_TOOLS.get(k, {}).get(os, None)
                 for k in tool_required.all

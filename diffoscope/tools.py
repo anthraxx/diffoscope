@@ -17,6 +17,7 @@
 # You should have received a copy of the GNU General Public License
 # along with diffoscope.  If not, see <https://www.gnu.org/licenses/>.
 
+import collections
 import platform
 import functools
 
@@ -28,11 +29,13 @@ from .profiling import profile
 # calls
 find_executable = functools.lru_cache()(find_executable)
 
-OS_NAMES = {
-    'arch': 'Arch Linux',
-    'debian': 'Debian',
-    'FreeBSD': 'FreeBSD',
-}
+# The output of --help and --list-tools will use the order of this dict.
+# Please keep it alphabetized.
+OS_NAMES = collections.OrderedDict([
+    ('arch', 'Arch Linux'),
+    ('debian', 'Debian'),
+    ('FreeBSD', 'FreeBSD'),
+])
 
 
 def tool_required(command):

@@ -56,27 +56,20 @@ except ImportError:
 
 def create_parser():
     parser = argparse.ArgumentParser(
-        description='Calculate differences between two files or directories.')
+        description='Calculate differences between two files or directories',
+        add_help=False)
     parser.add_argument('path1', help='First file or directory to compare')
     parser.add_argument('path2', help='Second file or directory to compare')
-    parser.add_argument('--version', action='version',
-                        version='diffoscope %s' % VERSION)
-    parser.add_argument('--list-tools', nargs='?', type=str, action=ListToolsAction,
-                        metavar='DISTRO', choices=sorted(OS_NAMES),
-                        help='Show external tools required and exit. '
-                        'DISTRO can be one of {%(choices)s}. '
-                        'If specified, the output will list packages in that '
-                        'distribution that satisfy these dependencies.')
     parser.add_argument('--debug', dest='debug', action='store_true',
                         default=False, help='Display debug messages')
     parser.add_argument('--debugger', action='store_true',
-                        help='Open the python debugger in case of crashes.')
-    parser.add_argument('--status-fd', dest='status_fd', metavar='N', type=int,
-                        help='Send machine-readable status to file descriptor N')
+                        help='Open the Python debugger in case of crashes')
+    parser.add_argument('--status-fd', dest='status_fd', metavar='FD', type=int,
+                        help='Send machine-readable status to file descriptor FD')
     parser.add_argument('--progress', dest='progress', action='store_const',
-                        const=True, help='Show an (approximate) progress bar')
+                        const=True, help='Show an approximate progress bar')
     parser.add_argument('--no-progress', dest='progress', action='store_const',
-                        const=False, help='Do not show an (approximate) progress bar')
+                        const=False, help='Do not show any progress bar')
 
     group1 = parser.add_argument_group('output types')
     group1.add_argument('--text', metavar='OUTPUT_FILE', dest='text_output',
@@ -87,16 +80,16 @@ def create_parser():
                         'Default: auto, meaning yes if the output is a terminal, otherwise no.')
     group1.add_argument('--output-empty', action='store_true',
                         help='If there was no difference, then output an empty '
-                        'diff for each output type that was specified. (For '
-                        '--text, an empty file is written.)')
+                        'diff for each output type that was specified. In '
+                        '--text output, an empty file is written.')
     group1.add_argument('--html', metavar='OUTPUT_FILE', dest='html_output',
                         help='Write HTML report to given file (use - for stdout)')
     group1.add_argument('--html-dir', metavar='OUTPUT_DIR', dest='html_output_directory',
                         help='Write multi-file HTML report to given directory')
-    group1.add_argument('--css', metavar='url', dest='css_url',
+    group1.add_argument('--css', metavar='URL', dest='css_url',
                         help='Link to an extra CSS for the HTML report')
-    group1.add_argument('--jquery', metavar='url', dest='jquery_url',
-                        help='Link to the jquery url, with --html-dir. Specify '
+    group1.add_argument('--jquery', metavar='URL', dest='jquery_url',
+                        help='Link to the jQuery url, with --html-dir. Specify '
                         '"disable" to disable JavaScript. When omitted '
                         'diffoscope will try to create a symlink to a system '
                         'installation. Known locations: %s' % ', '.join(JQUERY_SYSTEM_LOCATIONS))
@@ -117,15 +110,15 @@ def create_parser():
                         Config().max_report_size, 200000)
     group2.add_argument('--max-report-child-size', metavar='BYTES',
                         dest='max_report_child_size', type=int,
-                        help='In html-dir output, this is the max bytes of '
-                        'each child page. (0 to disable, default: %(default)s, '
+                        help='In --html-dir output, this is the max bytes of '
+                        'each child page (0 to disable, default: %(default)s, '
                         'remaining in effect even with --no-default-limits)',
                         default=Config().max_report_child_size).completer=RangeCompleter(0,
                         Config().max_report_child_size, 50000)
     group2.add_argument('--max-diff-block-lines', dest='max_diff_block_lines',
                         metavar='LINES', type=int,
                         help='Maximum number of lines output per diff block. '
-                        'In html-dir output, we use %d * this number instead, '
+                        'In --html-dir output, we use %d times this number instead, '
                         'taken over all pages. (0 to disable, default: %d)' %
                         (Config().max_diff_block_lines_html_dir_ratio,
                         Config().max_diff_block_lines),
@@ -134,8 +127,8 @@ def create_parser():
     group2.add_argument('--max-diff-block-lines-parent', dest='max_diff_block_lines_parent',
                         metavar='LINES', type=int,
                         help='In --html-dir output, this is maximum number of '
-                        'lines output per diff block on the parent page, '
-                        'before spilling it into child pages. (0 to disable, '
+                        'lines output per diff block on the parent page '
+                        'before spilling it into child pages (0 to disable, '
                         'default: %(default)s, remaining in effect even with '
                         '--no-default-limits)',
                         default=Config().max_diff_block_lines_parent).completer=RangeCompleter(0,
@@ -145,7 +138,7 @@ def create_parser():
                         help='Maximum number of lines saved per diff block. '
                         'Most users should not need this, unless you run out '
                         'of memory. This truncates diff(1) output before even '
-                        'trying to emit it in a report; also affects --text '
+                        'trying to emit it in a report. This also affects --text '
                         'output. (0 to disable, default: 0)',
                         default=0).completer=RangeCompleter(0, 0, 200)
 
@@ -159,11 +152,24 @@ def create_parser():
                         400, 20)
     group3.add_argument('--max-diff-input-lines', dest='max_diff_input_lines',
                         metavar='LINES', type=int,
-                        help='Maximum number of lines fed to diff(1). '
+                        help='Maximum number of lines fed to diff(1) '
                         '(0 to disable, default: %d)' %
                         Config().max_diff_input_lines,
                         default=None).completer=RangeCompleter(0,
                         Config().max_diff_input_lines, 5000)
+
+    group4 = parser.add_argument_group('information commands')
+    group4.add_argument('--help', '-h', action='help',
+                        help="Show this help and exit")
+    group4.add_argument('--version', action='version',
+                        version='diffoscope %s' % VERSION,
+                        help="Show program's version number and exit")
+    group4.add_argument('--list-tools', nargs='?', type=str, action=ListToolsAction,
+                        metavar='DISTRO', choices=OS_NAMES,
+                        help='Show external tools required and exit. '
+                        'DISTRO can be one of {%(choices)s}. '
+                        'If specified, the output will list packages in that '
+                        'distribution that satisfy these dependencies.')
 
     if not tlsh:
         parser.epilog = 'File renaming detection based on fuzzy-matching is currently disabled. It can be enabled by installing the "tlsh" module available at https://github.com/trendmicro/tlsh'

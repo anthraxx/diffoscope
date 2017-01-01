@@ -518,6 +518,9 @@ def output_html_directory(directory, difference, css_url=None, jquery_url=None):
     if not os.path.exists(directory):
         os.makedirs(directory)
 
+    if not os.path.isdir(directory):
+        raise ValueError("%s is not a directory" % directory)
+
     if not jquery_url:
         jquery_symlink = os.path.join(directory, "jquery.js")
         if os.path.exists(jquery_symlink):

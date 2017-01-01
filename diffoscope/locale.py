@@ -20,18 +20,37 @@
 import os
 import time
 
+from .logging import logger
+
 
 def set_locale():
-    """Normalize locale so external tool gives us stable and properly
-    encoded output"""
+    """
+    Normalise locale so external tool gives us stable and properly encoded
+    output.
+    """
 
-    for var in ['LANGUAGE', 'LC_ALL']:
-        if var in os.environ:
-            del os.environ[var]
-    for var in ['LANG', 'LC_NUMERIC', 'LC_TIME', 'LC_COLLATE', 'LC_MONETARY',
-                'LC_MESSAGES', 'LC_PAPER', 'LC_NAME', 'LC_ADDRESS',
-                'LC_TELEPHONE', 'LC_MEASUREMENT', 'LC_IDENTIFICATION']:
-        os.environ[var] = 'C'
-    os.environ['LC_CTYPE'] = 'C.UTF-8'
+    logger.debug("Normalising locale, timezone, etc.")
+
+    for x in ('LANGUAGE', 'LC_ALL'):
+        os.environ.pop(x, None)
+
+    for x in (
+        'LANG',
+        'LC_NUMERIC',
+        'LC_TIME',
+        'LC_COLLATE',
+        'LC_MONETARY',
+        'LC_MESSAGES',
+        'LC_PAPER',
+        'LC_NAME',
+        'LC_ADDRESS',
+        'LC_TELEPHONE',
+        'LC_MEASUREMENT',
+        'LC_IDENTIFICATION',
+    ):
+        os.environ[x] = 'C'
+
     os.environ['TZ'] = 'UTC'
+    os.environ['LC_CTYPE'] = 'C.UTF-8'
+
     time.tzset()

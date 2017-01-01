@@ -29,7 +29,7 @@ Files: diffoscope/comparators/bzip2.py
        diffoscope/comparators/haskell.py
        diffoscope/comparators/pdf.py
        diffoscope/comparators/png.py
-       diffoscope/comparators/utils.py
+       diffoscope/comparators/utils/*.py
        diffoscope/comparators/xz.py
        diffoscope/comparators/zip.py
 Copyright: 2014-2015 Jérémy Bobbio <lunar@debian.org>
@@ -44,7 +44,7 @@ Copyright: 2015 Reiner Herrmann <reiner@reiner-h.de>
            2015 Jérémy Bobbio <lunar@debian.org>
 License: GPL-3+
 
-Files: diffoscope/presenters/html.py
+Files: diffoscope/presenters/html/*.py
 Copyright: 2014-2015 Jérémy Bobbio <lunar@debian.org>
                 2015 Reiner Herrmann <reiner@reiner-h.de>
            2012-2013 Olivier Matz <zer0@droids-corp.org>

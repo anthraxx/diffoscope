@@ -40,11 +40,11 @@ import codecs
 import hashlib
 import contextlib
 
-from .. import VERSION
-from ..config import Config
-from ..logging import logger
+from ... import VERSION
+from ...config import Config
+from ...logging import logger
 
-from .icon import FAVICON_BASE64
+from ..icon import FAVICON_BASE64
 
 
 # minimum line size, we add a zero-sized breakable space every

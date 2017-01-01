@@ -36,7 +36,9 @@ class ProfileManager(object):
 
         if not self._singleton:
             self.data = collections.defaultdict(
-                lambda: collections.defaultdict(float),
+                lambda: collections.defaultdict(lambda: {
+                    'time': 0.0,
+                }),
             )
 
     def increment(self, start, namespace, key):
@@ -46,7 +48,7 @@ class ProfileManager(object):
                 key.__class__.__name__,
             )
 
-        self.data[namespace][key] += time.time() - start
+        self.data[namespace][key]['time'] += time.time() - start
 
     def output(self, print):
         title = "Profiling output for: {}".format(' '.join(sys.argv))
@@ -55,12 +57,12 @@ class ProfileManager(object):
         print("=" * len(title))
 
         for namespace, keys in sorted(self.data.items(), key=lambda x: x[0]):
-            subtitle = "{} (total: {:.3f}s)".format(
+            subtitle = "{} (total time: {:.3f}s)".format(
                 namespace,
-                sum(keys.values()),
+                sum(x['time'] for x in keys.values()),
             )
 
             print("\n{}\n{}\n".format(subtitle, "-" * len(subtitle)))
 
-            for value, total in sorted(keys.items(), key=lambda x: x[1], reverse=True):
-                print("  {:10.3f}s  {}".format(total, value))
+            for value, totals in sorted(keys.items(), key=lambda x: x[1]['time'], reverse=True):
+                print("  {:10.3f}s  {}".format(totals['time'], value))

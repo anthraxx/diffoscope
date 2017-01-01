@@ -67,8 +67,9 @@ class ProfileManager(object):
             print("\n{}\n{}\n".format(subtitle, "-" * len(subtitle)))
 
             for value, totals in sorted(keys.items(), key=lambda x: x[1]['time'], reverse=True):
-                print("  {:10.3f}s {:5d} calls    {}".format(
+                print("  {:10.3f}s {:5d} call{}    {}".format(
                     totals['time'],
                     totals['count'],
+                    ' ' if totals['count'] == 1 else 's',
                     value,
                 ))

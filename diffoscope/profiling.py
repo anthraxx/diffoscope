@@ -38,6 +38,7 @@ class ProfileManager(object):
             self.data = collections.defaultdict(
                 lambda: collections.defaultdict(lambda: {
                     'time': 0.0,
+                    'count': 0,
                 }),
             )
 
@@ -49,6 +50,7 @@ class ProfileManager(object):
             )
 
         self.data[namespace][key]['time'] += time.time() - start
+        self.data[namespace][key]['count'] += 1
 
     def output(self, print):
         title = "Profiling output for: {}".format(' '.join(sys.argv))
@@ -65,4 +67,8 @@ class ProfileManager(object):
             print("\n{}\n{}\n".format(subtitle, "-" * len(subtitle)))
 
             for value, totals in sorted(keys.items(), key=lambda x: x[1]['time'], reverse=True):
-                print("  {:10.3f}s  {}".format(totals['time'], value))
+                print("  {:10.3f}s {:5d} calls    {}".format(
+                    totals['time'],
+                    totals['count'],
+                    value,
+                ))

@@ -40,9 +40,9 @@ import codecs
 import hashlib
 import contextlib
 
-from ... import VERSION
-from ...config import Config
-from ...logging import logger
+from diffoscope import VERSION
+from diffoscope.config import Config
+from diffoscope.logging import logger
 
 from ..icon import FAVICON_BASE64
 

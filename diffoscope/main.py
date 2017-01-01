@@ -247,7 +247,7 @@ def run_diffoscope(parsed_args):
         parsed_args.text_output = "-"
     logger.debug('Starting comparison')
     ProgressManager().setup(parsed_args)
-    with Progress(1, parsed_args.path1) as p:
+    with Progress(1, parsed_args.path1):
         difference = compare_root_paths(
             parsed_args.path1, parsed_args.path2)
     ProgressManager().finish()

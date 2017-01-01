@@ -60,6 +60,10 @@ WORDBREAK = " \t;.,/):-"
 DIFFON = "\x01"
 DIFFOFF = "\x02"
 
+JQUERY_SYSTEM_LOCATIONS = (
+    '/usr/share/javascript/jquery/jquery.js',
+)
+
 
 class PrintLimitReached(Exception):
     pass
@@ -576,8 +580,6 @@ def output_html(difference, css_url=None, print_func=None):
 def file_printer(directory, filename):
     with codecs.open(os.path.join(directory,filename), 'w', encoding='utf-8') as f:
         yield f.write
-
-JQUERY_SYSTEM_LOCATIONS = ['/usr/share/javascript/jquery/jquery.js']
 
 def output_html_directory(directory, difference, css_url=None, jquery_url=None):
     """

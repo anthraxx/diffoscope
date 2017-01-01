@@ -47,6 +47,7 @@ from diffoscope.logging import logger
 from ..icon import FAVICON_BASE64
 
 from . import templates
+from .linediff import linediff
 
 # minimum line size, we add a zero-sized breakable space every
 # LINESIZE characters
@@ -101,82 +102,6 @@ def new_unified_diff():
     hunk_off1, hunk_size1, hunk_off2, hunk_size2 = 0, 0, 0, 0
     spl_rows, spl_current_page = 0, 0
     spl_print_func, spl_print_ctrl = None, None
-
-
-def sane(x):
-    r = ""
-    for i in x:
-        j = ord(i)
-        if i not in ['\t', '\n'] and (j < 32):
-            r = r + "."
-        else:
-            r = r + i
-    return r
-
-
-def linediff(s, t):
-    '''
-    Original line diff algorithm of diff2html. It's character based.
-    '''
-    if len(s):
-        s = ''.join([ sane(c) for c in s ])
-    if len(t):
-        t = ''.join([ sane(c) for c in t ])
-
-    m, n = len(s), len(t)
-    d = [[(0, 0) for i in range(n+1)] for i in range(m+1)]
-
-
-    d[0][0] = (0, (0, 0))
-    for i in range(m+1)[1:]:
-        d[i][0] = (i,(i-1, 0))
-    for j in range(n+1)[1:]:
-        d[0][j] = (j,(0, j-1))
-
-    for i in range(m+1)[1:]:
-        for j in range(n+1)[1:]:
-            if s[i-1] == t[j-1]:
-                cost = 0
-            else:
-                cost = 1
-            d[i][j] = min((d[i-1][j][0] + 1, (i-1, j)),
-                          (d[i][j-1][0] + 1, (i, j-1)),
-                          (d[i-1][j-1][0] + cost, (i-1, j-1)))
-
-    l = []
-    coord = (m, n)
-    while coord != (0, 0):
-        l.insert(0, coord)
-        x, y = coord
-        coord = d[x][y][1]
-
-    l1 = []
-    l2 = []
-
-    for coord in l:
-        cx, cy = coord
-        child_val = d[cx][cy][0]
-
-        father_coord = d[cx][cy][1]
-        fx, fy = father_coord
-        father_val = d[fx][fy][0]
-
-        diff = (cx-fx, cy-fy)
-
-        if diff == (0, 1):
-            l1.append("")
-            l2.append(DIFFON + t[fy] + DIFFOFF)
-        elif diff == (1, 0):
-            l1.append(DIFFON + s[fx] + DIFFOFF)
-            l2.append("")
-        elif child_val-father_val == 1:
-            l1.append(DIFFON + s[fx] + DIFFOFF)
-            l2.append(DIFFON + t[fy] + DIFFOFF)
-        else:
-            l1.append(s[fx])
-            l2.append(t[fy])
-
-    return ''.join(l1).replace(DIFFOFF + DIFFON, ''), ''.join(l2).replace(DIFFOFF + DIFFON, '')
 
 
 def convert(s, ponct=0, tag=''):
@@ -246,7 +171,7 @@ def output_line(s1, s2):
         type_name = "unmodified"
     else:
         type_name = "changed"
-        s1, s2 = linediff(s1, s2)
+        s1, s2 = linediff(s1, s2, DIFFON, DIFFOFF)
 
     spl_print_func(u'<tr class="diff%s">' % type_name)
     try:
@@ -621,5 +546,5 @@ def output_html_directory(directory, difference, css_url=None, jquery_url=None):
             print_func(u'<div class="error">Max output size reached.</div>',
                        force=True)
         if jquery_url:
-            print_func(template.SCRIPTS % {'jquery_url': html.escape(jquery_url)}, force=True)
+            print_func(templates.SCRIPTS % {'jquery_url': html.escape(jquery_url)}, force=True)
         output_footer(print_func)

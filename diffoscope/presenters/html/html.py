@@ -621,5 +621,5 @@ def output_html_directory(directory, difference, css_url=None, jquery_url=None):
             print_func(u'<div class="error">Max output size reached.</div>',
                        force=True)
         if jquery_url:
-            print_func(SCRIPTS % {'jquery_url': html.escape(jquery_url)}, force=True)
+            print_func(template.SCRIPTS % {'jquery_url': html.escape(jquery_url)}, force=True)
         output_footer(print_func)

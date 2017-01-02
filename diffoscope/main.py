@@ -224,9 +224,6 @@ def run_diffoscope(parsed_args):
     if parsed_args.debug:
         logger.setLevel(logging.DEBUG)
     set_locale()
-    # no output desired? print text to stdout
-    if not any((parsed_args.text_output, parsed_args.html_output, parsed_args.html_output_directory)):
-        parsed_args.text_output = "-"
     logger.debug('Starting comparison')
     ProgressManager().setup(parsed_args)
     with Progress(1, parsed_args.path1):

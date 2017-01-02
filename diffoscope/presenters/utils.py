@@ -33,6 +33,14 @@ def output_all(difference, parsed_args, has_differences):
     Generate all known output formats.
     """
 
+    # If no output specified, default to printing --text output to stdout
+    if not any((
+        parsed_args.text_output,
+        parsed_args.html_output,
+        parsed_args.html_output_directory,
+    )):
+        parsed_args.text_output = '-'
+
     for name, fn, target in (
         ('text', text, parsed_args.text_output),
         ('html', html, parsed_args.html_output),

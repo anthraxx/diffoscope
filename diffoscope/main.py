@@ -251,37 +251,72 @@ def run_diffoscope(parsed_args):
         difference = compare_root_paths(
             parsed_args.path1, parsed_args.path2)
     ProgressManager().finish()
-    retcode = 1 if difference else 0
-    if not retcode and parsed_args.output_empty:
-        # dummy empty diff to write
+    # Generate an empty, dummy diff to write, saving for exit code first.
+    has_differences = bool(difference is not None)
+    if difference is None and parsed_args.output_empty:
         difference = Difference(None, parsed_args.path1, parsed_args.path2)
-    if difference:
-        if parsed_args.text_output:
-            with profile('output', 'text'):
-                if not retcode:
-                    # special case for --text: write an empty file instead of an empty diff
-                    open(parsed_args.text_output, 'w').close()
-                else:
-                    with make_printer(parsed_args.text_output or '-') as print_func:
-                        color = {
-                            'auto': print_func.output.isatty(),
-                            'never': False,
-                            'always': True,
-                        }[parsed_args.text_color]
-                        output_text(difference, print_func=print_func, color=color)
-        if parsed_args.html_output:
-            with profile('output', 'html'):
-                with make_printer(parsed_args.html_output) as print_func:
-                        output_html(difference, css_url=parsed_args.css_url, print_func=print_func)
-        if parsed_args.html_output_directory:
-            with profile('output', 'html_directory'):
-                output_html_directory(parsed_args.html_output_directory, difference,
-                    css_url=parsed_args.css_url, jquery_url=parsed_args.jquery_url)
-    if parsed_args.profile_output:
-        with make_printer(parsed_args.profile_output) as print_func:
-            ProfileManager().output(print_func)
-    return retcode
+    output_all(difference, parsed_args, has_differences)
+    return 1 if has_differences else 0
 
+def output_all(difference, parsed_args, has_differences):
+    # Generate outputs
+    for name, fn, target in (
+        ('text', text, parsed_args.text_output),
+        ('html', html, parsed_args.html_output),
+        ('html_directory', html_directory, parsed_args.html_output_directory),
+        ('profile', profiling, parsed_args.html_output_directory),
+    ):
+        if target is None:
+            continue
+
+        logger.debug("Generating %r output at %r", name, target)
+
+        with profile('output', name):
+            fn(difference, parsed_args, has_differences)
+
+def text(difference, parsed_args, has_differences):
+    if difference is None:
+        return
+
+    # As a sppecial case, write an empty file instead of an empty diff.
+    if not has_differences:
+        open(parsed_args.text_output, 'w').close()
+        return
+
+    color = {
+        'auto': fn.output.isatty(),
+        'never': False,
+        'always': True,
+    }[parsed_args.text_color]
+
+    with make_printer(parsed_args.text_output or '-') as fn:
+        output_text(difference, print_func=fn, color=color)
+
+def html(difference, parsed_args, has_differences):
+    if difference is None:
+        return
+
+    with make_printer(parsed_args.html_output) as fn:
+        output_html(
+            difference,
+            css_url=parsed_args.css_url,
+            print_func=fn,
+        )
+
+def html_directory(difference, parsed_args, has_differences):
+    if difference is None:
+        return
+
+    output_html_directory(
+        parsed_args.html_output_directory,
+        difference,
+        css_url=parsed_args.css_url,
+        jquery_url=parsed_args.jquery_url,
+    )
+
+def profiling(difference, parsed_args, has_differences):
+    with make_printer(parsed_args.profile_output or '-') as fn:
+        ProfileManager().output(fn)
 
 def sigterm_handler(signo, stack_frame):
     sys.exit(2)

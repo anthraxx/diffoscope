@@ -93,14 +93,17 @@ def profiling(difference, parsed_args, has_differences):
 
 @contextlib.contextmanager
 def make_printer(path):
-    if path == '-':
-        output = sys.stdout
-    else:
+    output = sys.stdout
+
+    if path != '-':
         output = codecs.open(path, 'w', encoding='utf-8')
-    def print_func(*args, **kwargs):
+
+    def fn(*args, **kwargs):
         kwargs['file'] = output
         print(*args, **kwargs)
-    print_func.output = output
-    yield print_func
+    fn.output = output
+
+    yield fn
+
     if path != '-':
         output.close()

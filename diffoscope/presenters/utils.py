@@ -65,7 +65,7 @@ def output_all(difference, parsed_args, has_differences):
             data['fn'](difference, parsed_args, has_differences)
 
 def text(difference, parsed_args, has_differences):
-    # As a sppecial case, write an empty file instead of an empty diff.
+    # As a special case, write an empty file instead of an empty diff.
     if not has_differences:
         open(parsed_args.text_output, 'w').close()
         return

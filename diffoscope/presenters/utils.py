@@ -22,7 +22,7 @@ import codecs
 import contextlib
 
 from ..logging import logger
-from ..profiling import ProfileManager, profile
+from ..profiling import profile
 
 from .text import output_text
 from .html import output_html, output_html_directory
@@ -45,7 +45,6 @@ def output_all(difference, parsed_args, has_differences):
         ('text', text, parsed_args.text_output),
         ('html', html, parsed_args.html_output),
         ('html_directory', html_directory, parsed_args.html_output_directory),
-        ('profile', profiling, parsed_args.profile_output),
     ):
         if target is None:
             continue
@@ -56,9 +55,6 @@ def output_all(difference, parsed_args, has_differences):
             fn(difference, parsed_args, has_differences)
 
 def text(difference, parsed_args, has_differences):
-    if difference is None:
-        return
-
     # As a sppecial case, write an empty file instead of an empty diff.
     if not has_differences:
         open(parsed_args.text_output, 'w').close()
@@ -94,10 +90,6 @@ def html_directory(difference, parsed_args, has_differences):
         css_url=parsed_args.css_url,
         jquery_url=parsed_args.jquery_url,
     )
-
-def profiling(difference, parsed_args, has_differences):
-    with make_printer(parsed_args.profile_output or '-') as fn:
-        ProfileManager().output(fn)
 
 @contextlib.contextmanager
 def make_printer(path):

@@ -52,6 +52,15 @@ class ProfileManager(object):
         self.data[namespace][key]['time'] += time.time() - start
         self.data[namespace][key]['count'] += 1
 
+    def finish(self, parsed_args):
+        from .presenters.utils import make_printer
+
+        if parsed_args.profile_output is None:
+            return
+
+        with make_printer(parsed_args.profile_output) as fn:
+            self.output(fn)
+
     def output(self, print):
         title = "Profiling output for: {}".format(' '.join(sys.argv))
 

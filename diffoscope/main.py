@@ -33,6 +33,7 @@ from .config import Config
 from .locale import set_locale
 from .logging import logger
 from .progress import ProgressManager, Progress
+from .profiling import ProfileManager, profile
 from .tempfiles import clean_all_temp_files
 from .difference import Difference
 from .presenters.html import JQUERY_SYSTEM_LOCATIONS
@@ -227,14 +228,16 @@ def run_diffoscope(parsed_args):
     logger.debug('Starting comparison')
     ProgressManager().setup(parsed_args)
     with Progress(1, parsed_args.path1):
-        difference = compare_root_paths(
-            parsed_args.path1, parsed_args.path2)
+        with profile('main', 'outputs'):
+            difference = compare_root_paths(
+                parsed_args.path1, parsed_args.path2)
     ProgressManager().finish()
     # Generate an empty, dummy diff to write, saving for exit code first.
     has_differences = bool(difference is not None)
     if difference is None and parsed_args.output_empty:
         difference = Difference(None, parsed_args.path1, parsed_args.path2)
-    output_all(difference, parsed_args, has_differences)
+    with profile('main', 'outputs'):
+        output_all(difference, parsed_args, has_differences)
     return 1 if has_differences else 0
 
 
@@ -248,8 +251,9 @@ def main(args=None):
     signal.signal(signal.SIGTERM, sigterm_handler)
     parsed_args = None
     try:
-        parser = create_parser()
-        parsed_args = parser.parse_args(args)
+        with profile('main', 'parse_args'):
+            parser = create_parser()
+            parsed_args = parser.parse_args(args)
         sys.exit(run_diffoscope(parsed_args))
     except KeyboardInterrupt:
         logger.info('Keyboard Interrupt')
@@ -263,7 +267,12 @@ def main(args=None):
             pdb.post_mortem()
         sys.exit(2)
     finally:
-        clean_all_temp_files()
+        with profile('main', 'cleanup'):
+            clean_all_temp_files()
+
+        # Print profiling output at the very end
+        if parsed_args is not None:
+            ProfileManager().finish(parsed_args)
 
 if __name__ == '__main__':
     main()

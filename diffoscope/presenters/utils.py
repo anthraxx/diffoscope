@@ -33,26 +33,36 @@ def output_all(difference, parsed_args, has_differences):
     Generate all known output formats.
     """
 
-    # If no output specified, default to printing --text output to stdout
-    if not any((
-        parsed_args.text_output,
-        parsed_args.html_output,
-        parsed_args.html_output_directory,
-    )):
-        parsed_args.text_output = '-'
+    if difference is None:
+        return
 
-    for name, fn, target in (
-        ('text', text, parsed_args.text_output),
-        ('html', html, parsed_args.html_output),
-        ('html_directory', html_directory, parsed_args.html_output_directory),
-    ):
-        if target is None:
+    FORMATS = {
+        'text': {
+            'fn': text,
+            'target': parsed_args.text_output,
+        },
+        'html': {
+            'fn': html,
+            'target': parsed_args.html_output,
+        },
+        'html_directory': {
+            'fn': html_directory,
+            'target': parsed_args.html_output_directory,
+        },
+    }
+
+    # If no output specified, default to printing --text output to stdout
+    if not any(x['target'] for x in FORMATS.values()):
+        FORMATS['text']['target'] = '-'
+
+    for name, data in FORMATS.items():
+        if data['target'] is None:
             continue
 
-        logger.debug("Generating %r output at %r", name, target)
+        logger.debug("Generating %r output at %r", name, data['target'])
 
         with profile('output', name):
-            fn(difference, parsed_args, has_differences)
+            data['fn'](difference, parsed_args, has_differences)
 
 def text(difference, parsed_args, has_differences):
     # As a sppecial case, write an empty file instead of an empty diff.
@@ -70,9 +80,6 @@ def text(difference, parsed_args, has_differences):
         output_text(difference, print_func=fn, color=color)
 
 def html(difference, parsed_args, has_differences):
-    if difference is None:
-        return
-
     with make_printer(parsed_args.html_output) as fn:
         output_html(
             difference,
@@ -81,9 +88,6 @@ def html(difference, parsed_args, has_differences):
         )
 
 def html_directory(difference, parsed_args, has_differences):
-    if difference is None:
-        return
-
     output_html_directory(
         parsed_args.html_output_directory,
         difference,

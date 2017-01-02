@@ -21,12 +21,10 @@
 
 import os
 import sys
-import codecs
 import signal
 import logging
 import argparse
 import traceback
-import contextlib
 
 from . import VERSION
 from .exc import RequiredToolNotFound
@@ -36,11 +34,9 @@ from .locale import set_locale
 from .logging import logger
 from .progress import ProgressManager, Progress
 from .tempfiles import clean_all_temp_files
-from .profiling import ProfileManager, profile
 from .difference import Difference
-from .presenters.html import output_html, output_html_directory, \
-    JQUERY_SYSTEM_LOCATIONS
-from .presenters.text import output_text
+from .presenters.html import JQUERY_SYSTEM_LOCATIONS
+from .presenters.utils import output_all
 from .comparators.utils.compare import compare_root_paths
 
 try:
@@ -172,20 +168,6 @@ def create_parser():
     return parser
 
 
-@contextlib.contextmanager
-def make_printer(path):
-    if path == '-':
-        output = sys.stdout
-    else:
-        output = codecs.open(path, 'w', encoding='utf-8')
-    def print_func(*args, **kwargs):
-        kwargs['file'] = output
-        print(*args, **kwargs)
-    print_func.output = output
-    yield print_func
-    if path != '-':
-        output.close()
-
 class RangeCompleter(object):
     def __init__(self, start, end, step):
         self.choices = range(start, end + 1, step)
@@ -258,65 +240,6 @@ def run_diffoscope(parsed_args):
     output_all(difference, parsed_args, has_differences)
     return 1 if has_differences else 0
 
-def output_all(difference, parsed_args, has_differences):
-    # Generate outputs
-    for name, fn, target in (
-        ('text', text, parsed_args.text_output),
-        ('html', html, parsed_args.html_output),
-        ('html_directory', html_directory, parsed_args.html_output_directory),
-        ('profile', profiling, parsed_args.html_output_directory),
-    ):
-        if target is None:
-            continue
-
-        logger.debug("Generating %r output at %r", name, target)
-
-        with profile('output', name):
-            fn(difference, parsed_args, has_differences)
-
-def text(difference, parsed_args, has_differences):
-    if difference is None:
-        return
-
-    # As a sppecial case, write an empty file instead of an empty diff.
-    if not has_differences:
-        open(parsed_args.text_output, 'w').close()
-        return
-
-    color = {
-        'auto': fn.output.isatty(),
-        'never': False,
-        'always': True,
-    }[parsed_args.text_color]
-
-    with make_printer(parsed_args.text_output or '-') as fn:
-        output_text(difference, print_func=fn, color=color)
-
-def html(difference, parsed_args, has_differences):
-    if difference is None:
-        return
-
-    with make_printer(parsed_args.html_output) as fn:
-        output_html(
-            difference,
-            css_url=parsed_args.css_url,
-            print_func=fn,
-        )
-
-def html_directory(difference, parsed_args, has_differences):
-    if difference is None:
-        return
-
-    output_html_directory(
-        parsed_args.html_output_directory,
-        difference,
-        css_url=parsed_args.css_url,
-        jquery_url=parsed_args.jquery_url,
-    )
-
-def profiling(difference, parsed_args, has_differences):
-    with make_printer(parsed_args.profile_output or '-') as fn:
-        ProfileManager().output(fn)
 
 def sigterm_handler(signo, stack_frame):
     sys.exit(2)

@@ -45,7 +45,7 @@ def output_all(difference, parsed_args, has_differences):
         ('text', text, parsed_args.text_output),
         ('html', html, parsed_args.html_output),
         ('html_directory', html_directory, parsed_args.html_output_directory),
-        ('profile', profiling, parsed_args.html_output_directory),
+        ('profile', profiling, parsed_args.profile_output),
     ):
         if target is None:
             continue

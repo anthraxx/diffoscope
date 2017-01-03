@@ -38,11 +38,11 @@ import sys
 import html
 import codecs
 import hashlib
+import logging
 import contextlib
 
 from diffoscope import VERSION
 from diffoscope.config import Config
-from diffoscope.logging import logger
 
 from ..icon import FAVICON_BASE64
 
@@ -64,6 +64,8 @@ DIFFOFF = "\x02"
 JQUERY_SYSTEM_LOCATIONS = (
     '/usr/share/javascript/jquery/jquery.js',
 )
+
+logger = logging.getLogger(__name__)
 
 
 class PrintLimitReached(Exception):

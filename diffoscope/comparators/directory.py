@@ -19,17 +19,19 @@
 
 import os
 import re
+import logging
 import subprocess
 
 from diffoscope.exc import RequiredToolNotFound
 from diffoscope.tools import tool_required
-from diffoscope.logging import logger
 from diffoscope.progress import Progress
 from diffoscope.difference import Difference
 
 from .binary import FilesystemFile
 from .utils.command import Command
 from .utils.container import Container
+
+logger = logging.getLogger(__name__)
 
 
 def list_files(path):

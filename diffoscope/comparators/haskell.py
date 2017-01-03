@@ -19,16 +19,18 @@
 
 import re
 import struct
+import logging
 import platform
 import subprocess
 
 from diffoscope.tools import tool_required
-from diffoscope.logging import logger
 from diffoscope.profiling import profile
 from diffoscope.difference import Difference
 
 from .utils.file import File
 from .utils.command import Command
+
+logger = logging.getLogger(__name__)
 
 
 class ShowIface(Command):

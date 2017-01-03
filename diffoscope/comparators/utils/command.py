@@ -19,10 +19,11 @@
 
 import io
 import abc
+import logging
 import subprocess
 import threading
 
-from diffoscope.logging import logger
+logger = logging.getLogger(__name__)
 
 
 class Command(object, metaclass=abc.ABCMeta):

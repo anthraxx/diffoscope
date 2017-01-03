@@ -20,11 +20,11 @@
 
 import re
 import stat
+import logging
 import subprocess
 import collections
 
 from diffoscope.tools import tool_required
-from diffoscope.logging import logger
 from diffoscope.difference import Difference
 
 from .utils.file import File
@@ -33,6 +33,8 @@ from .symlink import Symlink
 from .directory import Directory
 from .utils.archive import Archive, ArchiveMember
 from .utils.command import Command
+
+logger = logging.getLogger(__name__)
 
 
 class SquashfsSuperblock(Command):

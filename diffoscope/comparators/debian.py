@@ -20,12 +20,12 @@
 import re
 import os.path
 import hashlib
+import logging
 import functools
 import collections
 
 from debian.deb822 import Dsc
 
-from diffoscope.logging import logger
 from diffoscope.changes import Changes
 from diffoscope.difference import Difference
 
@@ -39,6 +39,8 @@ DOT_CHANGES_FIELDS = [
     "Maintainer", "Changed-By", "Description",
     "Changes",
     ]
+
+logger = logging.getLogger(__name__)
 
 
 class DebControlMember(File):

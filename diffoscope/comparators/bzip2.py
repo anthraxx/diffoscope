@@ -19,15 +19,17 @@
 
 import re
 import os.path
+import logging
 import subprocess
 import collections
 
 from diffoscope.tools import tool_required
-from diffoscope.logging import logger
 
 from .utils.file import File
 from .utils.archive import Archive
 from .utils.filenames import get_compressed_content_name
+
+logger = logging.getLogger(__name__)
 
 
 class Bzip2Container(Archive):

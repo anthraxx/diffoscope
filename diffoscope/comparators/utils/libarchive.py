@@ -21,9 +21,9 @@
 import time
 import os.path
 import ctypes
+import logging
 import libarchive
 
-from diffoscope.logging import logger
 from diffoscope.tempfiles import get_temporary_directory
 
 from ..device import Device
@@ -31,6 +31,8 @@ from ..symlink import Symlink
 from ..directory import Directory
 
 from .archive import Archive, ArchiveMember
+
+logger = logging.getLogger(__name__)
 
 
 # Monkeypatch libarchive-c (<< 2.2)

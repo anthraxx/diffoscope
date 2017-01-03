@@ -31,7 +31,7 @@ from .exc import RequiredToolNotFound
 from .tools import tool_required, OS_NAMES, get_current_os
 from .config import Config
 from .locale import set_locale
-from .logging import logger
+from .logging import setup_logging
 from .progress import ProgressManager, Progress
 from .profiling import ProfileManager, profile
 from .tempfiles import clean_all_temp_files
@@ -39,6 +39,9 @@ from .difference import Difference
 from .presenters.html import JQUERY_SYSTEM_LOCATIONS
 from .presenters.utils import output_all
 from .comparators.utils.compare import compare_root_paths
+
+logger = logging.getLogger(__name__)
+
 
 try:
     import tlsh
@@ -211,6 +214,7 @@ def maybe_set_limit(config, parsed_args, key):
 
 
 def run_diffoscope(parsed_args):
+    setup_logging(parsed_args.debug)
     if not tlsh and Config().fuzzy_threshold != parsed_args.fuzzy_threshold:
         logger.warning('Fuzzy-matching is currently disabled as the "tlsh" module is unavailable.')
     maybe_set_limit(Config(), parsed_args, "max_report_size")
@@ -222,8 +226,6 @@ def run_diffoscope(parsed_args):
     maybe_set_limit(Config(), parsed_args, "max_diff_input_lines")
     Config().fuzzy_threshold = parsed_args.fuzzy_threshold
     Config().new_file = parsed_args.new_file
-    if parsed_args.debug:
-        logger.setLevel(logging.DEBUG)
     set_locale()
     logger.debug('Starting comparison')
     ProgressManager().setup(parsed_args)

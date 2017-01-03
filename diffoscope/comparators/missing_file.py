@@ -18,13 +18,15 @@
 # along with diffoscope.  If not, see <https://www.gnu.org/licenses/>.
 
 import os
+import logging
 
 from diffoscope.config import Config
-from diffoscope.logging import logger
 from diffoscope.difference import Difference
 
 from .binary import FilesystemFile
 from .utils.file import File
+
+logger = logging.getLogger(__name__)
 
 
 class MissingFile(File):

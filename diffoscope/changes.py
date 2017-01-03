@@ -43,12 +43,14 @@ __license__ = 'MIT'
 
 import os.path
 import hashlib
+import logging
 import subprocess
 
 from debian import deb822
 
 from .tools import tool_required
-from .logging import logger
+
+logger = logging.getLogger(__name__)
 
 
 class ChangesFileException(Exception):

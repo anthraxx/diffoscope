@@ -18,11 +18,12 @@
 # along with diffoscope.  If not, see <https://www.gnu.org/licenses/>.
 
 import os
+import logging
 import tempfile
 
-from .logging import logger
-
 _DIRS, _FILES = [], []
+
+logger = logging.getLogger(__name__)
 
 
 def get_named_temporary_file(*args, **kwargs):

@@ -18,14 +18,16 @@
 # along with diffoscope.  If not, see <https://www.gnu.org/licenses/>.
 
 import re
+import logging
 
 from diffoscope.exc import RequiredToolNotFound
 from diffoscope.tools import tool_required
-from diffoscope.logging import logger
 from diffoscope.difference import Difference
 
 from .text import TextFile
 from .utils.command import Command
+
+logger = logging.getLogger(__name__)
 
 
 class Pstotext(Command):

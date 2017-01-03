@@ -19,8 +19,9 @@
 
 import os
 import time
+import logging
 
-from .logging import logger
+logger = logging.getLogger(__name__)
 
 
 def set_locale():

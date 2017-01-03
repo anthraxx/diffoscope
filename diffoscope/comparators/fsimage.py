@@ -18,10 +18,10 @@
 # along with diffoscope.  If not, see <https://www.gnu.org/licenses/>.
 
 import re
+import logging
 import os.path
 import collections
 
-from diffoscope.logging import logger
 from diffoscope.difference import Difference
 
 from .utils.file import File
@@ -31,6 +31,8 @@ try:
     import guestfs
 except ImportError:
     guestfs = None
+
+logger = logging.getLogger(__name__)
 
 
 class FsImageContainer(Archive):

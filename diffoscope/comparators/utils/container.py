@@ -18,11 +18,11 @@
 # along with diffoscope.  If not, see <https://www.gnu.org/licenses/>.
 
 import abc
+import logging
 import itertools
 import collections
 
 from diffoscope.config import Config
-from diffoscope.logging import logger
 from diffoscope.progress import Progress
 
 from ..missing_file import MissingFile
@@ -32,6 +32,7 @@ from .specialize import specialize
 
 NO_COMMENT = None
 
+logger = logging.getLogger(__name__)
 
 
 class Container(object, metaclass=abc.ABCMeta):

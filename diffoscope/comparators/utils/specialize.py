@@ -17,12 +17,14 @@
 # You should have received a copy of the GNU General Public License
 # along with diffoscope.  If not, see <https://www.gnu.org/licenses/>.
 
+import logging
 import importlib
 
-from diffoscope.logging import logger
 from diffoscope.profiling import profile
 
 from .. import COMPARATORS
+
+logger = logging.getLogger(__name__)
 
 
 def specialize(file):

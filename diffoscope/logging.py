@@ -19,12 +19,16 @@
 
 import logging
 
-logger = logging.getLogger("diffoscope")
-logger.setLevel(logging.WARNING)
 
-ch = logging.StreamHandler()
-ch.setLevel(logging.DEBUG)
-logger.addHandler(ch)
+def setup_logging(debug):
+    logger = logging.getLogger()
+    logger.setLevel(logging.DEBUG if debug else logging.WARNING)
 
-formatter = logging.Formatter('%(created).3f %(levelname).1s: %(message)s')
-ch.setFormatter(formatter)
+    ch = logging.StreamHandler()
+    ch.setLevel(logging.DEBUG)
+    logger.addHandler(ch)
+
+    formatter = logging.Formatter(
+        '%(asctime)s %(levelname).1s: %(name)s: %(message)s',
+    )
+    ch.setFormatter(formatter)

@@ -17,15 +17,17 @@
 # You should have received a copy of the GNU General Public License
 # along with diffoscope.  If not, see <https://www.gnu.org/licenses/>.
 
+import logging
 import operator
 
 from diffoscope.config import Config
-from diffoscope.logging import logger
 
 try:
     import tlsh
 except ImportError:
     tlsh = None
+
+logger = logging.getLogger(__name__)
 
 
 def perform_fuzzy_matching(members1, members2):

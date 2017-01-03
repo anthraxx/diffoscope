@@ -19,14 +19,17 @@
 
 import re
 import os.path
+import logging
 import subprocess
 
 from diffoscope.tools import tool_required
-from diffoscope.logging import logger
 from diffoscope.tempfiles import get_temporary_directory
 
 from .utils.file import File
 from .utils.archive import Archive
+
+logger = logging.getLogger(__name__)
+
 
 class ApkContainer(Archive):
     @property

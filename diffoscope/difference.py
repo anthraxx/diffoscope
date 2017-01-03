@@ -22,6 +22,7 @@ import re
 import io
 import signal
 import hashlib
+import logging
 import threading
 import contextlib
 import subprocess
@@ -32,8 +33,9 @@ from multiprocessing.dummy import Queue
 from .exc import RequiredToolNotFound
 from .tools import tool_required
 from .config import Config
-from .logging import logger
 from .profiling import profile
+
+logger = logging.getLogger(__name__)
 
 
 class DiffParser(object):

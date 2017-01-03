@@ -19,13 +19,15 @@
 
 import sys
 import codecs
+import logging
 import contextlib
 
-from ..logging import logger
 from ..profiling import profile
 
 from .text import output_text
 from .html import output_html, output_html_directory
+
+logger = logging.getLogger(__name__)
 
 
 def output_all(difference, parsed_args, has_differences):

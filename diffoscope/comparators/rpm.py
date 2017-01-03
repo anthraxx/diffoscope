@@ -21,16 +21,18 @@
 import io
 import rpm
 import os.path
+import logging
 import binascii
 import subprocess
 
 from diffoscope.tools import tool_required
-from diffoscope.logging import logger
 from diffoscope.tempfiles import get_temporary_directory
 from diffoscope.difference import Difference
 
 from .rpm_fallback import AbstractRpmFile
 from .utils.archive import Archive
+
+logger = logging.getLogger(__name__)
 
 
 def convert_header_field(io, header):

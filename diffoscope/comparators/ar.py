@@ -19,14 +19,16 @@
 # along with diffoscope.  If not, see <https://www.gnu.org/licenses/>.
 
 import re
+import logging
 
 from diffoscope.tools import tool_required
-from diffoscope.logging import logger
 from diffoscope.difference import Difference
 
 from .utils.file import File
 from .utils.command import Command
 from .utils.libarchive import LibarchiveContainer, list_libarchive
+
+logger = logging.getLogger(__name__)
 
 
 # TODO: this would also be useful for Go archives. Currently those are handled

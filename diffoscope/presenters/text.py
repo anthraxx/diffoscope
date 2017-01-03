@@ -20,10 +20,12 @@
 
 import subprocess
 import sys
+import logging
 
 from diffoscope.tools import tool_required
-from diffoscope.logging import logger
 from diffoscope.difference import color_unified_diff
+
+logger = logging.getLogger(__name__)
 
 
 def print_difference(difference, print_func, color=False):

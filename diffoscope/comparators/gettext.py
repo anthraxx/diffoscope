@@ -19,13 +19,15 @@
 
 import io
 import re
+import logging
 
 from diffoscope.tools import tool_required
-from diffoscope.logging import logger
 from diffoscope.difference import Difference
 
 from .utils.file import File
 from .utils.command import Command
+
+logger = logging.getLogger(__name__)
 
 
 class Msgunfmt(Command):

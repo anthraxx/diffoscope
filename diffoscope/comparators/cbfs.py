@@ -21,15 +21,17 @@ import io
 import os
 import re
 import struct
+import logging
 import subprocess
 
 from diffoscope.tools import tool_required
-from diffoscope.logging import logger
 from diffoscope.difference import Difference
 
 from .utils.file import File
 from .utils.archive import Archive
 from .utils.command import Command
+
+logger = logging.getLogger(__name__)
 
 
 class CbfsListing(Command):

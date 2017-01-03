@@ -20,10 +20,10 @@
 
 import zlib
 import os.path
+import logging
 import collections
 
 from diffoscope.tools import tool_required
-from diffoscope.logging import logger
 from diffoscope.difference import Difference
 
 from .utils.archive import Archive
@@ -32,6 +32,8 @@ from .utils.filenames import get_compressed_content_name
 RLIB_BYTECODE_OBJECT_V1_DATASIZE_OFFSET = 15
 RLIB_BYTECODE_OBJECT_V1_DATA_OFFSET = 23
 ZLIB_DEFAULT_COMPRESSION = b'\x78\x9C'
+
+logger = logging.getLogger(__name__)
 
 
 class RustObjectContainer(Archive):

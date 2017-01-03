@@ -19,12 +19,12 @@
 
 import os
 import re
+import logging
 import subprocess
 import collections
 
 from diffoscope.exc import OutputParsingError
 from diffoscope.tools import tool_required
-from diffoscope.logging import logger
 from diffoscope.tempfiles import get_named_temporary_file
 from diffoscope.difference import Difference
 
@@ -50,6 +50,8 @@ DEBUG_SECTION_GROUPS = (
     'trace_aranges',
     'gdb_index',
 )
+
+logger = logging.getLogger(__name__)
 
 
 class Readelf(Command):

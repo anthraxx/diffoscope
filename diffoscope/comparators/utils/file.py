@@ -21,11 +21,11 @@ import os
 import re
 import abc
 import magic
+import logging
 import subprocess
 
 from diffoscope.exc import RequiredToolNotFound, OutputParsingError
 from diffoscope.tools import tool_required
-from diffoscope.logging import logger
 from diffoscope.profiling import profile
 from diffoscope.difference import Difference
 
@@ -35,6 +35,8 @@ except ImportError:
     tlsh = None
 
 SMALL_FILE_THRESHOLD = 65536 # 64 kiB
+
+logger = logging.getLogger(__name__)
 
 
 class File(object, metaclass=abc.ABCMeta):

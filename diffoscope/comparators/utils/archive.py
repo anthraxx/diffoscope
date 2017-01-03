@@ -18,8 +18,8 @@
 # along with diffoscope.  If not, see <https://www.gnu.org/licenses/>.
 
 import abc
+import logging
 
-from diffoscope.logging import logger
 from diffoscope.profiling import profile
 from diffoscope.tempfiles import get_temporary_directory
 
@@ -27,6 +27,8 @@ from ..missing_file import MissingFile
 
 from .file import File
 from .container import Container
+
+logger = logging.getLogger(__name__)
 
 
 class Archive(Container, metaclass=abc.ABCMeta):

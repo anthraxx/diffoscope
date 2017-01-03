@@ -18,8 +18,8 @@
 # along with diffoscope.  If not, see <https://www.gnu.org/licenses/>.
 
 import re
+import logging
 
-from diffoscope.logging import logger
 from diffoscope.difference import Difference
 
 from .tar import TarContainer
@@ -32,6 +32,8 @@ try:
     from debian import deb822
 except ImportError:
     deb822 = None
+
+logger = logging.getLogger(__name__)
 
 
 # Return a dict with build ids as keys and file as values for all deb in the

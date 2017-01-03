@@ -20,10 +20,10 @@
 import io
 import os
 import sys
+import logging
 import binascii
 
 from diffoscope.tools import tool_required
-from diffoscope.logging import logger
 from diffoscope.exc import RequiredToolNotFound
 from diffoscope.config import Config
 from diffoscope.profiling import profile
@@ -38,6 +38,8 @@ try:
     import tlsh
 except ImportError:
     tlsh = None
+
+logger = logging.getLogger(__name__)
 
 
 class Xxd(Command):

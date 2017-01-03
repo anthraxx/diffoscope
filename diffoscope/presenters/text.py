@@ -22,8 +22,8 @@ import subprocess
 import sys
 import logging
 
+from diffoscope.diff import color_unified_diff
 from diffoscope.tools import tool_required
-from diffoscope.difference import color_unified_diff
 
 logger = logging.getLogger(__name__)
 

@@ -19,12 +19,15 @@
 
 import os
 import stat
+import logging
 
 from diffoscope.tempfiles import get_named_temporary_file
 from diffoscope.difference import Difference
 
 from .binary import FilesystemFile
 from .utils.file import File
+
+logger = logging.getLogger(__name__)
 
 
 class Device(File):
@@ -38,7 +41,12 @@ class Device(File):
         return st.st_mode, os.major(st.st_rdev), os.minor(st.st_rdev)
 
     def has_same_content_as(self, other):
-        return self.get_device() == other.get_device()
+        logging.debug('Device.has_same_content: %s %s', self, other)
+        try:
+            return self.get_device() == other.get_device()
+        except (AttributeError, OSError):
+            # 'other' is not a device, or something.
+            return False
 
     def create_placeholder(self):
         with get_named_temporary_file(mode='w+', delete=False) as f:

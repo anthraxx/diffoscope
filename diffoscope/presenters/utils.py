@@ -53,7 +53,7 @@ def output_all(difference, parsed_args, has_differences):
 
     # If no output specified, default to printing --text output to stdout
     if not any(x['target'] for x in FORMATS.values()):
-        FORMATS['text']['target'] = '-'
+        parsed_args.text_output = FORMATS['text']['target'] = '-'
 
     for name, data in FORMATS.items():
         if data['target'] is None:

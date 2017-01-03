@@ -71,8 +71,6 @@ class DiffParser(object):
         self._output.close()
 
     def read_headers(self, line):
-        found = DiffParser.RANGE_RE.match(line)
-
         if not line:
             return None
 
@@ -81,6 +79,8 @@ class DiffParser(object):
 
         if line.startswith('+++'):
             return self.read_headers
+
+        found = DiffParser.RANGE_RE.match(line)
 
         if not found:
             raise ValueError('Unable to parse diff headers: %s' % repr(line))

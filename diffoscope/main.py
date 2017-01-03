@@ -215,6 +215,7 @@ def maybe_set_limit(config, parsed_args, key):
 
 def run_diffoscope(parsed_args):
     setup_logging(parsed_args.debug)
+    logger.debug("Starting diffoscope %s", VERSION)
     if not tlsh and Config().fuzzy_threshold != parsed_args.fuzzy_threshold:
         logger.warning('Fuzzy-matching is currently disabled as the "tlsh" module is unavailable.')
     maybe_set_limit(Config(), parsed_args, "max_report_size")

@@ -53,6 +53,7 @@ class DiffParser(object):
         self._block_len = None
         self._direction = None
         self._end_nl = None
+        self._max_lines = Config().max_diff_block_lines_saved
 
     @property
     def diff(self):
@@ -130,9 +131,8 @@ class DiffParser(object):
             else:
                 self._block_len = 1
                 self._direction = line[0]
-            max_lines = Config().max_diff_block_lines_saved
 
-            if self._block_len >= max_lines:
+            if self._block_len >= self._max_lines:
                 return self.skip_block
         else:
             self._block_len = 1

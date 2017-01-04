@@ -39,5 +39,10 @@ After uploading, please also update the version on PyPI using::
 
    $ python3 setup.py sdist upload --sign
 
+Once the tracker.debian.org entry appears, consider tweeting the release on
+#reproducible-builds with:
+
+  %twitter diffoscope $VERSION has been released. Check out the changelog here: $URL
+
 
 // vim: set filetype=asciidoc:

@@ -1,3 +1,60 @@
+diffoscope (67) unstable; urgency=medium
+
+  [ Chris Lamb ]
+
+  * Optimisations:
+    - Avoid multiple iterations over archive by unpacking once for an ~8X
+      runtime optimisation.
+    - Avoid unnecessary splitting and interpolating for a ~20X optimisation
+      when writing --text output.
+    - Avoid expensive diff regex parsing until we need it, speeding up diff
+      parsing by 2X.
+    - Alias expensive Config() in diff parsing lookup for a 10% optimisation.
+
+  * Progress bar:
+    - Show filenames, ELF sections, etc. in progress bar.
+    - Emit JSON on the the status file descriptor output instead of a custom
+      format.
+
+  * Logging:
+    - Use more-Pythonic logging functions and output based on __name__, etc.
+    - Use Debian-style "I:", "D:" log level format modifier.
+    - Only print milliseconds in output, not microseconds.
+    - Print version in debug output so that saved debug outputs can standalone
+      as bug reports.
+
+  * Profiling:
+    - Also report the total number of method calls, not just the total time.
+    - Report on the total wall clock taken to execute diffoscope, including
+      cleanup.
+
+  * Tidying:
+    - Rename "NonExisting" -> "Missing".
+    - Entirely rework diffoscope.comparators module, splitting as many separate
+      concerns into a different utility package, tidying imports, etc.
+    - Split diffoscope.difference into diffoscope.diff, etc.
+    - Update file references in debian/copyright post module reorganisation.
+    - Many other cleanups, etc.
+
+  * Misc:
+    - Clarify comment regarding why we call python3(1) directly. Thanks to Jérémy
+      Bobbio <lunar@debian.org>.
+    - Raise a clearer error if trying to use --html-dir on a file.
+    - Fix --output-empty when files are identical and no outputs specified.
+    - Wrap changelog line to avoid Lintian warning.
+
+  [ Reiner Herrmann ]
+  * Extend .apk recognition regex to also match zip archives (Closes: #849638)
+
+  [ Mattia Rizzolo ]
+  * Follow the rename of the Debian package "python-jsbeautifier" to
+    "jsbeautifier".
+
+  [ siamezzze ]
+  * Fixed no newline being classified as order-like difference.
+
+ -- Chris Lamb <lamby@debian.org>  Wed, 04 Jan 2017 16:56:36 +0000
+
 diffoscope (66) unstable; urgency=medium
 
   [ Chris Lamb ]

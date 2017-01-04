@@ -13,7 +13,7 @@ diffoscope (67) unstable; urgency=medium
 
   * Progress bar:
     - Show filenames, ELF sections, etc. in progress bar.
-    - Emit JSON on the the status file descriptor output instead of a custom
+    - Emit JSON on the status file descriptor output instead of a custom
       format.
 
   * Logging:
@@ -37,8 +37,8 @@ diffoscope (67) unstable; urgency=medium
     - Many other cleanups, etc.
 
   * Misc:
-    - Clarify comment regarding why we call python3(1) directly. Thanks to Jérémy
-      Bobbio <lunar@debian.org>.
+    - Clarify comment regarding why we call python3(1) directly. Thanks to
+      Jérémy Bobbio <lunar@debian.org>.
     - Raise a clearer error if trying to use --html-dir on a file.
     - Fix --output-empty when files are identical and no outputs specified.
     - Wrap changelog line to avoid Lintian warning.

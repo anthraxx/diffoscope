@@ -22,7 +22,8 @@ import time
 import contextlib
 import collections
 
-_ENABLED = True
+_ENABLED = False
+
 
 @contextlib.contextmanager
 def profile(namespace, key):

@@ -105,7 +105,10 @@ class File(object, metaclass=abc.ABCMeta):
             return None
         if not hasattr(self, '_as_container'):
             logger.debug('instantiating %s for %s', self.__class__.CONTAINER_CLASS, self)
-            self._as_container = self.__class__.CONTAINER_CLASS(self)
+            try:
+                self._as_container = self.__class__.CONTAINER_CLASS(self)
+            except RequiredToolNotFound as e:
+                return None
         logger.debug('returning a %s for %s', self._as_container.__class__, self)
         return self._as_container
 

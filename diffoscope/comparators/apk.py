@@ -41,7 +41,7 @@ class ApkContainer(Archive):
         self._members = []
         self._unpacked = os.path.join(
             get_temporary_directory().name,
-            self.source.name,
+            os.path.basename(self.source.name),
         )
 
         logger.debug("Extracting %s to %s", self.source.name, self._unpacked)

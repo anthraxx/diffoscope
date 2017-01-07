@@ -22,11 +22,15 @@ import time
 import contextlib
 import collections
 
+_ENABLED = True
+
 @contextlib.contextmanager
 def profile(namespace, key):
     start = time.time()
     yield
-    ProfileManager().increment(start, namespace, key)
+
+    if _ENABLED:
+        ProfileManager().increment(start, namespace, key)
 
 class ProfileManager(object):
     _singleton = {}
@@ -41,6 +45,10 @@ class ProfileManager(object):
                     'count': 0,
                 }),
             )
+
+    def setup(self, parsed_args):
+        global _ENABLED
+        _ENABLED = parsed_args.profile_output is not None
 
     def increment(self, start, namespace, key):
         if not isinstance(key, str):

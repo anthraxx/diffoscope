@@ -23,7 +23,6 @@ import os.path
 import logging
 import collections
 
-from diffoscope.tools import tool_required
 from diffoscope.difference import Difference
 
 from .utils.archive import Archive

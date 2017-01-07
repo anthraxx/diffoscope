@@ -39,15 +39,23 @@ class ApkContainer(Archive):
     @tool_required('apktool')
     def open_archive(self):
         self._members = []
-        self._unpacked = os.path.join(get_temporary_directory().name, self.source.name)
-        logger.debug("extracting %s to %s", self.source.name, self._unpacked)
-        subprocess.check_call(['apktool', 'd', '-k', '-m', '-o', self._unpacked, self.source.path],
-            shell=False, stderr=None, stdout=subprocess.PIPE)
+        self._unpacked = os.path.join(
+            get_temporary_directory().name,
+            self.source.name,
+        )
+
+        logger.debug("Extracting %s to %s", self.source.name, self._unpacked)
+
+        subprocess.check_call((
+            'apktool', 'd', '-k', '-m', '-o', self._unpacked, self.source.path,
+        ), shell=False, stderr=None, stdout=subprocess.PIPE)
+
         for root, _, files in os.walk(self._unpacked):
             for f in files:
                 abspath = os.path.join(root, f)
                 relpath = abspath[len(self._unpacked)+1:]
                 self._members.append(relpath)
+
         return self
 
     def close_archive(self):
@@ -67,4 +75,5 @@ class ApkFile(File):
 
     @staticmethod
     def recognizes(file):
-        return ApkFile.RE_FILE_TYPE.match(file.magic_file_type) and ApkFile.RE_FILE_EXTENSION.search(file.name)
+        return ApkFile.RE_FILE_TYPE.match(file.magic_file_type) and \
+            ApkFile.RE_FILE_EXTENSION.search(file.name)

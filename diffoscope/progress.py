@@ -20,6 +20,10 @@
 import os
 import sys
 import json
+import logging
+
+logger = logging.getLogger(__name__)
+
 
 class ProgressManager(object):
     _singleton = {}
@@ -50,6 +54,8 @@ class ProgressManager(object):
     ##
 
     def register(self, observer):
+        logger.debug("Registering %s as a progress observer", observer)
+
         self.observers.append(observer)
 
     def step(self, delta=1, msg=""):

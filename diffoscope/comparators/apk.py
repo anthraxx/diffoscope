@@ -31,6 +31,18 @@ from .utils.archive import Archive
 logger = logging.getLogger(__name__)
 
 
+def filter_apk_metadata(filepath, archive_name):
+    new_filename = os.path.join(os.path.split(filepath)[0], "APK metadata")
+    logger.debug("Moving APK metadata from %s to %s", filepath, new_filename)
+    with open(filepath) as f:
+        with open(new_filename, "w") as f_out:
+            for line in f:
+                if not re.match(r'^apkFileName: %s' % os.path.basename(archive_name), line):
+                    f_out.write(line)
+    os.remove(filepath)
+    return new_filename
+
+
 class ApkContainer(Archive):
     @property
     def path(self):
@@ -53,6 +65,10 @@ class ApkContainer(Archive):
         for root, _, files in os.walk(self._unpacked):
             for f in files:
                 abspath = os.path.join(root, f)
+                # apktool.yml is a file created by apktool and containing metadata information.
+                # Rename it to clarify.
+                if os.path.basename(abspath) == "apktool.yml":
+                    abspath = filter_apk_metadata(abspath, os.path.basename(self.source.name))
                 relpath = abspath[len(self._unpacked)+1:]
                 self._members.append(relpath)
 

@@ -33,18 +33,6 @@ from .zip import Zipinfo, ZipinfoVerbose
 logger = logging.getLogger(__name__)
 
 
-def filter_apk_metadata(filepath, archive_name):
-    new_filename = os.path.join(os.path.split(filepath)[0], "APK metadata")
-    logger.debug("Moving APK metadata from %s to %s", filepath, new_filename)
-    with open(filepath) as f:
-        with open(new_filename, "w") as f_out:
-            for line in f:
-                if not re.match(r'^apkFileName: %s' % os.path.basename(archive_name), line):
-                    f_out.write(line)
-    os.remove(filepath)
-    return new_filename
-
-
 class ApkContainer(Archive):
     @property
     def path(self):
@@ -100,3 +88,15 @@ class ApkFile(File):
         zipinfo_difference = Difference.from_command(Zipinfo, self.path, other.path) or \
                              Difference.from_command(ZipinfoVerbose, self.path, other.path)
         return [zipinfo_difference]
+
+
+def filter_apk_metadata(filepath, archive_name):
+    new_filename = os.path.join(os.path.split(filepath)[0], "APK metadata")
+    logger.debug("Moving APK metadata from %s to %s", filepath, new_filename)
+    with open(filepath) as f:
+        with open(new_filename, "w") as f_out:
+            for line in f:
+                if not re.match(r'^apkFileName: %s' % os.path.basename(archive_name), line):
+                    f_out.write(line)
+    os.remove(filepath)
+    return new_filename

@@ -57,7 +57,7 @@ class ApkContainer(Archive):
                 abspath = os.path.join(root, f)
                 # apktool.yml is a file created by apktool and containing metadata information.
                 # Rename it to clarify.
-                if os.path.basename(abspath) == "apktool.yml":
+                if os.path.basename(abspath) == 'apktool.yml':
                     abspath = filter_apk_metadata(abspath, os.path.basename(self.source.name))
                 relpath = abspath[len(self._unpacked)+1:]
                 self._members.append(relpath)
@@ -91,7 +91,7 @@ class ApkFile(File):
 
 
 def filter_apk_metadata(filepath, archive_name):
-    new_filename = os.path.join(os.path.dirname(filepath), "APK metadata")
+    new_filename = os.path.join(os.path.dirname(filepath), 'APK metadata')
     logger.debug("Moving APK metadata from %s to %s", filepath, new_filename)
 
     re_filename = re.compile(
@@ -99,7 +99,7 @@ def filter_apk_metadata(filepath, archive_name):
     )
 
     with open(filepath) as f:
-        with open(new_filename, "w") as f_out:
+        with open(new_filename, 'w') as f_out:
             for line in f:
                 if not re_filename.match(line):
                     f_out.write(line)

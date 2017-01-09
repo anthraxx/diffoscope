@@ -104,11 +104,11 @@ def filter_apk_metadata(filepath, archive_name):
         r'^apkFileName: %s' % re.escape(os.path.basename(archive_name)),
     )
 
-    with open(filepath) as f:
-        with open(new_filename, 'w') as f_out:
-            for line in f:
+    with open(filepath) as in_:
+        with open(new_filename, 'w') as out:
+            for line in in_:
                 if not re_filename.match(line):
-                    w.write(line)
+                    out.write(line)
 
     os.remove(filepath)
 

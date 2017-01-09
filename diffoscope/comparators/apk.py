@@ -93,10 +93,15 @@ class ApkFile(File):
 def filter_apk_metadata(filepath, archive_name):
     new_filename = os.path.join(os.path.dirname(filepath), "APK metadata")
     logger.debug("Moving APK metadata from %s to %s", filepath, new_filename)
+
+    re_filename = re.compile(
+        r'^apkFileName: %s' % re.escape(os.path.basename(archive_name)),
+    )
+
     with open(filepath) as f:
         with open(new_filename, "w") as f_out:
             for line in f:
-                if not re.match(r'^apkFileName: %s' % re.escape(os.path.basename(archive_name)), line):
+                if not re_filename.match(line):
                     f_out.write(line)
     os.remove(filepath)
     return new_filename

@@ -91,7 +91,7 @@ class ApkFile(File):
 
 
 def filter_apk_metadata(filepath, archive_name):
-    new_filename = os.path.join(os.path.split(filepath)[0], "APK metadata")
+    new_filename = os.path.join(os.path.dirname(filepath), "APK metadata")
     logger.debug("Moving APK metadata from %s to %s", filepath, new_filename)
     with open(filepath) as f:
         with open(new_filename, "w") as f_out:

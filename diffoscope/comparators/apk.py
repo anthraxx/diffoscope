@@ -24,9 +24,11 @@ import subprocess
 
 from diffoscope.tools import tool_required
 from diffoscope.tempfiles import get_temporary_directory
+from diffoscope.difference import Difference
 
 from .utils.file import File
 from .utils.archive import Archive
+from .zip import Zipinfo, ZipinfoVerbose
 
 logger = logging.getLogger(__name__)
 
@@ -93,3 +95,8 @@ class ApkFile(File):
     def recognizes(file):
         return ApkFile.RE_FILE_TYPE.match(file.magic_file_type) and \
             ApkFile.RE_FILE_EXTENSION.search(file.name)
+
+    def compare_details(self, other, source=None):
+        zipinfo_difference = Difference.from_command(Zipinfo, self.path, other.path) or \
+                             Difference.from_command(ZipinfoVerbose, self.path, other.path)
+        return [zipinfo_difference]

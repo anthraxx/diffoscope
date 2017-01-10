@@ -127,6 +127,9 @@ class RequiredToolNotFound(Exception):
             'arch': 'gettext',
             'FreeBSD': 'gettext-tools',
         },
+        'icotool': {
+            'debian': 'icoutils',
+        },
         'nm': {
             'debian': 'binutils-multiarch',
             'arch': 'binutils',

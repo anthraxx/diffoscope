@@ -65,6 +65,7 @@ COMPARATORS = (
     ('zip.ZipFile',),
     ('zip.MozillaZipFile',),
     ('image.JPEGImageFile',),
+    ('image.ICOImageFile',),
     ('cbfs.CbfsFile',),
     ('git.GitIndexFile',),
     ('openssh.PublicKeyFile',),

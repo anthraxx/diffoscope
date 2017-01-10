@@ -18,8 +18,10 @@
 # along with diffoscope.  If not, see <https://www.gnu.org/licenses/>.
 
 import re
+import subprocess
 
 from diffoscope.tools import tool_required
+from diffoscope.tempfiles import get_named_temporary_file
 from diffoscope.difference import Difference
 
 from .utils.file import File
@@ -51,3 +53,25 @@ class JPEGImageFile(File):
 
     def compare_details(self, other, source=None):
         return [Difference.from_command(Img2Txt, self.path, other.path)]
+
+class ICOImageFile(File):
+    RE_FILE_TYPE = re.compile(r'\bMS Windows icon resource\b')
+
+    @staticmethod
+    def recognizes(file):
+        return ICOImageFile.RE_FILE_TYPE.search(file.magic_file_type)
+
+    def compare_details(self, other, source=None):
+        # img2txt does not support .ico files directly so convert to .PNG.
+        xs = [ICOImageFile.convert(x) for x in (self, other)]
+
+        return [Difference.from_command(Img2Txt, *xs)]
+
+    @staticmethod
+    @tool_required('icotool')
+    def convert(file):
+        result = get_named_temporary_file().name
+
+        subprocess.check_call(('icotool', '-x', '-o', result, file.path))
+
+        return result

@@ -30,5 +30,6 @@ def setup_logging(debug):
 
     formatter = logging.Formatter(
         '%(asctime)s %(levelname).1s: %(name)s: %(message)s',
+        '%Y-%m-%d %H:%M:%S',
     )
     ch.setFormatter(formatter)

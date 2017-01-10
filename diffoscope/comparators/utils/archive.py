@@ -81,7 +81,7 @@ class ArchiveMember(File):
     @property
     def path(self):
         if self._path is None:
-            logger.debug('unpacking %s', self._name)
+            logger.debug("Unpacking %s", self._name)
             assert self._temp_dir is None
             self._temp_dir = get_temporary_directory()
             with profile('container_extract', self.container):

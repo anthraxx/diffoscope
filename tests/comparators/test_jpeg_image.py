@@ -41,7 +41,7 @@ def differences(image1, image2):
 
 @skip_unless_tools_exist('img2txt')
 def test_diff(differences):
-    expected_diff = open(data('image_expected_diff')).read()
+    expected_diff = open(data('jpeg_image_expected_diff')).read()
     assert differences[0].unified_diff == expected_diff
 
 @skip_unless_tools_exist('img2txt')

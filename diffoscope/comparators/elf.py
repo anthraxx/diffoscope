@@ -485,7 +485,7 @@ class ElfContainer(Container):
             '.debug',
             os.path.basename(debuglink),
         )
-        os.mkdir(os.path.dirname(dest_path))
+        os.makedirs(os.path.dirname(dest_path), exist_ok=True)
 
         def objcopy(*args):
             subprocess.check_call(

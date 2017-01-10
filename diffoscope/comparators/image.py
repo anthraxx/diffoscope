@@ -63,7 +63,10 @@ class ICOImageFile(File):
 
     def compare_details(self, other, source=None):
         # img2txt does not support .ico files directly so convert to .PNG.
-        xs = [ICOImageFile.convert(x) for x in (self, other)]
+        try:
+            xs = [ICOImageFile.convert(x) for x in (self, other)]
+        except subprocess.CalledProcessError:
+            return []
 
         return [Difference.from_command(Img2Txt, *xs)]
 

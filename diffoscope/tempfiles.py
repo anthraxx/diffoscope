@@ -43,6 +43,8 @@ def get_temporary_directory(*args, **kwargs):
     return d
 
 def clean_all_temp_files():
+    logger.debug("Cleaning %d temp files", len(_FILES))
+
     for x in _FILES:
         try:
             os.unlink(x)
@@ -50,6 +52,8 @@ def clean_all_temp_files():
             pass
         except:
             logger.exception("Unable to delete %s", x)
+
+    logger.debug("Cleaning %d temporary directories", len(_DIRS))
 
     for x in _DIRS:
         try:

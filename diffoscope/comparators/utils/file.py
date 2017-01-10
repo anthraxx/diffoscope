@@ -109,7 +109,11 @@ class File(object, metaclass=abc.ABCMeta):
                 self._as_container = self.__class__.CONTAINER_CLASS(self)
             except RequiredToolNotFound:
                 return None
-        logger.debug('returning a %s for %s', self._as_container.__class__, self)
+        logger.debug(
+            "Returning a %s for %s",
+            self._as_container.__class__.__name__,
+            self,
+        )
         return self._as_container
 
     @property

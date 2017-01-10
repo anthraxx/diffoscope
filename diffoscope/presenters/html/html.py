@@ -66,6 +66,8 @@ JQUERY_SYSTEM_LOCATIONS = (
 )
 
 logger = logging.getLogger(__name__)
+re_anchor_prefix = re.compile(r'^[^A-Za-z]')
+re_anchor_suffix = re.compile(r'[^A-Za-z-_:\.]')
 
 
 class PrintLimitReached(Exception):
@@ -438,6 +440,20 @@ def output_unified_diff(print_func, css_url, directory, unified_diff, has_intern
         text = "load diff (%s %s%s)" % (spl_current_page, noun, (", truncated" if truncated else ""))
         print_func(templates.UD_TABLE_FOOTER % {"filename": html.escape("%s-1.html" % mainname), "text": text}, force=True)
 
+def escape_anchor(val):
+    """
+    ID and NAME tokens must begin with a letter ([A-Za-z]) and may be followed
+    by any number of letters, digits ([0-9]), hyphens ("-"), underscores ("_"),
+    colons (":"), and periods (".").
+    """
+
+    for pattern, repl in (
+        (re_anchor_prefix, 'D'),
+        (re_anchor_suffix, '-'),
+    ):
+        val = pattern.sub(repl, val)
+
+    return val
 
 def output_difference(difference, print_func, css_url, directory, parents):
     logger.debug('html output for %s', difference.source1)
@@ -455,7 +471,7 @@ def output_difference(difference, print_func, css_url, directory, parents):
                        % html.escape(difference.source1))
             print_func(u'<div><span class="source">%s</span>'
                        % html.escape(difference.source2))
-        anchor = '/'.join(sources[1:])
+        anchor = escape_anchor('/'.join(sources[1:]))
         print_func(u' <a class="anchor" href="#%s" name="%s">\xb6</a>' % (anchor, anchor))
         print_func(u"</div>")
         if difference.comments:

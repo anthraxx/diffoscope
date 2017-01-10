@@ -42,12 +42,12 @@ class Img2Txt(Command):
         # Strip ANSI escapes
         return re_ansi_escapes.sub('', line.decode('utf-8')).encode('utf-8')
 
-class ImageFile(File):
-    RE_FILE_TYPE = re.compile(r'\bMS Windows icon resource|JPEG image data\b')
+class JPEGImageFile(File):
+    RE_FILE_TYPE = re.compile(r'\bJPEG image data\b')
 
     @staticmethod
     def recognizes(file):
-        return ImageFile.RE_FILE_TYPE.search(file.magic_file_type)
+        return JPEGImageFile.RE_FILE_TYPE.search(file.magic_file_type)
 
     def compare_details(self, other, source=None):
         return [Difference.from_command(Img2Txt, self.path, other.path)]

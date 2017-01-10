@@ -64,7 +64,7 @@ COMPARATORS = (
     ('apk.ApkFile',),
     ('zip.ZipFile',),
     ('zip.MozillaZipFile',),
-    ('image.ImageFile',),
+    ('image.JPEGImageFile',),
     ('cbfs.CbfsFile',),
     ('git.GitIndexFile',),
     ('openssh.PublicKeyFile',),

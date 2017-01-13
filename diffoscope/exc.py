@@ -84,6 +84,10 @@ class RequiredToolNotFound(Exception):
             'debian': 'gzip',
             'arch': 'gzip',
         },
+        'identify': {
+            'debian': 'imagemagick',
+            'arch': 'imagemagick',
+        },
         'img2txt': {
             'debian': 'caca-utils',
             'arch': 'libcaca',

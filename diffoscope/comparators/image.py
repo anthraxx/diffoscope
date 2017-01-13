@@ -28,6 +28,26 @@ from .utils.file import File
 from .utils.command import Command
 
 re_ansi_escapes = re.compile(r'\x1b[^m]*m')
+identify_attributes = '\n'.join(('Image format: %m',
+                                 'File size: %b',
+                                 'Height: %[height]',
+                                 'Width: %[width]',
+                                 'Orientation: %[orientation]',
+                                 'Compression type: %[compression]',
+                                 'Compression quality: %[quality]',
+                                 'Colorspace: %[colorspace]',
+                                 'Channels: %[channels]',
+                                 'Depth: %[depth]',
+                                 'Interlace mode: %[interlace]',
+                                 'Rendering intent: %[rendering-intent]',
+                                 'X resolution: %[resolution.x]',
+                                 'Y resolution: %[resolution.y]',
+                                 'Resolution units: %[units]',
+                                 'Transparency channel enabled: %A',
+                                 'Gamma: %[gamma]',
+                                 'Number of unique colors: %[colors]',
+                                 'Comment: %c',
+                                 'EXIF data: %[EXIF:*]'))
 
 
 class Img2Txt(Command):
@@ -44,6 +64,16 @@ class Img2Txt(Command):
         # Strip ANSI escapes
         return re_ansi_escapes.sub('', line.decode('utf-8')).encode('utf-8')
 
+class Identify(Command):
+    @tool_required('identify')
+    def cmdline(self):
+        return [
+            'identify',
+            '-format',
+            identify_attributes,
+            self.path,
+        ]
+
 class JPEGImageFile(File):
     RE_FILE_TYPE = re.compile(r'\bJPEG image data\b')
 
@@ -52,7 +82,8 @@ class JPEGImageFile(File):
         return JPEGImageFile.RE_FILE_TYPE.search(file.magic_file_type)
 
     def compare_details(self, other, source=None):
-        return [Difference.from_command(Img2Txt, self.path, other.path)]
+        return [Difference.from_command(Img2Txt, self.path, other.path),
+                Difference.from_command(Identify, self.path, other.path)]
 
 class ICOImageFile(File):
     RE_FILE_TYPE = re.compile(r'\bMS Windows icon resource\b')
@@ -68,7 +99,8 @@ class ICOImageFile(File):
         except subprocess.CalledProcessError:
             return []
 
-        return [Difference.from_command(Img2Txt, *xs)]
+        return [Difference.from_command(Img2Txt, *xs),
+                Difference.from_command(Identify, self.path, other.path)]
 
     @staticmethod
     @tool_required('icotool')

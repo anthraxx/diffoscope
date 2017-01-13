@@ -1,0 +1,26 @@
+@@ -1,20 +1,20 @@
+ Image format: JPEG
+-File size: 662B
++File size: 627B
+ Height: 100
+ Width: 100
+ Orientation: Undefined
+ Compression type: JPEG
+-Compression quality: 90
++Compression quality: 95
+ Colorspace: sRGB
+ Channels: srgb
+ Depth: 8
+ Interlace mode: JPEG
+ Rendering intent: Perceptual
+-X resolution: 88
+-Y resolution: 88
++X resolution: 65
++Y resolution: 65
+ Resolution units: PixelsPerInch
+ Transparency channel enabled: False
+ Gamma: 0.454545
+ Number of unique colors: 1
+-Comment: Comment #1
++Comment: Comment #2
+ EXIF data: 

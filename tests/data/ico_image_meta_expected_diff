@@ -1,0 +1,20 @@
+@@ -1,17 +1,17 @@
+ Image format: ICO
+-File size: 6.93KB
++File size: 3.27KB
+ Height: 100
+ Width: 100
+ Orientation: Undefined
+ Compression type: Undefined
+ Compression quality: 0
+ Colorspace: sRGB
+ Channels: srgba
+-Depth: 4
++Depth: 1
+ Interlace mode: None
+ Rendering intent: Perceptual
+ X resolution: 0
+ Y resolution: 0
+ Resolution units: Undefined
+ Transparency channel enabled: True
+ Gamma: 0.454545

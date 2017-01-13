@@ -23,6 +23,7 @@ Build-Depends:
  fp-utils <!nocheck>,
  ghc <!nocheck>,
  ghostscript <!nocheck>,
+ imagemagick <!nocheck>,
  libjs-jquery <!nocheck>,
  libjs-jquery-hotkeys <!nocheck>,
  libjs-jquery-isonscreen <!nocheck>,

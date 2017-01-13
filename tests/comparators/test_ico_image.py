@@ -26,6 +26,8 @@ from utils import skip_unless_tools_exist, data, load_fixture
 
 image1 = load_fixture(data('test1.ico'))
 image2 = load_fixture(data('test2.ico'))
+image1_meta = load_fixture(data('test1_meta.ico'))
+image2_meta = load_fixture(data('test2_meta.ico'))
 
 def test_identification(image1):
     assert isinstance(image1, ICOImageFile)
@@ -42,3 +44,12 @@ def differences(image1, image2):
 def test_diff(differences):
     expected_diff = open(data('ico_image_expected_diff')).read()
     assert differences[0].unified_diff == expected_diff
+
+@pytest.fixture
+def differences_meta(image1_meta, image2_meta):
+    return image1_meta.compare(image2_meta).details
+
+@skip_unless_tools_exist('img2txt', 'identify')
+def test_diff_meta(differences_meta):
+    expected_diff = open(data('ico_image_meta_expected_diff')).read()
+    assert differences_meta[-1].unified_diff == expected_diff

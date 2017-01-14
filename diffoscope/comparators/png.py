@@ -41,9 +41,5 @@ class Sng(Command):
 class PngFile(File):
     RE_FILE_TYPE = re.compile(r'^PNG image data\b')
 
-    @staticmethod
-    def recognizes(file):
-        return PngFile.RE_FILE_TYPE.match(file.magic_file_type)
-
     def compare_details(self, other, source=None):
         return [Difference.from_command(Sng, self.path, other.path, source='sng')]

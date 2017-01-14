@@ -35,9 +35,5 @@ class Iccdump(Command):
 class IccFile(File):
     RE_FILE_TYPE = re.compile(r'\bColorSync (ICC|color) [Pp]rofile')
 
-    @staticmethod
-    def recognizes(file):
-        return IccFile.RE_FILE_TYPE.search(file.magic_file_type)
-
     def compare_details(self, other, source=None):
         return [Difference.from_command(Iccdump, self.path, other.path)]

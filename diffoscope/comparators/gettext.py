@@ -63,9 +63,5 @@ class Msgunfmt(Command):
 class MoFile(File):
     RE_FILE_TYPE = re.compile(r'^GNU message catalog\b')
 
-    @staticmethod
-    def recognizes(file):
-        return MoFile.RE_FILE_TYPE.match(file.magic_file_type)
-
     def compare_details(self, other, source=None):
         return [Difference.from_command(Msgunfmt, self.path, other.path)]

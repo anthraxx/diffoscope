@@ -82,10 +82,6 @@ class DebFile(File):
     CONTAINER_CLASS = DebContainer
     RE_FILE_TYPE = re.compile(r'^Debian binary package')
 
-    @staticmethod
-    def recognizes(file):
-        return DebFile.RE_FILE_TYPE.match(file.magic_file_type)
-
     @property
     def md5sums(self):
         if not hasattr(self, '_md5sums'):

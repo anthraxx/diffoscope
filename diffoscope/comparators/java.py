@@ -46,9 +46,5 @@ class Javap(Command):
 class ClassFile(File):
     RE_FILE_TYPE = re.compile(r'^compiled Java class data\b')
 
-    @staticmethod
-    def recognizes(file):
-        return ClassFile.RE_FILE_TYPE.match(file.magic_file_type)
-
     def compare_details(self, other, source=None):
         return [Difference.from_command(Javap, self.path, other.path)]

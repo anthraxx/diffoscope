@@ -44,10 +44,6 @@ class Pdftk(Command):
 class PdfFile(File):
     RE_FILE_TYPE = re.compile(r'^PDF document\b')
 
-    @staticmethod
-    def recognizes(file):
-        return PdfFile.RE_FILE_TYPE.match(file.magic_file_type)
-
     def compare_details(self, other, source=None):
         return [Difference.from_command(Pdftotext, self.path, other.path),
                 Difference.from_command(Pdftk, self.path, other.path)]

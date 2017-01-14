@@ -32,10 +32,6 @@ class TarFile(File):
     CONTAINER_CLASS = TarContainer
     RE_FILE_TYPE = re.compile(r'\btar archive\b')
 
-    @staticmethod
-    def recognizes(file):
-        return TarFile.RE_FILE_TYPE.search(file.magic_file_type)
-
     def compare_details(self, other, source=None):
         return [Difference.from_text_readers(list_libarchive(self.path),
                                         list_libarchive(other.path),

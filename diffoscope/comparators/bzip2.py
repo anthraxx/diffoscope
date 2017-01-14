@@ -59,7 +59,3 @@ class Bzip2Container(Archive):
 class Bzip2File(File):
     CONTAINER_CLASS = Bzip2Container
     RE_FILE_TYPE = re.compile(r'^bzip2 compressed data\b')
-
-    @staticmethod
-    def recognizes(file):
-        return Bzip2File.RE_FILE_TYPE.match(file.magic_file_type)

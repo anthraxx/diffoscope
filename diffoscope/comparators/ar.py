@@ -59,10 +59,6 @@ class ArFile(File):
     CONTAINER_CLASS = ArContainer
     RE_FILE_TYPE = re.compile(r'\bar archive\b')
 
-    @staticmethod
-    def recognizes(file):
-        return ArFile.RE_FILE_TYPE.search(file.magic_file_type)
-
     def compare_details(self, other, source=None):
         return [Difference.from_command(ArSymbolTableDumper, self.path, other.path),
                 Difference.from_text_readers(list_libarchive(self.path),

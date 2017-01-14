@@ -67,10 +67,6 @@ class Iso9660File(File):
     CONTAINER_CLASS = LibarchiveContainer
     RE_FILE_TYPE = re.compile(r'\bISO 9660\b')
 
-    @staticmethod
-    def recognizes(file):
-        return Iso9660File.RE_FILE_TYPE.search(file.magic_file_type)
-
     def compare_details(self, other, source=None):
         differences = []
         differences.append(Difference.from_command(ISO9660PVD, self.path, other.path))

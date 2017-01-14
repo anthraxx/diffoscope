@@ -244,10 +244,6 @@ class SquashfsFile(File):
     CONTAINER_CLASS = SquashfsContainer
     RE_FILE_TYPE = re.compile(r'^Squashfs filesystem\b')
 
-    @staticmethod
-    def recognizes(file):
-        return SquashfsFile.RE_FILE_TYPE.match(file.magic_file_type)
-
     def compare_details(self, other, source=None):
         return [Difference.from_command(SquashfsSuperblock, self.path, other.path),
                 Difference.from_command(SquashfsListing, self.path, other.path)]

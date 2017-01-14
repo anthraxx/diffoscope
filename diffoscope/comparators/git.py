@@ -30,10 +30,6 @@ from .utils.file import File
 class GitIndexFile(File):
     RE_FILE_TYPE = re.compile(r'^Git index')
 
-    @staticmethod
-    def recognizes(file):
-        return GitIndexFile.RE_FILE_TYPE.match(file.magic_file_type)
-
     def compare_details(self, other, source=None):
         return [Difference.from_text(
             describe_index(self.path),

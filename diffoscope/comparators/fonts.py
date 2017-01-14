@@ -38,9 +38,5 @@ class Showttf(Command):
 class TtfFile(File):
     RE_FILE_TYPE = re.compile(r'^(TrueType|OpenType) font data$')
 
-    @staticmethod
-    def recognizes(file):
-        return TtfFile.RE_FILE_TYPE.match(file.magic_file_type)
-
     def compare_details(self, other, source=None):
         return [Difference.from_command(Showttf, self.path, other.path)]

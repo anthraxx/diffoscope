@@ -36,9 +36,5 @@ class Pedump(Command):
 class MonoExeFile(File):
     RE_FILE_TYPE = re.compile(r'\bPE[0-9]+\b.*\bMono\b')
 
-    @staticmethod
-    def recognizes(file):
-        return MonoExeFile.RE_FILE_TYPE.search(file.magic_file_type)
-
     def compare_details(self, other, source=None):
         return [Difference.from_command(Pedump, self.path, other.path)]

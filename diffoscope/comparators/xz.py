@@ -59,7 +59,3 @@ class XzContainer(Archive):
 class XzFile(File):
     CONTAINER_CLASS = XzContainer
     RE_FILE_TYPE = re.compile(r'^XZ compressed data$')
-
-    @staticmethod
-    def recognizes(file):
-        return XzFile.RE_FILE_TYPE.match(file.magic_file_type)

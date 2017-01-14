@@ -39,10 +39,6 @@ class Pstotext(Command):
 class PsFile(TextFile):
     RE_FILE_TYPE = re.compile(r'^PostScript document\b')
 
-    @staticmethod
-    def recognizes(file):
-        return PsFile.RE_FILE_TYPE.match(file.magic_file_type)
-
     def compare(self, other, source=None):
         differences = super().compare(other, source)
         details = None

@@ -38,10 +38,6 @@ def order_only_difference(unified_diff):
 class TextFile(File):
     RE_FILE_TYPE = re.compile(r'\btext\b')
 
-    @staticmethod
-    def recognizes(file):
-        return TextFile.RE_FILE_TYPE.search(file.magic_file_type)
-
     @property
     def encoding(self):
         if not hasattr(self, '_encoding'):

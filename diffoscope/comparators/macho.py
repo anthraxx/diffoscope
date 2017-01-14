@@ -71,10 +71,6 @@ class MachoFile(File):
     RE_EXTRACT_ARCHS = re.compile(r'^(?:Architectures in the fat file: .* are|Non-fat file: .* is architecture): (.*)$')
 
     @staticmethod
-    def recognizes(file):
-        return MachoFile.RE_FILE_TYPE.match(file.magic_file_type)
-
-    @staticmethod
     @tool_required('lipo')
     def get_arch_from_macho(path):
         lipo_output = subprocess.check_output(['lipo', '-info', path]).decode('utf-8')

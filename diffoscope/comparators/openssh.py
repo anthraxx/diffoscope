@@ -34,10 +34,6 @@ class SSHKeyList(Command):
 class PublicKeyFile(File):
     RE_FILE_TYPE = re.compile(r'^OpenSSH \S+ public key')
 
-    @staticmethod
-    def recognizes(file):
-        return PublicKeyFile.RE_FILE_TYPE.match(file.magic_file_type)
-
     def compare_details(self, other, source=None):
         return [Difference.from_command(SSHKeyList, self.path, other.path)]
 

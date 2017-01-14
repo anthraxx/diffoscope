@@ -38,10 +38,6 @@ class CpioFile(File):
     CONTAINER_CLASS = LibarchiveContainer
     RE_FILE_TYPE = re.compile(r'\bcpio archive\b')
 
-    @staticmethod
-    def recognizes(file):
-        return CpioFile.RE_FILE_TYPE.search(file.magic_file_type)
-
     def compare_details(self, other, source=None):
         return [Difference.from_text_readers(list_libarchive(self.path),
                                              list_libarchive(other.path),

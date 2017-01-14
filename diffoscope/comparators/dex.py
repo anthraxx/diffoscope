@@ -60,7 +60,3 @@ class DexContainer(Archive):
 class DexFile(File):
     RE_FILE_TYPE = re.compile(r'^Dalvik dex file .*\b')
     CONTAINER_CLASS = DexContainer
-
-    @staticmethod
-    def recognizes(file):
-        return DexFile.RE_FILE_TYPE.match(file.magic_file_type)

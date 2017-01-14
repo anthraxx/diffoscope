@@ -530,11 +530,11 @@ class ElfContainer(Container):
 
 class ElfFile(File):
     CONTAINER_CLASS = ElfContainer
-    RE_FILE_TYE = re.compile(r'^ELF ')
+    RE_FILE_TYPE = re.compile(r'^ELF ')
 
     @staticmethod
     def recognizes(file):
-        return ElfFile.RE_FILE_TYE.match(file.magic_file_type)
+        return ElfFile.RE_FILE_TYPE.match(file.magic_file_type)
 
     def compare_details(self, other, source=None):
         return _compare_elf_data(self.path, other.path)

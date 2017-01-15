@@ -76,8 +76,7 @@ class ApkContainer(Archive):
         return self._members
 
     def extract(self, member_name, dest_dir):
-        src_path = os.path.join(self._unpacked, member_name)
-        return src_path
+        return os.path.join(self._unpacked, member_name)
 
 class ApkFile(File):
     RE_FILE_TYPE = re.compile(r'^(Java|Zip) archive data.*\b')

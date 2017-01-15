@@ -22,7 +22,9 @@ import pytest
 from diffoscope.comparators.binary import FilesystemFile
 from diffoscope.comparators.haskell import HiFile
 
-from utils import skip_unless_tools_exist, data, load_fixture
+from utils.data import data, load_fixture
+from utils.tools import skip_unless_tools_exist
+
 
 haskell1 = load_fixture(data('test1.hi'))
 haskell2 = load_fixture(data('test2.hi'))

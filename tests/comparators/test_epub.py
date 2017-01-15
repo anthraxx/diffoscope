@@ -23,7 +23,10 @@ from diffoscope.config import Config
 from diffoscope.comparators.zip import ZipFile
 from diffoscope.comparators.missing_file import MissingFile
 
-from utils import skip_unless_tools_exist, data, load_fixture
+from utils.data import data, load_fixture
+from utils.tools import skip_unless_tools_exist
+from utils.nonexisting import assert_non_existing
+
 
 epub1 = load_fixture(data('test1.epub'))
 epub2 = load_fixture(data('test2.epub'))

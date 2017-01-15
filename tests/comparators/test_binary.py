@@ -17,8 +17,12 @@
 # You should have received a copy of the GNU General Public License
 # along with diffoscope.  If not, see <https://www.gnu.org/licenses/>.
 
+import os.path
 import pytest
 import subprocess
+
+from os import mkdir, symlink
+from tempfile import TemporaryDirectory
 
 from diffoscope.tools import tool_required
 from diffoscope.exc import RequiredToolNotFound
@@ -28,10 +32,9 @@ from diffoscope.comparators.utils.file import File
 from diffoscope.comparators.missing_file import MissingFile
 from diffoscope.comparators.utils.compare import Xxd
 
-from utils import skip_unless_tools_exist, data, load_fixture
-from os import mkdir, symlink
-from tempfile import TemporaryDirectory
-import os.path
+from utils.data import data, load_fixture
+from utils.tools import skip_unless_tools_exist
+
 
 TEST_FILE1_PATH = data('binary1')
 TEST_FILE2_PATH = data('binary2')

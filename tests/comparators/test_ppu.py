@@ -23,8 +23,10 @@ import subprocess
 
 from diffoscope.comparators.ppu import PpuFile
 
-from utils import skip_unless_tools_exist, data, load_fixture, \
-    assert_non_existing, skip_unless_tool_is_at_least
+from utils.data import data, load_fixture
+from utils.tools import skip_unless_tools_exist, skip_unless_tool_is_at_least
+from utils.nonexisting import assert_non_existing
+
 
 # These test files were taken from two different builds of the Debian package
 # fp-units-castle-game-engine (version 5.1.1-2 on amd64) on the Debian

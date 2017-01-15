@@ -25,7 +25,9 @@ from diffoscope.config import Config
 from diffoscope.comparators.macho import MachoFile
 from diffoscope.comparators.missing_file import MissingFile
 
-from utils import skip_unless_tools_exist, data, load_fixture
+from utils.data import data, load_fixture
+from utils.tools import skip_unless_tools_exist
+
 
 obj1 = load_fixture(data('test1.macho'))
 obj2 = load_fixture(data('test2.macho'))

@@ -2,7 +2,8 @@
 #
 # diffoscope: in-depth comparison of files, archives, and directories
 #
-# Copyright © 2015 Jérémy Bobbio <lunar@debian.org>
+# Copyright © 2015      Jérémy Bobbio <lunar@debian.org>
+#             2016-2017 Mattia Rizzolo <mattia@debian.org>
 #
 # diffoscope is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -17,54 +18,11 @@
 # You should have received a copy of the GNU General Public License
 # along with diffoscope.  If not, see <https://www.gnu.org/licenses/>.
 
-import os
-import re
-import pytest
-import diffoscope
-
-from distutils.spawn import find_executable
-from distutils.version import LooseVersion
-
 from diffoscope.config import Config
 from diffoscope.presenters.html import output_html
 from diffoscope.presenters.text import output_text
-from diffoscope.comparators.binary import FilesystemFile
 from diffoscope.comparators.missing_file import MissingFile
-from diffoscope.comparators.utils.specialize import specialize
 
-re_diff_line_numbers = re.compile(r"(^|\n)@@ -(\d+),(\d+) \+(\d+),(\d+) @@(?=\n|$)")
-
-
-def tools_missing(*required):
-    return not required or any(find_executable(x) is None for x in required)
-
-def skip_unless_tools_exist(*required):
-    return pytest.mark.skipif(
-        tools_missing(*required),
-        reason="requires {}".format(" and ".join(required)),
-    )
-
-def skip_unless_tool_is_at_least(tool, actual_ver, min_ver, vcls=LooseVersion):
-    if tools_missing(tool):
-        return pytest.mark.skipif(True, reason="requires {}".format(tool))
-    if callable(actual_ver):
-        actual_ver = actual_ver()
-    return pytest.mark.skipif(
-        vcls(str(actual_ver)) < vcls(str(min_ver)),
-        reason="requires {} >= {} ({} detected)".format(tool, min_ver, actual_ver)
-    )
-
-def load_fixture(filename):
-    return pytest.fixture(
-        lambda: specialize(FilesystemFile(filename))
-    )
-
-def data(filename):
-    return os.path.join(
-        os.path.dirname(os.path.dirname(__file__)),
-        'data',
-        filename,
-    )
 
 def assert_non_existing(monkeypatch, fixture, has_null_source=True, has_details=True):
     monkeypatch.setattr(Config(), 'new_file', True)
@@ -78,6 +36,3 @@ def assert_non_existing(monkeypatch, fixture, has_null_source=True, has_details=
     assert difference.source2 == '/nonexisting'
     assert not has_details or len(difference.details) > 0
     assert not has_null_source or difference.details[-1].source2 == '/dev/null'
-
-def diff_ignore_line_numbers(diff):
-    return re_diff_line_numbers.sub(r"\1@@ -XX,XX +XX,XX @@", diff)

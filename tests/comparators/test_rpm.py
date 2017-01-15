@@ -19,8 +19,10 @@
 
 import pytest
 
-from utils import skip_unless_tools_exist, data, load_fixture, \
-    assert_non_existing
+from utils.data import data, load_fixture
+from utils.tools import skip_unless_tools_exist
+from utils.nonexisting import assert_non_existing
+
 
 try:
     from diffoscope.comparators.rpm import RpmFile

@@ -28,7 +28,9 @@ from diffoscope.comparators.directory import FilesystemDirectory
 from diffoscope.comparators.missing_file import MissingFile
 from diffoscope.comparators.utils.specialize import specialize
 
-from utils import skip_unless_tools_exist, data, load_fixture
+from utils.data import data, load_fixture
+from utils.tools import skip_unless_tools_exist
+
 
 try:
     import diffoscope.comparators.debian # noqa

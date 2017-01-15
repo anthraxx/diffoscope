@@ -24,7 +24,8 @@ import pytest
 from diffoscope.presenters.text import output_text
 from diffoscope.comparators.directory import compare_directories
 
-from utils import data
+from utils.data import data
+
 
 TEST_FILE1_PATH = data('text_ascii1')
 TEST_FILE2_PATH = data('text_ascii2')

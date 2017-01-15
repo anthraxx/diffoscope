@@ -24,8 +24,10 @@ from diffoscope.config import Config
 from diffoscope.difference import Difference
 from diffoscope.comparators.utils.command import Command
 
-from utils import tools_missing, skip_unless_tools_exist, data, load_fixture, \
-    skip_unless_tool_is_at_least
+from utils.data import data, load_fixture
+from utils.tools import tools_missing, skip_unless_tools_exist
+from utils.nonexisting import assert_non_existing
+
 
 try:
     import tlsh # noqa

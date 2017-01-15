@@ -22,7 +22,9 @@ import codecs
 from diffoscope.comparators.binary import FilesystemFile
 from diffoscope.comparators.utils.specialize import specialize
 
-from utils import data, load_fixture, assert_non_existing
+from utils.data import data, load_fixture
+from utils.nonexisting import assert_non_existing
+
 
 ascii1 = load_fixture(data('text_ascii1'))
 ascii2 = load_fixture(data('text_ascii2'))

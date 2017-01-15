@@ -22,8 +22,10 @@ import subprocess
 
 from diffoscope.comparators.squashfs import SquashfsFile
 
-from utils import skip_unless_tools_exist, data, load_fixture, \
-    assert_non_existing, skip_unless_tool_is_at_least
+from utils.data import data, load_fixture
+from utils.tools import skip_unless_tools_exist, skip_unless_tool_is_at_least
+from utils.nonexisting import assert_non_existing
+
 
 def unsquashfs_version():
     # first line of 'unsquashfs -version' looks like:

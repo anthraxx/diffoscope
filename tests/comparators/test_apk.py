@@ -21,8 +21,9 @@ import pytest
 
 from diffoscope.comparators.apk import ApkFile
 
-from utils import skip_unless_tools_exist, data, load_fixture, \
-    assert_non_existing
+from utils.data import data, load_fixture
+from utils.tools import skip_unless_tools_exist
+from utils.nonexisting import assert_non_existing
 
 apk1 = load_fixture(data('test1.apk'))
 apk2 = load_fixture(data('test2.apk'))

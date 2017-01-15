@@ -27,7 +27,7 @@ from diffoscope.comparators.binary import FilesystemFile
 from diffoscope.comparators.missing_file import MissingFile
 from diffoscope.comparators.utils.specialize import specialize
 
-from utils import data, load_fixture
+from utils.data import data, load_fixture
 
 
 deb1 = load_fixture(data('test1.deb'))

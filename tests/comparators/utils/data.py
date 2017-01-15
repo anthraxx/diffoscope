@@ -2,7 +2,8 @@
 #
 # diffoscope: in-depth comparison of files, archives, and directories
 #
-# Copyright © 2016 Chris Lamb <lamby@debian.org>
+# Copyright © 2015      Jérémy Bobbio <lunar@debian.org>
+#             2016-2017 Mattia Rizzolo <mattia@debian.org>
 #
 # diffoscope is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -17,27 +18,23 @@
 # You should have received a copy of the GNU General Public License
 # along with diffoscope.  If not, see <https://www.gnu.org/licenses/>.
 
+import os
 import pytest
 
-from diffoscope.comparators.git import GitIndexFile
+from diffoscope.comparators.binary import FilesystemFile
+from diffoscope.comparators.utils.specialize import specialize
 
-from utils.data import data, load_fixture
+
+def load_fixture(filename):
+    return pytest.fixture(
+        lambda: specialize(FilesystemFile(filename))
+    )
 
 
-git1 = load_fixture(data('test1.git-index'))
-git2 = load_fixture(data('test2.git-index'))
-
-def test_identification(git1):
-    assert isinstance(git1, GitIndexFile)
-
-def test_no_differences(git1):
-    assert git1.compare(git1) is None
-
-@pytest.fixture
-def differences(git1, git2):
-    return git1.compare(git2).details
-
-def test_diff(differences):
-    with open(data('git_expected_diff')) as f:
-        expected_diff = f.read()
-    assert differences[0].unified_diff == expected_diff
+def data(filename):
+    return os.path.join(
+        os.path.dirname(os.path.dirname(__file__)),
+        '..',
+        'data',
+        filename,
+    )

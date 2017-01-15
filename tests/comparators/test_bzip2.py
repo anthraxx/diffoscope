@@ -24,8 +24,9 @@ from diffoscope.comparators.bzip2 import Bzip2File
 from diffoscope.comparators.binary import FilesystemFile
 from diffoscope.comparators.utils.specialize import specialize
 
-from utils import skip_unless_tools_exist, data, load_fixture, \
-    assert_non_existing
+from utils.data import data, load_fixture
+from utils.tools import skip_unless_tools_exist
+from utils.nonexisting import assert_non_existing
 
 
 TEST_FILE1_PATH = data('test1.bz2')

@@ -24,7 +24,9 @@ from diffoscope.config import Config
 from diffoscope.comparators.missing_file import MissingFile
 from diffoscope.comparators.gettext import MoFile
 
-from utils import skip_unless_tools_exist, data, load_fixture
+from utils.data import data, load_fixture
+from utils.tools import skip_unless_tools_exist
+
 
 mo1 = load_fixture(data('test1.mo'))
 mo2 = load_fixture(data('test2.mo'))

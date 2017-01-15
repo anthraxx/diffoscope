@@ -26,7 +26,8 @@ from diffoscope.comparators.binary import FilesystemFile
 from diffoscope.comparators.missing_file import MissingFile
 from diffoscope.comparators.utils.specialize import specialize
 
-from utils import data, assert_non_existing
+from utils.data import data
+from utils.nonexisting import assert_non_existing
 
 try:
     from diffoscope.comparators.debian import DotChangesFile, DotDscFile, \

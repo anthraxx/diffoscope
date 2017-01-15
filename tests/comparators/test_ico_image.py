@@ -22,9 +22,10 @@ import pytest
 from diffoscope.config import Config
 from diffoscope.comparators.image import ICOImageFile
 
-from utils import skip_unless_tools_exist, data, load_fixture, \
-    skip_unless_tool_is_at_least
+from utils.data import data, load_fixture
+from utils.tools import skip_unless_tools_exist, skip_unless_tool_is_at_least
 from test_jpeg_image import identify_version
+
 
 image1 = load_fixture(data('test1.ico'))
 image2 = load_fixture(data('test2.ico'))

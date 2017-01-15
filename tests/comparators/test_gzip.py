@@ -26,7 +26,8 @@ from diffoscope.comparators.binary import FilesystemFile
 from diffoscope.comparators.missing_file import MissingFile
 from diffoscope.comparators.utils.specialize import specialize
 
-from utils import data, load_fixture
+from utils.data import data, load_fixture
+
 
 TEST_FILE1_PATH = data('test1.gz')
 TEST_FILE2_PATH = data('test2.gz')

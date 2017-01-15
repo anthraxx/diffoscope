@@ -21,8 +21,10 @@ import pytest
 
 from diffoscope.comparators.sqlite import Sqlite3Database
 
-from utils import skip_unless_tools_exist, data, load_fixture, \
-    assert_non_existing
+from utils.data import data, load_fixture
+from utils.tools import skip_unless_tools_exist
+from utils.nonexisting import assert_non_existing
+
 
 sqlite3db1 = load_fixture(data('test1.sqlite3'))
 sqlite3db2 = load_fixture(data('test2.sqlite3'))

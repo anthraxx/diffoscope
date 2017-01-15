@@ -28,26 +28,6 @@ from .utils.file import File
 from .utils.command import Command
 
 re_ansi_escapes = re.compile(r'\x1b[^m]*m')
-identify_attributes = '\n'.join(('Image format: %m',
-                                 'File size: %b',
-                                 'Height: %[height]',
-                                 'Width: %[width]',
-                                 'Orientation: %[orientation]',
-                                 'Compression type: %[compression]',
-                                 'Compression quality: %[quality]',
-                                 'Colorspace: %[colorspace]',
-                                 'Channels: %[channels]',
-                                 'Depth: %[depth]',
-                                 'Interlace mode: %[interlace]',
-                                 'Rendering intent: %[rendering-intent]',
-                                 'X resolution: %[resolution.x]',
-                                 'Y resolution: %[resolution.y]',
-                                 'Resolution units: %[units]',
-                                 'Transparency channel enabled: %A',
-                                 'Gamma: %[gamma]',
-                                 'Number of unique colors: %[colors]',
-                                 'Comment: %c',
-                                 'EXIF data: %[EXIF:*]'))
 
 
 class Img2Txt(Command):
@@ -65,12 +45,35 @@ class Img2Txt(Command):
         return re_ansi_escapes.sub('', line.decode('utf-8')).encode('utf-8')
 
 class Identify(Command):
+    ATTRIBUTES = (
+        'Image format: %m',
+        'File size: %b',
+        'Height: %[height]',
+        'Width: %[width]',
+        'Orientation: %[orientation]',
+        'Compression type: %[compression]',
+        'Compression quality: %[quality]',
+        'Colorspace: %[colorspace]',
+        'Channels: %[channels]',
+        'Depth: %[depth]',
+        'Interlace mode: %[interlace]',
+        'Rendering intent: %[rendering-intent]',
+        'X resolution: %[resolution.x]',
+        'Y resolution: %[resolution.y]',
+        'Resolution units: %[units]',
+        'Transparency channel enabled: %A',
+        'Gamma: %[gamma]',
+        'Number of unique colors: %[colors]',
+        'Comment: %c',
+        'EXIF data: %[EXIF:*]',
+    )
+
     @tool_required('identify')
     def cmdline(self):
         return [
             'identify',
             '-format',
-            identify_attributes,
+            '\n'.join(self.ATTRIBUTES),
             self.path,
         ]
 

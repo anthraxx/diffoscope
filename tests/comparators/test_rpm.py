@@ -19,7 +19,7 @@
 
 import pytest
 
-from utils.data import data, init_fixture
+from utils.data import load_fixture
 from utils.tools import skip_unless_tools_exist
 from utils.nonexisting import assert_non_existing
 
@@ -31,8 +31,8 @@ except ImportError:
     from diffoscope.comparators.rpm_fallback import RpmFile
     miss_rpm_module = True
 
-rpm1 = init_fixture(data('test1.rpm'))
-rpm2 = init_fixture(data('test2.rpm'))
+rpm1 = load_fixture('test1.rpm')
+rpm2 = load_fixture('test2.rpm')
 
 def test_identification(rpm1):
     assert isinstance(rpm1, RpmFile)

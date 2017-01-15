@@ -21,13 +21,13 @@ import pytest
 
 from diffoscope.comparators.cpio import CpioFile
 
-from utils.data import data, init_fixture
+from utils.data import data, load_fixture
 from utils.tools import skip_unless_tools_exist
 from utils.nonexisting import assert_non_existing
 
 
-cpio1 = init_fixture(data('test1.cpio'))
-cpio2 = init_fixture(data('test2.cpio'))
+cpio1 = load_fixture('test1.cpio')
+cpio2 = load_fixture('test2.cpio')
 
 def test_identification(cpio1):
     assert isinstance(cpio1, CpioFile)

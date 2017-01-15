@@ -24,12 +24,12 @@ from diffoscope.config import Config
 from diffoscope.comparators.java import ClassFile
 from diffoscope.comparators.missing_file import MissingFile
 
-from utils.data import data, init_fixture
+from utils.data import load_fixture
 from utils.tools import skip_unless_tools_exist, skip_unless_tool_is_at_least
 
 
-class1 = init_fixture(data('Test1.class'))
-class2 = init_fixture(data('Test2.class'))
+class1 = load_fixture('Test1.class')
+class2 = load_fixture('Test2.class')
 
 def javap_version():
     try:

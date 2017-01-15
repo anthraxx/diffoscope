@@ -23,7 +23,7 @@ import subprocess
 
 from diffoscope.comparators.ppu import PpuFile
 
-from utils.data import data, init_fixture
+from utils.data import load_fixture
 from utils.tools import skip_unless_tools_exist, skip_unless_tool_is_at_least
 from utils.nonexisting import assert_non_existing
 
@@ -34,8 +34,8 @@ from utils.nonexisting import assert_non_existing
 # castletexturefont_dejavusans_10.ppu which are generated during package
 # building of the cge package from dejavusans font in the fonts-dejavu package.
 
-file1 = init_fixture(data('test1.ppu'))
-file2 = init_fixture(data('test2.ppu'))
+file1 = load_fixture('test1.ppu')
+file2 = load_fixture('test2.ppu')
 
 def ppudump_version():
     # first line of `PPU-Analyser Version 3.0.0` looks like:

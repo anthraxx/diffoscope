@@ -21,13 +21,13 @@ import pytest
 
 from diffoscope.comparators.pdf import PdfFile
 
-from utils.data import data, init_fixture
+from utils.data import load_fixture
 from utils.tools import skip_unless_tools_exist
 from utils.nonexisting import assert_non_existing
 
 
-pdf1 = init_fixture(data('test1.pdf'))
-pdf2 = init_fixture(data('test2.pdf'))
+pdf1 = load_fixture('test1.pdf')
+pdf2 = load_fixture('test2.pdf')
 
 def test_identification(pdf1):
     assert isinstance(pdf1, PdfFile)

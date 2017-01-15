@@ -23,7 +23,7 @@ from diffoscope.config import Config
 from diffoscope.comparators.missing_file import MissingFile
 from diffoscope.comparators.fsimage import FsImageFile
 
-from utils.data import data, init_fixture
+from utils.data import load_fixture
 from utils.tools import skip_unless_tools_exist
 
 
@@ -33,8 +33,8 @@ try:
 except ImportError:
     miss_guestfs = True
 
-img1 = init_fixture(data('test1.ext4'))
-img2 = init_fixture(data('test2.ext4'))
+img1 = load_fixture('test1.ext4')
+img2 = load_fixture('test2.ext4')
 
 def guestfs_working():
     if miss_guestfs:

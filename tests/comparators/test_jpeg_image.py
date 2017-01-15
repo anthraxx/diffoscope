@@ -24,14 +24,14 @@ from diffoscope.config import Config
 from diffoscope.comparators.image import JPEGImageFile
 from diffoscope.comparators.missing_file import MissingFile
 
-from utils.data import data, init_fixture
+from utils.data import data, load_fixture
 from utils.tools import skip_unless_tools_exist, skip_unless_tool_is_at_least
 
 
-image1 = init_fixture(data('test1.jpg'))
-image2 = init_fixture(data('test2.jpg'))
-image1_meta = init_fixture(data('test1_meta.jpg'))
-image2_meta = init_fixture(data('test2_meta.jpg'))
+image1 = load_fixture('test1.jpg')
+image2 = load_fixture('test2.jpg')
+image1_meta = load_fixture('test1_meta.jpg')
+image2_meta = load_fixture('test2_meta.jpg')
 
 def identify_version():
     out = subprocess.check_output(['identify', '-version'])

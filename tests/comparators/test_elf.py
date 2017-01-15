@@ -28,7 +28,7 @@ from diffoscope.comparators.directory import FilesystemDirectory
 from diffoscope.comparators.missing_file import MissingFile
 from diffoscope.comparators.utils.specialize import specialize
 
-from utils.data import data, init_fixture
+from utils.data import data, load_fixture
 from utils.tools import skip_unless_tools_exist
 
 
@@ -38,8 +38,8 @@ try:
 except ImportError:
     miss_debian_module = True
 
-obj1 = init_fixture(data('test1.o'))
-obj2 = init_fixture(data('test2.o'))
+obj1 = load_fixture('test1.o')
+obj2 = load_fixture('test2.o')
 
 def test_obj_identification(obj1):
     assert isinstance(obj1, ElfFile)

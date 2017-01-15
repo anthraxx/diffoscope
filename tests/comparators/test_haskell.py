@@ -22,12 +22,12 @@ import pytest
 from diffoscope.comparators.binary import FilesystemFile
 from diffoscope.comparators.haskell import HiFile
 
-from utils.data import data, init_fixture
+from utils.data import load_fixture
 from utils.tools import skip_unless_tools_exist
 
 
-haskell1 = init_fixture(data('test1.hi'))
-haskell2 = init_fixture(data('test2.hi'))
+haskell1 = load_fixture('test1.hi')
+haskell2 = load_fixture('test2.hi')
 
 @skip_unless_tools_exist('ghc')
 def test_identification(haskell1):

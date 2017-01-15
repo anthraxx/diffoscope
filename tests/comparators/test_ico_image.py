@@ -22,15 +22,15 @@ import pytest
 from diffoscope.config import Config
 from diffoscope.comparators.image import ICOImageFile
 
-from utils.data import data, init_fixture
+from utils.data import data, load_fixture
 from utils.tools import skip_unless_tools_exist, skip_unless_tool_is_at_least
 from test_jpeg_image import identify_version
 
 
-image1 = init_fixture(data('test1.ico'))
-image2 = init_fixture(data('test2.ico'))
-image1_meta = init_fixture(data('test1_meta.ico'))
-image2_meta = init_fixture(data('test2_meta.ico'))
+image1 = load_fixture('test1.ico')
+image2 = load_fixture('test2.ico')
+image1_meta = load_fixture('test1_meta.ico')
+image2_meta = load_fixture('test2_meta.ico')
 
 def test_identification(image1):
     assert isinstance(image1, ICOImageFile)

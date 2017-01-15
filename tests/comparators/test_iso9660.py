@@ -23,12 +23,12 @@ from diffoscope.config import Config
 from diffoscope.comparators.missing_file import MissingFile
 from diffoscope.comparators.iso9660 import Iso9660File
 
-from utils.data import data, init_fixture
+from utils.data import data, load_fixture
 from utils.tools import skip_unless_tools_exist
 
 
-iso1 = init_fixture(data('test1.iso'))
-iso2 = init_fixture(data('test2.iso'))
+iso1 = load_fixture('test1.iso')
+iso2 = load_fixture('test2.iso')
 
 def test_identification(iso1):
     assert isinstance(iso1, Iso9660File)

@@ -24,15 +24,15 @@ from diffoscope.config import Config
 from diffoscope.comparators.dex import DexFile
 from diffoscope.comparators.missing_file import MissingFile
 
-from utils.data import data, init_fixture
+from utils.data import load_fixture
 from utils.tools import skip_unless_tools_exist, skip_unless_tool_is_at_least
 from utils.nonexisting import assert_non_existing
 
 from test_java import javap_version
 
 
-dex1 = init_fixture(data('test1.dex'))
-dex2 = init_fixture(data('test2.dex'))
+dex1 = load_fixture('test1.dex')
+dex2 = load_fixture('test2.dex')
 
 def enjarify_version():
     # Module enjarify.typeinference appeared in enjarify 1.0.3.  We use a call

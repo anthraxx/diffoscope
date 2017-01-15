@@ -24,7 +24,7 @@ from diffoscope.config import Config
 from diffoscope.difference import Difference
 from diffoscope.comparators.utils.command import Command
 
-from utils.data import data, init_fixture
+from utils.data import load_fixture
 from utils.tools import tools_missing, skip_unless_tools_exist
 from utils.nonexisting import assert_non_existing
 
@@ -35,9 +35,9 @@ try:
 except ImportError:
     miss_tlsh = True
 
-fuzzy_tar1 = init_fixture(data('fuzzy1.tar'))
-fuzzy_tar2 = init_fixture(data('fuzzy2.tar'))
-fuzzy_tar3 = init_fixture(data('fuzzy3.tar'))
+fuzzy_tar1 = load_fixture('fuzzy1.tar')
+fuzzy_tar2 = load_fixture('fuzzy2.tar')
+fuzzy_tar3 = load_fixture('fuzzy3.tar')
 
 def test_tools_missing():
     assert tools_missing() is True
@@ -78,8 +78,8 @@ def test_fuzzy_matching_only_once(fuzzy_tar1, fuzzy_tar3):
     assert len(differences) == 2
     expected_diff = codecs.open(data('text_iso8859_expected_diff'), encoding='utf-8').read()
 
-fuzzy_tar_in_tar1 = init_fixture(data('fuzzy-tar-in-tar1.tar'))
-fuzzy_tar_in_tar2 = init_fixture(data('fuzzy-tar-in-tar2.tar'))
+fuzzy_tar_in_tar1 = load_fixture('fuzzy-tar-in-tar1.tar')
+fuzzy_tar_in_tar2 = load_fixture('fuzzy-tar-in-tar2.tar')
 
 @pytest.mark.skipif(miss_tlsh, reason='tlsh is missing')
 def test_no_fuzzy_matching(monkeypatch, fuzzy_tar_in_tar1, fuzzy_tar_in_tar2):

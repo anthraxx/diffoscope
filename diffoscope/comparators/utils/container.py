@@ -28,7 +28,6 @@ from diffoscope.progress import Progress
 from ..missing_file import MissingFile
 
 from .fuzzy import perform_fuzzy_matching
-from .specialize import specialize
 
 NO_COMMENT = None
 
@@ -57,6 +56,7 @@ class Container(object, metaclass=abc.ABCMeta):
 
     def lookup_file(self, *names):
         """Try to fetch a specific file by digging in containers."""
+        from .specialize import specialize
         name, remainings = names[0], names[1:]
         try:
             file = self.get_member(name)

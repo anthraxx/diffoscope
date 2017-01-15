@@ -85,8 +85,10 @@ class JPEGImageFile(File):
         return JPEGImageFile.RE_FILE_TYPE.search(file.magic_file_type)
 
     def compare_details(self, other, source=None):
-        return [Difference.from_command(Img2Txt, self.path, other.path),
-                Difference.from_command(Identify, self.path, other.path)]
+        return [
+            Difference.from_command(Img2Txt, self.path, other.path),
+            Difference.from_command(Identify, self.path, other.path),
+        ]
 
 class ICOImageFile(File):
     RE_FILE_TYPE = re.compile(r'\bMS Windows icon resource\b')
@@ -102,8 +104,10 @@ class ICOImageFile(File):
         except subprocess.CalledProcessError:
             return []
 
-        return [Difference.from_command(Img2Txt, *xs),
-                Difference.from_command(Identify, self.path, other.path)]
+        return [
+            Difference.from_command(Img2Txt, *xs),
+            Difference.from_command(Identify, self.path, other.path),
+        ]
 
     @staticmethod
     @tool_required('icotool')

@@ -53,19 +53,28 @@ class ApkContainer(Archive):
         ), shell=False, stderr=None, stdout=subprocess.PIPE)
 
         for root, _, files in os.walk(self._unpacked):
-            for f in files:
-                abspath = os.path.join(root, f)
+            current_dir = []
+
+            for filename in files:
+                abspath = os.path.join(root, filename)
 
                 # apktool.yml is a file created by apktool and containing
-                # metadata information. Rename it to clarify.
-                if os.path.basename(abspath) == 'apktool.yml':
+                # metadata information. Rename it to clarify and always make it
+                # appear at the beginning of the directory listing for
+                # reproducibility.
+                if filename == 'apktool.yml':
                     abspath = filter_apk_metadata(
                         abspath,
                         os.path.basename(self.source.name),
                     )
+                    relpath = abspath[len(self._unpacked) + 1:]
+                    current_dir.insert(0, relpath)
+                    continue
 
                 relpath = abspath[len(self._unpacked)+1:]
-                self._members.append(relpath)
+                current_dir.append(relpath)
+
+            self._members.extend(current_dir)
 
         return self
 
@@ -76,7 +85,8 @@ class ApkContainer(Archive):
         return self._members
 
     def extract(self, member_name, dest_dir):
-        return os.path.join(self._unpacked, member_name)
+        src_path = os.path.join(self._unpacked, member_name)
+        return src_path
 
 class ApkFile(File):
     RE_FILE_TYPE = re.compile(r'^(Java|Zip) archive data.*\b')
@@ -89,9 +99,8 @@ class ApkFile(File):
             ApkFile.RE_FILE_EXTENSION.search(file.name)
 
     def compare_details(self, other, source=None):
-        zipinfo_difference = \
-            Difference.from_command(Zipinfo, self.path, other.path) or \
-            Difference.from_command(ZipinfoVerbose, self.path, other.path)
+        zipinfo_difference = Difference.from_command(Zipinfo, self.path, other.path) or \
+                             Difference.from_command(ZipinfoVerbose, self.path, other.path)
         return [zipinfo_difference]
 
 

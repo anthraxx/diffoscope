@@ -51,12 +51,12 @@ def test_zipinfo(differences):
 
 @skip_unless_tools_exist('apktool', 'zipinfo')
 def test_android_manifest(differences):
-    assert differences[1].source1 == 'AndroidManifest.xml'
-    assert differences[1].source2 == 'AndroidManifest.xml'
+    assert differences[2].source1 == 'AndroidManifest.xml'
+    assert differences[2].source2 == 'AndroidManifest.xml'
     expected_diff = open(data('apk_manifest_expected_diff')).read()
-    assert differences[1].unified_diff == expected_diff
+    assert differences[2].unified_diff == expected_diff
 
 @skip_unless_tools_exist('apktool', 'zipinfo')
 def test_apk_metadata_source(differences):
-    assert differences[2].source1 == 'APK metadata'
-    assert differences[2].source2 == 'APK metadata'
+    assert differences[1].source1 == 'APK metadata'
+    assert differences[1].source2 == 'APK metadata'

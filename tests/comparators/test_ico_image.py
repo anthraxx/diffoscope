@@ -40,7 +40,7 @@ def test_no_differences(image1):
 def differences(image1, image2):
     return image1.compare(image2).details
 
-@skip_unless_tools_exist('img2txt', 'icotool')
+@skip_unless_tools_exist('img2txt', 'convert')
 def test_diff(differences):
     expected_diff = open(data('ico_image_expected_diff')).read()
     assert differences[0].unified_diff == expected_diff

@@ -110,10 +110,10 @@ class ICOImageFile(File):
         ]
 
     @staticmethod
-    @tool_required('icotool')
+    @tool_required('convert')
     def convert(file):
-        result = get_named_temporary_file().name
+        result = get_named_temporary_file(suffix='.png').name
 
-        subprocess.check_call(('icotool', '-x', '-o', result, file.path))
+        subprocess.check_call(('convert', file.path, result))
 
         return result

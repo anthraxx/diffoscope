@@ -131,8 +131,9 @@ class RequiredToolNotFound(Exception):
             'arch': 'gettext',
             'FreeBSD': 'gettext-tools',
         },
-        'icotool': {
-            'debian': 'icoutils',
+        'convert': {
+            'debian': 'imagemagick',
+            'arch': 'imagemagick',
         },
         'nm': {
             'debian': 'binutils-multiarch',

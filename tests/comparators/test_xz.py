@@ -52,11 +52,11 @@ def test_content_source(differences):
     assert differences[0].source2 == 'test2'
 
 @skip_unless_tools_exist('xz')
-def test_content_source_without_extension(tmpdir):
+def test_content_source_without_extension(tmpdir, xz1, xz2):
     path1 = str(tmpdir.join('test1'))
     path2 = str(tmpdir.join('test2'))
-    shutil.copy(TEST_FILE1_PATH, path1)
-    shutil.copy(TEST_FILE2_PATH, path2)
+    shutil.copy(xz1.path, path1)
+    shutil.copy(xz2.path, path2)
     xz1 = specialize(FilesystemFile(path1))
     xz2 = specialize(FilesystemFile(path2))
     difference = xz1.compare(xz2).details

@@ -74,11 +74,11 @@ def mozzip_differences(mozzip1, mozzip2):
     return mozzip1.compare(mozzip2).details
 
 @skip_unless_tools_exist('zipinfo')
-def test_mozzip_metadata(mozzip_differences):
+def test_mozzip_metadata(mozzip_differences, mozzip1, mozzip2):
     expected_diff = open(data('mozzip_zipinfo_expected_diff')).read()
     diff = mozzip_differences[0].unified_diff
-    assert (diff.replace(TEST_MOZZIP1_PATH, 'test1.mozzip')
-                .replace(TEST_MOZZIP2_PATH, 'test2.mozzip')) == expected_diff
+    assert (diff.replace(mozzip1.path, 'test1.mozzip')
+                .replace(mozzip2.path, 'test2.mozzip')) == expected_diff
 
 @skip_unless_tools_exist('zipinfo')
 def test_mozzip_compressed_files(mozzip_differences):

@@ -57,11 +57,11 @@ def test_content_source(differences):
     assert differences[1].source1 == 'test1'
     assert differences[1].source2 == 'test2'
 
-def test_content_source_without_extension(tmpdir):
+def test_content_source_without_extension(tmpdir, gzip1, gzip2):
     path1 = str(tmpdir.join('test1'))
     path2 = str(tmpdir.join('test2'))
-    shutil.copy(TEST_FILE1_PATH, path1)
-    shutil.copy(TEST_FILE2_PATH, path2)
+    shutil.copy(gzip1.path, path1)
+    shutil.copy(gzip2.path, path2)
     gzip1 = specialize(FilesystemFile(path1))
     gzip2 = specialize(FilesystemFile(path2))
     difference = gzip1.compare(gzip2).details

@@ -52,11 +52,11 @@ def test_content_source(differences):
     assert differences[0].source2 == 'test2'
 
 @skip_unless_tools_exist('bzip2')
-def test_content_source_without_extension(tmpdir):
+def test_content_source_without_extension(tmpdir, bzip1, bzip2):
     path1 = str(tmpdir.join('test1'))
     path2 = str(tmpdir.join('test2'))
-    shutil.copy(TEST_FILE1_PATH, path1)
-    shutil.copy(TEST_FILE2_PATH, path2)
+    shutil.copy(bzip1.path, path1)
+    shutil.copy(bzip2.path, path2)
     bzip1 = specialize(FilesystemFile(path1))
     bzip2 = specialize(FilesystemFile(path2))
     differences = bzip1.compare(bzip2).details

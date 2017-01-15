@@ -22,7 +22,9 @@ import pytest
 from diffoscope.config import Config
 from diffoscope.comparators.image import ICOImageFile
 
-from utils import skip_unless_tools_exist, data, load_fixture
+from utils import skip_unless_tools_exist, data, load_fixture, \
+    skip_unless_tool_is_at_least
+from test_jpeg_image import identify_version
 
 image1 = load_fixture(data('test1.ico'))
 image2 = load_fixture(data('test2.ico'))
@@ -50,6 +52,7 @@ def differences_meta(image1_meta, image2_meta):
     return image1_meta.compare(image2_meta).details
 
 @skip_unless_tools_exist('img2txt', 'identify')
+@skip_unless_tool_is_at_least('identify', identify_version, '6.9.6')
 def test_diff_meta(differences_meta):
     expected_diff = open(data('ico_image_meta_expected_diff')).read()
     assert differences_meta[-1].unified_diff == expected_diff

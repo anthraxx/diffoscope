@@ -18,17 +18,25 @@
 # along with diffoscope.  If not, see <https://www.gnu.org/licenses/>.
 
 import pytest
+import subprocess
 
 from diffoscope.config import Config
 from diffoscope.comparators.image import JPEGImageFile
 from diffoscope.comparators.missing_file import MissingFile
 
-from utils import skip_unless_tools_exist, data, load_fixture
+from utils import skip_unless_tools_exist, data, load_fixture, \
+    skip_unless_tool_is_at_least
 
 image1 = load_fixture(data('test1.jpg'))
 image2 = load_fixture(data('test2.jpg'))
 image1_meta = load_fixture(data('test1_meta.jpg'))
 image2_meta = load_fixture(data('test2_meta.jpg'))
+
+def identify_version():
+    out = subprocess.check_output(['identify', '-version'])
+    # First line is expected to look like
+    # "Version: ImageMagick 6.9.6-6 Q16 x86_64 20161125 ..."
+    return out.decode('utf-8').splitlines()[0].split()[2].strip()
 
 def test_identification(image1):
     assert isinstance(image1, JPEGImageFile)
@@ -58,6 +66,7 @@ def differences_meta(image1_meta, image2_meta):
     return image1_meta.compare(image2_meta).details
 
 @skip_unless_tools_exist('img2txt', 'identify')
+@skip_unless_tool_is_at_least('identify', identify_version, '6.9.6')
 def test_diff_meta(differences_meta):
     expected_diff = open(data('jpeg_image_meta_expected_diff')).read()
     assert differences_meta[-1].unified_diff == expected_diff

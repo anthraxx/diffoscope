@@ -25,7 +25,3 @@ from .gzip import GzipFile
 
 class IpkFile(GzipFile):
     RE_FILE_EXTENSION = re.compile('\.ipk$')
-
-    @staticmethod
-    def recognizes(file):
-        return IpkFile.RE_FILE_EXTENSION.search(file.name)

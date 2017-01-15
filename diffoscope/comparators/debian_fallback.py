@@ -25,10 +25,6 @@ from .text import TextFile
 class DotChangesFile(TextFile):
     RE_FILE_EXTENSION = re.compile(r'\.changes$')
 
-    @staticmethod
-    def recognizes(file):
-        return DotChangesFile.RE_FILE_EXTENSION.search(file.name)
-
     def compare(self, other, source=None):
         difference = super().compare(other)
         if not difference:
@@ -39,10 +35,6 @@ class DotChangesFile(TextFile):
 class DotDscFile(TextFile):
     RE_FILE_EXTENSION = re.compile(r'\.dsc$')
 
-    @staticmethod
-    def recognizes(file):
-        return DotDscFile.RE_FILE_EXTENSION.search(file.name)
-
     def compare(self, other, source=None):
         difference = super().compare(other)
         if not difference:
@@ -52,10 +44,6 @@ class DotDscFile(TextFile):
 
 class DotBuildinfoFile(TextFile):
     RE_FILE_EXTENSION = re.compile(r'\.buildinfo$')
-
-    @staticmethod
-    def recognizes(file):
-        return DotBuildinfoFile.RE_FILE_EXTENSION.search(file.name)
 
     def compare(self, other, source=None):
         difference = super().compare(other)

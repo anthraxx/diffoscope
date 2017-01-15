@@ -90,8 +90,9 @@ class ApkFile(File):
             ApkFile.RE_FILE_EXTENSION.search(file.name)
 
     def compare_details(self, other, source=None):
-        zipinfo_difference = Difference.from_command(Zipinfo, self.path, other.path) or \
-                             Difference.from_command(ZipinfoVerbose, self.path, other.path)
+        zipinfo_difference = \
+            Difference.from_command(Zipinfo, self.path, other.path) or \
+            Difference.from_command(ZipinfoVerbose, self.path, other.path)
         return [zipinfo_difference]
 
 

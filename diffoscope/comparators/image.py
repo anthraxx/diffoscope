@@ -87,7 +87,8 @@ class JPEGImageFile(File):
     def compare_details(self, other, source=None):
         return [
             Difference.from_command(Img2Txt, self.path, other.path),
-            Difference.from_command(Identify, self.path, other.path),
+            Difference.from_command(Identify,self.path, other.path,
+                                    source='Image metadata'),
         ]
 
 class ICOImageFile(File):
@@ -106,7 +107,8 @@ class ICOImageFile(File):
 
         return [
             Difference.from_command(Img2Txt, *xs),
-            Difference.from_command(Identify, self.path, other.path),
+            Difference.from_command(Identify, self.path, other.path,
+                                    source='Image metadata'),
         ]
 
     @staticmethod

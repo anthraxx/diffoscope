@@ -80,10 +80,6 @@ class Identify(Command):
 class JPEGImageFile(File):
     RE_FILE_TYPE = re.compile(r'\bJPEG image data\b')
 
-    @staticmethod
-    def recognizes(file):
-        return JPEGImageFile.RE_FILE_TYPE.search(file.magic_file_type)
-
     def compare_details(self, other, source=None):
         return [
             Difference.from_command(Img2Txt, self.path, other.path),
@@ -97,10 +93,6 @@ class JPEGImageFile(File):
 
 class ICOImageFile(File):
     RE_FILE_TYPE = re.compile(r'\bMS Windows icon resource\b')
-
-    @staticmethod
-    def recognizes(file):
-        return ICOImageFile.RE_FILE_TYPE.search(file.magic_file_type)
 
     def compare_details(self, other, source=None):
         differences = []

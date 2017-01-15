@@ -38,3 +38,7 @@ def data(filename):
         'data',
         filename,
     )
+
+
+def load_fixture(filename):
+    return init_fixture(data(filename))

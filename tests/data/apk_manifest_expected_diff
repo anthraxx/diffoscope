@@ -1,0 +1,11 @@
+@@ -1,9 +1,9 @@
+ <?xml version="1.0" encoding="utf-8"?>
+-<manifest android:versionCode="1" android:versionName="1.0" package="com.any.any" platformBuildVersionCode="24" platformBuildVersionName="7.0.0"
++<manifest android:versionCode="2" android:versionName="2.0" package="com.any.any" platformBuildVersionCode="24" platformBuildVersionName="7.0.0"
+   xmlns:android="http://schemas.android.com/apk/res/android">
+     <uses-permission android:name="android.permission.INTERNET" />
+     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+     <application>
+         <activity android:name="com.any.any.SomeActivity">
+             <intent-filter>

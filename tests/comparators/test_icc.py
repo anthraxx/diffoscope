@@ -23,12 +23,12 @@ from diffoscope.config import Config
 from diffoscope.comparators.icc import IccFile
 from diffoscope.comparators.missing_file import MissingFile
 
-from utils.data import data, load_fixture
+from utils.data import data, init_fixture
 from utils.tools import skip_unless_tools_exist
 
 
-icc1 = load_fixture(data('test1.icc'))
-icc2 = load_fixture(data('test2.icc'))
+icc1 = init_fixture(data('test1.icc'))
+icc2 = init_fixture(data('test2.icc'))
 
 def test_identification(icc1):
     assert isinstance(icc1, IccFile)

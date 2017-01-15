@@ -25,7 +25,7 @@ from diffoscope.comparators.binary import FilesystemFile
 from diffoscope.comparators.utils.specialize import specialize
 
 
-def load_fixture(filename):
+def init_fixture(filename):
     return pytest.fixture(
         lambda: specialize(FilesystemFile(filename))
     )

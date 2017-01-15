@@ -21,13 +21,13 @@ import pytest
 
 from diffoscope.comparators.sqlite import Sqlite3Database
 
-from utils.data import data, load_fixture
+from utils.data import data, init_fixture
 from utils.tools import skip_unless_tools_exist
 from utils.nonexisting import assert_non_existing
 
 
-sqlite3db1 = load_fixture(data('test1.sqlite3'))
-sqlite3db2 = load_fixture(data('test2.sqlite3'))
+sqlite3db1 = init_fixture(data('test1.sqlite3'))
+sqlite3db2 = init_fixture(data('test2.sqlite3'))
 
 def test_identification(sqlite3db1):
     assert isinstance(sqlite3db1, Sqlite3Database)

@@ -21,12 +21,12 @@ import pytest
 
 from diffoscope.comparators.apk import ApkFile
 
-from utils.data import data, load_fixture
+from utils.data import data, init_fixture
 from utils.tools import skip_unless_tools_exist
 from utils.nonexisting import assert_non_existing
 
-apk1 = load_fixture(data('test1.apk'))
-apk2 = load_fixture(data('test2.apk'))
+apk1 = init_fixture(data('test1.apk'))
+apk2 = init_fixture(data('test2.apk'))
 
 def test_identification(apk1):
     assert isinstance(apk1, ApkFile)

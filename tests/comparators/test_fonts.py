@@ -23,12 +23,12 @@ from diffoscope.config import Config
 from diffoscope.comparators.fonts import TtfFile
 from diffoscope.comparators.missing_file import MissingFile
 
-from utils.data import data, load_fixture
+from utils.data import data, init_fixture
 from utils.tools import skip_unless_tools_exist
 
 
-ttf1 = load_fixture(data('Samyak-Malayalam1.ttf'))
-ttf2 = load_fixture(data('Samyak-Malayalam2.ttf'))
+ttf1 = init_fixture(data('Samyak-Malayalam1.ttf'))
+ttf2 = init_fixture(data('Samyak-Malayalam2.ttf'))
 
 def test_identification(ttf1):
     assert isinstance(ttf1, TtfFile)

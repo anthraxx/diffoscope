@@ -23,7 +23,7 @@ from diffoscope.config import Config
 from diffoscope.comparators.mono import MonoExeFile
 from diffoscope.comparators.missing_file import MissingFile
 
-from utils.data import data, load_fixture
+from utils.data import data, init_fixture
 from utils.tools import skip_unless_tools_exist
 
 
@@ -32,8 +32,8 @@ from utils.tools import skip_unless_tools_exist
 # echo 'public class Test { static public void Main () {} }' > test.cs
 # mcs -out:test1.exe test.cs ; sleep 2; mcs -out:test2.exe test.cs
 
-exe1 = load_fixture(data('test1.exe'))
-exe2 = load_fixture(data('test2.exe'))
+exe1 = init_fixture(data('test1.exe'))
+exe2 = init_fixture(data('test2.exe'))
 
 def test_identification(exe1):
     assert isinstance(exe1, MonoExeFile)

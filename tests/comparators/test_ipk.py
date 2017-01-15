@@ -23,11 +23,11 @@ from diffoscope.config import Config
 from diffoscope.comparators.ipk import IpkFile
 from diffoscope.comparators.missing_file import MissingFile
 
-from utils.data import data, load_fixture
+from utils.data import data, init_fixture
 
 
-ipk1 = load_fixture(data('base-files_157-r45695_ar71xx.ipk'))
-ipk2 = load_fixture(data('base-files_157-r45918_ar71xx.ipk'))
+ipk1 = init_fixture(data('base-files_157-r45695_ar71xx.ipk'))
+ipk2 = init_fixture(data('base-files_157-r45918_ar71xx.ipk'))
 
 def test_identification(ipk1):
     assert isinstance(ipk1, IpkFile)

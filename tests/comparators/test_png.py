@@ -21,13 +21,13 @@ import pytest
 
 from diffoscope.comparators.png import PngFile
 
-from utils.data import data, load_fixture
+from utils.data import data, init_fixture
 from utils.tools import skip_unless_tools_exist
 from utils.nonexisting import assert_non_existing
 
 
-png1 = load_fixture(data('test1.png'))
-png2 = load_fixture(data('test2.png'))
+png1 = init_fixture(data('test1.png'))
+png2 = init_fixture(data('test2.png'))
 
 def test_identification(png1):
     assert isinstance(png1, PngFile)

@@ -22,7 +22,7 @@ import subprocess
 
 from diffoscope.comparators.squashfs import SquashfsFile
 
-from utils.data import data, load_fixture
+from utils.data import data, init_fixture
 from utils.tools import skip_unless_tools_exist, skip_unless_tool_is_at_least
 from utils.nonexisting import assert_non_existing
 
@@ -36,8 +36,8 @@ def unsquashfs_version():
         out = e.output
     return out.decode('UTF-8').splitlines()[0].split()[2].strip()
 
-squashfs1 = load_fixture(data('test1.squashfs'))
-squashfs2 = load_fixture(data('test2.squashfs'))
+squashfs1 = init_fixture(data('test1.squashfs'))
+squashfs2 = init_fixture(data('test2.squashfs'))
 
 def test_identification(squashfs1):
     assert isinstance(squashfs1, SquashfsFile)

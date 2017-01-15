@@ -32,7 +32,7 @@ from diffoscope.comparators.utils.file import File
 from diffoscope.comparators.missing_file import MissingFile
 from diffoscope.comparators.utils.compare import Xxd
 
-from utils.data import data, load_fixture
+from utils.data import data, init_fixture
 from utils.tools import skip_unless_tools_exist
 
 
@@ -43,8 +43,8 @@ TEST_UNICODE_PATH = data('text_unicode1')
 TEST_ISO8859_PATH = data('text_iso8859')
 
 
-binary1 = load_fixture(TEST_FILE1_PATH)
-binary2 = load_fixture(TEST_FILE2_PATH)
+binary1 = init_fixture(TEST_FILE1_PATH)
+binary2 = init_fixture(TEST_FILE2_PATH)
 
 def normalize_zeros(s):
     # older xxd had one zero less.  Make sure there are always 8.

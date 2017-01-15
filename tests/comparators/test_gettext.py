@@ -24,12 +24,12 @@ from diffoscope.config import Config
 from diffoscope.comparators.missing_file import MissingFile
 from diffoscope.comparators.gettext import MoFile
 
-from utils.data import data, load_fixture
+from utils.data import data, init_fixture
 from utils.tools import skip_unless_tools_exist
 
 
-mo1 = load_fixture(data('test1.mo'))
-mo2 = load_fixture(data('test2.mo'))
+mo1 = init_fixture(data('test1.mo'))
+mo2 = init_fixture(data('test2.mo'))
 
 def test_identification(mo1):
     assert isinstance(mo1, MoFile)
@@ -47,8 +47,8 @@ def test_diff(differences):
     expected_diff = open(data('mo_expected_diff')).read()
     assert differences[0].unified_diff == expected_diff
 
-mo_no_charset = load_fixture(data('test_no_charset.mo'))
-mo_iso8859_1 = load_fixture(data('test_iso8859-1.mo'))
+mo_no_charset = init_fixture(data('test_no_charset.mo'))
+mo_iso8859_1 = init_fixture(data('test_iso8859-1.mo'))
 
 @skip_unless_tools_exist('msgunfmt')
 def test_charsets(mo_no_charset, mo_iso8859_1):

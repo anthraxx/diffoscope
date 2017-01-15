@@ -21,11 +21,11 @@ import pytest
 
 from diffoscope.comparators.git import GitIndexFile
 
-from utils.data import data, load_fixture
+from utils.data import data, init_fixture
 
 
-git1 = load_fixture(data('test1.git-index'))
-git2 = load_fixture(data('test2.git-index'))
+git1 = init_fixture(data('test1.git-index'))
+git2 = init_fixture(data('test2.git-index'))
 
 def test_identification(git1):
     assert isinstance(git1, GitIndexFile)

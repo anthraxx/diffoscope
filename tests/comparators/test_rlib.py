@@ -24,14 +24,14 @@ import subprocess
 from diffoscope.comparators.ar import ArFile
 
 from utils import diff_ignore_line_numbers
-from utils.data import data, load_fixture
+from utils.data import data, init_fixture
 from utils.tools import skip_unless_tools_exist, skip_unless_tool_is_at_least
 from utils.nonexisting import assert_non_existing
 
 
 
-rlib1 = load_fixture(data('test1.rlib'))
-rlib2 = load_fixture(data('test2.rlib'))
+rlib1 = init_fixture(data('test1.rlib'))
+rlib2 = init_fixture(data('test2.rlib'))
 
 def llvm_version():
     return subprocess.check_output(['llvm-config', '--version']).decode("utf-8").strip()

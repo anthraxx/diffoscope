@@ -23,12 +23,12 @@ from diffoscope.config import Config
 from diffoscope.comparators.tar import TarFile
 from diffoscope.comparators.missing_file import MissingFile
 
-from utils.data import data, load_fixture
+from utils.data import data, init_fixture
 from utils.nonexisting import assert_non_existing
 
 
-tar1 = load_fixture(data('test1.tar'))
-tar2 = load_fixture(data('test2.tar'))
+tar1 = init_fixture(data('test1.tar'))
+tar2 = init_fixture(data('test2.tar'))
 
 def test_identification(tar1):
     assert isinstance(tar1, TarFile)
@@ -61,7 +61,7 @@ def test_text_file(differences):
 def test_compare_non_existing(monkeypatch, tar1):
     assert_non_existing(monkeypatch, tar1)
 
-no_permissions_tar = load_fixture(data('no-perms.tar'))
+no_permissions_tar = init_fixture(data('no-perms.tar'))
 
 # Reported as Debian #797164. This is a good way to notice if we unpack directories
 # as we won't be able to remove files in one if we don't have write permissions.

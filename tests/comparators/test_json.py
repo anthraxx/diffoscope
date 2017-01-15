@@ -21,14 +21,14 @@ import pytest
 
 from diffoscope.comparators.json import JSONFile
 
-from utils.data import data, load_fixture
+from utils.data import data, init_fixture
 from utils.nonexisting import assert_non_existing
 
 
-json1 = load_fixture(data('test1.json'))
-json2 = load_fixture(data('test2.json'))
-json3a = load_fixture(data('order1a.json'))
-json3b = load_fixture(data('order1b.json'))
+json1 = init_fixture(data('test1.json'))
+json2 = init_fixture(data('test2.json'))
+json3a = init_fixture(data('order1a.json'))
+json3b = init_fixture(data('order1b.json'))
 
 def test_identification(json1):
     assert isinstance(json1, JSONFile)

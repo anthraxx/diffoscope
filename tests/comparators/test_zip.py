@@ -21,13 +21,13 @@ import pytest
 
 from diffoscope.comparators.zip import ZipFile, MozillaZipFile
 
-from utils.data import data, load_fixture
+from utils.data import data, init_fixture
 from utils.tools import skip_unless_tools_exist
 from utils.nonexisting import assert_non_existing
 
 
-zip1 = load_fixture(data('test1.zip'))
-zip2 = load_fixture(data('test2.zip'))
+zip1 = init_fixture(data('test1.zip'))
+zip2 = init_fixture(data('test2.zip'))
 
 def test_identification(zip1):
     assert isinstance(zip1, ZipFile)
@@ -59,8 +59,8 @@ def test_compare_non_existing(monkeypatch, zip1):
 TEST_MOZZIP1_PATH = data('test1.mozzip')
 TEST_MOZZIP2_PATH = data('test2.mozzip')
 
-mozzip1 = load_fixture(TEST_MOZZIP1_PATH)
-mozzip2 = load_fixture(TEST_MOZZIP2_PATH)
+mozzip1 = init_fixture(TEST_MOZZIP1_PATH)
+mozzip2 = init_fixture(TEST_MOZZIP2_PATH)
 
 def test_mozzip_identification(mozzip1):
     assert isinstance(mozzip1, MozillaZipFile)

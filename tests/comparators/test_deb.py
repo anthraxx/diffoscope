@@ -27,11 +27,11 @@ from diffoscope.comparators.binary import FilesystemFile
 from diffoscope.comparators.missing_file import MissingFile
 from diffoscope.comparators.utils.specialize import specialize
 
-from utils.data import data, load_fixture
+from utils.data import data, init_fixture
 
 
-deb1 = load_fixture(data('test1.deb'))
-deb2 = load_fixture(data('test2.deb'))
+deb1 = init_fixture(data('test1.deb'))
+deb2 = init_fixture(data('test2.deb'))
 
 def test_identification(deb1):
     assert isinstance(deb1, DebFile)

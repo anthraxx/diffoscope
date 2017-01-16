@@ -1,3 +1,52 @@
+diffoscope (68) unstable; urgency=medium
+
+  [ Chris Lamb ]
+
+  * Don't blow up if directory containing ELF debug symbols already exists.
+    (Closes: #850807)
+  * Fix .APK extration when provided with absolute filenames.
+    (Closes: #850485)
+  * Support comparing .ico files using img2txt. (Closes: #850730)
+  * comparators.utils.file: If we don't have an archive-extraction tool (eg.
+    apktool), don't blow up when attempting to unpack it.
+  * Include magic file type when we know the file format but can't find
+    file-specific details. (Closes: #850850)
+  * Ensure fake "APK metadata" file appears first, fixing non-deterministic
+    tests/output.
+  * Correctly escape value of href="" elements (re. #849411)
+
+  * Optimisations:
+    - Disable profiling entirely (unless enabled) for a 2%+ optimisation
+    - Compile APK filename regex instead of generating it each loop.
+
+  * Logging:
+    - Log tempfile cleanup process
+    - Log when we add a progress observer.
+    - Drop milliseconds from log output
+
+  * Misc:
+    - Many unused import removals, indentation changes, etc.
+    - Fix duplicated word and long line errors in debian/changelog.
+    - Suggest some promotion in post-release documentation.
+
+  [ Maria Glukhova ]
+  * comparators/device: don't crash when comparing a non-device against a
+    device (Closes: #850055)
+  * Remove archive name from apktool.yml and rename it. (Closes: #850501)
+  * Zipinfo included in APK files comparison. (Closes: #850502)
+    - Add some tests for APK comparator.
+  * Add image metadata comparison. (Closes: #849395)
+  * Ensure imagemagick version is new enough for image metadata tests.
+
+  [ Mattia Rizzolo ]
+  * Skip the openssh_pub_key test if the version of ssh is < 6.9.
+  * comparators/icc: rename RE_FILE_EXTENSION to RE_FILE_TYPE, as that's what
+    the regular expression is looking for.
+  * Make use of a new mechanism to remove a bunch of recognizes() methods
+    dealing with simple RE_FILE_TYPE matching.
+
+ -- Chris Lamb <lamby@debian.org>  Mon, 16 Jan 2017 11:24:22 +1100
+
 diffoscope (67) unstable; urgency=medium
 
   [ Chris Lamb ]

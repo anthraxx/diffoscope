@@ -38,17 +38,8 @@ def specialize(file):
             with profile('recognizes', file):
                 flag = cls.recognizes(file)
         else:
-            # No recognizes() method specified, try an auto recognition
-            def search_type(file):
-                return bool(cls.RE_FILE_TYPE.search(file.magic_file_type))
-            def search_ext(file):
-                return bool(cls.RE_FILE_EXTENSION.search(file.name))
-            if hasattr(cls, 'RE_FILE_TYPE') and hasattr(cls, 'RE_FILE_EXTENSION'):
-                flag = search_type(file) and search_ext(file)
-            elif hasattr(cls, 'RE_FILE_TYPE'):
-                flag = search_type(file)
-            elif hasattr(cls, 'RE_FILE_EXTENSION'):
-                flag = search_ext(file)
+            flag = cls.RE_FILE_TYPE.search(file.magic_file_type) and \
+                cls.RE_FILE_EXTENSION.search(file.name)
 
         if not flag:
             continue

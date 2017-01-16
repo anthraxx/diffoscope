@@ -27,7 +27,6 @@ import argparse
 import traceback
 
 from . import VERSION
-from .exc import RequiredToolNotFound
 from .tools import tool_required, OS_NAMES, get_current_os
 from .config import Config
 from .locale import set_locale
@@ -36,6 +35,7 @@ from .progress import ProgressManager, Progress
 from .profiling import ProfileManager, profile
 from .tempfiles import clean_all_temp_files
 from .difference import Difference
+from .external_tools import EXTERNAL_TOOLS
 from .presenters.html import JQUERY_SYSTEM_LOCATIONS
 from .presenters.utils import output_all
 from .comparators.utils.compare import compare_root_paths
@@ -199,7 +199,7 @@ class ListToolsAction(argparse.Action):
         for os in os_list:
             print("Available-in-{}-packages: ".format(OS_NAMES.get(os, os)), end='')
             print(', '.join(sorted(filter(None, {
-                RequiredToolNotFound.PROVIDERS.get(k, {}).get(os, None)
+                EXTERNAL_TOOLS.get(k, {}).get(os, None)
                 for k in tool_required.all
             }))))
         sys.exit(0)

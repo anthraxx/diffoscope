@@ -26,6 +26,8 @@ import collections
 from diffoscope.tools import tool_required
 from diffoscope.difference import Difference
 
+
+from .utils.file import File
 from .utils.archive import Archive
 from .utils.filenames import get_compressed_content_name
 
@@ -56,7 +58,7 @@ class GzipContainer(Archive):
         return dest_path
 
 
-class GzipFile(object):
+class GzipFile(File):
     CONTAINER_CLASS = GzipContainer
     RE_FILE_TYPE = re.compile(r'^gzip compressed data\b')
 

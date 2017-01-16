@@ -25,7 +25,8 @@ from diffoscope.comparators.ar import ArFile
 
 from utils import diff_ignore_line_numbers
 from utils.data import data, load_fixture
-from utils.tools import skip_unless_tools_exist, skip_unless_tool_is_at_least
+from utils.tools import skip_unless_tools_exist, skip_unless_tool_is_at_least, \
+    skip_if_binutils_does_not_support_x86
 from utils.nonexisting import assert_non_existing
 
 
@@ -52,6 +53,7 @@ def test_num_items(differences):
     assert len(differences) == 4
 
 @skip_unless_tools_exist('nm')
+@skip_if_binutils_does_not_support_x86()
 def test_item0_armap(differences):
     assert differences[0].source1 == 'nm -s {}'
     assert differences[0].source2 == 'nm -s {}'
@@ -59,6 +61,7 @@ def test_item0_armap(differences):
     assert differences[0].unified_diff == expected_diff
 
 @skip_unless_tools_exist('nm')
+@skip_if_binutils_does_not_support_x86()
 def test_item1_elf(differences):
     assert differences[1].source1 == 'alloc_system-d16b8f0e.0.o'
     assert differences[1].source2 == 'alloc_system-d16b8f0e.0.o'

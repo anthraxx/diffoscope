@@ -19,9 +19,12 @@
 # along with diffoscope.  If not, see <https://www.gnu.org/licenses/>.
 
 import pytest
+import functools
+import subprocess
 
 from distutils.spawn import find_executable
 from distutils.version import LooseVersion
+
 
 def tools_missing(*required):
     return not required or any(find_executable(x) is None for x in required)
@@ -41,3 +44,18 @@ def skip_unless_tool_is_at_least(tool, actual_ver, min_ver, vcls=LooseVersion):
         vcls(str(actual_ver)) < vcls(str(min_ver)),
         reason="requires {} >= {} ({} detected)".format(tool, min_ver, actual_ver)
     )
+
+def skip_if_binutils_does_not_support_x86():
+    if tools_missing('objdump'):
+        return skip_unless_tools_exist('objdump')
+
+    return pytest.mark.skipif(
+       'elf64-x86-64' not in get_supported_elf_formats(),
+        reason="requires a binutils capable of reading x86-64 binaries"
+    )
+
+@functools.lru_cache()
+def get_supported_elf_formats():
+    return set(subprocess.check_output(
+        ('objdump', '--info'),
+    ).decode('utf-8').splitlines())

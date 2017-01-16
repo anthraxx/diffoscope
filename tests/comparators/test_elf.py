@@ -29,7 +29,8 @@ from diffoscope.comparators.missing_file import MissingFile
 from diffoscope.comparators.utils.specialize import specialize
 
 from utils.data import data, load_fixture
-from utils.tools import skip_unless_tools_exist
+from utils.tools import skip_unless_tools_exist, \
+    skip_if_binutils_does_not_support_x86
 
 
 try:
@@ -53,6 +54,7 @@ def obj_differences(obj1, obj2):
     return obj1.compare(obj2).details
 
 @skip_unless_tools_exist('readelf')
+@skip_if_binutils_does_not_support_x86()
 def test_obj_compare_non_existing(monkeypatch, obj1):
     monkeypatch.setattr(Config(), 'new_file', True)
     difference = obj1.compare(MissingFile('/nonexisting', obj1))
@@ -60,6 +62,7 @@ def test_obj_compare_non_existing(monkeypatch, obj1):
     assert len(difference.details) > 0
 
 @skip_unless_tools_exist('readelf')
+@skip_if_binutils_does_not_support_x86()
 def test_diff(obj_differences):
     assert len(obj_differences) == 1
     expected_diff = open(data('elf_obj_expected_diff')).read()
@@ -88,6 +91,7 @@ def lib_differences(lib1, lib2):
     return lib1.compare(lib2).details
 
 @skip_unless_tools_exist('readelf', 'objdump')
+@skip_if_binutils_does_not_support_x86()
 def test_lib_differences(lib_differences):
     assert len(lib_differences) == 2
     assert lib_differences[0].source1 == 'file list'
@@ -98,6 +102,7 @@ def test_lib_differences(lib_differences):
     assert lib_differences[1].unified_diff == expected_objdump_diff
 
 @skip_unless_tools_exist('readelf', 'objdump')
+@skip_if_binutils_does_not_support_x86()
 def test_lib_compare_non_existing(monkeypatch, lib1):
     monkeypatch.setattr(Config(), 'new_file', True)
     difference = lib1.compare(MissingFile('/nonexisting', lib1))

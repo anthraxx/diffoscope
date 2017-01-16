@@ -139,7 +139,7 @@ def test_html_option_with_file(tmpdir, capsys):
 
 def test_htmldir_option(tmpdir, capsys):
     html_dir = os.path.join(str(tmpdir), 'target')
-    args = ['--html-dir', html_dir, *TEST_TARS]
+    args = ['--html-dir', html_dir, '--jquery', 'disable', *TEST_TARS]
     with pytest.raises(SystemExit) as excinfo:
         main(args)
     assert excinfo.value.code == 1

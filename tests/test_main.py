@@ -136,6 +136,19 @@ def test_html_option_with_file(tmpdir, capsys):
     with open(report_path, 'r', encoding='utf-8') as f:
         assert 'meta name="generator" content="diffoscope"' in f.read()
 
+def test_htmldir_option(tmpdir, capsys):
+    html_dir = os.path.join(str(tmpdir), 'target')
+    args = ['--html-dir', html_dir, TEST_TAR1_PATH, TEST_TAR2_PATH]
+    with pytest.raises(SystemExit) as excinfo:
+        main(args)
+    assert excinfo.value.code == 1
+    out, err = capsys.readouterr()
+    assert err == ''
+    assert out == ''
+    assert os.path.isdir(html_dir)
+    with open(os.path.join(html_dir, 'index.html'), 'r', encoding='utf-8') as f:
+        assert 'meta name="generator" content="diffoscope"' in f.read()
+
 def test_html_option_with_stdout(capsys):
     args = ['--html', '-', TEST_TAR1_PATH, TEST_TAR2_PATH]
     with pytest.raises(SystemExit) as excinfo:

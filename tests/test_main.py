@@ -64,9 +64,10 @@ def test_non_existing_files_with_new_file(capsys):
 
 TEST_TAR1_PATH = os.path.join(os.path.dirname(__file__), 'data/test1.tar')
 TEST_TAR2_PATH = os.path.join(os.path.dirname(__file__), 'data/test2.tar')
+TEST_TARS = (TEST_TAR1_PATH, TEST_TAR2_PATH)
 
 def test_remove_temp_files_on_sigterm(tmpdir, monkeypatch):
-    args = [TEST_TAR1_PATH, TEST_TAR2_PATH]
+    args = [*TEST_TARS]
     pid = os.fork()
     if pid == 0:
         def suicide(*args):
@@ -82,7 +83,7 @@ def test_remove_temp_files_on_sigterm(tmpdir, monkeypatch):
         assert os.listdir(str(tmpdir)) == []
 
 def test_ctrl_c_handling(tmpdir, monkeypatch, capsys):
-    args = [TEST_TAR1_PATH, TEST_TAR2_PATH]
+    args = [*TEST_TARS]
     monkeypatch.setattr('tempfile.tempdir', str(tmpdir))
     def interrupt(*args):
         raise KeyboardInterrupt
@@ -96,7 +97,7 @@ def test_ctrl_c_handling(tmpdir, monkeypatch, capsys):
 
 def test_text_option_with_file(tmpdir, capsys):
     report_path = str(tmpdir.join('report.txt'))
-    args = ['--text', report_path, TEST_TAR1_PATH, TEST_TAR2_PATH]
+    args = ['--text', report_path, *TEST_TARS]
     with pytest.raises(SystemExit) as excinfo:
         main(args)
     assert excinfo.value.code == 1
@@ -107,7 +108,7 @@ def test_text_option_with_file(tmpdir, capsys):
         assert f.read().startswith('--- ')
 
 def test_text_option_with_stdiout(capsys):
-    args = ['--text', '-', TEST_TAR1_PATH, TEST_TAR2_PATH]
+    args = ['--text', '-', *TEST_TARS]
     with pytest.raises(SystemExit) as excinfo:
         main(args)
     assert excinfo.value.code == 1
@@ -116,7 +117,7 @@ def test_text_option_with_stdiout(capsys):
     assert out.startswith('--- ')
 
 def test_no_report_option(capsys):
-    args = [TEST_TAR1_PATH, TEST_TAR2_PATH]
+    args = [*TEST_TARS]
     with pytest.raises(SystemExit) as excinfo:
         main(args)
     assert excinfo.value.code == 1
@@ -126,7 +127,7 @@ def test_no_report_option(capsys):
 
 def test_html_option_with_file(tmpdir, capsys):
     report_path = str(tmpdir.join('report.html'))
-    args = ['--html', report_path, TEST_TAR1_PATH, TEST_TAR2_PATH]
+    args = ['--html', report_path, *TEST_TARS]
     with pytest.raises(SystemExit) as excinfo:
         main(args)
     assert excinfo.value.code == 1
@@ -138,7 +139,7 @@ def test_html_option_with_file(tmpdir, capsys):
 
 def test_htmldir_option(tmpdir, capsys):
     html_dir = os.path.join(str(tmpdir), 'target')
-    args = ['--html-dir', html_dir, TEST_TAR1_PATH, TEST_TAR2_PATH]
+    args = ['--html-dir', html_dir, *TEST_TARS]
     with pytest.raises(SystemExit) as excinfo:
         main(args)
     assert excinfo.value.code == 1
@@ -150,7 +151,7 @@ def test_htmldir_option(tmpdir, capsys):
         assert 'meta name="generator" content="diffoscope"' in f.read()
 
 def test_html_option_with_stdout(capsys):
-    args = ['--html', '-', TEST_TAR1_PATH, TEST_TAR2_PATH]
+    args = ['--html', '-', *TEST_TARS]
     with pytest.raises(SystemExit) as excinfo:
         main(args)
     assert excinfo.value.code == 1

@@ -26,7 +26,6 @@ from diffoscope.comparators.missing_file import MissingFile
 
 from utils.data import data, load_fixture
 from utils.tools import skip_unless_tools_exist, skip_unless_tool_is_at_least
-from utils.nonexisting import assert_non_existing
 
 from test_java import javap_version
 

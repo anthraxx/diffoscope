@@ -19,7 +19,6 @@
 
 import pytest
 
-from diffoscope.config import Config
 from diffoscope.comparators.image import ICOImageFile
 
 from utils.data import data, load_fixture

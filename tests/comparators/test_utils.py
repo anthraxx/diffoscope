@@ -26,14 +26,13 @@ from diffoscope.comparators.utils.command import Command
 
 from utils.data import data, load_fixture
 from utils.tools import tools_missing, skip_unless_tools_exist
-from utils.nonexisting import assert_non_existing
-
 
 try:
     import tlsh # noqa
     miss_tlsh = False
 except ImportError:
     miss_tlsh = True
+
 
 fuzzy_tar1 = load_fixture('fuzzy1.tar')
 fuzzy_tar2 = load_fixture('fuzzy2.tar')
@@ -76,7 +75,6 @@ def test_fuzzy_matching(fuzzy_tar1, fuzzy_tar2):
 def test_fuzzy_matching_only_once(fuzzy_tar1, fuzzy_tar3):
     differences = fuzzy_tar1.compare(fuzzy_tar3).details
     assert len(differences) == 2
-    expected_diff = codecs.open(data('text_iso8859_expected_diff'), encoding='utf-8').read()
 
 fuzzy_tar_in_tar1 = load_fixture('fuzzy-tar-in-tar1.tar')
 fuzzy_tar_in_tar2 = load_fixture('fuzzy-tar-in-tar2.tar')

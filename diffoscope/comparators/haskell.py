@@ -47,6 +47,27 @@ else:
     HI_MAGIC = HI_MAGIC_64
 
 class HiFile(File):
+    """
+    Here is how an example .hi file starts:
+    % hexdump -C tests/data/test1.hi | head -n 1
+    00000000  01 fa ce 64 00 00 00 00  00 00 00 00 04 00 00 00  |...d............|
+              ~~~~~~~~~~~ ~~~~~~~~~~~~~~~~~~~~~~~~ ~~ ~~~~~~~~~~
+                HI_MAGIC    zero padding (used to  ↑↑  int('7')
+                             be a field here)      ||
+                                                   ||
+                           ·~~~~~~~~~~~~~~~~~~~~~~~||
+                           | version string length ||
+                           ·~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    00000010  37 00 00 00 31 00 00 00  30 00 00 00 33 00 00 00  |7...1...0...3...|
+            ~~~~ ~~~~~~~~~~~ ~~~~~~~~~~~~ ~~~~~~~~~~~
+                  int('1')     int('0')    int('3')
+
+
+    So the version of this file has 4 characters, and it's 7103.
+    Note how all this information is store as big endian.
+
+    """
     RE_FILE_EXTENSION = re.compile(r'\.(p_|dyn_)?hi$')
 
     @staticmethod

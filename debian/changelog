@@ -1,3 +1,31 @@
+diffoscope (69) unstable; urgency=medium
+
+  [ Chris Lamb ]
+  * Skip tests if binutils can't handle the object file format. Based on a
+    patch by Mattia Rizzolo. (Closes: #851588)
+  * Move external tool definitions out of misleading "exceptions" module.
+  * Save some complicated logic by setting default RE_FILE_{EXTENSION,TYPE}
+  * Test --html-dir option.
+  * Misc:
+    * Add missing `data` imports.
+    - Inherit GzipFile from File, not object.
+    - Remove unused imports in comparator tests.
+    - Consistently space out environment exports in debian/rules.
+
+  [ Mattia Rizzolo ]
+  * If both RE_FILE_TYPE and RE_FILE_EXTENSION are defined, AND them
+  * Use the path attribute of the specialized file instead of the original name
+    in tests.
+  * tests/main:
+    * Shorten argument lists by unpacking common arguments.
+    * Disable jQuery while testing --htmldir so tests can run without it.
+  * tests/comparators:
+    * Refactor into packages with smaller modules.
+    * Rename load_fixture() to init_fixture().
+    * Add a load_fixture() function wrapping both init_fixture() and data().
+
+ -- Chris Lamb <lamby@debian.org>  Tue, 17 Jan 2017 11:33:54 +1100
+
 diffoscope (68) unstable; urgency=medium
 
   [ Chris Lamb ]

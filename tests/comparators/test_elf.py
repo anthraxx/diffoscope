@@ -127,6 +127,7 @@ def dbgsym_differences(dbgsym_dir1, dbgsym_dir2):
     return dbgsym_dir1.compare(dbgsym_dir2)
 
 @skip_unless_tools_exist('readelf', 'objdump', 'objcopy')
+@skip_if_binutils_does_not_support_x86()
 @pytest.mark.skipif(miss_debian_module, reason='debian module is not installed')
 def test_differences_with_dbgsym(dbgsym_differences):
     output_text(dbgsym_differences, print)
@@ -137,6 +138,7 @@ def test_differences_with_dbgsym(dbgsym_differences):
     assert 'test-cases/dbgsym/package/test.c:2' in bin_details.details[1].unified_diff
 
 @skip_unless_tools_exist('readelf', 'objdump', 'objcopy')
+@skip_if_binutils_does_not_support_x86()
 @pytest.mark.skipif(miss_debian_module, reason='debian module is not installed')
 def test_original_gnu_debuglink(dbgsym_differences):
     bin_details = dbgsym_differences.details[2].details[0].details[0]

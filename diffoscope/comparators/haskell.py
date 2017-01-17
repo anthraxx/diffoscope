@@ -39,8 +39,8 @@ class ShowIface(Command):
         return ['ghc', '--show-iface', self.path]
 
 
-HI_MAGIC_32 = struct.pack('!I', 0x1face)
-HI_MAGIC_64 = struct.pack('!I', 0x1face64)
+HI_MAGIC_32 = struct.pack('>I', 0x1face)
+HI_MAGIC_64 = struct.pack('>I', 0x1face64)
 if platform.architecture()[0] == '32bit':
     HI_MAGIC = HI_MAGIC_32
 else:
@@ -77,11 +77,18 @@ class HiFile(File):
                 fp.read(4)
             elif buf == HI_MAGIC_64:
                 fp.read(8)
-            # skip way_descr
-            fp.read(4)
-            # now read version
-            buf = fp.read(16)
-            version_found = ''.join(map(chr, struct.unpack_from('=3IB', buf)))
+            # Read version, which is [Char]
+            buf = fp.read(1)
+            # Small list optimisation - anything less than 0xff has its length
+            # in a single byte; everything else is 0xff followed by the 32-bit
+            # length (big-endian).
+            if buf[0] == 0xff:
+                buf = fp.read(4)
+                length = struct.unpack('>I', buf)[0]
+            else:
+                length = buf[0]
+            # Now read characters; each is 32-bit big-endian.
+            version_found = ''.join([chr(struct.unpack('>I', fp.read(4))[0]) for _ in range(length)])
             if version_found != HiFile.hi_version:
                 logger.debug('Haskell version mismatch. Found %s instead of %s.',
                              version_found, HiFile.hi_version)

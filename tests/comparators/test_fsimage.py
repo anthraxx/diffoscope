@@ -23,7 +23,7 @@ from diffoscope.config import Config
 from diffoscope.comparators.missing_file import MissingFile
 from diffoscope.comparators.fsimage import FsImageFile
 
-from utils.data import load_fixture
+from utils.data import data, load_fixture
 from utils.tools import skip_unless_tools_exist
 
 

@@ -22,7 +22,7 @@ import subprocess
 
 from diffoscope.comparators.squashfs import SquashfsFile
 
-from utils.data import load_fixture
+from utils.data import data, load_fixture
 from utils.tools import skip_unless_tools_exist, skip_unless_tool_is_at_least
 from utils.nonexisting import assert_non_existing
 

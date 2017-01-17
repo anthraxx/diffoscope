@@ -19,7 +19,7 @@
 
 import pytest
 
-from utils.data import load_fixture
+from utils.data import data, load_fixture
 from utils.tools import skip_unless_tools_exist
 from utils.nonexisting import assert_non_existing
 

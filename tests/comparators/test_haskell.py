@@ -22,7 +22,7 @@ import pytest
 from diffoscope.comparators.binary import FilesystemFile
 from diffoscope.comparators.haskell import HiFile
 
-from utils.data import load_fixture
+from utils.data import data, load_fixture
 from utils.tools import skip_unless_tools_exist
 
 

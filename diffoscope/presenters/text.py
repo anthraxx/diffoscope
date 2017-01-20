@@ -2,8 +2,7 @@
 #
 # diffoscope: in-depth comparison of files, archives, and directories
 #
-# Copyright © 2015 Jérémy Bobbio <lunar@debian.org>
-#             2015 Helmut Grohne <helmut@subdivi.de>
+# Copyright © 2017 Chris Lamb <lamby@debian.org>
 #
 # diffoscope is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -18,50 +17,59 @@
 # You should have received a copy of the GNU General Public License
 # along with diffoscope.  If not, see <https://www.gnu.org/licenses/>.
 
-import subprocess
+import re
 import sys
 import logging
 
 from diffoscope.diff import color_unified_diff
-from diffoscope.tools import tool_required
+
+from .base import Presenter
 
 logger = logging.getLogger(__name__)
 
 
-def print_difference(difference, print_func, color=False):
-    if difference.comments:
-        for comment in difference.comments:
-            print_func(u"│┄ %s" % comment)
-    if difference.unified_diff:
-        if color:
-            diff_output = color_unified_diff(difference.unified_diff)
+class TextPresenter(Presenter):
+    PREFIX = u'│ '
+    RE_PREFIX = re.compile(r'(^|\n)')
+
+    def __init__(self, print_func, color):
+        self.print_func = print_func
+        self.color = color
+
+        super().__init__()
+
+    def visit_difference(self, difference):
+        if self.depth == 0:
+            self.output("--- {}".format(difference.source1))
+            self.output("+++ {}".format(difference.source2))
+        elif difference.source1 == difference.source2:
+            self.output(u"├── {}".format(difference.source1))
         else:
-            diff_output = difference.unified_diff
+            self.output(u"│   --- {}".format(difference.source1))
+            self.output(u"├── +++ {}".format(difference.source2))
+
+        for x in difference.comments:
+            self.output(u"│┄ {}".format(x))
+
+        diff = difference.unified_diff
+
+        if diff:
+            self.output(color_unified_diff(diff) if self.color else diff, True)
+
+    def output(self, val, raw=False):
         # As an optimisation, output as much as possible in one go to avoid
         # unnecessary splitting, interpolating, etc.
-        print_func(diff_output.replace('\n', '\n│ '))
-
-def print_details(difference, print_func, color=False):
-    if not difference.details:
-        return
-    for detail in difference.details:
-        if detail.source1 == detail.source2:
-            print_func(u"├── %s" % detail.source1)
-        else:
-            print_func(u"│   --- %s" % (detail.source1))
-            print_func(u"├── +++ %s" % (detail.source2))
-        print_difference(detail, print_func, color)
-        def new_print_func(*args, **kwargs):
-            print_func(u'│  ', *args, **kwargs)
-        print_details(detail, new_print_func, color)
-    print_func(u'╵')
+        self.print_func(self.RE_PREFIX.sub(
+            r'\1{}'.format(self.PREFIX * (self.depth + 0 if raw else -1)),
+            val,
+        ))
 
 def output_text(difference, print_func, color=False):
+    presenter = TextPresenter(print_func, color)
+
     try:
-        print_func("--- %s" % (difference.source1))
-        print_func("+++ %s" % (difference.source2))
-        print_difference(difference, print_func, color)
-        print_details(difference, print_func, color)
+        presenter.visit(difference)
     except UnicodeEncodeError:
-        logger.critical('Console is unable to print Unicode characters. Set e.g. PYTHONIOENCODING=utf-8')
+        logger.critical("Console is unable to print Unicode characters. "
+            "Set e.g. PYTHONIOENCODING=utf-8")
         sys.exit(2)

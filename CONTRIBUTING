@@ -2,15 +2,17 @@
 
 The preferred way to report bugs about diffoscope, as well as suggest fixes
 and requests for improvements, is to submit reports to the Debian bug
-tracker for the 'src:diffoscope' package.  You can do this over e-mail;
-link:https://www.debian.org/Bugs/Reporting[the bug tracker has instructions
-for sending in your report.]  If you're on a Debian-based system, you can
-install and use the 'reportbug' package to help walk you through the
-process.
+tracker for the 'diffoscope' package.  You can do this over e-mail, simply
+write an email to link:mailto:submit@bugs.debian.org with 'Source: diffoscope'
+as the very first line; there are link:https://www.debian.org/Bugs/Reporting[
+more detailed instructions available] about reporting a bug in the Debian bug
+tracker.
+If you're on a Debian-based system, you can install and use the 'reportbug'
+package to help walk you through the process.
 
 You can submit patches to the Debian bug tracker too.  Start by cloning the
-link:https://anonscm.debian.org/git/reproducible/diffoscope.git/tree/[diffoscope
-Git repository].  Make your changes and commit them as you normally would.
+link:https://anonscm.debian.org/git/reproducible/diffoscope.git/[diffoscope
+Git repository], make your changes and commit them as you normally would.
 Then you can use Git's 'format-patch' command to save your changes as a
 series of patches that can be attached to the report you submit.
 

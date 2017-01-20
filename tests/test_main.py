@@ -125,6 +125,16 @@ def test_markdown(capsys):
     assert err == ''
     assert out.startswith('# Comparing')
 
+def test_restructuredtext(capsys):
+    args = ['--restructured-text', '-', *TEST_TARS]
+    with pytest.raises(SystemExit) as excinfo:
+        main(args)
+    assert excinfo.value.code == 1
+    out, err = capsys.readouterr()
+    assert err == ''
+    assert out.startswith('=====')
+    assert "Comparing" in out
+
 def test_no_report_option(capsys):
     args = [*TEST_TARS]
     with pytest.raises(SystemExit) as excinfo:

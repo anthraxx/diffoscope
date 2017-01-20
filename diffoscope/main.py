@@ -95,6 +95,9 @@ def create_parser():
                         'installation. Known locations: %s' % ', '.join(JQUERY_SYSTEM_LOCATIONS))
     group1.add_argument('--markdown', metavar='OUTPUT_FILE', dest='markdown_output',
                         help='Write Markdown text output to given file (use - for stdout)')
+    group1.add_argument('--restructured-text', metavar='OUTPUT_FILE',
+                        dest='restructuredtext_output',
+                        help='Write RsT text output to given file (use - for stdout)')
     group1.add_argument('--profile', metavar='OUTPUT_FILE', dest='profile_output',
                         help='Write profiling info to given file (use - for stdout)')
 

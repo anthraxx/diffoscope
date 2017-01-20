@@ -27,6 +27,7 @@ from ..profiling import profile
 from .text import output_text
 from .html import output_html, output_html_directory
 from .markdown import output_markdown
+from .restructuredtext import output_restructuredtext
 
 logger = logging.getLogger(__name__)
 
@@ -51,6 +52,10 @@ def output_all(difference, parsed_args, has_differences):
         'markdown': {
             'fn': markdown,
             'target': parsed_args.markdown_output,
+        },
+        'restructuredtext': {
+            'fn': restructuredtext,
+            'target': parsed_args.restructuredtext_output,
         },
         'html_directory': {
             'fn': html_directory,
@@ -97,6 +102,10 @@ def html(difference, parsed_args, has_differences):
 def markdown(difference, parsed_args, has_differences):
     with make_printer(parsed_args.markdown_output) as fn:
         output_markdown(difference, print_func=fn)
+
+def restructuredtext(difference, parsed_args, has_differences):
+    with make_printer(parsed_args.restructuredtext_output) as fn:
+        output_restructuredtext(difference, print_func=fn)
 
 def html_directory(difference, parsed_args, has_differences):
     output_html_directory(

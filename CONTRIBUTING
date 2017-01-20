@@ -1,30 +1,32 @@
-=== Contributing code to this project
+=== Contributing to this project
 
-It's helpful to track fixes or new features via wishlist bugs against the
-'diffoscope' package, eg with the 'reportbug' tool ('devscripts' package).
+The preferred way to report bugs about diffoscope, as well as suggest fixes
+and requests for improvements, is to submit reports to the Debian bug
+tracker for the 'src:diffoscope' package.  You can do this over e-mail;
+link:https://www.debian.org/Bugs/Reporting[the bug tracker has instructions
+for sending in your report.]  If you're on a Debian-based system, you can
+install and use the 'reportbug' package to help walk you through the
+process.
 
-The code is available in the link:https://anonscm.debian.org/git/reproducible/diffoscope.git/tree/[diffoscope.git repository].
-
-Patches can be submitted as requests to pull from a publicly-visible
-git repository (this is the prefered way) communicated via IRC or mail,
-or completly via mail (using git format-patch, see below).
-If appropriate, please make a topic branch based on the 'master' branch.
-
-You can send patches or requests to the link:diffoscope@lists.reproducible-builds.org[development list],
-or to the tracking bug: <bugnumber>@bugs.debian.org.
+You can submit patches to the Debian bug tracker too.  Start by cloning the
+link:https://anonscm.debian.org/git/reproducible/diffoscope.git/tree/[diffoscope
+Git repository].  Make your changes and commit them as you normally would.
+Then you can use Git's 'format-patch' command to save your changes as a
+series of patches that can be attached to the report you submit.
 
 One possible workflow:
 ----
   git clone git://anonscm.debian.org/reproducible/diffoscope.git
+  cd diffoscope
   git checkout origin/master -b <topicname>
   # <edits>
   git commit -a
   git format-patch -M origin/master
-
-  reportbug qa.debian.org
-  # <describe the issue, attach the patch>
 ----
 
+The 'format-patch' command will make a series of '.patch' files in your
+checkout.  Attach these files to your submission in your e-mail client or
+reportbug.
 
 === Uploading the package
 

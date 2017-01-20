@@ -116,6 +116,15 @@ def test_text_option_with_stdiout(capsys):
     assert err == ''
     assert out.startswith('--- ')
 
+def test_markdown(capsys):
+    args = ['--markdown', '-', *TEST_TARS]
+    with pytest.raises(SystemExit) as excinfo:
+        main(args)
+    assert excinfo.value.code == 1
+    out, err = capsys.readouterr()
+    assert err == ''
+    assert out.startswith('# Comparing')
+
 def test_no_report_option(capsys):
     args = [*TEST_TARS]
     with pytest.raises(SystemExit) as excinfo:

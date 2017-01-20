@@ -26,6 +26,7 @@ from ..profiling import profile
 
 from .text import output_text
 from .html import output_html, output_html_directory
+from .markdown import output_markdown
 
 logger = logging.getLogger(__name__)
 
@@ -46,6 +47,10 @@ def output_all(difference, parsed_args, has_differences):
         'html': {
             'fn': html,
             'target': parsed_args.html_output,
+        },
+        'markdown': {
+            'fn': markdown,
+            'target': parsed_args.markdown_output,
         },
         'html_directory': {
             'fn': html_directory,
@@ -88,6 +93,10 @@ def html(difference, parsed_args, has_differences):
             css_url=parsed_args.css_url,
             print_func=fn,
         )
+
+def markdown(difference, parsed_args, has_differences):
+    with make_printer(parsed_args.markdown_output) as fn:
+        output_markdown(difference, print_func=fn)
 
 def html_directory(difference, parsed_args, has_differences):
     output_html_directory(

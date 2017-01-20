@@ -81,14 +81,15 @@ class HiFile(File):
                     output = subprocess.check_output(
                         ['ghc', '--numeric-version'],
                     )
+            except (OSError, subprocess.CalledProcessError):
+                HiFile.hi_version = None
+                logger.debug("Unable to read GHC version")
+            else:
                 major, minor, patch = [
                     int(x) for x in output.decode('utf-8').strip().split('.')
                 ]
                 HiFile.hi_version = '%d%02d%d' % (major, minor, patch)
                 logger.debug("Found .hi version %s", HiFile.hi_version)
-            except OSError:
-                HiFile.hi_version = None
-                logger.debug("Unable to read GHC version")
 
         if HiFile.hi_version is None:
             return False

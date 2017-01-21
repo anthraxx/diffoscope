@@ -61,10 +61,6 @@ class ZipDirectory(Directory, ArchiveMember):
     def has_same_content_as(self, other):
         return False
 
-    @contextlib.contextmanager
-    def get_content(self):
-        yield
-
     def is_directory(self):
         return True
 

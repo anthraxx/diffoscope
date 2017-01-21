@@ -57,5 +57,5 @@ class TextPresenter(Presenter):
         # unnecessary splitting, interpolating, etc.
         self.print_func(self.RE_PREFIX.sub(
             r'\1{}'.format(self.PREFIX * (self.depth + 0 if raw else -1)),
-            val,
+            val.rstrip(),
         ))

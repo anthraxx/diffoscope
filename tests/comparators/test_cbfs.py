@@ -21,7 +21,6 @@ import struct
 import pytest
 import subprocess
 
-from diffoscope.presenters.text import output_text
 from diffoscope.comparators.cbfs import CbfsFile
 from diffoscope.comparators.binary import FilesystemFile
 from diffoscope.comparators.utils.specialize import specialize
@@ -73,7 +72,6 @@ def test_no_differences(rom1):
 @pytest.fixture
 def differences(rom1, rom2):
     difference = rom1.compare(rom2)
-    output_text(difference, print_func=print)
     return difference.details
 
 @skip_unless_tools_exist('cbfstool')

@@ -21,7 +21,6 @@ import os
 import shutil
 import pytest
 
-from diffoscope.presenters.text import output_text
 from diffoscope.comparators.directory import compare_directories
 
 from utils.data import data
@@ -55,12 +54,10 @@ def differences(tmpdir):
     return compare_directories(str(tmpdir.join('a')), str(tmpdir.join('b'))).details
 
 def test_content(differences):
-    output_text(differences[0], print_func=print)
     assert differences[0].source1 == 'dir'
     assert differences[0].details[0].source1 == 'text'
     expected_diff = open(data('text_ascii_expected_diff')).read()
     assert differences[0].details[0].unified_diff == expected_diff
 
 def test_stat(differences):
-    output_text(differences[0], print_func=print)
     assert 'stat' in differences[0].details[0].details[0].source1

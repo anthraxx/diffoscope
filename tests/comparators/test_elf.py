@@ -21,7 +21,6 @@ import pytest
 import os.path
 
 from diffoscope.config import Config
-from diffoscope.presenters.text import output_text
 from diffoscope.comparators.elf import ElfFile, StaticLibFile
 from diffoscope.comparators.binary import FilesystemFile
 from diffoscope.comparators.directory import FilesystemDirectory
@@ -130,7 +129,6 @@ def dbgsym_differences(dbgsym_dir1, dbgsym_dir2):
 @skip_if_binutils_does_not_support_x86()
 @pytest.mark.skipif(miss_debian_module, reason='debian module is not installed')
 def test_differences_with_dbgsym(dbgsym_differences):
-    output_text(dbgsym_differences, print)
     assert dbgsym_differences.details[2].source1 == 'data.tar.xz'
     bin_details = dbgsym_differences.details[2].details[0].details[0]
     assert bin_details.source1 == './usr/bin/test'

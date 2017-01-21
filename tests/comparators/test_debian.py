@@ -21,7 +21,6 @@ import shutil
 import pytest
 
 from diffoscope.config import Config
-from diffoscope.presenters.text import output_text
 from diffoscope.comparators.binary import FilesystemFile
 from diffoscope.comparators.missing_file import MissingFile
 from diffoscope.comparators.utils.specialize import specialize
@@ -102,43 +101,22 @@ def test_dot_changes_no_differences(dot_changes1):
 @pytest.fixture
 def dot_changes_differences(dot_changes1, dot_changes2):
     difference = dot_changes1.compare(dot_changes2)
-    output_text(difference, print_func=print)
-    return difference.details
-
-@pytest.mark.skipif(miss_debian_module, reason='debian module is not installed')
-def test_dot_changes_description(dot_changes_differences):
-    assert dot_changes_differences[0]
-    expected_diff = open(data('dot_changes_description_expected_diff')).read()
-    assert dot_changes_differences[0].unified_diff == expected_diff
-
-@pytest.mark.skipif(miss_debian_module, reason='debian module is not installed')
-def test_dot_changes_internal_diff(dot_changes_differences):
-    assert dot_changes_differences[2].source1 == 'test_1_all.deb'
-
-@pytest.mark.skipif(miss_debian_module, reason='debian module is not installed')
-def test_dot_changes_compare_non_existing(monkeypatch, dot_changes1):
-    monkeypatch.setattr(Config(), 'new_file', True)
-    difference = dot_changes1.compare(MissingFile('/nonexisting', dot_changes1))
-    output_text(difference, print_func=print)
     assert difference.source2 == '/nonexisting'
     assert difference.details[-1].source2 == '/dev/null'
 
 @pytest.fixture
 def dot_changes_differences_identical_contents_and_identical_files(dot_changes1, dot_changes3):
     difference = dot_changes1.compare(dot_changes3)
-    output_text(difference, print_func=print)
     return difference.details
 
 @pytest.fixture
 def dot_changes_differences_identical_contents_and_different_files(dot_changes1, dot_changes4):
     difference = dot_changes1.compare(dot_changes4)
-    output_text(difference, print_func=print)
     return difference.details
 
 @pytest.fixture
 def dot_changes_differences_different_contents_and_identical_files(dot_changes2, dot_changes4):
     difference = dot_changes4.compare(dot_changes2)
-    output_text(difference, print_func=print)
     return difference.details
 
 @pytest.mark.skipif(miss_debian_module, reason='debian module is not installed')
@@ -202,7 +180,6 @@ def test_dot_dsc_no_differences(dot_dsc1):
 @pytest.fixture
 def dot_dsc_differences(dot_dsc1, dot_dsc2):
     difference = dot_dsc1.compare(dot_dsc2)
-    output_text(difference, print_func=print)
     return difference.details
 
 @pytest.mark.skipif(miss_debian_module, reason='debian module is not installed')
@@ -213,7 +190,6 @@ def test_dot_dsc_internal_diff(dot_dsc_differences):
 def test_dot_dsc_compare_non_existing(monkeypatch, dot_dsc1):
     monkeypatch.setattr(Config(), 'new_file', True)
     difference = dot_dsc1.compare(MissingFile('/nonexisting', dot_dsc1))
-    output_text(difference, print_func=print)
     assert difference.source2 == '/nonexisting'
     assert difference.details[-1].source2 == '/dev/null'
 
@@ -255,7 +231,6 @@ def test_dot_buildinfo_no_differences(dot_buildinfo1):
 @pytest.fixture
 def dot_buildinfo_differences(dot_buildinfo1, dot_buildinfo2):
     difference = dot_buildinfo1.compare(dot_buildinfo2)
-    output_text(difference, print_func=print)
     return difference.details
 
 @pytest.mark.skipif(miss_debian_module, reason='debian module is not installed')

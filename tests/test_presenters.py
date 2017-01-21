@@ -22,14 +22,18 @@ import pytest
 
 from diffoscope.main import main
 
-def run(capsys, *args):
-    args = list(args) + [
-        os.path.join(os.path.dirname(__file__), 'data', x)
-        for x in ('test1.tar', 'test2.tar')
-    ]
+DATA_DIR = os.path.join(os.path.dirname(__file__), 'data')
 
+
+def run(capsys, *args):
     with pytest.raises(SystemExit) as exc:
-        main(args)
+        prev = os.getcwd()
+        os.chdir(DATA_DIR)
+
+        try:
+            main(args + ('test1.tar', 'test2.tar'))
+        finally:
+            os.chdir(prev)
 
     out, err = capsys.readouterr()
 
@@ -38,35 +42,39 @@ def run(capsys, *args):
 
     return out
 
+def data(filename):
+    with open(os.path.join(DATA_DIR, filename)) as f:
+        return f.read()
+
 def test_text_option_with_file(tmpdir, capsys):
     report_path = str(tmpdir.join('report.txt'))
 
     out = run(capsys, '--text', report_path)
 
     assert out == ''
+
     with open(report_path, 'r', encoding='utf-8') as f:
-        assert f.read().startswith('--- ')
+        assert f.read() == data('output.txt')
 
 def test_text_option_with_stdiout(capsys):
     out = run(capsys, '--text', '-')
 
-    assert out.startswith('--- ')
+    assert out == data('output.txt')
 
 def test_markdown(capsys):
     out = run(capsys, '--markdown', '-')
 
-    assert out.startswith('# Comparing')
+    assert out == data('output.md')
 
 def test_restructuredtext(capsys):
     out = run(capsys, '--restructured-text', '-')
 
-    assert out.startswith('=====')
-    assert "Comparing" in out
+    assert out == data('output.rst')
 
 def test_no_report_option(capsys):
     out = run(capsys)
 
-    assert out.startswith('--- ')
+    assert out == data('output.txt')
 
 def test_html_option_with_file(tmpdir, capsys):
     report_path = str(tmpdir.join('report.html'))

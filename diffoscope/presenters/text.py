@@ -18,14 +18,10 @@
 # along with diffoscope.  If not, see <https://www.gnu.org/licenses/>.
 
 import re
-import sys
-import logging
 
 from diffoscope.diff import color_unified_diff
 
 from .base import Presenter
-
-logger = logging.getLogger(__name__)
 
 
 class TextPresenter(Presenter):
@@ -63,13 +59,3 @@ class TextPresenter(Presenter):
             r'\1{}'.format(self.PREFIX * (self.depth + 0 if raw else -1)),
             val,
         ))
-
-def output_text(difference, print_func, color=False):
-    presenter = TextPresenter(print_func, color)
-
-    try:
-        presenter.visit(difference)
-    except UnicodeEncodeError:
-        logger.critical("Console is unable to print Unicode characters. "
-            "Set e.g. PYTHONIOENCODING=utf-8")
-        sys.exit(2)

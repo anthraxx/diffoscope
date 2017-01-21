@@ -56,7 +56,3 @@ class RestructuredTextPresenter(Presenter):
         self.print_func(val)
         self.print_func(len(val) * char)
         self.print_func()
-
-def output_restructuredtext(difference, print_func, color=False):
-    presenter = RestructuredTextPresenter(print_func)
-    presenter.visit(difference)

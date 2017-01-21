@@ -24,10 +24,10 @@ import contextlib
 
 from ..profiling import profile
 
-from .text import output_text
+from .text import TextPresenter
 from .html import output_html, output_html_directory
-from .markdown import output_markdown
-from .restructuredtext import output_restructuredtext
+from .markdown import MarkdownTextPresenter
+from .restructuredtext import RestructuredTextPresenter
 
 logger = logging.getLogger(__name__)
 
@@ -50,11 +50,11 @@ def output_all(difference, parsed_args, has_differences):
             'target': parsed_args.html_output,
         },
         'markdown': {
-            'fn': markdown,
+            'klass': MarkdownTextPresenter,
             'target': parsed_args.markdown_output,
         },
         'restructuredtext': {
-            'fn': restructuredtext,
+            'klass': RestructuredTextPresenter,
             'target': parsed_args.restructuredtext_output,
         },
         'html_directory': {
@@ -74,7 +74,12 @@ def output_all(difference, parsed_args, has_differences):
         logger.debug("Generating %r output at %r", name, data['target'])
 
         with profile('output', name):
-            data['fn'](difference, parsed_args, has_differences)
+            if 'fn' in data:
+                data['fn'](difference, parsed_args, has_differences)
+                continue
+
+            with make_printer(data['target']) as fn:
+                data['klass'](fn).visit(difference)
 
 def text(difference, parsed_args, has_differences):
     # As a special case, write an empty file instead of an empty diff.
@@ -89,7 +94,14 @@ def text(difference, parsed_args, has_differences):
             'always': True,
         }[parsed_args.text_color]
 
-        output_text(difference, print_func=fn, color=color)
+        presenter = TextPresenter(fn, color)
+
+        try:
+            presenter.visit(difference)
+        except UnicodeEncodeError:
+            logger.critical("Console is unable to print Unicode characters. "
+                "Set e.g. PYTHONIOENCODING=utf-8")
+            sys.exit(2)
 
 def html(difference, parsed_args, has_differences):
     with make_printer(parsed_args.html_output) as fn:
@@ -98,14 +110,6 @@ def html(difference, parsed_args, has_differences):
             css_url=parsed_args.css_url,
             print_func=fn,
         )
-
-def markdown(difference, parsed_args, has_differences):
-    with make_printer(parsed_args.markdown_output) as fn:
-        output_markdown(difference, print_func=fn)
-
-def restructuredtext(difference, parsed_args, has_differences):
-    with make_printer(parsed_args.restructuredtext_output) as fn:
-        output_restructuredtext(difference, print_func=fn)
 
 def html_directory(difference, parsed_args, has_differences):
     output_html_directory(

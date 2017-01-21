@@ -48,7 +48,3 @@ class MarkdownTextPresenter(Presenter):
 
         self.print_func("{} {}".format(prefix, val))
         self.print_func()
-
-def output_markdown(difference, print_func, color=False):
-    presenter = MarkdownTextPresenter(print_func)
-    presenter.visit(difference)

@@ -18,10 +18,12 @@
 # along with diffoscope.  If not, see <https://www.gnu.org/licenses/>.
 
 import os
+import re
 import pytest
 
 from diffoscope.main import main
 
+re_html = re.compile(r'.*<body(?P<body>.*)<div class="footer">', re.MULTILINE | re.DOTALL)
 DATA_DIR = os.path.join(os.path.dirname(__file__), 'data')
 
 
@@ -45,6 +47,19 @@ def run(capsys, *args):
 def data(filename):
     with open(os.path.join(DATA_DIR, filename)) as f:
         return f.read()
+
+def extract_body(val):
+    """
+    Extract the salient parts of HTML fixtures that won't change between
+    versions, etc.
+    """
+
+    result = re_html.search(val).group('body')
+
+    # Ensure that we extracted something
+    assert len(result) > 0
+
+    return result
 
 def test_text_option_with_file(tmpdir, capsys):
     report_path = str(tmpdir.join('report.txt'))
@@ -83,7 +98,7 @@ def test_html_option_with_file(tmpdir, capsys):
 
     assert out == ''
     with open(report_path, 'r', encoding='utf-8') as f:
-        assert 'meta name="generator" content="diffoscope"' in f.read()
+        assert extract_body(f.read()) == extract_body(data('output.html'))
 
 def test_htmldir_option(tmpdir, capsys):
     html_dir = os.path.join(str(tmpdir), 'target')
@@ -93,9 +108,9 @@ def test_htmldir_option(tmpdir, capsys):
     assert out == ''
     assert os.path.isdir(html_dir)
     with open(os.path.join(html_dir, 'index.html'), 'r', encoding='utf-8') as f:
-        assert 'meta name="generator" content="diffoscope"' in f.read()
+        assert extract_body(f.read()) == extract_body(data('index.html'))
 
 def test_html_option_with_stdout(capsys):
     out = run(capsys, '--html', '-')
 
-    assert 'meta name="generator" content="diffoscope"' in out
+    assert extract_body(out) == extract_body(data('output.html'))

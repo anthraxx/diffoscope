@@ -24,133 +24,126 @@ import tempfile
 
 from diffoscope.main import main
 
-
-def test_non_existing_files(capsys):
-    args = '/nonexisting1 /nonexisting2'
-    with pytest.raises(SystemExit) as excinfo:
-        main(args.split())
-    assert excinfo.value.code == 2
-    out, err = capsys.readouterr()
-    assert '/nonexisting1: No such file or directory' in err
-    assert '/nonexisting2: No such file or directory' in err
-
-def test_non_existing_left_with_new_file(capsys):
-    args = ['--new-file', '/nonexisting1', __file__]
-    with pytest.raises(SystemExit) as excinfo:
-        main(args)
-    assert excinfo.value.code == 1
-    out, err = capsys.readouterr()
-    assert '--- /nonexisting1' in out
-    assert ('+++ %s' % __file__) in out
-
-def test_non_existing_right_with_new_file(capsys):
-    args = ['--new-file', __file__, '/nonexisting2']
-    with pytest.raises(SystemExit) as excinfo:
-        main(args)
-    assert excinfo.value.code == 1
-    out, err = capsys.readouterr()
-    assert ('--- %s' % __file__) in out
-    assert '+++ /nonexisting2' in out
-
-def test_non_existing_files_with_new_file(capsys):
-    args = ['--new-file', '/nonexisting1', '/nonexisting2']
-    with pytest.raises(SystemExit) as excinfo:
-        main(args)
-    assert excinfo.value.code == 1
-    out, err = capsys.readouterr()
-    assert '--- /nonexisting1' in out
-    assert '+++ /nonexisting2' in out
-    assert 'Trying to compare two non-existing files.' in out
-
 TEST_TAR1_PATH = os.path.join(os.path.dirname(__file__), 'data/test1.tar')
 TEST_TAR2_PATH = os.path.join(os.path.dirname(__file__), 'data/test2.tar')
 TEST_TARS = (TEST_TAR1_PATH, TEST_TAR2_PATH)
 
-def test_remove_temp_files_on_sigterm(tmpdir, monkeypatch):
-    args = [*TEST_TARS]
+
+def run(capsys, *args):
+    with pytest.raises(SystemExit) as exc:
+        main(args)
+
+    out, err = capsys.readouterr()
+
+    return exc.value.code, out, err
+
+def test_non_existing_files(capsys):
+    ret, _, err = run(capsys, '/nonexisting1', '/nonexisting2')
+
+    assert ret == 2
+    assert '/nonexisting1: No such file or directory' in err
+    assert '/nonexisting2: No such file or directory' in err
+
+def test_non_existing_left_with_new_file(capsys):
+    ret, out, _ = run(capsys, '--new-file', '/nonexisting1', __file__)
+
+    assert ret == 1
+    assert '--- /nonexisting1' in out
+    assert ('+++ %s' % __file__) in out
+
+def test_non_existing_right_with_new_file(capsys):
+    ret, out, _ = run(capsys, '--new-file', __file__, '/nonexisting2')
+
+    assert ret == 1
+    assert ('--- %s' % __file__) in out
+    assert '+++ /nonexisting2' in out
+
+def test_non_existing_files_with_new_file(capsys):
+    ret, out, _ = run(capsys, '--new-file', '/nonexisting1', '/nonexisting2')
+
+    assert ret == 1
+    assert '--- /nonexisting1' in out
+    assert '+++ /nonexisting2' in out
+    assert 'Trying to compare two non-existing files.' in out
+
+def test_remove_temp_files_on_sigterm(capsys, tmpdir, monkeypatch):
     pid = os.fork()
+
     if pid == 0:
         def suicide(*args):
             os.kill(os.getpid(), signal.SIGTERM)
         monkeypatch.setattr('diffoscope.comparators.text.TextFile.compare', suicide)
         tempfile.tempdir = str(tmpdir)
-        with pytest.raises(SystemExit) as excinfo:
-            main(args)
-        os._exit(excinfo.value.code)
+
+        ret, _, _ = run(capsys, *TEST_TARS)
+        os._exit(ret)
     else:
         _, ret = os.waitpid(pid, 0)
         assert (ret >> 8) == 2 # having received SIGTERM is trouble
         assert os.listdir(str(tmpdir)) == []
 
 def test_ctrl_c_handling(tmpdir, monkeypatch, capsys):
-    args = [*TEST_TARS]
     monkeypatch.setattr('tempfile.tempdir', str(tmpdir))
+
     def interrupt(*args):
         raise KeyboardInterrupt
-    monkeypatch.setattr('diffoscope.comparators.text.TextFile.compare', interrupt)
-    with pytest.raises(SystemExit) as excinfo:
-        main(args)
-    out, err = capsys.readouterr()
+    monkeypatch.setattr(
+        'diffoscope.comparators.text.TextFile.compare',
+        interrupt,
+    )
+
+    ret, _, err = run(capsys, *TEST_TARS)
+
     assert '' in err
-    assert excinfo.value.code == 2
+    assert ret == 2
     assert os.listdir(str(tmpdir)) == []
 
 def test_text_option_with_file(tmpdir, capsys):
     report_path = str(tmpdir.join('report.txt'))
-    args = ['--text', report_path, *TEST_TARS]
-    with pytest.raises(SystemExit) as excinfo:
-        main(args)
-    assert excinfo.value.code == 1
-    out, err = capsys.readouterr()
+
+    ret, out, err = run(capsys, '--text', report_path, *TEST_TARS)
+
+    assert ret == 1
     assert err == ''
     assert out == ''
     with open(report_path, 'r', encoding='utf-8') as f:
         assert f.read().startswith('--- ')
 
 def test_text_option_with_stdiout(capsys):
-    args = ['--text', '-', *TEST_TARS]
-    with pytest.raises(SystemExit) as excinfo:
-        main(args)
-    assert excinfo.value.code == 1
-    out, err = capsys.readouterr()
+    ret, out, err = run(capsys, '--text', '-', *TEST_TARS)
+
+    assert ret == 1
     assert err == ''
     assert out.startswith('--- ')
 
 def test_markdown(capsys):
-    args = ['--markdown', '-', *TEST_TARS]
-    with pytest.raises(SystemExit) as excinfo:
-        main(args)
-    assert excinfo.value.code == 1
-    out, err = capsys.readouterr()
+    ret, out, err = run(capsys, '--markdown', '-', *TEST_TARS)
+
+    assert ret == 1
     assert err == ''
     assert out.startswith('# Comparing')
 
 def test_restructuredtext(capsys):
-    args = ['--restructured-text', '-', *TEST_TARS]
-    with pytest.raises(SystemExit) as excinfo:
-        main(args)
-    assert excinfo.value.code == 1
-    out, err = capsys.readouterr()
+    ret, out, err = run(capsys, '--restructured-text', '-', *TEST_TARS)
+
+    assert ret == 1
     assert err == ''
     assert out.startswith('=====')
     assert "Comparing" in out
 
 def test_no_report_option(capsys):
-    args = [*TEST_TARS]
-    with pytest.raises(SystemExit) as excinfo:
-        main(args)
-    assert excinfo.value.code == 1
-    out, err = capsys.readouterr()
+    ret, out, err = run(capsys, *TEST_TARS)
+
+    assert ret == 1
     assert err == ''
     assert out.startswith('--- ')
 
 def test_html_option_with_file(tmpdir, capsys):
     report_path = str(tmpdir.join('report.html'))
-    args = ['--html', report_path, *TEST_TARS]
-    with pytest.raises(SystemExit) as excinfo:
-        main(args)
-    assert excinfo.value.code == 1
-    out, err = capsys.readouterr()
+
+    ret, out, err = run(capsys, '--html', report_path, *TEST_TARS)
+
+    assert ret == 1
     assert err == ''
     assert out == ''
     with open(report_path, 'r', encoding='utf-8') as f:
@@ -158,41 +151,40 @@ def test_html_option_with_file(tmpdir, capsys):
 
 def test_htmldir_option(tmpdir, capsys):
     html_dir = os.path.join(str(tmpdir), 'target')
-    args = ['--html-dir', html_dir, '--jquery', 'disable', *TEST_TARS]
-    with pytest.raises(SystemExit) as excinfo:
-        main(args)
-    assert excinfo.value.code == 1
-    out, err = capsys.readouterr()
+
+    ret, out, err = run(
+        capsys,
+        '--html-dir', html_dir,
+        '--jquery', 'disable',
+        *TEST_TARS
+    )
+
+    assert ret == 1
     assert err == ''
     assert out == ''
     assert os.path.isdir(html_dir)
+
     with open(os.path.join(html_dir, 'index.html'), 'r', encoding='utf-8') as f:
         assert 'meta name="generator" content="diffoscope"' in f.read()
 
 def test_html_option_with_stdout(capsys):
-    args = ['--html', '-', *TEST_TARS]
-    with pytest.raises(SystemExit) as excinfo:
-        main(args)
-    assert excinfo.value.code == 1
-    out, err = capsys.readouterr()
+    ret, out, err = run(capsys, '--html', '-', *TEST_TARS)
+
+    assert ret == 1
     assert err == ''
     assert 'meta name="generator" content="diffoscope"' in out
 
 def test_no_differences(capsys):
-    args = [TEST_TAR1_PATH, TEST_TAR1_PATH]
-    with pytest.raises(SystemExit) as excinfo:
-        main(args)
-    assert excinfo.value.code == 0
-    out, err = capsys.readouterr()
+    ret, out, err = run(capsys, TEST_TAR1_PATH, TEST_TAR1_PATH)
+
+    assert ret == 0
     assert err == ''
     assert out == ''
 
 def test_list_tools(capsys):
-    args = ['--list-tools']
-    with pytest.raises(SystemExit) as excinfo:
-        main(args)
-    assert excinfo.value.code == 0
-    out, err = capsys.readouterr()
+    ret, out, err = run(capsys, '--list-tools')
+
+    assert ret == 0
     assert err == ''
     assert 'External-Tools-Required: ' in out
     assert 'xxd,' in out

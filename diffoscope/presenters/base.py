@@ -17,6 +17,7 @@
 # You should have received a copy of the GNU General Public License
 # along with diffoscope.  If not, see <https://www.gnu.org/licenses/>.
 
+
 class Presenter(object):
     def __init__(self):
         self.depth = 0
@@ -33,3 +34,12 @@ class Presenter(object):
 
     def visit_difference(self, difference):
         raise NotImplementedError()
+
+    @classmethod
+    def indent(cls, val, prefix):
+        # As an optimisation, output as much as possible in one go to avoid
+        # unnecessary splitting, interpolating, etc.
+        #
+        # We don't use textwrap.indent as that unnecessarily calls
+        # str.splitlines, etc.
+        return prefix + val.rstrip().replace('\n', '\n{}'.format(prefix))

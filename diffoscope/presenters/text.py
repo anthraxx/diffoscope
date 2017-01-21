@@ -53,9 +53,6 @@ class TextPresenter(Presenter):
             self.output(color_unified_diff(diff) if self.color else diff, True)
 
     def output(self, val, raw=False):
-        # As an optimisation, output as much as possible in one go to avoid
-        # unnecessary splitting, interpolating, etc.
-        self.print_func(self.RE_PREFIX.sub(
-            r'\1{}'.format(self.PREFIX * (self.depth + 0 if raw else -1)),
-            val.rstrip(),
-        ))
+        self.print_func(
+            self.indent(val, self.PREFIX * (self.depth + 0 if raw else -1)),
+        )

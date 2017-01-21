@@ -17,8 +17,6 @@
 # You should have received a copy of the GNU General Public License
 # along with diffoscope.  If not, see <https://www.gnu.org/licenses/>.
 
-import textwrap
-
 from .base import Presenter
 
 
@@ -45,7 +43,8 @@ class RestructuredTextPresenter(Presenter):
         if difference.unified_diff:
             self.print_func('::')
             self.print_func()
-            self.print_func(textwrap.indent(difference.unified_diff, '    '))
+            self.print_func(self.indent(difference.unified_diff, '    '))
+            self.print_func()
 
     def title(self, val):
         char = self.TITLE_CHARS[self.depth % len(self.TITLE_CHARS)]

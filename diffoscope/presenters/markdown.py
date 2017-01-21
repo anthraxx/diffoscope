@@ -17,8 +17,6 @@
 # You should have received a copy of the GNU General Public License
 # along with diffoscope.  If not, see <https://www.gnu.org/licenses/>.
 
-import textwrap
-
 from .base import Presenter
 
 
@@ -41,7 +39,8 @@ class MarkdownTextPresenter(Presenter):
             self.print_func()
 
         if difference.unified_diff:
-            self.print_func(textwrap.indent(difference.unified_diff, '    '))
+            self.print_func(self.indent(difference.unified_diff, '    '))
+            self.print_func()
 
     def title(self, val):
         prefix = '#' * min(self.depth + 1, 6)

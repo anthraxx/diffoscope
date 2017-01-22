@@ -87,6 +87,9 @@ class RpmContainer(Archive):
     def open_archive(self):
         return self
 
+    def close_archive(self):
+        pass
+
     def get_member_names(self):
         return ['content']
 

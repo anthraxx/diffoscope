@@ -1,0 +1,31 @@
+--- test1.tar
++++ test2.tar
+├── file list
+│ [0;36m@@ -1,4 +1,4 @@[0m
+│ [31m-drwxr-xr-x   0 lunar     (1000) lunar     (1000)        0 2015-06-29 15:49:09.000000 dir/[0m
+│ [31m--rw-r--r--   0 lunar     (1000) lunar     (1000)      446 2015-06-29 15:49:09.000000 dir/text[0m
+│ [31m-crw-r--r--   0 root         (0) root         (0)    1,  3 2015-06-29 15:49:09.000000 dir/null[0m
+│ [31m-lrwxrwxrwx   0 lunar     (1000) lunar     (1000)        0 2015-06-29 15:49:09.000000 dir/link -> broken[0m
+│ [32m+drwxr-xr-x   0 lunar     (1000) lunar     (1000)        0 2015-06-29 15:49:41.000000 dir/[0m
+│ [32m+-rw-r--r--   0 lunar     (1000) lunar     (1000)      671 2015-06-29 15:49:41.000000 dir/text[0m
+│ [32m+crw-r--r--   0 root         (0) root         (0)    1,  3 2015-06-29 15:49:41.000000 dir/null[0m
+│ [32m+lrwxrwxrwx   0 lunar     (1000) lunar     (1000)        0 2015-06-29 15:49:41.000000 dir/link -> really-broken[0m
+├── dir/text
+│ [0;36m@@ -1,6 +1,12 @@[0m
+│ [32m+A common form of lorem ipsum reads:[0m
+│ [32m+[0m
+│  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
+│  incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis
+│  nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+│  Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
+│  fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
+│  culpa qui officia deserunt mollit anim id est laborum.
+│ [32m+[0m
+│ [32m+"Lorem ipsum" text is derived from sections 1.10.32--3 of Cicero's De finibus[0m
+│ [32m+bonorum et malorum (On the Ends of Goods and Evils, or alternatively [About][0m
+│ [32m+The Purposes of Good and Evil).[0m
+├── dir/link
+│┄ symlink
+│ [0;36m@@ -1 +1 @@[0m
+│ [31m-destination: broken[0m
+│ [32m+destination: really-broken[0m

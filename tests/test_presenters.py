@@ -61,6 +61,11 @@ def extract_body(val):
 
     return result
 
+def test_text_option_color(capsys):
+    out = run(capsys, '--text-color=always')
+
+    assert out == data('output.colored.txt')
+
 def test_text_option_with_file(tmpdir, capsys):
     report_path = str(tmpdir.join('report.txt'))
 

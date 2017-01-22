@@ -105,6 +105,13 @@ def test_no_differences(capsys):
     assert err == ''
     assert out == ''
 
+def test_no_differences_directories(capsys, tmpdir):
+    ret, out, err = run(capsys, str(tmpdir.mkdir('a')), str(tmpdir.mkdir('b')))
+
+    assert ret == 0
+    assert err == ''
+    assert out == ''
+
 def test_list_tools(capsys):
     ret, out, err = run(capsys, '--list-tools')
 

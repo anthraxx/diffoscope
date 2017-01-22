@@ -164,7 +164,7 @@ class LibarchiveContainer(Archive):
         return True
 
     def close_archive(self):
-        return
+        pass
 
     def get_member_names(self):
         self.ensure_unpacked()

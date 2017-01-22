@@ -61,6 +61,11 @@ def extract_body(val):
 
     return result
 
+def test_text_option_is_default(capsys):
+    out = run(capsys)
+
+    assert out == data('output.txt')
+
 def test_text_option_color(capsys):
     out = run(capsys, '--text-color=always')
 

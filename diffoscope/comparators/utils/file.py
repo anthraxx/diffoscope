@@ -31,7 +31,7 @@ from diffoscope.difference import Difference
 
 try:
     import tlsh
-except ImportError:
+except ImportError:  # noqa
     tlsh = None
 
 SMALL_FILE_THRESHOLD = 65536 # 64 kiB

@@ -71,7 +71,7 @@ def import_comparators(comparators):
 
             result.append(getattr(mod, klass_name))
             break
-        else:
+        else:  # noqa
             raise ImportError(
                 "Could not import any of {}".format(', '.join(xs))
             )

@@ -36,7 +36,7 @@ from .specialize import specialize
 
 try:
     import tlsh
-except ImportError:
+except ImportError:  # noqa
     tlsh = None
 
 logger = logging.getLogger(__name__)

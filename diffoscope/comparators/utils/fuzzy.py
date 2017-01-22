@@ -24,7 +24,7 @@ from diffoscope.config import Config
 
 try:
     import tlsh
-except ImportError:
+except ImportError:  # noqa
     tlsh = None
 
 logger = logging.getLogger(__name__)

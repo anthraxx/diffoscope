@@ -65,4 +65,4 @@ def get_current_os():
         # FIXME: Will break under Python 3.7, see:
         # https://docs.python.org/3/library/platform.html#platform.linux_distribution
         return platform.linux_distribution()[0]
-    return system
+    return system  # noqa

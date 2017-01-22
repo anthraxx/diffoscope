@@ -101,7 +101,7 @@ class ICOImageFile(File):
         try:
             png_a, png_b = [ICOImageFile.convert(x) for x in (self, other)]
         except subprocess.CalledProcessError:
-            pass
+            pass  # noqa
         else:
             differences.append(Difference.from_command(Img2Txt, png_a, png_b))
 

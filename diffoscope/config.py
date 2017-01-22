@@ -45,7 +45,7 @@ class Config(object):
             self.check_constraints()
 
     def check_constraints(self):
-        if self.max_diff_block_lines < self.max_diff_block_lines_parent:
+        if self.max_diff_block_lines < self.max_diff_block_lines_parent:  # noqa
             raise ValueError("max_diff_block_lines ({0.max_diff_block_lines}) "
                 "cannot be smaller than max_diff_block_lines_parent "
                 "({0.max_diff_block_lines_parent})".format(self),
@@ -53,7 +53,7 @@ class Config(object):
 
         max_ = self.max_diff_block_lines_html_dir_ratio * \
             self.max_diff_block_lines
-        if self.max_diff_block_lines_saved < max_:
+        if self.max_diff_block_lines_saved < max_:  # noqa
             raise ValueError("max_diff_block_lines_saved "
                 "({0.max_diff_block_lines_saved}) cannot be smaller than "
                 "{0.max_diff_block_lines_html_dir_ratio} * "

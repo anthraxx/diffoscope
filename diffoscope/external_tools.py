@@ -144,7 +144,7 @@ EXTERNAL_TOOLS = {
     },
     'pedump': {
         'debian': 'mono-utils',
-        'arch': 'mono-tools',
+        'arch': 'mono',
         'FreeBSD': 'mono',
     },
     'ppudump': {

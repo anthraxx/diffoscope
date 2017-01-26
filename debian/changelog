@@ -1,4 +1,4 @@
-diffoscope (70) UNRELEASED; urgency=medium
+diffoscope (70) unstable; urgency=medium
 
   [ Mattia Rizzolo ]
   * comparators
@@ -47,7 +47,7 @@ diffoscope (70) UNRELEASED; urgency=medium
   [ anthraxx ]
   * tools: switch Arch Linux dependency for pedump to mono.
 
- -- Mattia Rizzolo <mattia@debian.org>  Thu, 26 Jan 2017 16:19:29 +0100
+ -- Mattia Rizzolo <mattia@debian.org>  Thu, 26 Jan 2017 16:39:10 +0100
 
 diffoscope (69) unstable; urgency=medium
 

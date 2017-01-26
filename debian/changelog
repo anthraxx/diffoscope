@@ -1,3 +1,54 @@
+diffoscope (70) UNRELEASED; urgency=medium
+
+  [ Mattia Rizzolo ]
+  * comparators
+    + haskell: add a comment describing the file header.
+      Thanks to James Clarke <jrtc27@debian.org> for all the investigation done.
+  * tests:
+    + Skip two more tests requiring a x86-64-capable binutils.
+      This fixes the tests on ppc64el.
+  * CONTRIBUTING: misc updates, clearer info about how to submit a Debian bug.
+
+  [ James Clarke ]
+  * comparators:
+    + haskell: Properly extract version from interface files.
+      What the code did before was just totally wrong, and worked only by
+      chance (and only on little endian systems).
+      This also fixes the test suite when run on big endian systems.
+
+  [ Chris Lamb ]
+  * comparators:
+    + haskell: Also catch CalledProcessError, not just OSError.
+  * presenters:
+    + Move text presenter to use Visitor pattern.
+    + Add markdown output support.  Closes: #848141
+    + Add RestructuredText output format.
+    + Instantiate our presenter classes directly instead of wrapping a method.
+    + Use an optimised indentation routine throughout all text presenters.
+    + text: Remove superfluous empty newlines from diff.
+  * tests:
+    + Split main and presenter tests.
+    + Actually compare the output of text/ReST/markdown formats to fixtures.
+    + Drop output_* calls that are inconsistently applied to differences.
+    + Add tests for HTML output.
+    + Add a test comparing two empty directories.
+    + Test --text-color output format.
+    + Test that no arguments (beyond the filenames) prints the text output.
+    + Don't warn about coverage lines that raise NotImplementedError.
+    + Increase coverage by adding "# noqa" in relevant parts.
+  * Add build status to README.rst.
+
+  [ Brett Smith ]
+  * diffoscope:
+    + Specify choices for --list-tools switch.
+    + Improve --help output.  Closes: #852015
+  * CONTRIBUTING: Refresh instructions for contributing to diffoscope.
+
+  [ anthraxx ]
+  * tools: switch Arch Linux dependency for pedump to mono.
+
+ -- Mattia Rizzolo <mattia@debian.org>  Thu, 26 Jan 2017 16:19:29 +0100
+
 diffoscope (69) unstable; urgency=medium
 
   [ Chris Lamb ]

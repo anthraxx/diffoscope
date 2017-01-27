@@ -38,8 +38,11 @@ def specialize(file):
             with profile('recognizes', file):
                 flag = cls.recognizes(file)
         else:
-            flag = cls.RE_FILE_TYPE.search(file.magic_file_type) and \
-                cls.RE_FILE_EXTENSION.search(file.name)
+            re_tests = [(cls.RE_FILE_TYPE, file.magic_file_type),
+                        (cls.RE_FILE_EXTENSION, file.name)]
+            re_tests = filter(lambda pair: pair[0], re_tests)
+            if re_tests: # if neither are defined, it's *not* a match
+                flag = all(bool(pair[0].search(pair[1])) for pair in re_tests)
 
         if not flag:
             continue

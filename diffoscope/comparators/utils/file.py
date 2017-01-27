@@ -40,8 +40,8 @@ logger = logging.getLogger(__name__)
 
 
 class File(object, metaclass=abc.ABCMeta):
-    RE_FILE_TYPE = re.compile(r'.*')
-    RE_FILE_EXTENSION = re.compile(r'.*')
+    RE_FILE_TYPE = None
+    RE_FILE_EXTENSION = None
 
     if hasattr(magic, 'open'): # use Magic-file-extensions from file
         @classmethod

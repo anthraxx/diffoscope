@@ -40,7 +40,7 @@ def specialize(file):
         else:
             re_tests = [(cls.RE_FILE_TYPE, file.magic_file_type),
                         (cls.RE_FILE_EXTENSION, file.name)]
-            re_tests = filter(lambda pair: pair[0], re_tests)
+            re_tests = list(filter(lambda pair: pair[0], re_tests))
             if re_tests: # if neither are defined, it's *not* a match
                 flag = all(bool(pair[0].search(pair[1])) for pair in re_tests)
 

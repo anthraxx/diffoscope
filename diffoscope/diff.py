@@ -19,6 +19,9 @@
 
 import re
 import io
+import os
+import errno
+import fcntl
 import hashlib
 import logging
 import threading
@@ -190,54 +193,55 @@ def run_diff(fifo1, fifo2, end_nl_q1, end_nl_q2):
 
     return parser.diff
 
-def feed(feeder, f, end_nl_q):
-    # work-around unified diff limitation: if there's no newlines in both
-    # don't make it a difference
-    try:
-        end_nl = feeder(f)
-        end_nl_q.put(end_nl)
-    finally:
-        f.close()
+class FIFOFeeder(threading.Thread):
+    def __init__(self, feeder, fifo_path, end_nl_q=None, *, daemon=True):
+        os.mkfifo(fifo_path)
+        super().__init__(daemon=daemon)
+        self.feeder = feeder
+        self.fifo_path = fifo_path
+        self.end_nl_q = Queue() if end_nl_q is None else end_nl_q
+        self._exception = None
+        self._want_join = threading.Event()
 
-class ExThread(threading.Thread):
-    """
-    Inspired by https://stackoverflow.com/a/6874161
-    """
+    def __enter__(self):
+        self.start()
+        return self
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.__status_queue = Queue()
+    def __exit__(self, exc_type, exc_value, exc_tb):
+        self.join()
 
-    def run(self, *args, **kwargs):
+    def run(self):
         try:
-            super().run(*args, **kwargs)
-        except Exception as ex:
-            #except_type, except_class, tb = sys.exc_info()
-            self.__status_queue.put(ex)
+            # Try to open the FIFO nonblocking, so we can periodically check
+            # if the main thread wants us to wind down.  If it does, there's no
+            # more need for the FIFO, so stop the thread.
+            while True:
+                try:
+                    fifo_fd = os.open(self.fifo_path, os.O_WRONLY | os.O_NONBLOCK)
+                except OSError as error:
+                    if error.errno != errno.ENXIO:
+                        raise
+                    elif self._want_join.is_set():
+                        return
+                else:
+                    break
 
-        self.__status_queue.put(None)
-
-    def wait_for_exc_info(self):
-        return self.__status_queue.get()
+            # Now clear the fd's nonblocking flag to let writes block normally.
+            fcntl.fcntl(fifo_fd, fcntl.F_SETFL, 0)
+            with open(fifo_fd, 'wb') as fifo:
+                # The queue works around a unified diff limitation: if there's
+                # no newlines in both don't make it a difference
+                end_nl = self.feeder(fifo)
+                self.end_nl_q.put(end_nl)
+        except Exception as error:
+            self._exception = error
 
     def join(self):
-        ex = self.wait_for_exc_info()
-        if ex is None:
-            return
-        raise ex
+        self._want_join.set()
+        super().join()
+        if self._exception is not None:
+            raise self._exception
 
-@contextlib.contextmanager
-def fd_from_feeder(feeder, end_nl_q, fifo):
-    f = open(fifo, 'wb')
-    t = ExThread(target=feed, args=(feeder, f, end_nl_q))
-
-    t.daemon = True
-    t.start()
-
-    try:
-        t.join()
-    finally:
-        f.close()
 
 def empty_file_feeder():
     def feeder(f):
@@ -273,15 +277,12 @@ def make_feeder_from_raw_reader(in_file, filter=lambda buf: buf):
     return feeder
 
 def diff(feeder1, feeder2):
-    end_nl_q1 = Queue()
-    end_nl_q2 = Queue()
-
     with tempfile.TemporaryDirectory() as tmpdir:
-        fifo1 = '{}/f1'.format(tmpdir)
-        fifo2 = '{}/f2'.format(tmpdir)
-        fd_from_feeder(feeder1, end_nl_q1, fifo1)
-        fd_from_feeder(feeder2, end_nl_q2, fifo2)
-        return run_diff(fifo1, fifo2, end_nl_q1, end_nl_q2)
+        fifo1_path = os.path.join(tmpdir, 'fifo1')
+        fifo2_path = os.path.join(tmpdir, 'fifo2')
+        with FIFOFeeder(feeder1, fifo1_path) as fifo1, \
+             FIFOFeeder(feeder2, fifo2_path) as fifo2:
+            return run_diff(fifo1_path, fifo2_path, fifo1.end_nl_q, fifo2.end_nl_q)
 
 def reverse_unified_diff(diff):
     res = []

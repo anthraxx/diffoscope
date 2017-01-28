@@ -45,7 +45,7 @@ def run(capsys, *args):
     return out
 
 def data(filename):
-    with open(os.path.join(DATA_DIR, filename)) as f:
+    with open(os.path.join(DATA_DIR, filename), encoding='utf-8') as f:
         return f.read()
 
 def extract_body(val):

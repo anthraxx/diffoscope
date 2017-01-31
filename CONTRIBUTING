@@ -43,7 +43,7 @@ Please also release a signed tarball:
 
 ----
   $ VERSION=FIXME
-  $ git archive --format=tar --prefix=diffoscope-${VERSION} ${VERSION} | bzip2 -9 > diffoscope-${VERSION}.tar.bz2
+  $ git archive --format=tar --prefix=diffoscope-${VERSION}/ ${VERSION} | bzip2 -9 > diffoscope-${VERSION}.tar.bz2
   $ gpg --detach-sig --armor --output=diffoscope-${VERSION}.tar.bz2.asc < diffoscope-${VERSION}.tar.bz2
   $ scp diffoscope-${VERSION}* alioth.debian.org:/home/groups/reproducible/htdocs/releases/diffoscope
 ----

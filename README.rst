@@ -46,27 +46,6 @@ diffoscope requires Python 3 and the following modules available on PyPI:
 `libarchive-c <https://pypi.python.org/pypi/libarchive-c>`_,
 `python-magic <https://pypi.python.org/pypi/python-magic>`_.
 
-Optionally, the following modules will enhance it:
-
-* ``tlsh`` is used to recognize file renames.
-  It is build from `tlsh source
-  <https://github.com/trendmicro/tlsh>`_.
-  Available on Debian as ``python3-tlsh``.
-* ``python-debian`` is used to inspect Debian control files.
-  It is available on `PyPI <https://pypi.python.org/pypi/python-debian>`_.
-* ``rpm-python`` is used to inspect RPM files.
-  It is built from `rpm
-  <http://rpm.org/>`_.
-  Available on Debian and Fedora as ``python3-rpm``.
-* ``Magic-file-extension`` can be used instead of
-  ``python-magic``. It is built from `file
-  <https://www.darwinsys.com/file/>`_.
-  Available on Debian and Fedora as ``python3-magic``.
-* ``argcomplete`` is used for argument completion.
-  Available on Debian as ``python3-argcomplete``.
-  Available on Fedora as ``python-argcomplete``.
-  Available on `PyPI <https://pypi.python.org/pypi/argcomplete/>`
-
 The various comparators rely on external commands being available. To
 get a list of them, please run::
 

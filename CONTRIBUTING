@@ -39,6 +39,15 @@ when building the package. See https://bugs.debian.org/834315 for an example
 ftbfs bug caused by this and see https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=735377#44
 and followups to learn how this happened and how to prevent it.
 
+Please also release a signed tarball:
+
+----
+  $ VERSION=FIXME
+  $ git archive --format=tar --prefix=diffoscope-${VERSION} ${VERSION} | bzip2 -9 > diffoscope-${VERSION}.tar.bz2
+  $ gpg --detach-sig --armor --output=diffoscope-${VERSION}.tar.bz2.asc < diffoscope-${VERSION}.tar.bz2
+  $ scp diffoscope-${VERSION}* alioth.debian.org:/home/groups/reproducible/htdocs/releases/diffoscope
+----
+
 After uploading, please also update the version on PyPI using::
 
    $ python3 setup.py sdist upload --sign

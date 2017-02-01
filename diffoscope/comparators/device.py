@@ -46,6 +46,7 @@ class Device(File):
             return self.get_device() == other.get_device()
         except (AttributeError, OSError):
             # 'other' is not a device, or something.
+            logger.debug("has_same_content: Not a device: %s", other)
             return False
 
     def create_placeholder(self):

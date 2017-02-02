@@ -65,10 +65,10 @@ class ZipDirectory(Directory, ArchiveMember):
         return True
 
     def get_member_names(self):
-        raise ValueError("Zip archives are compared as a whole.")
+        raise ValueError("Zip archives are compared as a whole.")  # noqa
 
     def get_member(self, member_name):
-        raise ValueError("Zip archives are compared as a whole.")
+        raise ValueError("Zip archives are compared as a whole.")  # noqa
 
 
 class ZipContainer(Archive):

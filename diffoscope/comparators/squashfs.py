@@ -113,10 +113,10 @@ class SquashfsDirectory(Directory, SquashfsMember):
         return True
 
     def get_member_names(self):
-        raise ValueError("squashfs are compared as a whole.")
+        raise ValueError("squashfs are compared as a whole.")  # noqa
 
     def get_member(self, member_name):
-        raise ValueError("squashfs are compared as a whole.")
+        raise ValueError("squashfs are compared as a whole.")  # noqa
 
 
 class SquashfsSymlink(Symlink, SquashfsMember):

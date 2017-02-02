@@ -44,7 +44,7 @@ class PsFile(TextFile):
         details = None
         try:
             details = Difference.from_command(Pstotext, self.path, other.path)
-        except RequiredToolNotFound:
+        except RequiredToolNotFound:  # noqa
             logger.debug('ps2ascii not found')
 
         if details:

@@ -106,7 +106,12 @@ def test_no_differences(capsys):
     assert out == ''
 
 def test_no_differences_directories(capsys, tmpdir):
-    ret, out, err = run(capsys, str(tmpdir.mkdir('a')), str(tmpdir.mkdir('b')))
+    def create_dir(x):
+        path = str(tmpdir.mkdir(x))
+        os.utime(path, (0, 0)) # Ensure consistent mtime
+        return path
+
+    ret, out, err = run(capsys, create_dir('a'), create_dir('b'))
 
     assert ret == 0
     assert err == ''

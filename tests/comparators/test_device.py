@@ -50,6 +50,4 @@ def test_diff(differences):
 def test_diff_reverse(differences_reverse):
     with open(data('device_expected_diff_reverse')) as f:
         expected_diff = f.read()
-    with open('fixture', 'w') as f:
-        f.write(differences_reverse.unified_diff)
     assert differences_reverse.unified_diff == expected_diff

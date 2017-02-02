@@ -40,5 +40,10 @@ def data(filename):
     )
 
 
+def get_data(filename):
+    with open(data(filename), encoding='utf-8') as f:
+        return f.read()
+
+
 def load_fixture(filename):
     return init_fixture(data(filename))

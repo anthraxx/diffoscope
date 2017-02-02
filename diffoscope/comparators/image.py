@@ -100,8 +100,8 @@ class ICOImageFile(File):
         # img2txt does not support .ico files directly so convert to .PNG.
         try:
             png_a, png_b = [ICOImageFile.convert(x) for x in (self, other)]
-        except subprocess.CalledProcessError:
-            pass  # noqa
+        except subprocess.CalledProcessError:  # noqa
+            pass
         else:
             differences.append(Difference.from_command(Img2Txt, png_a, png_b))
 

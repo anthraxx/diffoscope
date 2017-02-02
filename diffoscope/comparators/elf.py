@@ -65,7 +65,7 @@ class Readelf(Command):
         return ['readelf', '--wide'] + self.readelf_options() + [self.path]
 
     def readelf_options(self):
-        return []
+        return []  # noqa
 
     def filter(self, line):
         try:

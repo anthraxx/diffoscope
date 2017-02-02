@@ -1,0 +1,2 @@
+version=3
+opts=pgpsigurlmangle=s/$/.asc/ http://reproducible.alioth.debian.org/releases/diffoscope/diffoscope-(.+).tar.bz2

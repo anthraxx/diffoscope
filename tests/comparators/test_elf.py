@@ -27,7 +27,7 @@ from diffoscope.comparators.directory import FilesystemDirectory
 from diffoscope.comparators.missing_file import MissingFile
 from diffoscope.comparators.utils.specialize import specialize
 
-from utils.data import data, load_fixture
+from utils.data import data, load_fixture, get_data
 from utils.tools import skip_unless_tools_exist, \
     skip_if_binutils_does_not_support_x86
 
@@ -64,7 +64,7 @@ def test_obj_compare_non_existing(monkeypatch, obj1):
 @skip_if_binutils_does_not_support_x86()
 def test_diff(obj_differences):
     assert len(obj_differences) == 1
-    expected_diff = open(data('elf_obj_expected_diff')).read()
+    expected_diff = get_data('elf_obj_expected_diff')
     assert obj_differences[0].unified_diff == expected_diff
 
 TEST_LIB1_PATH = data('test1.a')
@@ -94,10 +94,10 @@ def lib_differences(lib1, lib2):
 def test_lib_differences(lib_differences):
     assert len(lib_differences) == 2
     assert lib_differences[0].source1 == 'file list'
-    expected_metadata_diff = open(data('elf_lib_metadata_expected_diff')).read()
+    expected_metadata_diff = get_data('elf_lib_metadata_expected_diff')
     assert lib_differences[0].unified_diff == expected_metadata_diff
     assert 'objdump' in lib_differences[1].source1
-    expected_objdump_diff = open(data('elf_lib_objdump_expected_diff')).read()
+    expected_objdump_diff = get_data('elf_lib_objdump_expected_diff')
     assert lib_differences[1].unified_diff == expected_objdump_diff
 
 @skip_unless_tools_exist('readelf', 'objdump')
@@ -141,5 +141,5 @@ def test_differences_with_dbgsym(dbgsym_differences):
 def test_original_gnu_debuglink(dbgsym_differences):
     bin_details = dbgsym_differences.details[2].details[0].details[0]
     assert '.gnu_debuglink' in bin_details.details[2].source1
-    expected_gnu_debuglink = open(data('gnu_debuglink_expected_diff')).read()
+    expected_gnu_debuglink = get_data('gnu_debuglink_expected_diff')
     assert bin_details.details[2].unified_diff == expected_gnu_debuglink

@@ -23,7 +23,7 @@ from diffoscope.config import Config
 from diffoscope.comparators.missing_file import MissingFile
 from diffoscope.comparators.fsimage import FsImageFile
 
-from utils.data import data, load_fixture
+from utils.data import load_fixture, get_data
 from utils.tools import skip_unless_tools_exist
 
 
@@ -75,7 +75,7 @@ def test_differences(differences):
     assert tardiff.source2 == './date.txt'
     assert encodingdiff.source1 == 'encoding'
     assert encodingdiff.source2 == 'encoding'
-    expected_diff = open(data('ext4_expected_diffs'), encoding='utf-8').read()
+    expected_diff = get_data('ext4_expected_diffs')
     found_diff = tarinfo.unified_diff + tardiff.unified_diff + encodingdiff.unified_diff
     assert expected_diff == found_diff
 

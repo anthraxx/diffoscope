@@ -27,7 +27,7 @@ from diffoscope.comparators.binary import FilesystemFile
 from diffoscope.comparators.missing_file import MissingFile
 from diffoscope.comparators.utils.specialize import specialize
 
-from utils.data import data, load_fixture
+from utils.data import load_fixture, get_data
 
 
 deb1 = load_fixture('test1.deb')
@@ -45,7 +45,7 @@ def differences(deb1, deb2):
     return deb1.compare(deb2).details
 
 def test_metadata(differences):
-    expected_diff = open(data('deb_metadata_expected_diff')).read()
+    expected_diff = get_data('deb_metadata_expected_diff')
     assert differences[0].unified_diff == expected_diff
 
 def test_compressed_files(differences):

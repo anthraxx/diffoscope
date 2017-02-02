@@ -21,7 +21,7 @@ import pytest
 
 from diffoscope.comparators.png import PngFile
 
-from utils.data import data, load_fixture
+from utils.data import load_fixture, get_data
 from utils.tools import skip_unless_tools_exist
 from utils.nonexisting import assert_non_existing
 
@@ -42,7 +42,7 @@ def differences(png1, png2):
 
 @skip_unless_tools_exist('sng')
 def test_diff(differences):
-    expected_diff = open(data('png_expected_diff')).read()
+    expected_diff = get_data('png_expected_diff')
     assert differences[0].unified_diff == expected_diff
 
 @skip_unless_tools_exist('sng')

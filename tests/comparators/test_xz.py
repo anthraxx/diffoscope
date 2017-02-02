@@ -24,7 +24,7 @@ from diffoscope.comparators.xz import XzFile
 from diffoscope.comparators.binary import FilesystemFile
 from diffoscope.comparators.utils.specialize import specialize
 
-from utils.data import data, load_fixture
+from utils.data import load_fixture, get_data
 from utils.tools import skip_unless_tools_exist
 from utils.nonexisting import assert_non_existing
 
@@ -61,7 +61,7 @@ def test_content_source_without_extension(tmpdir, xz1, xz2):
 
 @skip_unless_tools_exist('xz')
 def test_content_diff(differences):
-    expected_diff = open(data('text_ascii_expected_diff')).read()
+    expected_diff = get_data('text_ascii_expected_diff')
     assert differences[0].unified_diff == expected_diff
 
 @skip_unless_tools_exist('xz')

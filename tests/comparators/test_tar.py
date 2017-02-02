@@ -23,7 +23,7 @@ from diffoscope.config import Config
 from diffoscope.comparators.tar import TarFile
 from diffoscope.comparators.missing_file import MissingFile
 
-from utils.data import data, load_fixture
+from utils.data import load_fixture, get_data
 from utils.nonexisting import assert_non_existing
 
 
@@ -42,20 +42,20 @@ def differences(tar1, tar2):
     return tar1.compare(tar2).details
 
 def test_listing(differences):
-    expected_diff = open(data('tar_listing_expected_diff')).read()
+    expected_diff = get_data('tar_listing_expected_diff')
     assert differences[0].unified_diff == expected_diff
 
 def test_symlinks(differences):
     assert differences[2].source1 == 'dir/link'
     assert differences[2].source2 == 'dir/link'
     assert differences[2].comment == 'symlink'
-    expected_diff = open(data('symlink_expected_diff')).read()
+    expected_diff = get_data('symlink_expected_diff')
     assert differences[2].unified_diff == expected_diff
 
 def test_text_file(differences):
     assert differences[1].source1 == 'dir/text'
     assert differences[1].source2 == 'dir/text'
-    expected_diff = open(data('text_ascii_expected_diff')).read()
+    expected_diff = get_data('text_ascii_expected_diff')
     assert differences[1].unified_diff == expected_diff
 
 def test_compare_non_existing(monkeypatch, tar1):

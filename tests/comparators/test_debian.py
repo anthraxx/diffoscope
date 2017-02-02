@@ -25,7 +25,7 @@ from diffoscope.comparators.binary import FilesystemFile
 from diffoscope.comparators.missing_file import MissingFile
 from diffoscope.comparators.utils.specialize import specialize
 
-from utils.data import data
+from utils.data import data, get_data
 from utils.nonexisting import assert_non_existing
 
 try:
@@ -127,15 +127,15 @@ def test_dot_changes_no_differences_exclude_buildinfo(dot_changes1, dot_changes3
 @pytest.mark.skipif(miss_debian_module, reason='debian module is not installed')
 def test_dot_changes_identical_contents_and_different_files(dot_changes_differences_identical_contents_and_different_files):
     assert dot_changes_differences_identical_contents_and_different_files[0]
-    expected_diff = open(data('dot_changes_identical_contents_and_different_files_expected_diff')).read()
+    expected_diff = get_data('dot_changes_identical_contents_and_different_files_expected_diff')
     assert dot_changes_differences_identical_contents_and_different_files[0].unified_diff == expected_diff
 
 @pytest.mark.skipif(miss_debian_module, reason='debian module is not installed')
 def test_dot_changes_different_contents_and_identical_files(dot_changes_differences_different_contents_and_identical_files):
     assert dot_changes_differences_different_contents_and_identical_files[0]
     assert dot_changes_differences_different_contents_and_identical_files[1]
-    expected_diff_contents = open(data('dot_changes_description_expected_diff')).read()
-    expected_diff_files = open(data('dot_changes_different_contents_and_identical_files_expected_diff')).read()
+    expected_diff_contents = get_data('dot_changes_description_expected_diff')
+    expected_diff_files = get_data('dot_changes_different_contents_and_identical_files_expected_diff')
     assert dot_changes_differences_different_contents_and_identical_files[0].unified_diff == expected_diff_contents
     assert dot_changes_differences_different_contents_and_identical_files[1].unified_diff == expected_diff_files
 

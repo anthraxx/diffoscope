@@ -23,7 +23,7 @@ from diffoscope.config import Config
 from diffoscope.comparators.icc import IccFile
 from diffoscope.comparators.missing_file import MissingFile
 
-from utils.data import data, load_fixture
+from utils.data import load_fixture, get_data
 from utils.tools import skip_unless_tools_exist
 
 
@@ -43,7 +43,7 @@ def differences(icc1, icc2):
 
 @skip_unless_tools_exist('cd-iccdump')
 def test_diff(differences):
-    expected_diff = open(data('icc_expected_diff')).read()
+    expected_diff = get_data('icc_expected_diff')
     assert differences[0].unified_diff == expected_diff
 
 @skip_unless_tools_exist('cd-iccdump')

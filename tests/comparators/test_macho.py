@@ -25,7 +25,7 @@ from diffoscope.config import Config
 from diffoscope.comparators.macho import MachoFile
 from diffoscope.comparators.missing_file import MissingFile
 
-from utils.data import data, load_fixture
+from utils.data import load_fixture, get_data
 from utils.tools import skip_unless_tools_exist
 
 
@@ -57,5 +57,5 @@ def test_diff(obj_differences):
     for idx, diff in enumerate(obj_differences):
         with open(os.path.join(os.path.dirname(__file__), '../data', l[idx]), 'w') as f:
             print(diff.unified_diff, file=f)
-    expected_diff = open(data('macho_expected_diff')).read()
+    expected_diff = get_data('macho_expected_diff')
     assert obj_differences[0].unified_diff == expected_diff

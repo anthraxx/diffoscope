@@ -21,7 +21,7 @@ import pytest
 
 from diffoscope.comparators.zip import ZipFile, MozillaZipFile
 
-from utils.data import data, load_fixture
+from utils.data import load_fixture, get_data
 from utils.tools import skip_unless_tools_exist
 from utils.nonexisting import assert_non_existing
 
@@ -45,14 +45,14 @@ def differences(zip1, zip2):
 
 @skip_unless_tools_exist('zipinfo')
 def test_metadata(differences):
-    expected_diff = open(data('zip_zipinfo_expected_diff')).read()
+    expected_diff = get_data('zip_zipinfo_expected_diff')
     assert differences[0].unified_diff == expected_diff
 
 @skip_unless_tools_exist('zipinfo')
 def test_compressed_files(differences):
     assert differences[1].source1 == 'dir/text'
     assert differences[1].source2 == 'dir/text'
-    expected_diff = open(data('text_ascii_expected_diff')).read()
+    expected_diff = get_data('text_ascii_expected_diff')
     assert differences[1].unified_diff == expected_diff
 
 @skip_unless_tools_exist('zipinfo')
@@ -72,7 +72,7 @@ def mozzip_differences(mozzip1, mozzip2):
 
 @skip_unless_tools_exist('zipinfo')
 def test_mozzip_metadata(mozzip_differences, mozzip1, mozzip2):
-    expected_diff = open(data('mozzip_zipinfo_expected_diff')).read()
+    expected_diff = get_data('mozzip_zipinfo_expected_diff')
     diff = mozzip_differences[0].unified_diff
     assert (diff.replace(mozzip1.path, 'test1.mozzip')
                 .replace(mozzip2.path, 'test2.mozzip')) == expected_diff
@@ -81,7 +81,7 @@ def test_mozzip_metadata(mozzip_differences, mozzip1, mozzip2):
 def test_mozzip_compressed_files(mozzip_differences):
     assert mozzip_differences[1].source1 == 'dir/text'
     assert mozzip_differences[1].source2 == 'dir/text'
-    expected_diff = open(data('text_ascii_expected_diff')).read()
+    expected_diff = get_data('text_ascii_expected_diff')
     assert mozzip_differences[1].unified_diff == expected_diff
 
 @skip_unless_tools_exist('zipinfo')

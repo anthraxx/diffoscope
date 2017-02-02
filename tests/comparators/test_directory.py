@@ -23,7 +23,7 @@ import pytest
 
 from diffoscope.comparators.directory import compare_directories
 
-from utils.data import data
+from utils.data import data, get_data
 
 
 TEST_FILE1_PATH = data('text_ascii1')
@@ -56,7 +56,7 @@ def differences(tmpdir):
 def test_content(differences):
     assert differences[0].source1 == 'dir'
     assert differences[0].details[0].source1 == 'text'
-    expected_diff = open(data('text_ascii_expected_diff')).read()
+    expected_diff = get_data('text_ascii_expected_diff')
     assert differences[0].details[0].unified_diff == expected_diff
 
 def test_stat(differences):

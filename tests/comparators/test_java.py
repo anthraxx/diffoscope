@@ -24,7 +24,7 @@ from diffoscope.config import Config
 from diffoscope.comparators.java import ClassFile
 from diffoscope.comparators.missing_file import MissingFile
 
-from utils.data import data, load_fixture
+from utils.data import load_fixture, get_data
 from utils.tools import skip_unless_tools_exist, skip_unless_tool_is_at_least
 
 
@@ -51,7 +51,7 @@ def differences(class1, class2):
 
 @skip_unless_tool_is_at_least('javap', javap_version, '1.8')
 def test_diff(differences):
-    expected_diff = open(data('class_expected_diff')).read()
+    expected_diff = get_data('class_expected_diff')
     assert differences[0].unified_diff == expected_diff
 
 @skip_unless_tools_exist('javap')

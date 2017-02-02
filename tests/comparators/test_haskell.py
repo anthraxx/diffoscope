@@ -22,7 +22,7 @@ import pytest
 from diffoscope.comparators.binary import FilesystemFile
 from diffoscope.comparators.haskell import HiFile
 
-from utils.data import data, load_fixture
+from utils.data import get_data, load_fixture
 from utils.tools import skip_unless_tools_exist
 
 
@@ -48,6 +48,5 @@ def test_diff(haskell1, differences):
     if isinstance(haskell1, FilesystemFile):
         pytest.skip("mismatch between system ghc and fixture")
 
-    with open(data('haskell_expected_diff')) as f:
-        expected_diff = f.read()
+    expected_diff = get_data('haskell_expected_diff')
     assert differences[0].unified_diff == expected_diff

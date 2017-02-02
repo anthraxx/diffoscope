@@ -23,7 +23,7 @@ from diffoscope.config import Config
 from diffoscope.comparators.missing_file import MissingFile
 from diffoscope.comparators.iso9660 import Iso9660File
 
-from utils.data import data, load_fixture
+from utils.data import load_fixture, get_data
 from utils.tools import skip_unless_tools_exist
 
 
@@ -43,25 +43,25 @@ def differences(iso1, iso2):
 
 @skip_unless_tools_exist('isoinfo')
 def test_iso9660_content(differences):
-    expected_diff = open(data('iso9660_content_expected_diff')).read()
+    expected_diff = get_data('iso9660_content_expected_diff')
     assert differences[0].unified_diff == expected_diff
 
 @skip_unless_tools_exist('isoinfo')
 def test_iso9660_rockridge(differences):
-    expected_diff = open(data('iso9660_rockridge_expected_diff')).read()
+    expected_diff = get_data('iso9660_rockridge_expected_diff')
     assert differences[1].unified_diff == expected_diff
 
 @skip_unless_tools_exist('isoinfo')
 def test_symlink(differences):
     assert differences[3].comment == 'symlink'
-    expected_diff = open(data('symlink_expected_diff')).read()
+    expected_diff = get_data('symlink_expected_diff')
     assert differences[3].unified_diff == expected_diff
 
 @skip_unless_tools_exist('isoinfo')
 def test_compressed_files(differences):
     assert differences[2].source1 == 'text'
     assert differences[2].source2 == 'text'
-    expected_diff = open(data('text_ascii_expected_diff')).read()
+    expected_diff = get_data('text_ascii_expected_diff')
     assert differences[2].unified_diff == expected_diff
 
 @skip_unless_tools_exist('isoinfo')

@@ -23,7 +23,7 @@ from diffoscope.comparators.binary import FilesystemFile
 from diffoscope.comparators.device import Device
 from diffoscope.comparators.utils.specialize import specialize
 
-from utils.data import load_fixture, data
+from utils.data import load_fixture, get_data
 
 text_ascii1 = load_fixture('text_ascii1')
 
@@ -43,11 +43,9 @@ def test_identification(devnull):
     assert isinstance(devnull, Device)
 
 def test_diff(differences):
-    with open(data('device_expected_diff')) as f:
-        expected_diff = f.read()
+    expected_diff = get_data('device_expected_diff')
     assert differences.unified_diff == expected_diff
 
 def test_diff_reverse(differences_reverse):
-    with open(data('device_expected_diff_reverse')) as f:
-        expected_diff = f.read()
+    expected_diff = get_data('device_expected_diff_reverse')
     assert differences_reverse.unified_diff == expected_diff

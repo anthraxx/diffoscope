@@ -19,7 +19,7 @@
 
 import pytest
 
-from utils.data import data, load_fixture
+from utils.data import load_fixture, get_data
 from utils.tools import skip_unless_tools_exist
 from utils.nonexisting import assert_non_existing
 
@@ -50,7 +50,7 @@ def differences(rpm1, rpm2):
 @skip_unless_tools_exist('rpm2cpio')
 def test_header(differences):
     assert differences[0].source1 == 'header'
-    expected_diff = open(data('rpm_header_expected_diff')).read()
+    expected_diff = get_data('rpm_header_expected_diff')
     assert differences[0].unified_diff == expected_diff
 
 @pytest.mark.skipif(miss_rpm_module, reason='rpm module is not installed')
@@ -58,7 +58,7 @@ def test_header(differences):
 def test_listing(differences):
     assert differences[1].source1 == 'content'
     assert differences[1].details[0].source1 == 'file list'
-    expected_diff = open(data('rpm_listing_expected_diff')).read()
+    expected_diff = get_data('rpm_listing_expected_diff')
     assert differences[1].details[0].unified_diff == expected_diff
 
 @pytest.mark.skipif(miss_rpm_module, reason='rpm module is not installed')
@@ -66,7 +66,7 @@ def test_listing(differences):
 def test_content(differences):
     assert differences[1].source1 == 'content'
     assert differences[1].details[1].source1 == './dir/text'
-    expected_diff = open(data('text_ascii_expected_diff')).read()
+    expected_diff = get_data('text_ascii_expected_diff')
     assert differences[1].details[1].unified_diff == expected_diff
 
 @pytest.mark.skipif(miss_rpm_module, reason='rpm module is not installed')

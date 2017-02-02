@@ -26,7 +26,7 @@ from diffoscope.comparators.binary import FilesystemFile
 from diffoscope.comparators.missing_file import MissingFile
 from diffoscope.comparators.utils.specialize import specialize
 
-from utils.data import data, load_fixture
+from utils.data import load_fixture, get_data
 
 
 gzip1 = load_fixture('test1.gz')
@@ -47,7 +47,7 @@ def differences(gzip1, gzip2):
 def test_metadata(differences):
     assert differences[0].source1 == 'metadata'
     assert differences[0].source2 == 'metadata'
-    expected_diff = open(data('gzip_metadata_expected_diff')).read()
+    expected_diff = get_data('gzip_metadata_expected_diff')
     assert differences[0].unified_diff == expected_diff
 
 def test_content_source(differences):
@@ -66,7 +66,7 @@ def test_content_source_without_extension(tmpdir, gzip1, gzip2):
     assert difference[1].source2 == 'test2-content'
 
 def test_content_diff(differences):
-    expected_diff = open(data('text_ascii_expected_diff')).read()
+    expected_diff = get_data('text_ascii_expected_diff')
     assert differences[1].unified_diff == expected_diff
 
 def test_compare_non_existing(monkeypatch, gzip1):

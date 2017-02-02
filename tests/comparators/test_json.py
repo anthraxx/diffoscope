@@ -21,7 +21,7 @@ import pytest
 
 from diffoscope.comparators.json import JSONFile
 
-from utils.data import data, load_fixture
+from utils.data import load_fixture, get_data
 from utils.nonexisting import assert_non_existing
 
 
@@ -41,8 +41,8 @@ def differences(json1, json2):
     return json1.compare(json2).details
 
 def test_diff(differences):
-    with open(data('json_expected_diff')) as f:
-        expected_diff = f.read()
+    expected_diff = get_data('json_expected_diff')
+
     assert differences[0].unified_diff == expected_diff
 
 def test_compare_non_existing(monkeypatch, json1):
@@ -51,4 +51,4 @@ def test_compare_non_existing(monkeypatch, json1):
 def test_ordering_differences(json3a, json3b):
     diff = json3a.compare(json3b)
     assert diff.details[0]._comments == ['ordering differences only']
-    assert diff.details[0].unified_diff == open(data('order1.diff')).read()
+    assert diff.details[0].unified_diff == get_data('order1.diff')

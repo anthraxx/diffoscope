@@ -22,7 +22,7 @@ import codecs
 from diffoscope.comparators.binary import FilesystemFile
 from diffoscope.comparators.utils.specialize import specialize
 
-from utils.data import data, load_fixture
+from utils.data import data, load_fixture, get_data
 from utils.nonexisting import assert_non_existing
 
 
@@ -36,7 +36,7 @@ def test_no_differences(ascii1):
 def test_difference_in_ascii(ascii1, ascii2):
     difference = ascii1.compare(ascii2)
     assert difference is not None
-    expected_diff = open(data('text_ascii_expected_diff')).read()
+    expected_diff = get_data('text_ascii_expected_diff')
     assert difference.unified_diff == expected_diff
     assert not difference.comments
     assert len(difference.details) == 0
@@ -74,4 +74,4 @@ text_order2 = load_fixture('text_order2')
 def test_ordering_differences(text_order1, text_order2):
     difference = text_order1.compare(text_order2)
     assert difference.comments == ['ordering differences only']
-    assert difference.unified_diff == open(data('text_order_expected_diff')).read()
+    assert difference.unified_diff == get_data('text_order_expected_diff')

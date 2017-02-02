@@ -23,7 +23,7 @@ from diffoscope.config import Config
 from diffoscope.comparators.mono import MonoExeFile
 from diffoscope.comparators.missing_file import MissingFile
 
-from utils.data import data, load_fixture
+from utils.data import load_fixture, get_data
 from utils.tools import skip_unless_tools_exist
 
 
@@ -48,7 +48,7 @@ def differences(exe1, exe2):
 
 @skip_unless_tools_exist('pedump')
 def test_diff(differences):
-    expected_diff = open(data('pe_expected_diff')).read()
+    expected_diff = get_data('pe_expected_diff')
     assert differences[0].unified_diff == expected_diff
 
 @skip_unless_tools_exist('pedump')

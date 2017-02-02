@@ -24,7 +24,7 @@ from diffoscope.config import Config
 from diffoscope.comparators.image import JPEGImageFile
 from diffoscope.comparators.missing_file import MissingFile
 
-from utils.data import data, load_fixture
+from utils.data import load_fixture, get_data
 from utils.tools import skip_unless_tools_exist, skip_unless_tool_is_at_least
 
 
@@ -52,7 +52,7 @@ def differences(image1, image2):
 
 @skip_unless_tools_exist('img2txt', 'identify')
 def test_diff(differences):
-    expected_diff = open(data('jpeg_image_expected_diff')).read()
+    expected_diff = get_data('jpeg_image_expected_diff')
     assert differences[0].unified_diff == expected_diff
 
 @skip_unless_tools_exist('img2txt', 'identify')
@@ -69,5 +69,5 @@ def differences_meta(image1_meta, image2_meta):
 @skip_unless_tools_exist('img2txt', 'identify')
 @skip_unless_tool_is_at_least('identify', identify_version, '6.9.6')
 def test_diff_meta(differences_meta):
-    expected_diff = open(data('jpeg_image_meta_expected_diff')).read()
+    expected_diff = get_data('jpeg_image_meta_expected_diff')
     assert differences_meta[-1].unified_diff == expected_diff

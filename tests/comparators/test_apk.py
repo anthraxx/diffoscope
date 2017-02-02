@@ -21,7 +21,7 @@ import pytest
 
 from diffoscope.comparators.apk import ApkFile
 
-from utils.data import data, load_fixture
+from utils.data import load_fixture, get_data
 from utils.tools import skip_unless_tools_exist
 from utils.nonexisting import assert_non_existing
 
@@ -47,14 +47,14 @@ def test_compare_non_existing(monkeypatch, apk1):
 def test_zipinfo(differences):
     assert differences[0].source1 == 'zipinfo {}'
     assert differences[0].source2 == 'zipinfo {}'
-    expected_diff = open(data('apk_zipinfo_expected_diff')).read()
+    expected_diff = get_data('apk_zipinfo_expected_diff')
     assert differences[0].unified_diff == expected_diff
 
 @skip_unless_tools_exist('apktool', 'zipinfo')
 def test_android_manifest(differences):
     assert differences[2].source1 == 'AndroidManifest.xml'
     assert differences[2].source2 == 'AndroidManifest.xml'
-    expected_diff = open(data('apk_manifest_expected_diff')).read()
+    expected_diff = get_data('apk_manifest_expected_diff')
     assert differences[2].unified_diff == expected_diff
 
 @skip_unless_tools_exist('apktool', 'zipinfo')

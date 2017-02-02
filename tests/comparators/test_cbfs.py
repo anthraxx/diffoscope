@@ -25,7 +25,7 @@ from diffoscope.comparators.cbfs import CbfsFile
 from diffoscope.comparators.binary import FilesystemFile
 from diffoscope.comparators.utils.specialize import specialize
 
-from utils.data import data
+from utils.data import data, get_data
 from utils.tools import skip_unless_tools_exist
 from utils.nonexisting import assert_non_existing
 
@@ -76,14 +76,14 @@ def differences(rom1, rom2):
 
 @skip_unless_tools_exist('cbfstool')
 def test_listing(differences):
-    expected_diff = open(data('cbfs_listing_expected_diff')).read()
+    expected_diff = get_data('cbfs_listing_expected_diff')
     assert differences[0].unified_diff == expected_diff
 
 @skip_unless_tools_exist('cbfstool')
 def test_content(differences):
     assert differences[1].source1 == 'text'
     assert differences[1].source2 == 'text'
-    expected_diff = open(data('text_ascii_expected_diff')).read()
+    expected_diff = get_data('text_ascii_expected_diff')
     assert differences[1].unified_diff == expected_diff
 
 @skip_unless_tools_exist('cbfstool')

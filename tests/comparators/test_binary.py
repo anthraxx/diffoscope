@@ -32,7 +32,7 @@ from diffoscope.comparators.utils.file import File
 from diffoscope.comparators.missing_file import MissingFile
 from diffoscope.comparators.utils.compare import Xxd
 
-from utils.data import data, init_fixture
+from utils.data import data, init_fixture, get_data
 from utils.tools import skip_unless_tools_exist
 
 
@@ -78,7 +78,7 @@ def test_no_differences_with_xxd(binary1):
 @skip_unless_tools_exist('xxd')
 def test_compare_with_xxd(binary1, binary2):
     difference = binary1.compare_bytes(binary2)
-    expected_diff = open(data('binary_expected_diff')).read()
+    expected_diff = get_data('binary_expected_diff')
     assert normalize_zeros(difference.unified_diff) == expected_diff
 
 def test_compare_non_existing_with_xxd(binary1):
@@ -97,7 +97,7 @@ def test_no_differences_without_xxd(xxd_not_found, binary1):
 
 def test_compare_without_xxd(xxd_not_found, binary1, binary2):
     difference = binary1.compare(binary2)
-    expected_diff = open(data('binary_hexdump_expected_diff')).read()
+    expected_diff = get_data('binary_hexdump_expected_diff')
     assert difference.unified_diff == expected_diff
 
 def test_with_compare_details():
@@ -114,7 +114,7 @@ def test_with_compare_details_and_fallback():
         def compare_details(self, other, source=None):
             return []
     difference = MockFile(TEST_FILE1_PATH).compare(MockFile(TEST_FILE2_PATH))
-    expected_diff = open(data('binary_expected_diff')).read()
+    expected_diff = get_data('binary_expected_diff')
     assert 'yet data differs' in difference.comment
     assert normalize_zeros(difference.unified_diff) == expected_diff
 
@@ -133,7 +133,7 @@ def test_with_compare_details_and_failed_process():
             subprocess.check_output(['sh', '-c', 'echo "%s"; exit 42' % output], shell=False)
             raise Exception('should not be run')
     difference = MockFile(TEST_FILE1_PATH).compare(MockFile(TEST_FILE2_PATH))
-    expected_diff = open(data('../data/binary_expected_diff')).read()
+    expected_diff = get_data('../data/binary_expected_diff')
     assert output in difference.comment
     assert '42' in difference.comment
     assert normalize_zeros(difference.unified_diff) == expected_diff
@@ -146,7 +146,7 @@ def test_with_compare_details_and_tool_not_found(monkeypatch):
         def compare_details(self, other, source=None):
             raise Exception('should not be run')
     difference = MockFile(TEST_FILE1_PATH).compare(MockFile(TEST_FILE2_PATH))
-    expected_diff = open(data('binary_expected_diff')).read()
+    expected_diff = get_data('binary_expected_diff')
     assert 'nonexistent' in difference.comment
     assert 'some-package' in difference.comment
     assert normalize_zeros(difference.unified_diff) == expected_diff

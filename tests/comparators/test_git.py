@@ -21,7 +21,7 @@ import pytest
 
 from diffoscope.comparators.git import GitIndexFile
 
-from utils.data import data, load_fixture
+from utils.data import get_data, load_fixture
 
 
 git1 = load_fixture('test1.git-index')
@@ -38,6 +38,5 @@ def differences(git1, git2):
     return git1.compare(git2).details
 
 def test_diff(differences):
-    with open(data('git_expected_diff')) as f:
-        expected_diff = f.read()
+    expected_diff = get_data('git_expected_diff')
     assert differences[0].unified_diff == expected_diff

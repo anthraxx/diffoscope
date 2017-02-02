@@ -24,7 +24,7 @@ import subprocess
 from diffoscope.comparators.ar import ArFile
 
 from utils import diff_ignore_line_numbers
-from utils.data import data, load_fixture
+from utils.data import load_fixture, get_data
 from utils.tools import skip_unless_tools_exist, skip_unless_tool_is_at_least, \
     skip_if_binutils_does_not_support_x86
 from utils.nonexisting import assert_non_existing
@@ -57,7 +57,7 @@ def test_num_items(differences):
 def test_item0_armap(differences):
     assert differences[0].source1 == 'nm -s {}'
     assert differences[0].source2 == 'nm -s {}'
-    expected_diff = open(data('rlib_armap_expected_diff')).read()
+    expected_diff = get_data('rlib_armap_expected_diff')
     assert differences[0].unified_diff == expected_diff
 
 @skip_unless_tools_exist('nm')
@@ -65,7 +65,7 @@ def test_item0_armap(differences):
 def test_item1_elf(differences):
     assert differences[1].source1 == 'alloc_system-d16b8f0e.0.o'
     assert differences[1].source2 == 'alloc_system-d16b8f0e.0.o'
-    expected_diff = open(data('rlib_elf_expected_diff')).read()
+    expected_diff = get_data('rlib_elf_expected_diff')
     assert differences[1].details[0].unified_diff == expected_diff
 
 @skip_unless_tools_exist('nm')
@@ -78,7 +78,7 @@ def test_item2_rust_metadata_bin(differences):
 def test_item3_deflate_llvm_bitcode(differences):
     assert differences[3].source1 == 'alloc_system-d16b8f0e.0.bytecode.deflate'
     assert differences[3].source2 == 'alloc_system-d16b8f0e.0.bytecode.deflate'
-    expected_diff = open(data('rlib_llvm_dis_expected_diff')).read()
+    expected_diff = get_data('rlib_llvm_dis_expected_diff')
     actual_diff = differences[3].details[0].details[1].unified_diff
     assert diff_ignore_line_numbers(actual_diff) == diff_ignore_line_numbers(expected_diff)
 

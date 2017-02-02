@@ -23,7 +23,7 @@ from diffoscope.config import Config
 from diffoscope.comparators.ipk import IpkFile
 from diffoscope.comparators.missing_file import MissingFile
 
-from utils.data import data, load_fixture
+from utils.data import load_fixture, get_data
 
 
 ipk1 = load_fixture('base-files_157-r45695_ar71xx.ipk')
@@ -42,7 +42,7 @@ def differences(ipk1, ipk2):
 
 def test_metadata(differences):
     assert differences[0].source1 == 'metadata'
-    expected_diff = open(data('ipk_metadata_expected_diff')).read()
+    expected_diff = get_data('ipk_metadata_expected_diff')
     assert differences[0].unified_diff == expected_diff
 
 def test_compressed_files(differences):

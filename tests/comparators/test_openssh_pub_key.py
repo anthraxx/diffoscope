@@ -24,7 +24,7 @@ from diffoscope.config import Config
 from diffoscope.comparators.openssh import PublicKeyFile
 from diffoscope.comparators.missing_file import MissingFile
 
-from utils.data import data, load_fixture
+from utils.data import load_fixture, get_data
 from utils.tools import skip_unless_tools_exist, skip_unless_tool_is_at_least
 
 
@@ -52,7 +52,7 @@ def differences(opensshpubkey1, opensshpubkey2):
 
 @skip_unless_tool_is_at_least('ssh-keygen', openssh_version, '6.9')
 def test_diff(differences):
-    expected_diff = open(data('openssh_pub_key_expected_diff')).read()
+    expected_diff = get_data('openssh_pub_key_expected_diff')
     assert differences[0].unified_diff == expected_diff
 
 @skip_unless_tools_exist('ssh-keygen')

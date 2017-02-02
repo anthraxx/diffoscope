@@ -24,7 +24,7 @@ from diffoscope.config import Config
 from diffoscope.comparators.dex import DexFile
 from diffoscope.comparators.missing_file import MissingFile
 
-from utils.data import data, load_fixture
+from utils.data import load_fixture, get_data
 from utils.tools import skip_unless_tools_exist, skip_unless_tool_is_at_least
 
 from test_java import javap_version
@@ -67,7 +67,7 @@ def test_differences(differences):
     assert zipinfo.source2 == 'zipinfo -v {}'
     assert classdiff.source1 == 'com/example/MainActivity.class'
     assert classdiff.source2 == 'com/example/MainActivity.class'
-    expected_diff = open(data('dex_expected_diffs')).read()
+    expected_diff = get_data('dex_expected_diffs')
     found_diff = zipinfo.unified_diff + classdiff.details[0].unified_diff
     assert expected_diff == found_diff
 

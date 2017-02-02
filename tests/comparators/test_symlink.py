@@ -22,7 +22,7 @@ import os
 from diffoscope.comparators.binary import FilesystemFile
 from diffoscope.comparators.utils.specialize import specialize
 
-from utils.data import data
+from utils.data import get_data
 
 
 def test_destination(tmpdir):
@@ -34,6 +34,6 @@ def test_destination(tmpdir):
     a = create('a')
     b = create('b')
 
-    expected_diff = open(data('symlink_expected_destination_diff')).read()
+    expected_diff = get_data('symlink_expected_destination_diff')
 
     assert a.compare(b).unified_diff == expected_diff

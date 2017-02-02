@@ -23,7 +23,7 @@ from diffoscope.config import Config
 from diffoscope.comparators.zip import ZipFile
 from diffoscope.comparators.missing_file import MissingFile
 
-from utils.data import data, load_fixture
+from utils.data import load_fixture, get_data
 from utils.tools import skip_unless_tools_exist
 
 
@@ -51,7 +51,7 @@ def test_differences(differences):
     assert differences[2].source2 == 'toc.ncx'
     assert differences[3].source1 == 'ch001.xhtml'
     assert differences[3].source2 == 'ch001.xhtml'
-    expected_diff = open(data('epub_expected_diffs')).read()
+    expected_diff = get_data('epub_expected_diffs')
     assert expected_diff == "".join(map(lambda x: x.unified_diff, differences))
 
 @skip_unless_tools_exist('zipinfo')

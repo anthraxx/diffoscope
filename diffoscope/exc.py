@@ -34,7 +34,7 @@ class RequiredToolNotFound(Exception):
     def get_package(self):
         try:
             providers = EXTERNAL_TOOLS[self.command]
-        except KeyError:
+        except KeyError:  # noqa
             return None
 
         return providers.get(get_current_os(), None)

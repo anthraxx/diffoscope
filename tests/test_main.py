@@ -124,3 +124,10 @@ def test_list_tools(capsys):
     assert err == ''
     assert 'External-Tools-Required: ' in out
     assert 'xxd,' in out
+
+def test_profiling(capsys):
+    ret, out, err = run(capsys, TEST_TAR1_PATH, TEST_TAR1_PATH, '--profile=-')
+
+    assert ret == 0
+    assert "Profiling output for" in out
+    assert err == ''

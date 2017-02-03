@@ -1,0 +1,3 @@
+# This will mainly be used to double check that what we upload to Debian
+# is also in our "archive".
+debian-watch-file-in-native-package

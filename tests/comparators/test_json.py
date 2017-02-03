@@ -29,9 +29,13 @@ json1 = load_fixture('test1.json')
 json2 = load_fixture('test2.json')
 json3a = load_fixture('order1a.json')
 json3b = load_fixture('order1b.json')
+invalid_json = load_fixture('test_invalid.json')
 
 def test_identification(json1):
     assert isinstance(json1, JSONFile)
+
+def test_invalid(invalid_json):
+    assert not isinstance(invalid_json, JSONFile)
 
 def test_no_differences(json1):
     assert json1.compare(json1) is None

@@ -85,7 +85,7 @@ EXTERNAL_TOOLS = {
     },
     'isoinfo': {
         'debian': 'genisoimage',
-        'arch': 'cdrkit',
+        'arch': 'cdrtools',
         'FreeBSD': 'cdrtools',
     },
     'javap': {

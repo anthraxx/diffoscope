@@ -20,18 +20,10 @@
 
 import re
 
-from diffoscope.tools import tool_required
 from diffoscope.difference import Difference
 
 from .utils.file import File
-from .utils.command import Command
 from .utils.libarchive import LibarchiveContainer, list_libarchive
-
-
-class CpioContent(Command):
-    @tool_required('cpio')
-    def cmdline(self):
-        return ['cpio', '--quiet', '--numeric-uid-gid', '--force-local', '-tvF', self.path]
 
 
 class CpioFile(File):

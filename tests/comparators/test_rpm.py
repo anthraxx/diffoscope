@@ -20,8 +20,10 @@
 import pytest
 
 from diffoscope.comparators import ComparatorManager
+from diffoscope.comparators.binary import FilesystemFile
+from diffoscope.comparators.utils.specialize import specialize
 
-from utils.data import load_fixture, get_data
+from utils.data import load_fixture, data, get_data
 from utils.tools import skip_unless_tools_exist
 from utils.nonexisting import assert_non_existing
 
@@ -76,10 +78,19 @@ def test_content(differences):
 def test_compare_non_existing(monkeypatch, rpm1):
     assert_non_existing(monkeypatch, rpm1)
 
-def test_fallback_import(monkeypatch):
-    # Ensure that we can at least import the fallback module
+def test_fallback_comparison(monkeypatch):
     manager = ComparatorManager()
     monkeypatch.setattr(manager, 'COMPARATORS', (
         ('rpm_fallback.RpmFile',),
     ))
     manager.reload()
+
+    # Re-specialize after reloading our Comparators
+    rpm1 = specialize(FilesystemFile(data('test1.rpm')))
+    rpm2 = specialize(FilesystemFile(data('test2.rpm')))
+
+    assert rpm1.compare(rpm1) is None
+    assert rpm2.compare(rpm2) is None
+
+    expected_diff = get_data('rpm_fallback_expected_diff')
+    assert rpm1.compare(rpm2).unified_diff == expected_diff

@@ -1,0 +1,23 @@
+@@ -1,19 +1,19 @@
+ Format: 1.0
+ Build-Architecture: amd64
+ Source: test
+ Binary: test
+ Architecture: all
+ Version: 1
+ Checksums-Md5:
+- 660ad4713e5d8271df2e7e86bf246dc0 2262 devel optional test_1_all.deb
++ d323c454462407fe3bfde31a74b23eba 2388 test_1_all.deb
+ Checksums-Sha1:
+- b21eeec5004853c4955d5b856a6546068c2d7dc9 2262 test_1_all.deb
++ 70982664db2015334bff6441b429d7e3c58dbecb 2388 test_1_all.deb
+ Checksums-Sha256:
+- d2b2ea8b9cf8ef645a328cdb882586ee465e141fc66a2dbe1ad29b29ac1e7920 2262 test_1_all.deb
++ 2f2e45ee3a5fdacd9b30133ec728121588bf9b97af3b947b3882b2b28a0555da 2388 test_1_all.deb
+ Build-Path: /build/test-1
+ Build-Environment:
+  base-files (= 9.4),
+  base-passwd (= 3.5.38),
+  bash (= 4.3-14),
+  binutils (= 2.25.1-5),
+  bsdmainutils (= 9.0.6),

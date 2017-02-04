@@ -242,10 +242,36 @@ def test_dot_buildinfo_internal_diff(dot_buildinfo_differences):
 def test_dot_buildinfo_compare_non_existing(monkeypatch, dot_buildinfo1):
     assert_non_existing(monkeypatch, dot_buildinfo1)
 
-def test_fallback_import(monkeypatch):
-    # Ensure that we can at least import the fallback module
+def test_fallback_comparisons(monkeypatch):
     manager = ComparatorManager()
     monkeypatch.setattr(manager, 'COMPARATORS', (
         ('debian_fallback.DotChangesFile',),
+        ('debian_fallback.DotDscFile',),
+        ('debian_fallback.DotBuildinfoFile',),
     ))
     manager.reload()
+
+    for a, b, expected_diff in (
+        (
+            'test1.changes',
+            'test2.changes',
+            'dot_changes_fallback_expected_diff',
+        ),
+        (
+            'test1.dsc',
+            'test2.dsc',
+            'dot_dsc_fallback_expected_diff'
+        ),
+        (
+            'test1.buildinfo',
+            'test2.buildinfo',
+            'dot_buildinfo_fallback_expected_diff',
+        ),
+    ):
+        # Re-specialize after reloading our Comparators
+        file1 = specialize(FilesystemFile(data(a)))
+        file2 = specialize(FilesystemFile(data(b)))
+
+        assert file1.compare(file1) is None
+        assert file2.compare(file2) is None
+        assert file1.compare(file2).unified_diff == get_data(expected_diff)

@@ -1,0 +1,29 @@
+@@ -5,21 +5,21 @@
+ Architecture: source all
+ Version: 1
+ Distribution: unstable
+ Urgency: low
+ Maintainer: Someone Else <user@example.org>
+ Changed-By: Someone Else <user@example.org>
+ Description:
+- test - just a test package
++ test - just a simple test package
+ Changes:
+  test (1) unstable; urgency=low
+  .
+    * Test package.
+ Checksums-Sha1:
+- b21eeec5004853c4955d5b856a6546068c2d7dc9 2262 test_1_all.deb
+- e1cafb5f8db51f4ec477807d105b1e3cccf9a767 3780 test_1.buildinfo
++ 70982664db2015334bff6441b429d7e3c58dbecb 2388 test_1_all.deb
++ 91d2cc6aadddb4a24b0c2f8f24d558ce0e07f9cd 3765 test_2.buildinfo
+ Checksums-Sha256:
+- d2b2ea8b9cf8ef645a328cdb882586ee465e141fc66a2dbe1ad29b29ac1e7920 2262 test_1_all.deb
+- 167d989223978a45a69af30dcd488baa00aec2045b66d0f74d7f03b08fd22365 3780 test_1.buildinfo
++ 2f2e45ee3a5fdacd9b30133ec728121588bf9b97af3b947b3882b2b28a0555da 2388 test_1_all.deb
++ 917d8b5c3ade2bde26fe2b7476481537f32a0c07f10e5e44c0ca7a02c8bfa9d8 3765 test_2.buildinfo
+ Files:
+- 660ad4713e5d8271df2e7e86bf246dc0 2262 devel optional test_1_all.deb
+- 40756b7e8aae2c1fcbcac099670b6db8 3780 web optional test_1.buildinfo
++ d323c454462407fe3bfde31a74b23eba 2388 devel optional test_1_all.deb
++ 9972d7c394228311ba92cbcbfe2d6cd9 3765 web optional test_2.buildinfo

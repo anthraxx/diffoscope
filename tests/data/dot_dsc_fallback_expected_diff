@@ -1,0 +1,16 @@
+@@ -5,12 +5,12 @@
+ Version: 1
+ Maintainer: Someone Else <user@example.org>
+ Standards-Version: 3.9.6
+ Build-Depends: debhelper (>= 7)
+ Package-List: 
+  test deb misc optional
+ Checksums-Sha1: 
+- 2f66c0cf9788240c8c3321193d4a628157748445 2086 test_1.tar.gz
++ 7453b45105d06be451cbc472c2fa1df13a60eb27 2193 test_1.tar.gz
+ Checksums-Sha256: 
+- 1066cb6c1fca0423eb449b7aac27d5a477c55f4262ab8af438100a6d2ee039b4 2086 test_1.tar.gz
++ ff86b4d705489ee0f2825a935100f9a0981b6c8c4c0eb5e19436c8599da14324 2193 test_1.tar.gz
+ Files: 
+- 42c53394ba8bb4d92aab8d40d33507d7 2086 test_1.tar.gz
++ b75f3bae96326e1c518dba429a81f91c 2193 test_1.tar.gz

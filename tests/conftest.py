@@ -20,7 +20,14 @@
 import pytest
 
 from diffoscope.locale import set_locale
+from diffoscope.comparators import ComparatorManager
 
 
 # Ensure set_locale fixture runs before all tests.
 set_locale = pytest.fixture(autouse=True, scope='session')(set_locale)
+
+@pytest.fixture(autouse=True)
+def reload_comparators():
+    # Reload Comparators after every test so we are always in a consistent
+    # state
+    ComparatorManager().reload()

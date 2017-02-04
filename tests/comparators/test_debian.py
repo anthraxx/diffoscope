@@ -21,6 +21,7 @@ import shutil
 import pytest
 
 from diffoscope.config import Config
+from diffoscope.comparators import ComparatorManager
 from diffoscope.comparators.binary import FilesystemFile
 from diffoscope.comparators.missing_file import MissingFile
 from diffoscope.comparators.utils.specialize import specialize
@@ -240,3 +241,11 @@ def test_dot_buildinfo_internal_diff(dot_buildinfo_differences):
 @pytest.mark.skipif(miss_debian_module, reason='debian module is not installed')
 def test_dot_buildinfo_compare_non_existing(monkeypatch, dot_buildinfo1):
     assert_non_existing(monkeypatch, dot_buildinfo1)
+
+def test_fallback_import(monkeypatch):
+    # Ensure that we can at least import the fallback module
+    manager = ComparatorManager()
+    monkeypatch.setattr(manager, 'COMPARATORS', (
+        ('debian_fallback.DotChangesFile',),
+    ))
+    manager.reload()

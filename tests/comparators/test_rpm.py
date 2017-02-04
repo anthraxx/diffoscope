@@ -19,6 +19,8 @@
 
 import pytest
 
+from diffoscope.comparators import ComparatorManager
+
 from utils.data import load_fixture, get_data
 from utils.tools import skip_unless_tools_exist
 from utils.nonexisting import assert_non_existing
@@ -73,3 +75,11 @@ def test_content(differences):
 @skip_unless_tools_exist('rpm2cpio')
 def test_compare_non_existing(monkeypatch, rpm1):
     assert_non_existing(monkeypatch, rpm1)
+
+def test_fallback_import(monkeypatch):
+    # Ensure that we can at least import the fallback module
+    manager = ComparatorManager()
+    monkeypatch.setattr(manager, 'COMPARATORS', (
+        ('rpm_fallback.RpmFile',),
+    ))
+    manager.reload()

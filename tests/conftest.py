@@ -20,6 +20,7 @@
 import pytest
 
 from diffoscope.locale import set_locale
+from diffoscope.progress import ProgressManager
 from diffoscope.comparators import ComparatorManager
 
 
@@ -31,3 +32,7 @@ def reload_comparators():
     # Reload Comparators after every test so we are always in a consistent
     # state
     ComparatorManager().reload()
+
+@pytest.fixture(autouse=True)
+def reset_progress():
+    ProgressManager().reset()

@@ -32,9 +32,12 @@ class ProgressManager(object):
         self.__dict__ = self._singleton
 
         if not self._singleton:
-            self.total = 0
-            self.current = 0
-            self.observers = []
+            self.reset()
+
+    def reset(self):
+        self.total = 0
+        self.current = 0
+        self.observers = []
 
     def setup(self, parsed_args):
         # Show progress bar if user explicitly asked for it, otherwise show if

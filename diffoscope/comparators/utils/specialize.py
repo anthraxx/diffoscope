@@ -18,17 +18,16 @@
 # along with diffoscope.  If not, see <https://www.gnu.org/licenses/>.
 
 import logging
-import importlib
 
 from diffoscope.profiling import profile
 
-from .. import COMPARATORS
+from .. import ComparatorManager
 
 logger = logging.getLogger(__name__)
 
 
 def specialize(file):
-    for cls in FILE_CLASSES:
+    for cls in ComparatorManager().classes:
         if isinstance(file, cls):
             return file
 
@@ -60,28 +59,3 @@ def specialize(file):
     logger.debug("Unidentified file. Magic says: %s", file.magic_file_type)
 
     return file
-
-def import_comparators(comparators):
-    result = []
-
-    for xs in comparators:
-        for x in xs:
-            package, klass_name = x.rsplit('.', 1)
-
-            try:
-                mod = importlib.import_module(
-                    'diffoscope.comparators.{}'.format(package)
-                )
-            except ImportError:
-                continue
-
-            result.append(getattr(mod, klass_name))
-            break
-        else:  # noqa
-            raise ImportError(
-                "Could not import any of {}".format(', '.join(xs))
-            )
-
-    return result
-
-FILE_CLASSES = import_comparators(COMPARATORS)

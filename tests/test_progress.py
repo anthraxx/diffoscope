@@ -18,9 +18,12 @@
 # along with diffoscope.  If not, see <https://www.gnu.org/licenses/>.
 
 import os
+import sys
+import json
 import pytest
 
 from diffoscope.main import main
+from diffoscope.progress import ProgressManager, StatusFD
 
 TEST_TAR1_PATH = os.path.join(os.path.dirname(__file__), 'data', 'test1.tar')
 TEST_TAR2_PATH = os.path.join(os.path.dirname(__file__), 'data', 'test2.tar')
@@ -39,3 +42,22 @@ def test_progress(capsys):
 
     assert ret == 1
     assert "ETA" in err
+
+def test_status_fd(capsys):
+    ProgressManager().register(StatusFD(sys.stderr))
+
+    ret, _, err = run(capsys, TEST_TAR1_PATH, TEST_TAR2_PATH)
+
+    assert ret == 1
+
+    # Parse lines and ensure we emitted at least one line
+    output = [json.loads(x) for x in err.splitlines()]
+    assert output
+
+    # Ensure each line is valid
+    for x in output:
+        assert 'msg' in x
+        assert x['current'] <= x['total']
+
+    # Last line should mark us as "complete"
+    assert output[-1]['current'] == output[-1]['total']

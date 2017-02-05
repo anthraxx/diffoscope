@@ -52,7 +52,7 @@ class ProgressManager(object):
                     raise
 
         if parsed_args.status_fd:
-            self.register(StatusFD(parsed_args.status_fd))
+            self.register(StatusFD(os.fdopen(parsed_args.status_fd, 'w')))
 
     ##
 
@@ -143,8 +143,8 @@ class ProgressBar(object):
         self.bar.finish()
 
 class StatusFD(object):
-    def __init__(self, fileno):
-        self.fileobj = os.fdopen(fileno, 'w')
+    def __init__(self, fileobj):
+        self.fileobj = fileobj
 
     def notify(self, current, total, msg):
         print(json.dumps({

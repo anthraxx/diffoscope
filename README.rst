@@ -15,10 +15,11 @@ with the detected differences. The report can be text or HTML.
 When no type of report has been selected, diffoscope defaults
 to write a text report on the standard output.
 
-diffoscope is developed as part of the `“Reproducible Builds” initiative
-<https://reproducible-builds.org>`_.  It is meant to be able to quickly
-understand why two builds of the same package produce different outputs.
-diffoscope was previously named debbindiff.
+diffoscope was initially started by the "reproducible builds" Debian
+project and now being developed as part of the (wider) `“Reproducible
+Builds” initiative <https://reproducible-builds.org>`_.  It is meant
+to be able to quickly understand why two builds of the same package
+produce different outputs. diffoscope was previously named debbindiff.
 
 Example
 -------

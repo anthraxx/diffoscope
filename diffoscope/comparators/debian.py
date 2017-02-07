@@ -32,14 +32,6 @@ from diffoscope.difference import Difference
 from .utils.file import File
 from .utils.container import Container
 
-
-DOT_CHANGES_FIELDS = [
-    "Format", "Source", "Binary", "Architecture",
-    "Version", "Distribution", "Urgency",
-    "Maintainer", "Changed-By", "Description",
-    "Changes",
-    ]
-
 logger = logging.getLogger(__name__)
 
 

@@ -51,7 +51,10 @@ class DebControlMember(File):
 
     @property
     def path(self):
-        return os.path.join(os.path.dirname(self.container.source.path), self.name)
+        return os.path.join(
+            os.path.dirname(self.container.source.path),
+            self.name,
+        )
 
     def is_directory(self):
         return False
@@ -71,20 +74,30 @@ class DebControlContainer(Container):
     @staticmethod
     def get_version_trimming_re(dcc):
         version = dcc.source.deb822.get('Version')
-        # remove the epoch as it's not in the filename
+
+        # Remove the epoch as it's not in the filename
         version = re.sub(r'^\d+:', '', version)
         if '-' in version:
             upstream, revision = version.rsplit('-', 1)
-            return re.compile(r'_%s(?:-%s)?' % (re.escape(upstream), re.escape(revision)))
-        else:
-            return re.compile(re.escape(version))
+
+            return re.compile(r'_%s(?:-%s)?' % (
+                re.escape(upstream),
+                re.escape(revision),
+            ))
+
+        return re.compile(re.escape(version))
 
     def get_members(self):
-        return collections.OrderedDict([(self._trim_version_number(name), self.get_member(name)) for name in self.get_member_names()])
+        return collections.OrderedDict([
+            (self._trim_version_number(name), self.get_member(name))
+            for name in self.get_member_names()
+        ])
 
     def get_member_names(self):
-        field = self.source.deb822.get('Files') or self.source.deb822.get('Checksums-Sha256')
-        return [d['name'] for d in field]
+        field = self.source.deb822.get('Files') or \
+            self.source.deb822.get('Checksums-Sha256')
+
+        return [x['name'] for x in field]
 
     def get_member(self, member_name):
         return DebControlMember(self, member_name)
@@ -152,6 +165,7 @@ class DotChangesFile(DebControlFile):
             return False
 
         changes = Changes(filename=file.path)
+
         try:
             changes.validate(check_signature=False)
         except FileNotFoundError:
@@ -167,9 +181,10 @@ class DotChangesFile(DebControlFile):
         if differences is None:
             return None
 
+        files = zip(self.deb822.get('Files'), other.deb822.get('Files')
+
         files_identical = all(
-            x == y
-            for x, y in zip(self.deb822.get('Files'), other.deb822.get('Files'))
+            x == y for x, y in files
             if not x['name'].endswith('.buildinfo')
         )
 
@@ -197,7 +212,10 @@ class DotDscFile(DebControlFile):
                 md5 = hashlib.md5()
 
                 # XXX: this will not work for containers
-                in_dsc_path = os.path.join(os.path.dirname(file.path), d['Name'])
+                in_dsc_path = os.path.join(
+                    os.path.dirname(file.path),
+                    d['Name'],
+                )
                 if not os.path.exists(in_dsc_path):
                     return False
 
@@ -239,7 +257,7 @@ class DotBuildinfoFile(DebControlFile):
             return False
 
         with open(file.path, 'rb') as f:
-            # We can parse .buildinfo just like .dsc
+            # We can parse .buildinfo files just like .dsc
             buildinfo = Dsc(f)
 
         if not 'Checksums-Sha256' in buildinfo:
@@ -249,7 +267,10 @@ class DotBuildinfoFile(DebControlFile):
             sha256 = hashlib.sha256()
 
             # XXX: this will not work for containers
-            in_buildinfo_path = os.path.join(os.path.dirname(file.path), d['Name'])
+            in_buildinfo_path = os.path.join(
+                os.path.dirname(file.path),
+                d['Name'],
+            )
             if not os.path.exists(in_buildinfo_path):
                 return False
 

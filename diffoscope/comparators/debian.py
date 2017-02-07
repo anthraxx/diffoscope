@@ -181,7 +181,7 @@ class DotChangesFile(DebControlFile):
         if differences is None:
             return None
 
-        files = zip(self.deb822.get('Files'), other.deb822.get('Files')
+        files = zip(self.deb822.get('Files'), other.deb822.get('Files'))
 
         files_identical = all(
             x == y for x, y in files

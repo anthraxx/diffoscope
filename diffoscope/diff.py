@@ -24,9 +24,10 @@ import logging
 import threading
 import contextlib
 import subprocess
-import tempfile
 
 from multiprocessing.dummy import Queue
+
+from diffoscope.tempfiles import get_temporary_directory
 
 from .tools import tool_required
 from .config import Config
@@ -276,12 +277,14 @@ def diff(feeder1, feeder2):
     end_nl_q1 = Queue()
     end_nl_q2 = Queue()
 
-    with tempfile.TemporaryDirectory() as tmpdir:
-        fifo1 = '{}/f1'.format(tmpdir)
-        fifo2 = '{}/f2'.format(tmpdir)
-        fd_from_feeder(feeder1, end_nl_q1, fifo1)
-        fd_from_feeder(feeder2, end_nl_q2, fifo2)
-        return run_diff(fifo1, fifo2, end_nl_q1, end_nl_q2)
+    tmpdir = get_temporary_directory().name
+
+    fifo1 = '{}/f1'.format(tmpdir)
+    fifo2 = '{}/f2'.format(tmpdir)
+    fd_from_feeder(feeder1, end_nl_q1, fifo1)
+    fd_from_feeder(feeder2, end_nl_q2, fifo2)
+
+    return run_diff(fifo1, fifo2, end_nl_q1, end_nl_q2)
 
 def reverse_unified_diff(diff):
     res = []

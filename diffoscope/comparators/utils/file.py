@@ -131,6 +131,18 @@ class File(object, metaclass=abc.ABCMeta):
             self._magic_file_type = File.guess_file_type(self.path)
         return self._magic_file_type
 
+    @property
+    def file_type(self):
+        for x, y in (
+            (self.is_device, "device"),
+            (self.is_symlink, "symlink"),
+            (self.is_directory, "directory"),
+        ):
+            if x():
+                return y
+
+        return "file"
+
     if tlsh:
         @property
         def fuzzy_hash(self):
@@ -161,6 +173,16 @@ class File(object, metaclass=abc.ABCMeta):
 
     def compare_bytes(self, other, source=None):
         from .compare import compare_binary_files
+
+        # Don't attempt to compare directories with any other type as binaries
+        if os.path.isdir(self.path) or os.path.isdir(other.path):
+            return Difference.from_text(
+                "type: {}".format(self.file_type),
+                "type: {}".format(other.file_type),
+                self.name,
+                other.name,
+                source,
+            )
 
         return compare_binary_files(self, other, source)
 

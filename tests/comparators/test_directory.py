@@ -3,6 +3,7 @@
 # diffoscope: in-depth comparison of files, archives, and directories
 #
 # Copyright © 2015 Jérémy Bobbio <lunar@debian.org>
+#             2017 Chris Lamb <lamby@debian.org>
 #
 # diffoscope is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -21,7 +22,9 @@ import os
 import shutil
 import pytest
 
+from diffoscope.comparators.binary import FilesystemFile
 from diffoscope.comparators.directory import compare_directories
+from diffoscope.comparators.utils.specialize import specialize
 
 from utils.data import data, get_data
 
@@ -61,3 +64,39 @@ def test_content(differences):
 
 def test_stat(differences):
     assert 'stat' in differences[0].details[0].details[0].source1
+
+
+def test_compare_to_file(tmpdir):
+    path = str(tmpdir.join('file'))
+
+    with open(path, 'w') as f:
+        f.write("content")
+
+    a = specialize(FilesystemFile(str(tmpdir.mkdir('dir'))))
+    b = specialize(FilesystemFile(path))
+
+    assert a.compare(b).unified_diff == get_data('test_directory_file_diff')
+
+def test_compare_to_device(tmpdir):
+    a = specialize(FilesystemFile(str(tmpdir.mkdir('dir'))))
+    b = specialize(FilesystemFile('/dev/null'))
+
+    assert a.compare(b).unified_diff == get_data('test_directory_device_diff')
+
+def test_compare_to_symlink(tmpdir):
+    path = str(tmpdir.join('src'))
+    os.symlink('/etc/passwd', path)
+
+    a = specialize(FilesystemFile(str(tmpdir.mkdir('dir'))))
+    b = specialize(FilesystemFile(path))
+
+    assert a.compare(b).unified_diff == get_data('test_directory_symlink_diff')
+
+def test_compare_to_dangling_symlink(tmpdir):
+    path = str(tmpdir.join('src'))
+    os.symlink('/dangling', path)
+
+    a = specialize(FilesystemFile(str(tmpdir.mkdir('dir'))))
+    b = specialize(FilesystemFile(path))
+
+    assert a.compare(b).unified_diff == get_data('test_directory_symlink_diff')

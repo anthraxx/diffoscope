@@ -32,7 +32,7 @@ class TextPresenter(Presenter):
     def __init__(self, print_func, color):
         self.print_func = create_limited_print_func(
             print_func,
-            Config().max_report_size,
+            Config().max_text_report_size,
         )
         self.color = color
 

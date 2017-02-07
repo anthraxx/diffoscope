@@ -107,6 +107,11 @@ def create_parser():
     group2.add_argument('--no-default-limits', action='store_true', default=False,
                         help='Disable most default limits. Note that text '
                         'output already ignores most of these.')
+    group2.add_argument('--max-text-report-size', metavar='BYTES',
+                        dest='max_text_report_size', type=int,
+                        help='Maximum bytes written in --text report. (0 to '
+                        'disable)', default=None).completer=RangeCompleter(0,
+                        Config().max_text_report_size, 200000)
     group2.add_argument('--max-report-size', metavar='BYTES',
                         dest='max_report_size', type=int,
                         help='Maximum bytes written in report. In html-dir '
@@ -229,6 +234,7 @@ def run_diffoscope(parsed_args):
     if not tlsh and Config().fuzzy_threshold != parsed_args.fuzzy_threshold:
         logger.warning('Fuzzy-matching is currently disabled as the "tlsh" module is unavailable.')
     maybe_set_limit(Config(), parsed_args, "max_report_size")
+    maybe_set_limit(Config(), parsed_args, "max_text_report_size")
     maybe_set_limit(Config(), parsed_args, "max_report_child_size")
     # need to set them in this order due to Config._check_constraints
     maybe_set_limit(Config(), parsed_args, "max_diff_block_lines_saved")

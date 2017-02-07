@@ -28,6 +28,7 @@ class Config(object):
     # GNU diff cannot process arbitrary large files :(
     max_diff_input_lines = 2 ** 20
     max_report_size = 2000 * 2 ** 10 # 2000 kB
+    max_text_report_size = 0
     max_report_child_size = 500 * 2 ** 10
     new_file = False
     fuzzy_threshold = 60

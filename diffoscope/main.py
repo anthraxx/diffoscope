@@ -37,7 +37,7 @@ from .tempfiles import clean_all_temp_files
 from .difference import Difference
 from .external_tools import EXTERNAL_TOOLS
 from .presenters.html import JQUERY_SYSTEM_LOCATIONS
-from .presenters.utils import output_all
+from .presenters.formats import output_all
 from .comparators.utils.compare import compare_root_paths
 
 logger = logging.getLogger(__name__)

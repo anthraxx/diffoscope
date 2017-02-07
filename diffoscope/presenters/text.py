@@ -20,8 +20,9 @@
 import re
 
 from diffoscope.diff import color_unified_diff
+from diffoscope.config import Config
 
-from .utils import Presenter
+from .utils import Presenter, create_limited_print_func, PrintLimitReached
 
 
 class TextPresenter(Presenter):
@@ -29,10 +30,19 @@ class TextPresenter(Presenter):
     RE_PREFIX = re.compile(r'(^|\n)')
 
     def __init__(self, print_func, color):
-        self.print_func = print_func
+        self.print_func = create_limited_print_func(
+            print_func,
+            Config().max_report_size,
+        )
         self.color = color
 
         super().__init__()
+
+    def start(self, difference):
+        try:
+            super().start(difference)
+        except PrintLimitReached:
+            self.print_func("Max output size reached.", force=True)
 
     def visit_difference(self, difference):
         if self.depth == 0:

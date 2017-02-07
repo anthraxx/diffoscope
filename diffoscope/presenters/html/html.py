@@ -45,6 +45,8 @@ from diffoscope import VERSION
 from diffoscope.config import Config
 
 from ..icon import FAVICON_BASE64
+from ..utils import PrintLimitReached, DiffBlockLimitReached, \
+    create_limited_print_func
 
 from . import templates
 from .linediff import linediff
@@ -68,25 +70,6 @@ JQUERY_SYSTEM_LOCATIONS = (
 logger = logging.getLogger(__name__)
 re_anchor_prefix = re.compile(r'^[^A-Za-z]')
 re_anchor_suffix = re.compile(r'[^A-Za-z-_:\.]')
-
-
-class PrintLimitReached(Exception):
-    pass
-
-class DiffBlockLimitReached(Exception):
-    pass
-
-
-def create_limited_print_func(print_func, max_page_size):
-    def limited_print_func(s, force=False):
-        if not hasattr(limited_print_func, 'char_count'):
-            limited_print_func.char_count = 0
-        print_func(s)
-        limited_print_func.char_count += len(s)
-        if not force and limited_print_func.char_count >= max_page_size:
-            raise PrintLimitReached()
-    return limited_print_func
-
 
 buf, add_cpt, del_cpt = [], 0, 0
 line1, line2, has_internal_linenos = 0, 0, True

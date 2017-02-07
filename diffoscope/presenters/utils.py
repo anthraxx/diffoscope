@@ -22,6 +22,12 @@ import codecs
 import contextlib
 
 
+class PrintLimitReached(Exception):
+    pass
+
+class DiffBlockLimitReached(Exception):
+    pass
+
 @contextlib.contextmanager
 def make_printer(path):
     output = sys.stdout
@@ -38,3 +44,13 @@ def make_printer(path):
 
     if path != '-':
         output.close()
+
+def create_limited_print_func(print_func, max_page_size):
+    def limited_print_func(s, force=False):
+        if not hasattr(limited_print_func, 'char_count'):
+            limited_print_func.char_count = 0
+        print_func(s)
+        limited_print_func.char_count += len(s)
+        if not force and limited_print_func.char_count >= max_page_size:
+            raise PrintLimitReached()
+    return limited_print_func

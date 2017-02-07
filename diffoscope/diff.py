@@ -19,6 +19,7 @@
 
 import re
 import io
+import os
 import hashlib
 import logging
 import threading
@@ -279,8 +280,8 @@ def diff(feeder1, feeder2):
 
     tmpdir = get_temporary_directory().name
 
-    fifo1 = '{}/f1'.format(tmpdir)
-    fifo2 = '{}/f2'.format(tmpdir)
+    fifo1 = os.path.join(tmpdir, 'f1')
+    fifo2 = os.path.join(tmpdir, 'f2')
     fd_from_feeder(feeder1, end_nl_q1, fifo1)
     fd_from_feeder(feeder2, end_nl_q2, fifo2)
 

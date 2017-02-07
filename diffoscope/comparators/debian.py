@@ -97,7 +97,13 @@ class DebControlContainer(Container):
         field = self.source.deb822.get('Files') or \
             self.source.deb822.get('Checksums-Sha256')
 
-        return [x['name'] for x in field]
+        # Show results from debugging packages last; they are rather verbose,
+        # masking other more interesting differences due to truncating the
+        # output.
+        return sorted(
+            (x['name'] for x in field),
+            key=lambda x: (x.endswith('.deb') and '-dbgsym_' in x, x),
+        )
 
     def get_member(self, member_name):
         return DebControlMember(self, member_name)

@@ -25,7 +25,6 @@ import fcntl
 import hashlib
 import logging
 import threading
-import contextlib
 import subprocess
 
 from multiprocessing.dummy import Queue

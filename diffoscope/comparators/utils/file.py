@@ -200,6 +200,8 @@ class File(object, metaclass=abc.ABCMeta):
 
     def has_same_content_as(self, other):
         logger.debug('Binary.has_same_content: %s %s', self, other)
+        if os.path.isdir(self.path) or os.path.isdir(other.path):
+            return False
         # try comparing small files directly first
         try:
             my_size = os.path.getsize(self.path)

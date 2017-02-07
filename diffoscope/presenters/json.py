@@ -30,11 +30,10 @@ class JSONPresenter(Presenter):
 
         super().__init__()
 
-    def visit(self, difference):
-        super().visit(difference)
+    def start(self, difference):
+        super().start(difference)
 
-        if self.depth == 0:
-            self.print_func(json.dumps(self.root[0], indent=2, sort_keys=True))
+        self.print_func(json.dumps(self.root[0], indent=2, sort_keys=True))
 
     def visit_difference(self, difference):
         self.current.append({

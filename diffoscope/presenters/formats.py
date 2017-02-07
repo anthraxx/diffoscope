@@ -83,7 +83,7 @@ def output_all(difference, parsed_args, has_differences):
                 continue
 
             with make_printer(data['target']) as fn:
-                data['klass'](fn).visit(difference)
+                data['klass'](fn).start(difference)
 
 def text(difference, parsed_args, has_differences):
     # As a special case, write an empty file instead of an empty diff.
@@ -101,7 +101,7 @@ def text(difference, parsed_args, has_differences):
         presenter = TextPresenter(fn, color)
 
         try:
-            presenter.visit(difference)
+            presenter.start(difference)
         except UnicodeEncodeError:
             logger.critical("Console is unable to print Unicode characters. "
                 "Set e.g. PYTHONIOENCODING=utf-8")

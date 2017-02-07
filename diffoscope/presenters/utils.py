@@ -26,6 +26,9 @@ class Presenter(object):
     def __init__(self):
         self.depth = 0
 
+    def start(self, difference):
+        self.visit(difference)
+
     def visit(self, difference):
         self.visit_difference(difference)
 

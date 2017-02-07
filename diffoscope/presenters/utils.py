@@ -76,6 +76,9 @@ def make_printer(path):
 
 def create_limited_print_func(print_func, max_page_size):
     def limited_print_func(s, force=False):
+        if max_page_size == 0:
+            print_func(s)
+            return
         if not hasattr(limited_print_func, 'char_count'):
             limited_print_func.char_count = 0
         print_func(s)

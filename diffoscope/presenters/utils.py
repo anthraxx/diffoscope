@@ -25,6 +25,7 @@ import contextlib
 from ..profiling import profile
 
 from .text import TextPresenter
+from .json import JSONPresenter
 from .html import output_html, output_html_directory
 from .markdown import MarkdownTextPresenter
 from .restructuredtext import RestructuredTextPresenter
@@ -48,6 +49,10 @@ def output_all(difference, parsed_args, has_differences):
         'html': {
             'fn': html,
             'target': parsed_args.html_output,
+        },
+        'json': {
+            'klass': JSONPresenter,
+            'target': parsed_args.json_output,
         },
         'markdown': {
             'klass': MarkdownTextPresenter,

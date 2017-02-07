@@ -93,6 +93,8 @@ def create_parser():
                         '"disable" to disable JavaScript. When omitted '
                         'diffoscope will try to create a symlink to a system '
                         'installation. Known locations: %s' % ', '.join(JQUERY_SYSTEM_LOCATIONS))
+    group1.add_argument('--json', metavar='OUTPUT_FILE', dest='json_output',
+                        help='Write JSON text output to given file (use - for stdout)')
     group1.add_argument('--markdown', metavar='OUTPUT_FILE', dest='markdown_output',
                         help='Write Markdown text output to given file (use - for stdout)')
     group1.add_argument('--restructured-text', metavar='OUTPUT_FILE',

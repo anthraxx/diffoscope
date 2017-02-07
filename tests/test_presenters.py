@@ -96,6 +96,14 @@ def test_restructuredtext(capsys):
 
     assert out == data('output.rst')
 
+def test_json(capsys):
+    out = run(capsys, '--json', '-')
+
+    with open('tests/data/output.json', 'w') as f:
+        f.write(out)
+
+    assert out == data('output.json')
+
 def test_no_report_option(capsys):
     out = run(capsys)
 

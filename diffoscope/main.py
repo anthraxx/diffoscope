@@ -255,8 +255,8 @@ def run_diffoscope(parsed_args):
 
 
 def sigterm_handler(signo, stack_frame):
-    sys.exit(2)
-
+    clean_all_temp_files()
+    os._exit(2)
 
 def main(args=None):
     if args is None:

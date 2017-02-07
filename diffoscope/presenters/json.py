@@ -19,7 +19,7 @@
 
 import json
 
-from .base import Presenter
+from .utils import Presenter
 
 
 class JSONPresenter(Presenter):

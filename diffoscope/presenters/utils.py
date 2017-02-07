@@ -2,7 +2,7 @@
 #
 # diffoscope: in-depth comparison of files, archives, and directories
 #
-# Copyright © 2016 Chris Lamb <lamby@debian.org>
+# Copyright © 2016, 2017 Chris Lamb <lamby@debian.org>
 #
 # diffoscope is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -21,6 +21,32 @@ import sys
 import codecs
 import contextlib
 
+
+class Presenter(object):
+    def __init__(self):
+        self.depth = 0
+
+    def visit(self, difference):
+        self.visit_difference(difference)
+
+        self.depth += 1
+
+        for x in difference.details:
+            self.visit(x)
+
+        self.depth -= 1
+
+    def visit_difference(self, difference):
+        raise NotImplementedError()
+
+    @classmethod
+    def indent(cls, val, prefix):
+        # As an optimisation, output as much as possible in one go to avoid
+        # unnecessary splitting, interpolating, etc.
+        #
+        # We don't use textwrap.indent as that unnecessarily calls
+        # str.splitlines, etc.
+        return prefix + val.rstrip().replace('\n', '\n{}'.format(prefix))
 
 class PrintLimitReached(Exception):
     pass

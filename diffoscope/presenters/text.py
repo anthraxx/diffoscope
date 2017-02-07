@@ -21,7 +21,7 @@ import re
 
 from diffoscope.diff import color_unified_diff
 
-from .base import Presenter
+from .utils import Presenter
 
 
 class TextPresenter(Presenter):

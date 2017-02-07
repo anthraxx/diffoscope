@@ -17,7 +17,7 @@
 # You should have received a copy of the GNU General Public License
 # along with diffoscope.  If not, see <https://www.gnu.org/licenses/>.
 
-from .base import Presenter
+from .utils import Presenter
 
 
 class MarkdownTextPresenter(Presenter):

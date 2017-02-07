@@ -224,9 +224,11 @@ class File(object, metaclass=abc.ABCMeta):
 
     @tool_required('cmp')
     def cmp_external(self, other):
-        return 0 == subprocess.call(['cmp', '-s', self.path, other.path],
-                                    shell=False, close_fds=True)
-
+        return subprocess.call(
+            ('cmp', '-s', self.path, other.path),
+            shell=False,
+            close_fds=True,
+        ) == 0
 
     # To be specialized directly, or by implementing compare_details
     def compare(self, other, source=None):

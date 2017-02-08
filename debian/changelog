@@ -1,3 +1,55 @@
+diffoscope (71) unstable; urgency=medium
+
+  [ Chris Lamb ]
+  * New features:
+    - Add a machine-readable JSON output format. (Closes: #850791)
+    - Show results from debugging packages last. (Closes: #820427)
+    - Add a --max-text-report-size option. (Closes: #851147)
+  * Bug fixes:
+    - Clean all temp files in signal handler thread instead of attempting to
+      bubble exception back to the main thread. (Closes: #852013)
+    - Prevent FTBFS by loading fixtures as UTF-8 in case surrounding terminal
+      is not Unicode-aware. (Closes: #852926)
+    - Fix errors when comparing directories with non-directories.
+      (Closes: #835641)
+    - Fix behaviour of setting report maximums to zero (ie. no limits)
+  * Tests:
+    - Test the RPM "fallback" comparison.
+    - Test the Deb{Changes,Buildinfo,Dsc} fallback comparisons.
+    - Test --progress and --status-fd output.
+    - Add tests for symlinks differing in destination.
+    - When comparing two empty directories, ensure that the mtime of the
+      directory is consistent to avoid non-deterministic failures.
+    - Smoke test profiling output.
+    - Ensure we ignore invalid JSON files correctly.
+    - Ensure 2nd source of a Difference is a string, not just the 1st.
+    - Don't report on test coverage for some internal error messages.
+  * Misc:
+    - Add docs about releasing signed tarballs.
+    - Drop the incomplete list of external tools from README.rst.
+    - Add debian/watch file with cryptographic signature verification.
+    - Drop CpioContent command now that we use libarchive.
+    - Use a singleton to manage our Comparator classes.
+    - Many small optimisations and code cleanups.
+
+  [ Brett Smith ]
+  * diffoscope.diff: Improve FIFO writing robustness.
+
+  [ Ximin Luo ]
+  * Fix bug introduced in commit 36d1c964 that only worked "accidentally".
+  * Fix lazy expression; filter is lazy in Python 3.
+
+  [ Mattia Rizzolo ]
+  * Override the debian-watch-file-in-native-package lintian tag.
+
+  [ anthraxx ]
+  * Arch package changed from cdrkit to cdrtools.
+
+  [ Holger Levsen ]
+  * Restore history section in README, explaining this was started in Debian.
+
+ -- Chris Lamb <lamby@debian.org>  Wed, 08 Feb 2017 13:02:01 +1300
+
 diffoscope (70) unstable; urgency=medium
 
   [ Mattia Rizzolo ]

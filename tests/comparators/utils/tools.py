@@ -20,6 +20,7 @@
 
 import pytest
 import functools
+import importlib
 import subprocess
 
 from distutils.spawn import find_executable
@@ -59,3 +60,9 @@ def get_supported_elf_formats():
     return set(subprocess.check_output(
         ('objdump', '--info'),
     ).decode('utf-8').splitlines())
+
+def skip_unless_module_exists(name):
+    return pytest.mark.skipif(
+        importlib.util.find_spec(name) is None,
+        reason="requires {} module".format(name),
+    )

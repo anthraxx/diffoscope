@@ -25,6 +25,8 @@ import pytest
 from diffoscope.main import main
 from diffoscope.progress import ProgressManager, StatusFD
 
+from comparators.utils.tools import skip_unless_module_exists
+
 TEST_TAR1_PATH = os.path.join(os.path.dirname(__file__), 'data', 'test1.tar')
 TEST_TAR2_PATH = os.path.join(os.path.dirname(__file__), 'data', 'test2.tar')
 
@@ -37,6 +39,7 @@ def run(capsys, *args):
 
     return exc.value.code, out, err
 
+@skip_unless_module_exists('progressbar')
 def test_progress(capsys):
     ret, _, err = run(capsys, TEST_TAR1_PATH, TEST_TAR2_PATH, '--progress')
 

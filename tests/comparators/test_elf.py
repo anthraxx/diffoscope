@@ -29,14 +29,7 @@ from diffoscope.comparators.utils.specialize import specialize
 
 from utils.data import data, load_fixture, get_data
 from utils.tools import skip_unless_tools_exist, \
-    skip_if_binutils_does_not_support_x86
-
-
-try:
-    import diffoscope.comparators.debian # noqa
-    miss_debian_module = False
-except ImportError:
-    miss_debian_module = True
+    skip_if_binutils_does_not_support_x86, skip_unless_module_exists
 
 obj1 = load_fixture('test1.o')
 obj2 = load_fixture('test2.o')
@@ -127,7 +120,7 @@ def dbgsym_differences(dbgsym_dir1, dbgsym_dir2):
 
 @skip_unless_tools_exist('readelf', 'objdump', 'objcopy')
 @skip_if_binutils_does_not_support_x86()
-@pytest.mark.skipif(miss_debian_module, reason='debian module is not installed')
+@skip_unless_module_exists('debian.deb822')
 def test_differences_with_dbgsym(dbgsym_differences):
     assert dbgsym_differences.details[2].source1 == 'data.tar.xz'
     bin_details = dbgsym_differences.details[2].details[0].details[0]
@@ -137,7 +130,7 @@ def test_differences_with_dbgsym(dbgsym_differences):
 
 @skip_unless_tools_exist('readelf', 'objdump', 'objcopy')
 @skip_if_binutils_does_not_support_x86()
-@pytest.mark.skipif(miss_debian_module, reason='debian module is not installed')
+@skip_unless_module_exists('debian.deb822')
 def test_original_gnu_debuglink(dbgsym_differences):
     bin_details = dbgsym_differences.details[2].details[0].details[0]
     assert '.gnu_debuglink' in bin_details.details[2].source1

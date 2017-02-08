@@ -24,16 +24,14 @@ from diffoscope.comparators.binary import FilesystemFile
 from diffoscope.comparators.utils.specialize import specialize
 
 from utils.data import load_fixture, data, get_data
-from utils.tools import skip_unless_tools_exist
+from utils.tools import skip_unless_tools_exist, skip_unless_module_exists
 from utils.nonexisting import assert_non_existing
 
 
 try:
     from diffoscope.comparators.rpm import RpmFile
-    miss_rpm_module = False
 except ImportError:
     from diffoscope.comparators.rpm_fallback import RpmFile
-    miss_rpm_module = True
 
 rpm1 = load_fixture('test1.rpm')
 rpm2 = load_fixture('test2.rpm')
@@ -41,7 +39,7 @@ rpm2 = load_fixture('test2.rpm')
 def test_identification(rpm1):
     assert isinstance(rpm1, RpmFile)
 
-@pytest.mark.skipif(miss_rpm_module, reason='rpm module is not installed')
+@skip_unless_module_exists('rpm')
 def test_no_differences(rpm1):
     difference = rpm1.compare(rpm1)
     assert difference is None
@@ -50,14 +48,14 @@ def test_no_differences(rpm1):
 def differences(rpm1, rpm2):
     return rpm1.compare(rpm2).details
 
-@pytest.mark.skipif(miss_rpm_module, reason='rpm module is not installed')
+@skip_unless_module_exists('rpm')
 @skip_unless_tools_exist('rpm2cpio')
 def test_header(differences):
     assert differences[0].source1 == 'header'
     expected_diff = get_data('rpm_header_expected_diff')
     assert differences[0].unified_diff == expected_diff
 
-@pytest.mark.skipif(miss_rpm_module, reason='rpm module is not installed')
+@skip_unless_module_exists('rpm')
 @skip_unless_tools_exist('rpm2cpio')
 def test_listing(differences):
     assert differences[1].source1 == 'content'
@@ -65,7 +63,7 @@ def test_listing(differences):
     expected_diff = get_data('rpm_listing_expected_diff')
     assert differences[1].details[0].unified_diff == expected_diff
 
-@pytest.mark.skipif(miss_rpm_module, reason='rpm module is not installed')
+@skip_unless_module_exists('rpm')
 @skip_unless_tools_exist('rpm2cpio')
 def test_content(differences):
     assert differences[1].source1 == 'content'
@@ -73,7 +71,7 @@ def test_content(differences):
     expected_diff = get_data('text_ascii_expected_diff')
     assert differences[1].details[1].unified_diff == expected_diff
 
-@pytest.mark.skipif(miss_rpm_module, reason='rpm module is not installed')
+@skip_unless_module_exists('rpm')
 @skip_unless_tools_exist('rpm2cpio')
 def test_compare_non_existing(monkeypatch, rpm1):
     assert_non_existing(monkeypatch, rpm1)

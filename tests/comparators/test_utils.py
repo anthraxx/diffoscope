@@ -25,13 +25,8 @@ from diffoscope.difference import Difference
 from diffoscope.comparators.utils.command import Command
 
 from utils.data import data, load_fixture
-from utils.tools import tools_missing, skip_unless_tools_exist
-
-try:
-    import tlsh # noqa
-    miss_tlsh = False
-except ImportError:
-    miss_tlsh = True
+from utils.tools import tools_missing, skip_unless_tools_exist, \
+    skip_unless_module_exists
 
 
 fuzzy_tar1 = load_fixture('fuzzy1.tar')
@@ -62,7 +57,7 @@ def skip_unless_tool_is_at_least():
         return '4.3-git'
     assert func('cat', version, '4.3').args[0] is False
 
-@pytest.mark.skipif(miss_tlsh, reason='tlsh is missing')
+@skip_unless_module_exists('tlsh')
 def test_fuzzy_matching(fuzzy_tar1, fuzzy_tar2):
     differences = fuzzy_tar1.compare(fuzzy_tar2).details
     expected_diff = codecs.open(data('text_iso8859_expected_diff'), encoding='utf-8').read()
@@ -71,7 +66,7 @@ def test_fuzzy_matching(fuzzy_tar1, fuzzy_tar2):
     assert 'similar' in differences[1].comment
     assert differences[1].unified_diff == expected_diff
 
-@pytest.mark.skipif(miss_tlsh, reason='tlsh is missing')
+@skip_unless_module_exists('tlsh')
 def test_fuzzy_matching_only_once(fuzzy_tar1, fuzzy_tar3):
     differences = fuzzy_tar1.compare(fuzzy_tar3).details
     assert len(differences) == 2
@@ -79,14 +74,14 @@ def test_fuzzy_matching_only_once(fuzzy_tar1, fuzzy_tar3):
 fuzzy_tar_in_tar1 = load_fixture('fuzzy-tar-in-tar1.tar')
 fuzzy_tar_in_tar2 = load_fixture('fuzzy-tar-in-tar2.tar')
 
-@pytest.mark.skipif(miss_tlsh, reason='tlsh is missing')
+@skip_unless_module_exists('tlsh')
 def test_no_fuzzy_matching(monkeypatch, fuzzy_tar_in_tar1, fuzzy_tar_in_tar2):
     monkeypatch.setattr(Config(), 'fuzzy_threshold', 0)
     difference = fuzzy_tar_in_tar1.compare(fuzzy_tar_in_tar2)
     assert len(difference.details) == 1
     assert difference.details[0].source1 == 'file list'
 
-@pytest.mark.skipif(miss_tlsh, reason='tlsh is missing')
+@skip_unless_module_exists('tlsh')
 def test_no_fuzzy_matching_new_file(monkeypatch, fuzzy_tar_in_tar1, fuzzy_tar_in_tar2):
     monkeypatch.setattr(Config(), 'fuzzy_threshold', 0)
     monkeypatch.setattr(Config(), 'new_file', True)

@@ -1,3 +1,14 @@
+diffoscope (72) unstable; urgency=medium
+
+  * Fix autopkgtest failures when Recommends are not installed.
+    (Closes: #854593)
+  * Specify <html lang="en"> in HTML output. (re. #849411)
+  * Tests:
+    - Add a "@skip_unless_module_exists" decorator.
+    - Show local variables in tracebacks.
+
+ -- Chris Lamb <lamby@debian.org>  Thu, 09 Feb 2017 12:49:40 +1300
+
 diffoscope (71) unstable; urgency=medium
 
   [ Chris Lamb ]

@@ -76,6 +76,7 @@ def test_content(differences):
 def test_compare_non_existing(monkeypatch, rpm1):
     assert_non_existing(monkeypatch, rpm1)
 
+@skip_unless_tools_exist('xxd')
 def test_fallback_comparison(monkeypatch):
     manager = ComparatorManager()
     monkeypatch.setattr(manager, 'COMPARATORS', (

@@ -24,6 +24,8 @@ from diffoscope.comparators.device import Device
 from diffoscope.comparators.utils.specialize import specialize
 
 from utils.data import load_fixture, get_data
+from utils.tools import skip_unless_tools_exist
+
 
 text_ascii1 = load_fixture('text_ascii1')
 
@@ -42,10 +44,12 @@ def differences_reverse(text_ascii1, devnull):
 def test_identification(devnull):
     assert isinstance(devnull, Device)
 
+@skip_unless_tools_exist('xxd')
 def test_diff(differences):
     expected_diff = get_data('device_expected_diff')
     assert differences.unified_diff == expected_diff
 
+@skip_unless_tools_exist('xxd')
 def test_diff_reverse(differences_reverse):
     expected_diff = get_data('device_expected_diff_reverse')
     assert differences_reverse.unified_diff == expected_diff

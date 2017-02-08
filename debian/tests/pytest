@@ -10,4 +10,6 @@ fi
 export LIBGUESTFS_MEMSIZE=128
 
 cp -r tests $ADTTMP
-(cd $ADTTMP; py.test-3 -vv -r a)
+(cd $ADTTMP; py.test-3 -vv -l -r a)
+
+-vv -r sxX

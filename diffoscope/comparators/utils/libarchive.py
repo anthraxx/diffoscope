@@ -23,6 +23,7 @@ import os.path
 import ctypes
 import logging
 import libarchive
+import collections
 
 from diffoscope.tempfiles import get_temporary_directory
 
@@ -168,11 +169,11 @@ class LibarchiveContainer(Archive):
 
     def get_member_names(self):
         self.ensure_unpacked()
-        return self._member_names
+        return self._members.keys()
 
     def extract(self, member_name, dest_dir):
         self.ensure_unpacked()
-        return os.path.join(self._unpacked, member_name)
+        return self._members[member_name]
 
     def get_member(self, member_name):
         with libarchive.file_reader(self.source.path) as archive:
@@ -197,39 +198,25 @@ class LibarchiveContainer(Archive):
         return LibarchiveMember(self, entry)
 
     def ensure_unpacked(self):
-        if hasattr(self, '_unpacked'):
+        if hasattr(self, '_members'):
             return
 
-        self._unpacked = get_temporary_directory().name
-        self._member_names = []
+        tmpdir = get_temporary_directory().name
+        self._members = collections.OrderedDict()
 
-        logger.debug("Extracting %s to %s", self.source.path, self._unpacked)
+        logger.debug("Extracting %s to %s", self.source.path, tmpdir)
 
         with libarchive.file_reader(self.source.path) as archive:
-            for entry in archive:
-                self._member_names.append(entry.pathname)
+            for idx, entry in enumerate(archive):
+                # Maintain a mapping of archive path to the extracted path,
+                # avoiding the need to sanitise filenames.
+                dst = os.path.join(tmpdir, '{}'.format(idx))
+                self._members[entry.pathname] = dst
 
                 if entry.isdir:
                     continue
 
-                # All extracted locations must be underneath self._unpacked
-                force_prefix = os.path.join(self._unpacked, "")
-
-                # Try to pick a safe and reasonable candidate name
-                candidate_name = os.path.normpath(entry.pathname.rstrip('/' + os.sep))
-                if os.path.isabs(candidate_name):
-                    candidate_name = os.path.relpath(candidate_name, os.path.join(os.path.sep))
-
-                dst = os.path.normpath(os.path.join(self._unpacked, candidate_name))
-                if not dst.startswith(force_prefix):
-                    logger.warn("Skipping member because we could not make a safe name to extract it to: '%s'",
-                                entry.pathname)
-                    continue
-
-                # TODO: need to fix reading these cleaned members. currently
-                # reading will still try to use the uncleaned name.
-                #logging.debug("Extracting %s to %s", entry.pathname, dst)
-                os.makedirs(os.path.dirname(dst), exist_ok=True)
+                logger.debug("Extracting %s to %s", entry.pathname, dst)
 
                 with open(dst, 'wb') as f:
                     for block in entry.get_blocks():
@@ -237,5 +224,5 @@ class LibarchiveContainer(Archive):
 
         logger.debug(
             "Extracted %d entries from %s to %s",
-            len(self._member_names), self.source.path, self._unpacked,
+            len(self._members), self.source.path, tmpdir,
         )

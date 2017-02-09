@@ -1,3 +1,17 @@
+diffoscope (75) unstable; urgency=medium
+
+  [ Chris Lamb ]
+  * Fix ImportError in Debian comparator tests. This was caused by not
+    handling the case where ``importlib.find_spec`` was testing for a submodule
+    (ie. ``debian.Deb822``) where it will attempt to import the ``debian``
+    module and raise an exception if it does not exist. Thanks to Iain Lane for
+    initial patches. (Closes: #854670)
+
+  [ Ximin Luo ]
+  * Remove pointless use of a thread
+
+ -- Chris Lamb <lamby@debian.org>  Fri, 10 Feb 2017 09:28:47 +1300
+
 diffoscope (74) unstable; urgency=medium
 
   * Add missing Recommends for comparators. This was a regression introduced in

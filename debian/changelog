@@ -1,3 +1,15 @@
+diffoscope (76) unstable; urgency=medium
+
+  [ Chris Lamb ]
+  * Extract archive members using an auto-incrementing integer, avoiding the
+    need to sanitise filenames and avoiding writes to arbitrary locations.
+    (Closes: #854723)
+
+  [ Ximin Luo ]
+  * Simplify call to subprocess.Popen
+
+ -- Chris Lamb <lamby@debian.org>  Fri, 10 Feb 2017 11:37:52 +1300
+
 diffoscope (75) unstable; urgency=medium
 
   [ Chris Lamb ]

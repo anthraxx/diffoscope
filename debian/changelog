@@ -1,3 +1,11 @@
+diffoscope (74) unstable; urgency=medium
+
+  * Add missing Recommends for comparators. This was a regression introduced in
+    version 71 due to lazily-importing them; they were then not available when
+    we called "--list-tools=debian" during package build. (Closes: #854655)
+
+ -- Chris Lamb <lamby@debian.org>  Thu, 09 Feb 2017 16:58:28 +1300
+
 diffoscope (73) unstable; urgency=medium
 
   * debian/tests/pytest: Remove spurious clipboard contents.

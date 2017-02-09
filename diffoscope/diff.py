@@ -163,14 +163,10 @@ def run_diff(fifo1, fifo2, end_nl_q1, end_nl_q2):
 
     p = subprocess.Popen(
         cmd,
-        shell=False,
         bufsize=1,
-        stdin=subprocess.PIPE,
         stdout=subprocess.PIPE,
         stderr=subprocess.STDOUT,
     )
-    p.stdin.close()
-
     parser = DiffParser(p.stdout, end_nl_q1, end_nl_q2)
     parser.parse()
     p.wait()

@@ -62,7 +62,10 @@ def get_supported_elf_formats():
     ).decode('utf-8').splitlines())
 
 def skip_unless_module_exists(name):
+    def module_exists(x):
+        return importlib.util.find_spec(x) is None
+
     return pytest.mark.skipif(
-        importlib.util.find_spec(name) is None,
+        module_exists(name),
         reason="requires {} module".format(name),
     )

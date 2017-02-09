@@ -35,6 +35,7 @@ from .progress import ProgressManager, Progress
 from .profiling import ProfileManager, profile
 from .tempfiles import clean_all_temp_files
 from .difference import Difference
+from .comparators import ComparatorManager
 from .external_tools import EXTERNAL_TOOLS
 from .presenters.html import JQUERY_SYSTEM_LOCATIONS
 from .presenters.formats import output_all
@@ -203,6 +204,10 @@ class RangeCompleter(object):
 
 class ListToolsAction(argparse.Action):
     def __call__(self, parser, namespace, os_override, option_string=None):
+        # Ensure all comparators are imported so tool_required.all is
+        # populated.
+        ComparatorManager().reload()
+
         print("External-Tools-Required: ", end='')
         print(', '.join(sorted(tool_required.all)))
         if os_override:

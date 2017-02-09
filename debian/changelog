@@ -1,7 +1,7 @@
 diffoscope (76) UNRELEASED; urgency=medium
 
   * Don't write to arbitrary locations when extracting archive members.
-    (Closes: #XXXXXX)
+    (Closes: #854723)
 
  -- Ximin Luo <infinity0@debian.org>  Thu, 09 Feb 2017 22:14:46 +0100
 

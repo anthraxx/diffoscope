@@ -212,15 +212,23 @@ class LibarchiveContainer(Archive):
                 if entry.isdir:
                     continue
 
-                clean_name = os.path.basename(entry.pathname.rstrip('/' + os.sep))
-                if not clean_name:
+                # All extracted locations must be underneath self._unpacked
+                force_prefix = os.path.join(self._unpacked, "")
+
+                # Try to pick a safe and reasonable candidate name
+                candidate_name = os.path.normpath(entry.pathname.rstrip('/' + os.sep))
+                if os.path.isabs(candidate_name):
+                    candidate_name = os.path.relpath(candidate_name, os.path.join(os.path.sep))
+
+                dst = os.path.normpath(os.path.join(self._unpacked, candidate_name))
+                if not dst.startswith(force_prefix):
                     logger.warn("Skipping member because we could not make a safe name to extract it to: '%s'",
                                 entry.pathname)
                     continue
 
                 # TODO: need to fix reading these cleaned members. currently
                 # reading will still try to use the uncleaned name.
-                dst = os.path.join(self._unpacked, clean_name)
+                #logging.debug("Extracting %s to %s", entry.pathname, dst)
                 os.makedirs(os.path.dirname(dst), exist_ok=True)
 
                 with open(dst, 'wb') as f:

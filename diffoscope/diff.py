@@ -172,10 +172,7 @@ def run_diff(fifo1, fifo2, end_nl_q1, end_nl_q2):
     p.stdin.close()
 
     parser = DiffParser(p.stdout, end_nl_q1, end_nl_q2)
-    t_read = threading.Thread(target=parser.parse)
-    t_read.daemon = True
-    t_read.start()
-    t_read.join()
+    parser.parse()
     p.wait()
 
     logger.debug(

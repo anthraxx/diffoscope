@@ -212,10 +212,15 @@ class LibarchiveContainer(Archive):
                 if entry.isdir:
                     continue
 
-                if not os.path.basename(entry.pathname.rstrip('/' + os.sep)):
+                clean_name = os.path.basename(entry.pathname.rstrip('/' + os.sep))
+                if not clean_name:
+                    logger.warn("Skipping member because we could not make a safe name to extract it to: '%s'",
+                                entry.pathname)
                     continue
 
-                dst = os.path.join(self._unpacked, entry.pathname)
+                # TODO: need to fix reading these cleaned members. currently
+                # reading will still try to use the uncleaned name.
+                dst = os.path.join(self._unpacked, clean_name)
                 os.makedirs(os.path.dirname(dst), exist_ok=True)
 
                 with open(dst, 'wb') as f:

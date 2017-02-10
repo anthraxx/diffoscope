@@ -62,15 +62,15 @@ def get_supported_elf_formats():
     ).decode('utf-8').splitlines())
 
 def skip_unless_module_exists(name):
-    def module_exists(x):
+    def module_does_not_exist(x):
         try:
-            return importlib.util.find_spec(x) is not None
+            return importlib.util.find_spec(x) is None
         except ImportError:
             # Probing for submodules (eg. ``debian.deb822``) will attempt to
             # import ``debian`` so we must handle that failing.
-            return False
+            return True
 
     return pytest.mark.skipif(
-        module_exists(name),
+        module_does_not_exist(name),
         reason="requires {} module".format(name),
     )

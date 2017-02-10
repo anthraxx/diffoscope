@@ -219,7 +219,7 @@ class LibarchiveContainer(Archive):
 
                 # Maintain a mapping of archive path to the extracted path,
                 # avoiding the need to sanitise filenames.
-                dst = os.path.join(tmpdir, '{}'.format(idx))
+                dst = os.path.join(tmpdir, str(idx))
                 self._members[entry.pathname] = dst
 
                 logger.debug("Extracting %s to %s", entry.pathname, dst)

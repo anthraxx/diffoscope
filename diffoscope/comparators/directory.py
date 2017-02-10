@@ -25,6 +25,7 @@ import subprocess
 from diffoscope.exc import RequiredToolNotFound
 from diffoscope.tools import tool_required
 from diffoscope.progress import Progress
+from diffoscope.excludes import filter_excludes
 from diffoscope.difference import Difference
 
 from .binary import FilesystemFile
@@ -167,6 +168,7 @@ class FilesystemDirectory(object):
         my_names = my_container.get_member_names()
         other_names = other_container.get_member_names()
         to_compare = set(my_names).intersection(other_names)
+        to_compare = set(filter_excludes(to_compare))
         with Progress(len(to_compare)) as p:
             for name in sorted(to_compare):
                 my_file = my_container.get_member(name)

@@ -26,6 +26,7 @@ import binascii
 from diffoscope.tools import tool_required
 from diffoscope.exc import RequiredToolNotFound
 from diffoscope.config import Config
+from diffoscope.excludes import any_excluded
 from diffoscope.profiling import profile
 from diffoscope.difference import Difference
 
@@ -52,6 +53,8 @@ def compare_root_paths(path1, path2):
 
     if not Config().new_file:
         bail_if_non_existing(path1, path2)
+    if any_excluded(path1, path2):
+        return None
     if os.path.isdir(path1) and os.path.isdir(path2):
         return compare_directories(path1, path2)
     container1 = FilesystemDirectory(os.path.dirname(path1)).as_container
@@ -68,6 +71,9 @@ def compare_files(file1, file2, source=None):
         file2.name,
         file2.__class__.__name__,
     )
+
+    if any_excluded(file1.name, file2.name):
+        return None
 
     with profile('has_same_content_as', file1):
         if file1.has_same_content_as(file2):

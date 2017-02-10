@@ -158,6 +158,9 @@ def create_parser():
     group3 = parser.add_argument_group('diff calculation')
     group3.add_argument('--new-file', dest='new_file', action='store_true',
                         help='Treat absent files as empty')
+    group3.add_argument('--exclude', dest='excludes', nargs='?',
+                        metavar='PATTERN', action='append', default=[],
+                        help='Exclude files that match %(metavar)s')
     group3.add_argument('--fuzzy-threshold', dest='fuzzy_threshold', type=int,
                         help='Threshold for fuzzy-matching '
                         '(0 to disable, %(default)s is default, 400 is high fuzziness)',
@@ -248,6 +251,7 @@ def run_diffoscope(parsed_args):
     maybe_set_limit(Config(), parsed_args, "max_diff_input_lines")
     Config().fuzzy_threshold = parsed_args.fuzzy_threshold
     Config().new_file = parsed_args.new_file
+    Config().excludes = parsed_args.excludes
     set_locale()
     logger.debug('Starting comparison')
     ProgressManager().setup(parsed_args)

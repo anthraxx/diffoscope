@@ -33,6 +33,7 @@ class Config(object):
     new_file = False
     fuzzy_threshold = 60
     enforce_constraints = True
+    excludes = ()
 
     _singleton = {}
 

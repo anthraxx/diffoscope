@@ -25,6 +25,7 @@ import logging
 import libarchive
 import collections
 
+from diffoscope.excludes import any_excluded
 from diffoscope.tempfiles import get_temporary_directory
 
 from ..device import Device
@@ -210,6 +211,10 @@ class LibarchiveContainer(Archive):
             for idx, entry in enumerate(archive):
                 # Always skip directories
                 if entry.isdir:
+                    continue
+
+                # Save extracting excluded files
+                if any_excluded(entry.pathname):
                     continue
 
                 # Maintain a mapping of archive path to the extracted path,

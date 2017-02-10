@@ -208,13 +208,14 @@ class LibarchiveContainer(Archive):
 
         with libarchive.file_reader(self.source.path) as archive:
             for idx, entry in enumerate(archive):
+                # Always skip directories
+                if entry.isdir:
+                    continue
+
                 # Maintain a mapping of archive path to the extracted path,
                 # avoiding the need to sanitise filenames.
                 dst = os.path.join(tmpdir, '{}'.format(idx))
                 self._members[entry.pathname] = dst
-
-                if entry.isdir:
-                    continue
 
                 logger.debug("Extracting %s to %s", entry.pathname, dst)
 

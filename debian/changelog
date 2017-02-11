@@ -3,7 +3,7 @@ diffoscope (76) unstable; urgency=medium
   [ Chris Lamb ]
   * Extract archive members using an auto-incrementing integer, avoiding the
     need to sanitise filenames and avoiding writes to arbitrary locations.
-    (Closes: #854723)
+    (Closes: #854723 - CVE-2017-0359)
 
   [ Ximin Luo ]
   * Simplify call to subprocess.Popen

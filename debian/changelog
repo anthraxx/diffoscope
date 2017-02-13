@@ -1,3 +1,25 @@
+diffoscope (77) UNRELEASED; urgency=medium
+
+  [ Chris Lamb ]
+  * tests/comparators/utils:
+    + Correct logic of module_exists, ensuring we correctly skip in case of
+      modules containing a dot in their name.  Closes: #854745
+  * comparators/utils/libarchive:
+    + No need to track archive directory locations.
+  * Add --exclude option.  Closes: #854783
+  * Add PyPI badge to README.rst.
+  * Update .travis.yml from http://travis.debian.net.
+
+  [ Mattia Rizzolo ]
+  * Add CVE reference to the changelog of v76.
+  * Add my key to debian/upstream/signing-key.asc.
+
+  [ Ximin Luo ]
+  * comparators/utils/libarchive:
+    + When extracting archives, try to keep directory sizes small.
+
+ -- Mattia Rizzolo <mattia@debian.org>  Mon, 13 Feb 2017 15:23:45 +0100
+
 diffoscope (76) unstable; urgency=medium
 
   [ Chris Lamb ]

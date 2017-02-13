@@ -1,4 +1,4 @@
-diffoscope (77) UNRELEASED; urgency=medium
+diffoscope (77) unstable; urgency=medium
 
   [ Chris Lamb ]
   * tests/comparators/utils:
@@ -18,7 +18,7 @@ diffoscope (77) UNRELEASED; urgency=medium
   * comparators/utils/libarchive:
     + When extracting archives, try to keep directory sizes small.
 
- -- Mattia Rizzolo <mattia@debian.org>  Mon, 13 Feb 2017 15:23:45 +0100
+ -- Mattia Rizzolo <mattia@debian.org>  Mon, 13 Feb 2017 16:25:02 +0100
 
 diffoscope (76) unstable; urgency=medium
 

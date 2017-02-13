@@ -217,19 +217,16 @@ class LibarchiveContainer(Archive):
                 if any_excluded(entry.pathname):
                     continue
 
+                # Keep directory sizes small. could be improved but should be
+                # good enough for "ordinary" large archives.
+                dst = os.path.join(tmpdir, str(idx // 4096), str(idx % 4096))
                 # Maintain a mapping of archive path to the extracted path,
                 # avoiding the need to sanitise filenames.
-                not_first = idx % 4096
-                # keep directory sizes small. could be improved but should be
-                # good enough for "ordinary" large archives.
-                basename = os.path.join(str(idx // 4096), str(not_first))
-                dst = os.path.join(tmpdir, basename)
                 self._members[entry.pathname] = dst
 
                 logger.debug("Extracting %s to %s", entry.pathname, dst)
 
-                if not not_first:
-                    os.makedirs(os.path.dirname(dst), exist_ok=True)
+                os.makedirs(os.path.dirname(dst), exist_ok=True)
                 with open(dst, 'wb') as f:
                     for block in entry.get_blocks():
                         f.write(block)

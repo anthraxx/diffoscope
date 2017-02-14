@@ -45,25 +45,31 @@ def list_files(path):
     return all_files
 
 
-class Stat(Command):
-    @tool_required('stat')
-    def cmdline(self):
-        return ['stat', self.path]
+if os.uname()[0] == 'FreeBSD':
+    class Stat(Command):
+        @tool_required('stat')
+        def cmdline(self):
+            return ['stat', '-t', '%Y-%m-%d %H:%M:%S', '-f', '%Sp %l %Su %Sg %z %Sm %k %b %#Xf', self.path]
+else:
+    class Stat(Command):
+        @tool_required('stat')
+        def cmdline(self):
+            return ['stat', self.path]
 
-    FILE_RE = re.compile(r'^\s*File:.*$')
-    DEVICE_RE = re.compile(r'Device: [0-9a-f]+h/[0-9]+d\s+')
-    INODE_RE = re.compile(r'Inode: [0-9]+\s+')
-    ACCESS_TIME_RE = re.compile(r'^Access: [0-9]{4}-[0-9]{2}-[0-9]{2}.*$')
-    CHANGE_TIME_RE = re.compile(r'^Change: [0-9]{4}-[0-9]{2}-[0-9]{2}.*$')
+        FILE_RE = re.compile(r'^\s*File:.*$')
+        DEVICE_RE = re.compile(r'Device: [0-9a-f]+h/[0-9]+d\s+')
+        INODE_RE = re.compile(r'Inode: [0-9]+\s+')
+        ACCESS_TIME_RE = re.compile(r'^Access: [0-9]{4}-[0-9]{2}-[0-9]{2}.*$')
+        CHANGE_TIME_RE = re.compile(r'^Change: [0-9]{4}-[0-9]{2}-[0-9]{2}.*$')
 
-    def filter(self, line):
-        line = line.decode('utf-8')
-        line = Stat.FILE_RE.sub('', line)
-        line = Stat.DEVICE_RE.sub('', line)
-        line = Stat.INODE_RE.sub('', line)
-        line = Stat.ACCESS_TIME_RE.sub('', line)
-        line = Stat.CHANGE_TIME_RE.sub('', line)
-        return line.encode('utf-8')
+        def filter(self, line):
+            line = line.decode('utf-8')
+            line = Stat.FILE_RE.sub('', line)
+            line = Stat.DEVICE_RE.sub('', line)
+            line = Stat.INODE_RE.sub('', line)
+            line = Stat.ACCESS_TIME_RE.sub('', line)
+            line = Stat.CHANGE_TIME_RE.sub('', line)
+            return line.encode('utf-8')
 
 
 @tool_required('lsattr')

@@ -23,7 +23,7 @@ from diffoscope.comparators.binary import FilesystemFile
 from diffoscope.comparators.device import Device
 from diffoscope.comparators.utils.specialize import specialize
 
-from utils.data import load_fixture, get_data
+from utils.data import load_fixture, get_data, normalize_zeros
 from utils.tools import skip_unless_tools_exist
 
 
@@ -47,9 +47,9 @@ def test_identification(devnull):
 @skip_unless_tools_exist('xxd')
 def test_diff(differences):
     expected_diff = get_data('device_expected_diff')
-    assert differences.unified_diff == expected_diff
+    assert normalize_zeros(differences.unified_diff) == expected_diff
 
 @skip_unless_tools_exist('xxd')
 def test_diff_reverse(differences_reverse):
     expected_diff = get_data('device_expected_diff_reverse')
-    assert differences_reverse.unified_diff == expected_diff
+    assert normalize_zeros(differences_reverse.unified_diff) == expected_diff

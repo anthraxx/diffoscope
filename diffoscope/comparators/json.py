@@ -37,7 +37,7 @@ class JSONFile(File):
         with open(file.path) as f:
             try:
                 file.parsed = json.load(f, object_pairs_hook=collections.OrderedDict)
-            except ValueError:
+            except json.JSONDecodeError:
                 return False
 
         return True

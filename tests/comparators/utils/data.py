@@ -55,7 +55,7 @@ def load_fixture(filename):
 
 
 def normalize_zeros(s):
-    # older xxd had one zero less.a  Make sure there are always 8.
+    # older xxd had one zero less.  Make sure there are always 8.
     def repl(x):
         return '{}{:08x}'.format(x.group('prefix'), int(x.group('offset'), 16))
     return re_normalize_zeros.sub(repl, s)

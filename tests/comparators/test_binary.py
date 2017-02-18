@@ -32,7 +32,7 @@ from diffoscope.comparators.utils.file import File
 from diffoscope.comparators.missing_file import MissingFile
 from diffoscope.comparators.utils.compare import Xxd
 
-from utils.data import data, init_fixture, get_data
+from utils.data import data, init_fixture, get_data, normalize_zeros
 from utils.tools import skip_unless_tools_exist
 
 
@@ -45,10 +45,6 @@ TEST_ISO8859_PATH = data('text_iso8859')
 
 binary1 = init_fixture(TEST_FILE1_PATH)
 binary2 = init_fixture(TEST_FILE2_PATH)
-
-def normalize_zeros(s):
-    # older xxd had one zero less.  Make sure there are always 8.
-    return s.replace('-0000000:', '-00000000:').replace('+0000000:', '+00000000:')
 
 def test_same_content(binary1):
     assert binary1.has_same_content_as(binary1) is True

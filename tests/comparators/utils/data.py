@@ -47,3 +47,8 @@ def get_data(filename):
 
 def load_fixture(filename):
     return init_fixture(data(filename))
+
+
+def normalize_zeros(s):
+    # older xxd had one zero less.  Make sure there are always 8.
+    return s.replace('-0000000:', '-00000000:').replace('+0000000:', '+00000000:')

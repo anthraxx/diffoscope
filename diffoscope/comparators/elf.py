@@ -398,7 +398,7 @@ class ElfContainer(Container):
                 output = output[2:]
             output = output[5:]
 
-            # Entires of readelf --section-headers have the following columns:
+            # Entries of readelf --section-headers have the following columns:
             # [Nr]  Name  Type  Address  Off  Size  ES  Flg  Lk  Inf  Al
             self._sections = collections.OrderedDict()
             for line in output:

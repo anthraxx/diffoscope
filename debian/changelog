@@ -1,3 +1,21 @@
+diffoscope (78) UNRELEASED; urgency=medium
+
+  [ Brett Smith ]
+  * comparators.json:
+    + Catch bad JSON errors on Python pre-3.5.  Closes: #855233
+
+  [ Chris Lamb ]
+  * tests:
+    + Move normalize_zeros to more generic `utils.data` module.
+    + Fix tests that call xxd fail on jessie due to output change.
+      Closes: #855239
+
+  [ Ed Maste ]
+  * comparators.directory:
+    + Assume BSD-style stat(1) on FreeBSD.  Closes: #855169
+
+ -- Mattia Rizzolo <mattia@debian.org>  Sun, 26 Feb 2017 17:23:39 +0100
+
 diffoscope (77) unstable; urgency=medium
 
   [ Chris Lamb ]

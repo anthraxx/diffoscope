@@ -1,4 +1,4 @@
-diffoscope (78) UNRELEASED; urgency=medium
+diffoscope (78) unstable; urgency=medium
 
   [ Brett Smith ]
   * comparators.json:
@@ -14,7 +14,7 @@ diffoscope (78) UNRELEASED; urgency=medium
   * comparators.directory:
     + Assume BSD-style stat(1) on FreeBSD.  Closes: #855169
 
- -- Mattia Rizzolo <mattia@debian.org>  Sun, 26 Feb 2017 17:23:39 +0100
+ -- Mattia Rizzolo <mattia@debian.org>  Sun, 26 Feb 2017 17:26:48 +0100
 
 diffoscope (77) unstable; urgency=medium
 
